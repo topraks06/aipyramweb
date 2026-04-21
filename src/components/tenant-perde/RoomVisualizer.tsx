@@ -9,6 +9,7 @@ import {
   Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight
 } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
+import toast from 'react-hot-toast';
 
 export default function RoomVisualizer() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -77,6 +78,15 @@ export default function RoomVisualizer() {
   }, [stagedImage, variationCount, resultImage, activeOriginalUrl]);
 
   const handleImageUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+        toast.error("Lütfen sadece resim dosyası yükleyin (JPG/PNG).");
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+        toast.error("Dosya boyutu çok büyük! Maksimum 10MB olmalıdır.");
+        return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
        const base64String = reader.result as string;
@@ -84,6 +94,9 @@ export default function RoomVisualizer() {
        setResultImage(null);
        setVariations(null);
        setActiveOriginalUrl(null);
+    };
+    reader.onerror = () => {
+       toast.error("Dosya yüklenirken bir sorun oluştu.");
     };
     reader.readAsDataURL(file);
   };
@@ -153,6 +166,9 @@ export default function RoomVisualizer() {
          
          window.dispatchEvent(new CustomEvent('agent_message', {
            detail: { message: `✅ Tasarım tamamlandı! Oda tipi: ${data.analysis?.roomType || 'bilinmiyor'}. Önerilen kumaşlar: ${data.suggestions?.map((s: any) => s.name).join(', ') || 'yok'}` }
+         }));
+         window.dispatchEvent(new CustomEvent('RENDER_COMPLETE', {
+           detail: { url: data.renderUrl }
          }));
        } else {
          throw new Error('Render sonucu alınamadı');
@@ -319,12 +335,12 @@ export default function RoomVisualizer() {
                               </div>
 
                               {canvasAttachments.length > 0 && (
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-h-[30vh] overflow-y-auto custom-scrollbar pr-2 border-b border-t border-white/5 py-2">
+                                  <div className="flex gap-3 w-full max-w-full overflow-x-auto pb-4 custom-scrollbar snap-x touch-pan-x">
                                      {canvasAttachments.map((att: any) => (
-                                        <div key={att.id} className="flex flex-col bg-zinc-900 border border-white/10 rounded-lg overflow-hidden relative">
+                                        <div key={att.id} className="snap-start shrink-0 w-64 flex flex-col bg-zinc-900 border border-white/10 rounded-lg overflow-hidden relative shadow-lg">
                                             <div className="flex bg-black/40 h-16 shrink-0 relative">
                                                 <img src={att.base64} alt="product" className="w-16 h-16 object-cover border-r border-white/10 shrink-0" />
-                                                <div className="flex-1 p-2 flex flex-col justify-center relative">
+                                                <div className="flex-1 p-2 flex flex-col justify-center relative min-w-0">
                                                     <input 
                                                         type="text" 
                                                         value={att.label || ''} 

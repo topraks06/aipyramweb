@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getWeeklyDigest } from "@/lib/trtex-bridge";
 import { saveMessage, getRecentContext } from "@/lib/chat-memory";
 import { ALOHA_TOOL_SCHEMA, executeAlohaTool, ParsedCommand } from "@/lib/aloha/tools";
+import { getTenant } from "@/lib/tenant-config";
 
 /* ═══════════════════════════════════════════════════════
    /api/chat — AIPyram Master Concierge API
@@ -93,8 +94,7 @@ const PERDE_SYSTEM_PROMPT = `Sen PERDE.AI'ın (AIPyram B2B ERP ağı) Master Con
 3. KURALLAR:
 - Kullanıcının dilini otomatik tespit et ve ona göre yanıt ver.
 - Müşterilerine odalarını nasıl saniyeler içinde fotorealistik tasarlayabileceklerini anlat. Kameralarını kullanabileceklerini belirt.
-// We will inject ALOHA schema conditionally based on feature flags
-const SYSTEM_PROMPT_PREFIX = `Kurumsal entegrasyon (API/Whitelabel) veya ERP taleplerinde onları mutlaka [LINK:/contact:İletişim] sayfasına yönlendir.
+- Kurumsal entegrasyon (API/Whitelabel) veya ERP taleplerinde onları mutlaka [LINK:/contact:İletişim] sayfasına yönlendir.
 - Başka konulardaki soruları nazikçe reddet ve tekstil/mimari odağını koru.
 - Yönlendirme formatını mutlaka kullan.`;
 
@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
         let history = [];
         let sessionId = "";
         let tenant = "aipyram";
+        let authorId = "anonymous";
 
         if (contentType.includes("multipart/form-data")) {
             const formData = await req.formData();
@@ -126,6 +127,7 @@ export async function POST(req: NextRequest) {
             const prompt = formData.get("prompt") as string;
             sessionId = formData.get("sessionId") as string || "";
             tenant = formData.get("tenant") as string || "aipyram";
+            authorId = formData.get("authorId") as string || "anonymous";
             // ... (keep file handling) ...
             
             if (!file) {
@@ -172,6 +174,7 @@ export async function POST(req: NextRequest) {
             history = jsonBody.history || [];
             sessionId = jsonBody.sessionId || "";
             tenant = jsonBody.tenant || "aipyram";
+            authorId = jsonBody.authorId || "anonymous";
         }
 
         if (!message || typeof message !== "string") {
@@ -296,6 +299,7 @@ export async function POST(req: NextRequest) {
                     // Fallback to currently active tenant/uid logic if missing
                     const cmd: ParsedCommand = { ...jsonObj, raw: jsonMatch[0] };
                     if (!cmd.tenant) cmd.tenant = tenant;
+                    if (!cmd.authorId) cmd.authorId = authorId;
                     
                     const toolRes = await executeAlohaTool(cmd);
                     

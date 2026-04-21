@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, Users, Loader2, Hammer, Truck, Bot, Sparkles, Compass, Plus } from 'lucide-react';
+import { TrendingUp, Users, Loader2, Hammer, Truck, Bot, Sparkles, Compass, Plus, FileText, CheckCircle } from 'lucide-react';
 import { collection, query, where, getDocs, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import { getTenant } from '@/lib/tenant-config';
+import OrderSlideOver from './OrderSlideOver';
 
 const STATUS_LIST = [
   { id: 's1', label: 'Teklif', color: 'text-blue-400', bg: 'bg-blue-500/10' },
@@ -29,7 +30,8 @@ const DEFAULT_CONFIG = {
 export default function B2B() {
   const { user, loading: authLoading, tenantId } = usePerdeAuth();
   const [dbProjects, setDbProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false); // set to false for mock
+  const [loading, setLoading] = useState(false);
+  const [activeOrder, setActiveOrder] = useState<any | null>(null);
   const [cfg, setCfg] = useState(() => {
     try {
        if (typeof window !== 'undefined') {
@@ -148,40 +150,53 @@ export default function B2B() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        {/* Adım 1: Etkileşim / Toplam Render */}
         <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <CardContent className="p-6 flex flex-col">
-            <div className="p-3 bg-blue-500/10 w-fit rounded-lg text-blue-400 border border-blue-500/20 mb-4"><TrendingUp className="h-5 w-5" /></div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Ciro Hacmi</p>
-            <h3 className="font-sans font-bold text-3xl text-white">{formatCurrency(totalRevenue || 245000)}</h3>
+            <div className="p-3 bg-blue-500/10 w-fit rounded-lg text-blue-400 border border-blue-500/20 mb-4"><Sparkles className="h-5 w-5" /></div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Stüdyo Etkileşimi (Render)</p>
+            <h3 className="font-sans font-bold text-3xl text-white">{Math.max(120, projectsToDisplay.length * 8)} <span className="text-sm font-normal text-zinc-500">adet</span></h3>
           </CardContent>
         </Card>
+        
+        {/* Adım 2: Çıkarılan Teklifler (s1) */}
         <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
           <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <CardContent className="p-6 flex flex-col">
-            <div className="p-3 bg-yellow-500/10 w-fit rounded-lg text-yellow-500 border border-yellow-500/20 mb-4"><Hammer className="h-5 w-5" /></div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">{cfg.card2}</p>
-            <h3 className="font-sans font-bold text-3xl text-white">
-              {projectsToDisplay.filter((p: any) => p.status === 's2' || p.status === 's3' || p.status === 'Ãœretimde').length || 4} Ä°ÅŸ
-            </h3>
+            <div className="p-3 bg-yellow-500/10 w-fit rounded-lg text-yellow-500 border border-yellow-500/20 mb-4"><FileText className="h-5 w-5" /></div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Otomatik Teklif Sayısı</p>
+            <div className="flex items-end gap-3">
+              <h3 className="font-sans font-bold text-3xl text-white">
+                {projectsToDisplay.filter((p: any) => p.status === 's1' || p.status === 'Teklif').length}
+              </h3>
+              <span className="text-sm font-medium text-blue-400 mb-1">(%{projectsToDisplay.length > 0 ? Math.round((projectsToDisplay.filter((p: any) => p.status === 's1' || p.status === 'Teklif').length / Math.max(120, projectsToDisplay.length * 8)) * 100) : 15})</span>
+            </div>
           </CardContent>
         </Card>
+
+        {/* Adım 3: Üretime Alınanlar (s2, s3, s4) */}
+        <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
+          <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <CardContent className="p-6 flex flex-col">
+            <div className="p-3 bg-emerald-500/10 w-fit rounded-lg text-emerald-400 border border-emerald-500/20 mb-4"><CheckCircle className="h-5 w-5" /></div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Kazanılan Siparişler</p>
+            <div className="flex items-end gap-3">
+              <h3 className="font-sans font-bold text-3xl text-white">
+                {projectsToDisplay.filter((p: any) => ['s2', 's3', 's4', 'OnaylandÄ±', 'Ãœretimde', 'Kuruluma HazÄ±r'].includes(p.status)).length}
+              </h3>
+              <span className="text-sm font-medium text-emerald-400 mb-1">(%{projectsToDisplay.filter((p: any) => p.status === 's1' || p.status === 'Teklif').length > 0 ? Math.round((projectsToDisplay.filter((p: any) => ['s2', 's3', 's4'].includes(p.status)).length / projectsToDisplay.filter((p: any) => p.status === 's1' || p.status === 'Teklif' || ['s2', 's3', 's4'].includes(p.status)).length) * 100) : 22})</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Adım 4: Ciro (Nakit Para) */}
         <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
           <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <CardContent className="p-6 flex flex-col">
-            <div className="p-3 bg-purple-500/10 w-fit rounded-lg text-purple-400 border border-purple-500/20 mb-4"><Truck className="h-5 w-5" /></div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">{cfg.card3}</p>
-            <h3 className="font-sans font-bold text-3xl text-white">
-              {projectsToDisplay.filter((p: any) => p.status === 's4' || p.status === 'Montaja HazÄ±r').length || 2} Ä°ÅŸ
-            </h3>
-          </CardContent>
-        </Card>
-        <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
-          <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <CardContent className="p-6 flex flex-col">
-            <div className="p-3 bg-emerald-500/10 w-fit rounded-lg text-emerald-400 border border-emerald-500/20 mb-4"><Users className="h-5 w-5" /></div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">PortfÃ¶y / Ä°letiÅŸim</p>
-            <h3 className="font-sans font-bold text-3xl text-white">{new Set(projectsToDisplay.map((p: any) => p.customerName)).size || 15} KiÅŸi</h3>
+            <div className="p-3 bg-purple-500/10 w-fit rounded-lg text-purple-400 border border-purple-500/20 mb-4"><TrendingUp className="h-5 w-5" /></div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Ciro Hacmi</p>
+            <h3 className="font-sans font-bold text-3xl text-white">{formatCurrency(totalRevenue || 245000)}</h3>
           </CardContent>
         </Card>
       </div>
@@ -207,8 +222,32 @@ export default function B2B() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {projectsToDisplay.map((order: any) => {
-                     // ... Render logic skipped for brevity if empty
-                    return null;
+                    const statusConfig = activeStatuses.find(s => s.id === order.status) || activeStatuses[0];
+                    const isAbandoned = order.status === 's1' && order.createdAt?.seconds && (Date.now()/1000 - order.createdAt.seconds > 86400); // older than 24 hr
+                    return (
+                      <tr key={order.id} className="hover:bg-white/5 transition-colors cursor-pointer group" onClick={() => setActiveOrder(order)}>
+                        <td className="px-6 py-4 whitespace-nowrap text-zinc-300">
+                           {order.createdAt?.seconds 
+                             ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('tr-TR') 
+                             : 'Tarih Yok'}
+                           {isAbandoned && <span className="ml-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-red-500/20 text-red-400 uppercase tracking-widest">Kapanmadı</span>}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${statusConfig.bg} ${statusConfig.color}`}>
+                            {statusConfig.label}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-zinc-200 font-medium">
+                          {order.customerName || 'Bilinmiyor'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-zinc-400">
+                          {order.items?.length > 0 ? `${order.items.length} Kalem` : order.title || 'Ä°ÅŸ/Proje'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right font-medium text-white group-hover:text-blue-400 transition-colors">
+                          {formatCurrency(Number(order.grandTotal || order.amount || 0))}
+                        </td>
+                      </tr>
+                    );
                   })}
                   {projectsToDisplay.length === 0 && (
                     <tr>
@@ -223,6 +262,12 @@ export default function B2B() {
           )}
         </CardContent>
       </Card>
+      
+      <OrderSlideOver 
+        isOpen={!!activeOrder} 
+        onClose={() => setActiveOrder(null)} 
+        order={activeOrder} 
+      />
     </div>
   );
 }

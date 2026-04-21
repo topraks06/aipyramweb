@@ -228,7 +228,8 @@ export function resolveTenantFromHost(host: string): TenantConfig {
 /**
  * Tenant ID → TenantConfig
  */
-export function getTenant(id: string): TenantConfig {
+export function getTenant(id?: string): TenantConfig {
+  if (!id) return TENANTS.perde;
   const normalized = id.toLowerCase().replace('.ai', '').replace('.com', '');
   return TENANTS[normalized as TenantId] || TENANTS.trtex;
 }

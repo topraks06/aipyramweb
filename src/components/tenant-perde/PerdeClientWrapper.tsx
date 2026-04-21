@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import PerdeAIAssistant from "./PerdeAIAssistant";
-import { OrderSlideOver } from "./OrderSlideOver";
+import OrderSlideOver from "./OrderSlideOver";
 
 export default function PerdeClientWrapper() {
     const [isOrderSlideOpen, setIsOrderSlideOpen] = useState(false);
@@ -26,7 +26,7 @@ export default function PerdeClientWrapper() {
             <OrderSlideOver 
                 isOpen={isOrderSlideOpen} 
                 onClose={() => setIsOrderSlideOpen(false)} 
-                aiSuggestedProducts={aiSuggested} 
+                order={{ title: 'Yeni Sipariş' }} // mockup for order
             />
         </>
     );

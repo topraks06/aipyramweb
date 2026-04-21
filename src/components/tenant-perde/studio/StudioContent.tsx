@@ -14,6 +14,24 @@ export default function StudioContent({ basePath }: StudioContentProps) {
   const searchParams = useSearchParams();
   const tab = searchParams?.get('tab') || 'dashboard';
 
+  React.useEffect(() => {
+     if (searchParams?.get('payment') === 'success') {
+         // Yönlendirme sonrasında ufak şık bildirim (alert yerine)
+         const { toast } = require('react-hot-toast');
+         toast.success('Ödeme başarıyla tamamlandı! Kredileriniz yüklendi.', {
+             style: {
+                 border: '1px solid #713200',
+                 padding: '16px',
+                 color: '#713200',
+             },
+             iconTheme: {
+                 primary: '#713200',
+                 secondary: '#FFFAEE',
+             },
+         });
+     }
+  }, [searchParams]);
+
   if (tab === 'inventory') {
     return (
       <div className="max-w-7xl mx-auto p-8">

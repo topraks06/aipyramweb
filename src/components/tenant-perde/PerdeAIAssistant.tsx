@@ -10,6 +10,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell, BarChart, Bar
 } from 'recharts';
+import { useTenantAuth } from '@/hooks/useTenantAuth';
 
 const DICT: Record<string, any> = {
   tr: {
@@ -94,6 +95,7 @@ export default function PerdeAIAssistant() {
   const router = useRouter();
   const [locale, setLocale] = useState('tr');
   const d = DICT[locale] || DICT['tr'];
+  const { tenantId, user } = useTenantAuth();
   
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -146,6 +148,8 @@ export default function PerdeAIAssistant() {
 
   // --- Proactive Interaction Logic ---
   const proactiveTriggered = useRef(false);
+  const hasNudged = useRef(false);
+  const [showOfferBadge, setShowOfferBadge] = useState(false);
   useEffect(() => {
      if (pathname === '/sites/perde/schema/b2b' && !proactiveTriggered.current) {
         proactiveTriggered.current = true;
@@ -208,17 +212,34 @@ export default function PerdeAIAssistant() {
             setAttachments(prev => prev.filter(p => p.id !== e.detail.id));
         }
     };
+    const handleRenderComplete = (e: any) => {
+        if (hasNudged.current) {
+            if (!isOpen) setShowOfferBadge(true);
+            return;
+        }
+        hasNudged.current = true;
+        if (!isOpen) setIsOpen(true);
+        setIsAttention(true);
+        setMessages(prev => [...prev, {
+            id: 'render-cta-' + Date.now(),
+            role: 'agent',
+            content: `Harika bir tasarım elde ettin! Odaya özel teklif (quote) üretmemi veya üretimi başlatmamı ister misin? "Teklif hazırla" demen yeterli.`
+        }]);
+        setTimeout(() => setIsAttention(false), 3000);
+    };
     window.addEventListener('agent_message', handleAgentMessage);
     window.addEventListener('open_perde_ai_assistant', handleOpen);
     window.addEventListener('agent_request_add_attachment', handleRemoteAttachment);
     window.addEventListener('agent_request_update_attachment', handleRemoteUpdate);
     window.addEventListener('agent_request_remove_attachment', handleRemoteRemove);
+    window.addEventListener('RENDER_COMPLETE', handleRenderComplete);
     return () => {
         window.removeEventListener('agent_message', handleAgentMessage);
         window.removeEventListener('open_perde_ai_assistant', handleOpen);
         window.removeEventListener('agent_request_add_attachment', handleRemoteAttachment);
         window.removeEventListener('agent_request_update_attachment', handleRemoteUpdate);
         window.removeEventListener('agent_request_remove_attachment', handleRemoteRemove);
+        window.removeEventListener('RENDER_COMPLETE', handleRenderComplete);
     };
   }, [isOpen]);
 
@@ -453,7 +474,8 @@ export default function PerdeAIAssistant() {
             text: m.content
           })),
           sessionId,
-          tenant: 'perde'
+          tenant: tenantId,
+          authorId: user?.uid || 'anonymous'
         })
       });
 
@@ -524,8 +546,13 @@ export default function PerdeAIAssistant() {
             exit={{ scale: 0, opacity: 0 }}
             className="fixed bottom-8 right-8 z-[100]"
           >
-            <div className="relative group cursor-pointer" onClick={() => setIsOpen(true)}>
+            <div className="relative group flex items-center justify-end" onClick={() => { setIsOpen(true); setShowOfferBadge(false); }}>
               <div className="absolute inset-0 bg-blue-500 rounded-full blur-xl opacity-40 group-hover:opacity-100 transition-opacity animate-pulse"></div>
+              {showOfferBadge && (
+                 <div className="absolute -left-20 bg-white text-blue-600 px-3 py-1.5 rounded-full shadow-xl font-bold text-xs uppercase tracking-widest animate-bounce z-20 whitespace-nowrap border border-blue-100">
+                    Teklif Al
+                 </div>
+              )}
               <button 
                 className="relative h-16 w-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-110 overflow-hidden border border-blue-400/50 transition-all z-10"
               >
