@@ -1,0 +1,516 @@
+@import "tailwindcss";
+
+
+@theme inline {
+  /* ═══════════════════════════════════════════════════════ */
+  /* AIPYRAM CORPORATE DESIGN SYSTEM - 2026 LIGHT THEME       */
+  /* ═══════════════════════════════════════════════════════ */
+
+  --color-background: oklch(0.99 0 0); /* Pure White */
+  --color-foreground: oklch(0.15 0.01 260); /* Deep Charcoal/Black */
+  --color-card: oklch(0.99 0 0); /* White */
+  --color-card-foreground: oklch(0.15 0.01 260);
+  --color-popover: oklch(0.99 0 0);
+  --color-popover-foreground: oklch(0.15 0.01 260);
+  --color-primary: oklch(0.55 0.22 25); /* Swiss Red #E4002B */
+  --color-primary-foreground: oklch(0.99 0 0); /* White */
+  --color-secondary: oklch(0.96 0.005 260); /* Soft Silver */
+  --color-secondary-foreground: oklch(0.15 0.01 260);
+  --color-muted: oklch(0.96 0.005 260);
+  --color-muted-foreground: oklch(0.55 0.02 260); /* Medium Gray */
+  --color-accent: oklch(0.96 0.005 260);
+  --color-accent-foreground: oklch(0.15 0.01 260);
+  --color-destructive: oklch(0.55 0.22 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+  --color-border: oklch(0.90 0.01 260); /* Light Gray */
+  --color-input: oklch(0.90 0.01 260);
+  --color-ring: oklch(0.55 0.22 25);
+  --color-chart-1: oklch(0.55 0.22 25);
+  --color-chart-2: oklch(0.60 0.12 60);
+  --color-chart-3: oklch(0.50 0.10 300);
+  --color-chart-4: oklch(0.70 0.15 145);
+  --color-chart-5: oklch(0.80 0.10 260);
+  --radius: 0.5rem;
+}
+
+:root {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0.01 260);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.15 0.01 260);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.15 0.01 260);
+  --primary: oklch(0.55 0.22 25);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.005 260);
+  --secondary-foreground: oklch(0.15 0.01 260);
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.55 0.02 260);
+  --accent: oklch(0.96 0.005 260);
+  --accent-foreground: oklch(0.15 0.01 260);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.90 0.01 260);
+  --input: oklch(0.90 0.01 260);
+  --ring: oklch(0.55 0.22 25);
+  --chart-1: oklch(0.55 0.22 25);
+  --chart-2: oklch(0.60 0.12 60);
+  --chart-3: oklch(0.50 0.10 300);
+  --chart-4: oklch(0.70 0.15 145);
+  --chart-5: oklch(0.80 0.10 260);
+  --radius: 0.5rem;
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* GLASSMORPHISM — Kurumsal Cam Efektleri                  */
+/* ═══════════════════════════════════════════════════════ */
+
+.glass {
+  background: oklch(from var(--background) l c h / 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid oklch(from var(--border) l c h / 0.2);
+}
+
+.glass-strong {
+  background: oklch(from var(--background) l c h / 0.85);
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  border: 1px solid oklch(from var(--border) l c h / 0.3);
+  box-shadow:
+    0 1px 2px oklch(from var(--foreground) l c h / 0.04),
+    0 4px 16px oklch(from var(--foreground) l c h / 0.03);
+}
+
+.glass-swiss {
+  background: oklch(from var(--background) l c h / 0.95);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid oklch(from var(--border) l c h / 0.5);
+}
+
+.textile-glass {
+  background: linear-gradient(135deg, oklch(from var(--background) l c h / 0.8), oklch(from var(--background) l c h / 0.6));
+  backdrop-filter: blur(16px) saturate(190%);
+  -webkit-backdrop-filter: blur(16px) saturate(190%);
+  border: 1px solid oklch(from var(--primary) l c h / 0.15);
+  box-shadow: 
+    0 4px 24px -4px oklch(from var(--primary) l c h / 0.05),
+    inset 0 1px 0 0 oklch(from var(--background) l c h / 0.5);
+}
+
+/* Swiss Cross Pattern (Minimal Muted Grey, No Pink Bleed) */
+.swiss-cross-pattern {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 35px, oklch(0.92 0.005 260 / 0.6) 35px, oklch(0.92 0.005 260 / 0.6) 36px),
+    repeating-linear-gradient(90deg, transparent, transparent 35px, oklch(0.92 0.005 260 / 0.6) 35px, oklch(0.92 0.005 260 / 0.6) 36px);
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* ANIMATIONS — Geçiş Efektleri                            */
+/* ═══════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes gradient {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-600 {
+  animation-delay: 600ms;
+}
+
+.animation-delay-800 {
+  animation-delay: 800ms;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* SCROLLBAR — Minimal Kaydırma Çubuğu                    */
+/* ═══════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(from var(--muted-foreground) l c h / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(from var(--muted-foreground) l c h / 0.5);
+}
+
+/* Selection */
+::selection {
+  background: oklch(0.50 0.20 25 / 0.2);
+  color: var(--foreground);
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* NEURAL PROTOCOL v2.1 — Özel Animasyonlar               */
+/* ═══════════════════════════════════════════════════════ */
+
+@keyframes neural-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.50 0.20 25 / 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 16px 3px oklch(0.50 0.20 25 / 0.12);
+  }
+}
+
+@keyframes data-flow {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+}
+
+@keyframes shield-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px oklch(0.55 0.18 145 / 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 18px oklch(0.55 0.18 145 / 0.4);
+  }
+}
+
+@keyframes countdown-tick {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes signal-travel {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-neural-pulse {
+  animation: neural-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-data-flow {
+  background-size: 200% 200%;
+  animation: data-flow 4s ease infinite;
+}
+
+.animate-shield-glow {
+  animation: shield-glow 3s ease-in-out infinite;
+}
+
+.animate-countdown-tick {
+  animation: countdown-tick 1s ease infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* Neural Glass — kurumsal dark mode glassmorphism */
+.neural-glass {
+  background: oklch(from var(--background) l c h / 0.95);
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  border: 1px solid oklch(from var(--border) l c h / 0.4);
+  box-shadow: 0 4px 20px oklch(from var(--foreground) l c h / 0.03);
+}
+
+/* Signal Line — Cross-Nexus bağlantı efekti */
+.signal-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.signal-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, oklch(0.50 0.20 25), transparent);
+  animation: signal-travel 2s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* CORPORATE CARD SYSTEM                                   */
+/* ═══════════════════════════════════════════════════════ */
+
+.corporate-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow:
+    0 1px 2px oklch(from var(--foreground) l c h / 0.03),
+    0 2px 8px oklch(from var(--foreground) l c h / 0.02);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.corporate-card:hover {
+  box-shadow:
+    0 2px 4px oklch(from var(--foreground) l c h / 0.04),
+    0 8px 24px oklch(from var(--foreground) l c h / 0.06);
+  border-color: oklch(0.50 0.20 25 / 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* 2026 FUTURISTIC UI SYSTEM (DARK MODE OPTIMIZED)         */
+/* ═══════════════════════════════════════════════════════ */
+
+.futuristic-glass {
+  background: linear-gradient(135deg, oklch(from var(--background) l c h / 0.6) 0%, oklch(from var(--background) l c h / 0.9) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid oklch(from var(--foreground) l c h / 0.05);
+}
+
+.neon-border {
+  position: relative;
+}
+
+.neon-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, oklch(0.55 0.22 25 / 0.8), transparent 40%, transparent 60%, oklch(0.985 0.002 75 / 0.3));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.neon-border:hover::before {
+  opacity: 1;
+}
+
+.bento-card {
+  background: linear-gradient(135deg, oklch(from var(--background) l c h / 0.6) 0%, oklch(from var(--background) l c h / 0.9) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid oklch(from var(--foreground) l c h / 0.05);
+  @apply rounded-3xl p-8 relative overflow-hidden transition-all duration-500;
+}
+
+.bento-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, oklch(0.55 0.22 25 / 0.8), transparent 40%, transparent 60%, oklch(0.985 0.002 75 / 0.3));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px oklch(0.55 0.22 25 / 0.15);
+}
+
+.spotlight-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, oklch(0.55 0.22 25 / 0.15) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.spotlight-hover:hover::after {
+  opacity: 1;
+}
+
+.text-glow {
+  text-shadow: 0 0 20px oklch(0.55 0.22 25 / 0.5);
+}
+
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, oklch(from var(--foreground) l c h / 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(from var(--foreground) l c h / 0.03) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+/* ═══════════════════════════════════════════════════════ */
+/* B2B PRINT EXPERIENCE (Rapor yazdırma için)              */
+/* ═══════════════════════════════════════════════════════ */
+@media print {
+  /* Yazdırırken gizlenmesi gereken ui elemanları */
+  nav, footer, .trtex-lang-trigger, .share-buttons, button {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Linklerin arkasına URL ekle */
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    word-break: break-all;
+  }
+}

@@ -1,0 +1,275 @@
+import { NextResponse } from 'next/server';
+import { adminDb } from '@/lib/firebase-admin';
+import { GoogleGenAI } from '@google/genai';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 120;
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+
+/**
+ * POST /api/v1/master/trtex/write-topic
+ * 
+ * TRTEX Baş Ajan — Konu Bazlı Haber Üretici
+ * 
+ * Hakan'ın istediği konuda GERÇEK haber üretir:
+ * - Konu alır
+ * - Gemini ile B2B analiz haberi yazar
+ * - 8 dile çevirir (TR öncelikli)
+ * - Firestore'a yazar
+ * - Görsel üretimini tetikler
+ * 
+ * Kullanım:
+ *   POST body: { "topic": "Hometex Istanbul 2026 fuar analizi" }
+ *   veya GET: ?topic=Hometex+Istanbul+2026
+ */
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const topic = url.searchParams.get('topic');
+  if (!topic) {
+    return NextResponse.json({ 
+      error: 'topic parametresi gerekli',
+      usage: '/api/v1/master/trtex/write-topic?topic=Hometex+Istanbul+fuar+analizi'
+    }, { status: 400 });
+  }
+  return handleTopicWrite(topic);
+}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const topic = body.topic;
+  if (!topic && !(body.imageUrls && body.imageUrls.length > 0)) {
+    return NextResponse.json({ error: 'topic veya resim alanı gerekli' }, { status: 400 });
+  }
+  return handleTopicWrite(topic || "Saha Raporu", body.category, body.imageUrls);
+}
+
+async function handleTopicWrite(topic: string, category?: string, imageUrls?: string[]) {
+  const startTime = Date.now();
+  
+  console.log(`[TRTEX-TOPIC] 📝 Konu bazlı haber üretimi: "${topic}"`);
+  
+  try {
+    // 1. Gemini ile B2B haber üret
+    const article = await generateArticleFromTopic(topic, category, imageUrls);
+    
+    if (!article) {
+      return NextResponse.json({ error: 'Haber üretilemedi' }, { status: 500 });
+    }
+
+    // 2. Firestore'a yaz
+    const slug = generateSlug(article.title);
+    const docRef = adminDb.collection('trtex_news').doc(slug);
+    
+    const newsData = {
+      title: article.title,
+      slug: slug,
+      summary: article.summary,
+      content: article.content,
+      category: article.category || category || 'İstihbarat',
+      status: 'published',
+      source: 'trtex-topic-command',
+      topic_command: topic,
+      quality_score: article.quality_score || 85,
+      impact_score: article.impact_score || 85,
+      confidence_score: article.confidence_score || 85,
+      translations: article.translations || {},
+      opportunity_card: article.opportunity_card || null,
+      ai_block: {
+        action: article.action_signal || 'ANALIZ ET',
+        reasoning: article.reasoning || '',
+      },
+      tags: article.tags || [],
+      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      publishedAt: new Date().toISOString(),
+      image_generated: false,
+    };
+    
+    await docRef.set(newsData);
+    console.log(`[TRTEX-TOPIC] ✅ Haber yazıldı: ${slug}`);
+    
+    // 3. GÖRSEL SİSTEMİ — Eğer kullanıcı kendi resimlerini yüklediyse, onları kullan ve SANAL RESİM ÇİZME.
+    if (imageUrls && imageUrls.length > 0) {
+        console.log(`[TRTEX-TOPIC] 📸 ${imageUrls.length} GERÇEK SAHA GÖRSELİ kullanılıyor (Sanal çizim iptal edildi).`);
+        await docRef.update({
+          image_url: imageUrls[0],
+          images: imageUrls,
+          image_generated: false, // Gerçek resim
+        });
+    } else {
+      // KENDİ SANAL RESİMLERİNİ ÇİZ (Fallback)
+      const images: string[] = [];
+      try {
+        const { processImageForContent } = await import('@/core/aloha/imageAgent');
+        const cat = article.category || 'İstihbarat';
+        
+        console.log(`[TRTEX-TOPIC] 📸 1/3 Hero görsel (wide) üretiliyor...`);
+        const heroUrl = await processImageForContent('news', cat, article.title, undefined, 'wide');
+        if (heroUrl) images.push(heroUrl);
+        
+        await new Promise(r => setTimeout(r, 3000));
+        console.log(`[TRTEX-TOPIC] 📸 2/3 Mid görsel (medium) üretiliyor...`);
+        try {
+          const midUrl = await processImageForContent('news', cat, article.title, undefined, 'medium');
+          if (midUrl) images.push(midUrl);
+        } catch { console.warn('[TRTEX-TOPIC] ⚠️ Mid görsel atlandı (rate limit)'); }
+        
+        await new Promise(r => setTimeout(r, 3000));
+        console.log(`[TRTEX-TOPIC] 📸 3/3 Detail görsel (macro) üretiliyor...`);
+        try {
+          const detailUrl = await processImageForContent('news', cat, article.title, undefined, 'macro');
+          if (detailUrl) images.push(detailUrl);
+        } catch { console.warn('[TRTEX-TOPIC] ⚠️ Detail görsel atlandı (rate limit)'); }
+        
+        if (images.length > 0) {
+          await docRef.update({
+            image_url: images[0],
+            images: images,
+            image_generated: true,
+            image_generated_at: new Date().toISOString(),
+          });
+          console.log(`[TRTEX-TOPIC] ✅ ${images.length}/3 görsel üretildi`);
+        }
+      } catch (imgErr: any) {
+        console.warn(`[TRTEX-TOPIC] ⚠️ Görsel üretilemedi: ${imgErr.message}`);
+      }
+    }
+    
+    // 4. Terminal payload'u güncelle
+    try {
+      const { buildTerminalPayload } = await import('@/core/aloha/terminalPayloadBuilder');
+      await buildTerminalPayload();
+      console.log(`[TRTEX-TOPIC] 🔄 Terminal payload güncellendi`);
+    } catch (payloadErr: any) {
+      console.warn(`[TRTEX-TOPIC] ⚠️ Payload güncellenemedi: ${payloadErr.message}`);
+    }
+    
+    const duration = Date.now() - startTime;
+    
+    return NextResponse.json({
+      success: true,
+      slug: slug,
+      title: article.title,
+      category: article.category,
+      duration_ms: duration,
+      image_generated: newsData.image_generated,
+      url: `/sites/trtex.com/news/${slug}?lang=tr`,
+      message: `✅ "${article.title}" başarıyla üretildi ve yayınlandı.`
+    });
+    
+  } catch (err: any) {
+    console.error(`[TRTEX-TOPIC] ❌ Hata: ${err.message}`);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+async function generateArticleFromTopic(topic: string, category?: string, imageUrls?: string[]) {
+  let prompt = `Sen TRTEX.com B2B ev tekstili istihbarat terminali için profesyonel sektör analisti/editörsün.
+
+GÖREV: Aşağıdaki konuda detaylı B2B istihbarat haberi yaz.
+
+KONU: ${topic}
+${category ? `KATEGORİ: ${category}` : ''}`;
+
+  if (imageUrls && imageUrls.length > 0) {
+    prompt += `\n\nEK GÖREV (GÖRSEL GAZETECİLİK): Sana verilen EKLİ GÖRSELLERİ dikkatlice YZ (Vision) yeteneğinle analiz et. Resimdeki stant, kumaş, mekan, kişiler veya ürün detaylarını OKU ve haberin senaryosunu, firmayı ve analizini DİREKT olarak bu fotoğraflarda gördüğün gerçek dünya verileri etrafında şekillendir! Fotoğraflarda gördüğün nesneleri haberde tasvir et (Örn: 'mavi jakar kumaşlardan oluşan stant ziyaretçi akınına uğradı' vb.)`;
+  }
+
+  prompt += `\n\nKURALLAR:
+1. Haber GERÇEK sektör bilgisine dayanmalı — uydurma YASAK (Fakat ekte resimler varsa resimleri doğru oku)
+2. En az 3 somut rakam/veri içermeli (pazar büyüklüğü, ihracat değeri, katılımcı sayısı vb.)
+3. En az 1 gerçek firma/kurum adı içermeli
+4. B2B alıcı/tedarikçi perspektifinden yazılmalı
+5. "Önemli gelişme", "kritik süreç" gibi boş klişeler YASAK
+6. Konu ev tekstili, perde, döşemelik, fuar, hammadde, teknoloji alanlarından olmalı
+7. İçerik HTML formatında olmalı (<h2>, <p>, <ul>, <li>, <table> kullan)
+
+JSON olarak dön:
+{
+  "title": "Türkçe başlık (max 80 karakter)",
+  "summary": "Türkçe özet (2-3 cümle, ticari etki vurgusu)",
+  "content": "HTML formatında detaylı haber içeriği (en az 500 kelime)",
+  "category": "Kategori (Fuar/Perde/Ev Tekstili/Döşemelik/Hammadde/Teknoloji/Regülasyon/Pazar)",
+  "tags": ["etiket1", "etiket2", "etiket3"],
+  "quality_score": 85,
+  "impact_score": 85,
+  "confidence_score": 85,
+  "action_signal": "AL/SAT/BEKLE/ANALIZ ET",
+  "reasoning": "Neden bu sinyal?",
+  "opportunity_card": {
+    "title": "Fırsat başlığı",
+    "description": "Fırsat açıklaması",
+    "action": "Yapılması gereken"
+  },
+  "translations": {
+    "EN": {
+      "title": "English title",
+      "summary": "English summary",
+      "content": "English HTML content (shorter version)"
+    },
+    "DE": {
+      "title": "German title",
+      "summary": "German summary"  
+    },
+    "TR": {
+      "title": "Türkçe başlık (aynı)",
+      "summary": "Türkçe özet (aynı)",
+      "content": "Türkçe HTML içerik (aynı)"
+    }
+  }
+}`;
+
+  let contents: any[] = [prompt];
+
+  // Resimleri Base64 Buffer'a çevirip Prompt'a 'inlineData' olarak ekleme (Vision Modu)
+  if (imageUrls && imageUrls.length > 0) {
+    console.log(`[TRTEX-VISION] GEMINI FLASH VISION EKLENTISI - ${imageUrls.length} Resim okunuyor...`);
+    for (const url of imageUrls) {
+      try {
+        const res = await fetch(url);
+        const arr = await res.arrayBuffer();
+        contents.push({
+          inlineData: {
+            data: Buffer.from(arr).toString('base64'),
+            mimeType: res.headers.get('content-type') || 'image/jpeg'
+          }
+        });
+      } catch (err: any) {
+         console.warn(`[TRTEX-VISION] Resim alınamadı ve atlandı: ${url} - ${err.message}`);
+      }
+    }
+  }
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: contents,
+    config: {
+      responseMimeType: 'application/json',
+      temperature: 0.7,
+    }
+  });
+
+  const text = response.text || '';
+  try {
+    return JSON.parse(text);
+  } catch {
+    // JSON parse hatası — text'ten çıkarmayı dene
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) return JSON.parse(jsonMatch[0]);
+    throw new Error('Gemini JSON döndüremedi');
+  }
+}
+
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .substring(0, 80)
+    .replace(/-$/, '');
+}

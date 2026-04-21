@@ -1,0 +1,151 @@
+{
+  "perde": {
+    "data": {
+      "studio": {
+        "titleTr": "Otonom Doku: Boucle revival in Nordic luxury homes",
+        "titleEn": "Autonomous Tex: Boucle revival in Nordic luxury homes",
+        "pitchTr": "AIPyram tarafından otomatik üretilmiş garantili satış senaryosu.",
+        "pitchEn": "AIPyram guaranteed auto-generated sales pitch.",
+        "preset": "NEUTRAL_STUDIO"
+      },
+      "renderOptions": [
+        {
+          "id": "1",
+          "nameTr": "Standart Işık Geçirgen",
+          "renderCommandTr": "Modern tül perde, gün ışığı",
+          "renderCommandEn": "Modern sheer curtain, daylight",
+          "icon": "fabric"
+        },
+        {
+          "id": "2",
+          "nameTr": "Yoğun Karartma",
+          "renderCommandTr": "Siyah blackout, lüks otel",
+          "renderCommandEn": "Blackout, luxury hotel room",
+          "icon": "fabric"
+        }
+      ],
+      "timestamp": 1775304128216
+    },
+    "timestamp": 1775304128216
+  },
+  "hometex": {
+    "data": {
+      "hero": {
+        "titleTr": [
+          "YAPAY ZEKA",
+          "OTONOM",
+          "FUAR"
+        ],
+        "titleEn": [
+          "AI DRIVEN",
+          "AUTONOMOUS",
+          "FAIR"
+        ],
+        "subtitleTr": "AIPyram Editorial Bot: Lüks pazar standartlarında \"Boucle revival in Nordic luxury homes\" teması işleniyor.",
+        "subtitleEn": "AIPyram Editorial Bot curating the \"Boucle revival in Nordic luxury homes\" theme for luxury markets.",
+        "image": "https://images.unsplash.com/photo-1600607688969-a5bfcd64bd40?w=1600&q=80"
+      },
+      "trends": {
+        "headerTr": "Haftanın Moda Zekası",
+        "headerEn": "AI Fashion Trends",
+        "cards": [
+          {
+            "id": "t1",
+            "nameTr": "Minimalizm",
+            "nameEn": "Minimalism",
+            "descTr": "Mekansal arınma.",
+            "descEn": "Spatial purification.",
+            "img": "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=800&q=80",
+            "score": 98,
+            "badge": "VİRAL",
+            "badgeEn": "VIRAL",
+            "reasonTr": "Global Pazar Analizi",
+            "reasonEn": "Global Market Analysis"
+          },
+          {
+            "id": "t2",
+            "nameTr": "Organik Doku",
+            "nameEn": "Organic Texture",
+            "descTr": "Doğal bağlantılar.",
+            "descEn": "Natural connections.",
+            "img": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=800&q=80",
+            "score": 95,
+            "badge": "PREMİUM",
+            "badgeEn": "PREMIUM",
+            "reasonTr": "Global Pazar Analizi",
+            "reasonEn": "Global Market Analysis"
+          }
+        ]
+      },
+      "collections": {
+        "headerTr": "Özel Zeka Seçkisi",
+        "headerEn": "Exclusive AI Curation",
+        "items": [
+          {
+            "id": "c1",
+            "name_tr": "Otonom Küratör Seçkisi",
+            "name_en": "Autonomous Curator Selection",
+            "ai_commentary_tr": "Sektörel analiz metrikleri.",
+            "ai_commentary_en": "Industry analysis metrics.",
+            "trend_score": 99,
+            "is_trending": true,
+            "cover_image_url": "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=800&q=80",
+            "style_tags": [
+              "LUXURY",
+              "ARCHITECTURAL"
+            ]
+          }
+        ]
+      },
+      "fairs": [],
+      "showrooms": [
+        {
+          "id": "s1",
+          "name": "AIPyram SuperNode",
+          "location": "Virtual Hub",
+          "is_featured": true
+        },
+        {
+          "id": "s2",
+          "name": "Zeka Düğümleri",
+          "location": "Digital",
+          "is_featured": false
+        }
+      ]
+    },
+    "timestamp": 1775304128352
+  },
+  "trtex": {
+    "data": {
+      "hero": {
+        "signal": "SYSTEM CORE",
+        "titleTr": "HACİM İNDEXİ: BOUCLE REVIVAL IN NORDIC LUXURY HOMES",
+        "titleEn": "VOLUME INDEX: BOUCLE REVIVAL IN NORDIC LUXURY HOMES",
+        "impactMetric": "DATA STABLE"
+      },
+      "intelligenceNews": [
+        {
+          "id": "req-1",
+          "type": "SUPPLY",
+          "descTr": "B2B Tedarik hattı açık.",
+          "descEn": "B2B Supply line open.",
+          "actionCode": "MONITOR"
+        },
+        {
+          "id": "req-2",
+          "type": "GLOBAL",
+          "descTr": "Toptan pazar analizi sürüyor.",
+          "descEn": "Wholesale market analysis ongoing.",
+          "actionCode": "ANALYZE"
+        }
+      ],
+      "hotCategories": [
+        "YARN",
+        "FABRIC",
+        "HOME"
+      ],
+      "timestamp": 1775304128357
+    },
+    "timestamp": 1775304128357
+  }
+}

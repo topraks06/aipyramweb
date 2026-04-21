@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// ----------------------------------------------------
+// AIPYRAM V8.1 - MULTI-TENANT B2B SECURITY RULES
+// Firebase "Çelik Kasa" (Tenant Isolation)
+// ----------------------------------------------------
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1) RFQ (Talepler) Koleksiyonu
+    match /rfqs/{rfqId} {
+      // Sadece talebi oluşturan Tenant (Sistem) okuyup yazabilir.
+      // Eğer request.auth yoksa (Public Web), Frontend'den gelen sorgunun tenant_id'si ile verinin tenant_id'si zorunlu eşleşmelidir.
+      allow read: if resource.data.tenant_id == request.auth.token.tenant_id;
+      
+      // Kayıt yazılırken sisteme sızmayı önlemek için tenant_id zorunluluğu:
+      allow create: if request.resource.data.keys().hasAll(['tenant_id']) && 
+                       request.resource.data.tenant_id != null;
+                       
+      // Güncelleme işleminde tenant_id değiştirilemez (Immutable Tenant Protocol)
+      allow update: if request.resource.data.tenant_id == resource.data.tenant_id;
+      allow delete: if request.auth.token.admin == true; // Sadece master siler
+    }
+
+    // 2) Deals (Anlaşmalar/Sözleşmeler) Koleksiyonu
+    match /deals/{dealId} {
+      allow read: if resource.data.tenant_id == request.auth.token.tenant_id;
+      allow create: if request.resource.data.keys().hasAll(['tenant_id']);
+      allow update: if request.resource.data.tenant_id == resource.data.tenant_id;
+      allow delete: if false; // Deallar asla silinemez, immutable audit log!
+    }
+
+    // 3) Suppliers (Tedarikçi Firmalar)
+    match /suppliers/{supplierId} {
+      allow read: if resource.data.tenant_id == request.auth.token.tenant_id;
+      allow create: if request.resource.data.keys().hasAll(['tenant_id']);
+      allow update: if request.resource.data.tenant_id == resource.data.tenant_id;
+    }
+    
+    // 4) Cloud Tasks (Core 2 AI Sandbox Görev Kuyruğu)
+    match /cloud_tasks/{taskId} {
+      // Bu koleksiyona sadece Backend API (Admin SDK) ve Node Daemon dokunabilir.
+      // Frontend client erişimi tamamen engellendi (Runaway Guard).
+      allow read, write: if false; 
+    }
+
+    // 5) Aloha Tasks (Master AI Komuta Kayıtları)
+    match /aloha_tasks/{taskId} {
+      allow read, write: if false; 
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+    "name": "Aipyram GmbH",
+    "short_name": "Aipyram",
+    "description": "Sectoral AI Ecosystem — Swiss Technology Laboratory",
+    "id": "/",
+    "scope": "/",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#faf9f7",
+    "theme_color": "#C41E3A",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "categories": [
+        "business",
+        "technology"
+    ],
+    "lang": "en",
+    "dir": "ltr"
+}

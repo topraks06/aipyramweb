@@ -1,0 +1,17 @@
+{
+  "trtex": {
+    "name": "TRTEX Commerce Engine",
+    "path": "./projects/trtex",
+    "type": "nextjs"
+  },
+  "perde": {
+    "name": "Perde.ai Canvas Studio",
+    "path": "./projects/perde",
+    "type": "nextjs"
+  },
+  "hometex": {
+    "name": "Hometex VR B2B",
+    "path": "./projects/hometex",
+    "type": "nextjs"
+  }
+}

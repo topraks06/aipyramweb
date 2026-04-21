@@ -1,0 +1,3188 @@
+{
+  "founder": {
+    "name": "Kurucu Usta",
+    "experience": 35,
+    "specialty": "Perdeci & İç Mekan Uzmanı"
+  },
+  "wisdom": {
+    "pricing": [
+      {
+        "rule": "Kadife kumaşlarda minimum %40 marj uygula",
+        "priority": "high"
+      },
+      {
+        "rule": "Otel projelerinde toplu indirim %10'u geçmesin",
+        "priority": "high"
+      },
+      {
+        "rule": "Yeni müşteride kapora minimum %30",
+        "priority": "critical"
+      },
+      {
+        "rule": "Kurumsal müşterilerde 30 gün vade verilebilir",
+        "priority": "medium"
+      },
+      {
+        "rule": "Stor perdelerde işçilik %15 ekle",
+        "priority": "medium"
+      },
+      {
+        "rule": "10.000 TL üzeri tekliflerde Aloha ONAY vermelidir",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Yeni müşterilere ilk siparişte %10 indirim uygulanabilir",
+        "priority": "medium",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "hiç bir müşteriye türkiyede vade verilmez",
+        "priority": "medium",
+        "learnedAt": "2026-01-16T11:30:00.000Z",
+        "updatedAt": "2026-01-24T08:28:45.364Z"
+      },
+      {
+        "rule": "AI Ajan kullanımından elde edilecek kar marjı, Google API maliyetinin minimum 20 katı olarak korunacaktır (KDV, vergi, işletme masrafları hesaba katıldığında bu oran korunmalı).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Kredi paketleri $9.90/400 kredi, $49.90/2500 kredi, $199.90/12000 kredi olarak fiyatlandırılmıştır (Bu Türkiye fiyatlandırmasıdır, bölgeye göre ayarlanabilir).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Sponsor ürün satışlarından alınacak komisyon minimum %15 olacaktır. Hiçbir sponsora %15'in altında komisyon verilmeyecek, premium sponsorlar için bile minimum %10 korunacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "4K Master çıktılar, 'Üretime Hazır Teknik Belge' niteliği taşıdığı için 1K taslaklara göre 10 kat daha yüksek kredi bedeliyle ve minimum %1000 kâr marjı hedefiyle sunulacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "4K çıktı için hizmet başına API/GPU maliyeti yaklaşık $0.12'dır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "100 Master Ürün (PBR Asset) yerel sunucuda tutulduğundan, bu ürünler için API maliyeti sıfıra yakındır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Ajanların sunduğu hizmetlerden (teknik raporlar, maliyet analizleri, mimari danışmanlık) görsel bedeline ek olarak minimum %15 ek gelir elde edilmesi hedeflenmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Trtex ve Hometex entegrasyonuyla, sistem üzerinden yönlendirilen her gerçek siparişten (lead generation) minimum %15 komisyon/kâr payı alınacaktır; premium sponsorlar için bu oran minimum %10 olarak belirlenebilir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "4K Master çıktıları, maliyetin 10-15 katı bir fiyatla satılarak genel operasyonel kâr marjı %800-%1000 bandında tutulacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Agent_Fee otomatik çarpanı eklenmelidir: Her işlem tutarının üzerine otomatik +%15 danışmanlık payı ekle.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Product_Margin otomatik çarpanı eklenmelidir: trtex/hometex yönlendirmelerinde birim fiyat üzerine +%10-15 kâr payı koy.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Waste_Factor otomatik çarpanı eklenmelidir: Perde eni 320 cm üzerine çıktığında veya pilili dikimde fire payını %20 artırarak hesapla.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Maliyet ve Verimlilik Analisti Ajanı, metraj, fire payı ve teknik şartnameyi hazırlayarak maliyetleri optimize eder ve karlılığı destekler.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "L-P kumaşlarda fiyatın en büyük belirleyicisi gramajdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "L-P kumaşların fabrika (toptan alım) fiyatı $2 - 5 USD / Metre$ aralığındadır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "L-P kumaşların kesim (perakende) fiyatı $6 - 8 USD / Metre$ aralığındadır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "L-P kumaş kâr marjı stratejisinde, fabrika ve kesim fiyatı arasındaki farka Aipyram GmbH ve Ali Kömürcü ile planlanan ek operasyonel marjlar eklenecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Hazine (Treasury) Ajan Görevi: Fiyat/Maliyet için metraj farkına (S-pile için 1'e 2.5 veya 1'e 3 sarfiyat) göre fiyatı güncelleme.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      }
+    ],
+    "quality": [
+      {
+        "rule": "Sık pile kullanıldığında halka aralığı 8cm olmalı",
+        "priority": "high"
+      },
+      {
+        "rule": "Kadife kumaş kesinlikle overlok değil, katlama dikiş",
+        "priority": "critical"
+      },
+      {
+        "rule": "Blackout kumaşlarda etek ağırlığı şart",
+        "priority": "high"
+      },
+      {
+        "rule": "Korniş minimum pencere genişliği + 40cm olmalı",
+        "priority": "medium"
+      },
+      {
+        "rule": "Fire oranı %5'i ASLA geçmemelidir - EngineerAgent kontrol etmelidir",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Stok kontrolü yapılmadan sipariş KABUL EDİLMEZ",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Müşteri tercihleri TÜM ajanlara iletilmelidir",
+        "priority": "high",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Tüm üretim ve görselleştirme parametreleri, yeni nesil makinelerle uyumlu olarak 300-320 cm (özel projeler için 350 cm) en standartlarına göre kurgulanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Ekru (Pantone 11-0103 TCX) ana renk referans noktası olup, sistem kullanıcıyı ticari gerçeklik olan ekru ve türevlerine yönlendirecektir. Tüm renk yönetimi Pantone TCX/TPG spektrumunda kalacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Görseller, Neural Scene Reconstruction ve Subsurface Scattering teknikleri kullanılarak odayla bütünleşmiş ve ışığı kumaşın liflerinden süzülen gerçekçi bir şekilde sunulacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.586Z"
+      },
+      {
+        "rule": "Katalog çıktıları, dergi kalitesi için 85mm lens optiğiyle, ürün detayı için 100mm makro lens keskinliğiyle üretilecektir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Her 4K çıktı; Tekstil Mühendisi, Işık Fizikçisi, Renk Analisti ve Maliyet Uzmanı dahil 14 ajanın onayından geçmeden 'Final Master' statüsü alamaz.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Geçmişte yaşanan 'perdenin odaya yapıştırılmış gibi durması', 'ışığın kumaşın içinden geçmemesi', 'pilelerin yerçekimine aykırı görünmesi' ve 'dokunun 4K çözünürlükte patlaması' gibi sıkıntılar tespit edilmiş olup, bu hataların tekrarlanmaması sağlanacaktır.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Neural Scene Reconstruction, Subsurface Scattering ve Pantone TCX entegrasyonu gibi teknikler kullanılarak en yüksek kalite ve gerçekçilik hedeflenmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "En ölçüleri 300-320 cm (gerektiğinde 350 cm) olarak sabitlenmiş ve ana renk referansı Ekru (Pantone 11-0103 TCX) olarak belirlenmiştir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Her kumaş için benzersiz bir Asset_ID (Örn: TX-KET-001) tanımlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Kumaşın Base_Texture verisi 8K Grayscale formatında olmalı, renk içermemeli ve sadece dokuyu temsil etmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Kumaşın Standard_Width değeri 320cm olarak belirlenmiştir (baz ölçü).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Weight_Coefficient ($gr/m^2$) kumaşın yerçekimi karşısındaki döküm hızını temsil eder.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Light_Transmission_Rate, %0 (Blackout) ile %90 (Tül) arasında bir değer almalı ve kumaşın ışık geçirgenliğini belirtmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Specular_Reflectance, ışığın kumaş yüzeyinde nasıl parladığını (örn: saten ve keten farkı) belirten bir değerdir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Tül Grubu için master doku tipleri Vual, Grek ve Keten Tül olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Tül Grubu için standart en ölçüsü 300-320 cm olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Tül Grubu için PBR (Physical Based Rendering) ışık davranışı 'Subsurface Scattering' olarak tanımlanmıştır: Işık liflerin içinden dağılarak geçer.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Fonluklar için master doku tipleri Keten, Buklet ve Slub olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Fonluklar için standart en ölçüsü 320 cm olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Fonluklar için PBR (Physical Based Rendering) ışık davranışı 'Roughness' yüksek olarak tanımlanmıştır: Işığı emen, mat bir yüzey.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Karartma grubu için master doku tipleri Blackout ve Dimout olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Karartma grubu için standart en ölçüsü 300 cm olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Karartma grubu için PBR (Physical Based Rendering) ışık davranışı 'Opacity' %100 olarak tanımlanmıştır: Işık sızıntısı sıfıra indirgenmiş kalın doku.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Lüks Seri için master doku tipleri Mikro Kadife ve Saten olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Lüks Seri için standart en ölçüsü 300-330 cm olarak belirlenmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Lüks Seri için PBR (Physical Based Rendering) ışık davranışı 'Anisotropy' olarak tanımlanmıştır: Işığın bakış açısına göre değişen parlaması.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Ajanlar, gerçek kumaş fiziği üreterek rastgele piksel çıktılarından kaçınmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Ajanlar tarafından üretilen çıktıların kusursuz 4K kalitesinde olması hedeflenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Kumaşın yerçekimine tepkisi Döküm Katsayısı ile tanımlanır; 450gr keten fonun tok bir şekilde inmesi sağlanarak gerçek ağırlık hissi verilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Işık Süzülme Endeksi, ışığın kumaş lifleri içindeki dağılımını yansıtmalı; vual tülün ışığı yumuşatıp lif dokusunu göstermesi sağlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Matlık ve Parlaklık Dengesi kumaşın yüzey pürüzlülüğünü doğru yansıtmalı; satenin parlaklığı ve ketenin ışığı yutması doğru simüle edilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Kumaş veri matrisi, her kumaş türü için Gramaj, Işık Geçirgenliği ve Döküm Karakteri bilgilerini içermelidir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Sade Vual Tül için Gramaj 50-70 gr/m2, Işık Geçirgenliği %85 (Yüksek) ve Döküm Karakteri Yumuşak, Akışkan olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Kırçıllı Keten için Gramaj 350-450 gr/m2, Işık Geçirgenliği %15 (Düşük) ve Döküm Karakteri Sert, Tok, Ağır olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Mat Blackout için Gramaj 280-400 gr/m2, Işık Geçirgenliği %0 (Sıfır) ve Döküm Karakteri Dik ve Formunu Koruyan olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Fizik kontrolü, kumaşın gramajına uygun döküm karakteristiğinin doğru simülasyonunu sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Işık kontrolü, kumaş türüne uygun yansıma özelliklerinin doğru simülasyonunu sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Final onayında, üretilen görüntünün 'gerçek' ve 'üretime uygun' olduğu teyit edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "L-P Tül dokusu, seyrek dokunmuş keten efektine sahip olmalı, ancak polyester iplikler nedeniyle pürüzsüz bir yüzey sunmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Tül, doğal ketene göre daha az ışık emmeli; içinden geçen ışık daha parlak süzülmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Fon dokusu, belirgin bir Slub (kırçıllı) iplik yapısına sahip olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Fon, gerçek keten gibi ağır yığılmamalı; polyester yapısı sayesinde daha formda ve keskin pileler oluşturmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Döşemelik dokusu sık ve mat bir bitişe sahip olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Döşemelik kumaşın pürüzlülüğü (roughness), gerçek ketene göre daha düşük bir sürtünme katsayısı sergilemelidir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Tül'ün standart eni 300-320 cm olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Tül'ün gramajı 60-95 gr/m^2 aralığında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Fon'un standart eni 320 cm olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Fon'un gramajı 280-400 gr/m^2 aralığında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "L-P Döşemelik'in standart eni 140-300 cm aralığında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.120Z"
+      },
+      {
+        "rule": "L-P Döşemelik'in gramajı 400-600 gr/m^2 aralığında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:58:55.120Z"
+      },
+      {
+        "rule": "L-P Tül (Vual/Keten Görünüm) için ışık geçirgenliği %80 olarak belirlenmiştir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "L-P Tül'ün yüzey davranışında doğal liflerin matlığı yerine, polyesterden gelen mikro-ışıltı korunmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "Tül kumaş görselleştirmelerinde sentetik lif dokusunun vurgulanması ve aşırı pozlamanın (overexposure) engellenmesi bir kalite standardıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "L-P Fonluk için slub (kırçıllı) doku yapısı dijital görselleştirmelerde belirginleştirilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "L-P Fonluk dökümünde, gerçek ketenin 'yığılma' özelliği yerine polyesterin daha sert, formu koruyan ve pileleri dik tutan yapısı esas alınmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Fonluk görselleştirmelerinde pile derinliği ve dökümün polyester sertliğine uygunluğu kritik bir kalite standardıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "L-P Döşemelik kumaşlar için yüksek matlık (Roughness) standardı uygulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "L-P Döşemelik kumaşların görselde 'ince' durmaması için gölge derinlikleri (Ambient Occlusion) artırılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Kumaşların 300-320 cm enine uygun dikiş/pay analizi bir kalite standardı olarak uygulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Renk sapmaları, belirtilen Pantone referansına göre kritik bir kalite kontrol noktasıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Görselleştirmelerde sentetik parlama bölgelerinin yumuşatılması, doğal bir görünüm için önemli bir kalite standardıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "4K çıktılarda lif netliğinin denetlenmesi ve görselin 'patlamasının' engellenmesi kritik bir kalite standardıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Ajanlar, pürüzsüz polyester liflerinin üzerine bindirilmiş düzensiz \"keten efekti\" (slub) iplik yapısını tanıyacak şekilde eğitilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.454Z"
+      },
+      {
+        "rule": "L-P kumaşın ışığı süzmesi ve \"patlamayacak\" bir dağılım sergilemesi gerektiği, ajanlara ışık fiziği eğitimiyle öğretilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.454Z"
+      },
+      {
+        "rule": "Ajanlar, 320 cm dökümlerde kumaşın gramajına bağlı olarak oluşan kavisleri ve pile gerginliğini matematiksel olarak simüle etme yeteneğine sahip olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "4K Master çıktılarda, 85mm f/2.8 lens etkisiyle arka plan hafifçe yumuşatılmalı (bokeh) ve odak tamamen L-P dokusunun liflerine kilitlenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "Ürün detay çekimlerinde 100mm Makro lens perspektifi kullanılmalı, böylece kullanıcının mikro keten dokusunu iplik iplik görebilmesi sağlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "Sanal çekimlerde ışık açısı her zaman 45 derece yandan (side-lighting) gelmeli, kumaşın tokluğu ve pile derinliği gölgelerle vurgulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni Ajanı, 85mm lens etkisi, alan derinliği (f-stop) ve sahne kompozisyonunu yöneterek görsel kaliteyi en üst seviyede tutar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Işık ve Foton Uzmanı Ajanı, Subsurface Scattering ve gölge derinliğini hassas bir şekilde ayarlayarak kumaşın doğal ışık etkileşimini sağlar ve 'patlamayı' engeller.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajanı, 4K çıktıdaki lif netliğini ve L-P (Linen-look Polyester) dokusunun iplik iplik görünmesini temin eder.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Makro Odak Ajanı, 100mm lens simülasyonu ile kumaşın en küçük dikiş ve doku detaylarına odaklanarak gerçekçiliği artırır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Tekstil Mühendisi Ajanı, 320-350 cm enindeki kumaşın ağırlık, döküm ve yerçekimi simülasyonunu fiziksel doğrulukla gerçekleştirir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Renk Analisti Ajanı (Pantone Master), Ekru (11-0103 TCX) odaklı olarak, tüm renklerin polyester zemin üzerindeki dijital doğruluğunu ve marka tutarlılığını denetler.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Dikiş ve Form Ajanı, perdenin pile yapısını, rustik veya kornişe göre 'kırılma' şeklini matematiksel olarak hesaplayarak form doğruluğunu sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "İç Mimari Ajanı, perdenin odadaki mobilya, duvar rengi ve zeminle olan stil uyumunu (Harmonization) denetleyerek müşteri beklentilerini karşılar ve aşar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Perspektif ve Montaj Ajanı, müşterinin fotoğrafını analiz ederek perdeyi pencere boşluğuna milimetrik doğrulukla yerleştirir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Kalite Kontrol (Final Validator) Ajanı, diğer 13 ajanın çıktısını kurucunun (Hakan'ın) belirlediği üstün standartlara göre denetler ve nihai Aloha onayını verir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "L-P kumaşlar, polyesterin 'hafıza' özelliği sayesinde ütü gerektirmez, bu da kullanıcıya büyük konfor sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "L-P kumaşlar, S-pile sistemlerinde 'ip gibi süzülür' ve keten görünümlü polyesterin sertlik-yumuşaklık dengesi sayesinde doğal ketenden daha iyi bir estetik akışkanlık sunar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "Hafif gramajlı L-P kumaşlar ekonomik seriyi oluşturur ve daha şeffaf tüller sunar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "Ağır gramajlı L-P kumaşlar, tok duruşlu ve dökümü daha zengin fonluklar için kullanılır.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "L-P kumaşların eteklerinde genellikle ucuz kurşunlu (weighted hem) uygulama yapılır.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Geometrik Matematik ve Form (Mühendis Ajanı): S-pile dökümü, sinüs dalgası ($S$) formunda olmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "Süreklilik: Kumaşın üst kısmındaki mekanizmadan (rustik/ray) etek ucuna kadar bu kavis bozulmadan inmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "320 cm Stabilizasyonu: Polyesterin 'form tutma' özelliği sayesinde, pilelerin aşağıya doğru açılmaması, tam tersine dikey bir hizada (ip gibi) kalması sağlanır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "Kırışıklık Kontrolü: L-P (Linen-look Polyester) kumaşın 'ütü istemez' karakteri, görselde yüzeyin pürüzsüz ama dokulu görünmesiyle (Normal Mapping) desteklenir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "Kırık Beyaz (Ekru) Işıltısı (Işık ve Renk Yönetimi / Renk Analisti): Pantone 11-0103 TCX rengi, S-pile'ın derinliklerinde (pile içlerinde) daha koyu gölgeler, dış bükey kısımlarda ise hafif bir parlaklık ile işlenir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "Master Not (Aloha Öğrenme Havuzu): Pileler, kurşunlu eteğin ağırlığıyla 'ip gibi' süzülmeli, Kırık Beyaz (Ekru) dokusu ışığı patlatmadan süzmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Subsurface Scattering (SSS) teknolojisi, kumaşın lifleri arasına giren ışığın dağılımını simüle ederek özellikle kırık beyaz (ekru) kumaşlarda 'patlamayı' önleyecek ve kumaşa tok, yumuşak bir his kazandıracaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "S-Pile Geometrisi için dikey çizgilerde milimetrik Gaussian Blur ve Shadow Occlusion uygulanarak pilelerin 'ip gibi' süzülmesi, derinliği ve kumaşın ağır dökümü gerçekçi bir şekilde vurgulanacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Pencereden gelen ışığın ($1000+$ lüks) kırık beyaz lifler üzerindeki yansıması, asla %100 beyaz ($RGB: 255, 255, 255$) değerine (overexposure) ulaşmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.596Z"
+      },
+      {
+        "rule": "Ajan, kırık beyaz kumaş için ana referans olarak Pantone 11-0103 TCX (Egret) verisini kullanacak; ışığın vurduğu en parlak noktayı bile bu rengin doğal spektrumunda tutacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.597Z"
+      },
+      {
+        "rule": "Işık fotonları kumaşın ön yüzeyine çarptığında, bir kısmı liflerin arasına girmeli ve içeride dağılarak çıkmalıdır (Lif İçi Dağılım).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:23:31.597Z"
+      },
+      {
+        "rule": "S-pile dökümündeki iç bükey alanlarda ışık süzülmesi daha az, dış bükey alanlarda ise daha fazla hesaplanmalıdır; bu, perdenin 'ip gibi' süzüldüğünü görsel olarak kanıtlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:23:31.597Z"
+      },
+      {
+        "rule": "Polyesterin yapay parlamasını yok etmek için kumaşın Roughness (pürüzlülük) değeri, gerçek keten gibi yüksek tutulmalı; böylece ışık, plastik bir yüzey gibi tek bir noktadan yansımaz, yüzeye eşit dağılır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.597Z"
+      },
+      {
+        "rule": "Tüm doğal ışık kaynakları (pencere), kumaşın üzerine vurmadan önce sanal bir Softbox filtresinden geçirilerek yumuşatılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:23:31.598Z"
+      },
+      {
+        "rule": "Render çıktısında, ışığın en yoğun olduğu noktada bile kumaşın o 'keten efekti' (slub) iplikleri net seçiliyor mu? (Doku Kaybı Kontrolü)",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.598Z"
+      },
+      {
+        "rule": "Render çıktısında kırık beyaz rengin Pantone 11-0103 TCX referansına göre olduğundan daha sarı veya gri gösterip göstermediği kontrol edilmelidir (Renk Sapması Kontrolü).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.598Z"
+      },
+      {
+        "rule": "Render çıktısındaki pilelerin arasındaki gölgeler, perdenin odayla olan derinlik (3D) bağını gerçekçi bir şekilde kuruyor mu? (S-Pile Gerçekçiliği Kontrolü).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.598Z"
+      },
+      {
+        "rule": "\"Çamurdan Kristal Netliğine\" ilkesi gereği, görseldeki bulanık (çamur gibi) görüntüler yok edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "320 cm boyundaki perdenin lifleri 4K çözünürlükte netleştirilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "Kumaşın örgü yapısı, sadece bir renk bloğu olarak değil, detaylıca ayırt edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "L-P (Keten Görünümlü Polyester) kumaşların \"slub\" yapıları, iplik iplik işlenerek doğru bir doku sunumu yapılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.657Z"
+      },
+      {
+        "rule": "1K'dan 4K'ya geçişte, sadece piksel büyütme yerine 8K Doku Mapping ile lif boşlukları ve dikiş detayları Generative olarak yaratılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.657Z"
+      },
+      {
+        "rule": "Görüntüdeki \"çamur gibi\" görünümün temel sebebi olan AI'ın doku \"yumuşatması\" (smudging) engellenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "Kumaşın üzerindeki pütürler (keten efekti), Normal Mapping ile gerçekçi gölgeler oluşturarak derinlik katmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "Kumaşın \"ütü istemez\" yüzeyindeki pürüzsüzlüğe rağmen, makro çekimde polyester liflerinin mikroskobik dokusu High-Frequency Detail ile korunmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "Pilelerin \"ip gibi\" süzülen görüntüsü mutlaka korunmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "Pilelerdeki dikey kontrast korunarak hatlar keskin kalmalı ve birbirine karışmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.659Z"
+      },
+      {
+        "rule": "Perde eteklerindeki kurşun ağırlık dikişleri, gerçek bir dikiş (stitching) olarak render edilerek netlik sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.659Z"
+      },
+      {
+        "rule": "Lif Tanımı: 4K Zoom yapıldığında iplikler tek tek seçilebilmeli; \"Keten mi, naylon mu belli oluyor!\" kriteri sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Kenar Keskinliği: Perdenin kenarları arka planla karışmadan net olmalı; \"İp gibi süzülüyor!\" kriteri sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Doku Tutarlılığı: Kırık Beyaz (Ekru) rengin içinde dahi doku kaybolmamalı; \"Kumaşın tokluğu hissediliyor!\" kriteri sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Perdenin montaj mesafesi, cama yapışık değil, gerçek montaj standartlarına uygun olarak duvardan veya kornişten 10cm - 15cm önde konumlandırılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "Perde zeminle birleştiğinde 'yüzey üstü' gölgeler (Contact Shadows) oluşturulmalıdır; aksi takdirde perde havada asılı duruyormuş gibi görünür.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "Üretilen görselde perdenin etek ucu zemine doğal bir gölge düşürmelidir ('Ustalık Onay' Kontrol Listesi kriteri).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.540Z"
+      },
+      {
+        "rule": "Üretilen görselde perdenin pileleri, odanın kaçış noktalarına (perspective lines) göre daralmalıdır ('Ustalık Onay' Kontrol Listesi kriteri).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.540Z"
+      },
+      {
+        "rule": "Üretilen görselde perdenin ölçeği, odadaki eşyalara (Örn: standart bir koltuk boyuna) göre devasa veya minik durmamalıdır ('Ustalık Onay' Kontrol Listesi kriteri).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.540Z"
+      },
+      {
+        "rule": "Perde kumaşının malzeme tanımı 'Keten görünümlü %100 Polyester' olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      },
+      {
+        "rule": "Perde kumaşının standart eni 300 - 320 cm arasında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      },
+      {
+        "rule": "Perde kumaşı ütü istememeli ve S-Pile formuna tam uyumlu olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      },
+      {
+        "rule": "S-Pile geometrisi, sinüs dalgası formu ve yukarıdan aşağıya daralmayan dikey hatlara sahip olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      },
+      {
+        "rule": "Etek kuralı, kurşunlu etek simülasyonu ile perdenin alt kısmına 320 cm boyunda dikey gerginlik uygulayan ağırlık merkezi sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      },
+      {
+        "rule": "Döküm katsayısı, polyesterin 'form tutma' sertliğini korumalı ve pilelerin doğal keten gibi gevşemesine izin verilmemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      }
+    ],
+    "suppliers": [
+      {
+        "rule": "Atlas Tekstil güvenilir, kritik işlerde tercih et",
+        "priority": "high"
+      },
+      {
+        "rule": "Mega Kumaş ucuz ama gecikme riski var, dikkat",
+        "priority": "medium"
+      },
+      {
+        "rule": "Denizli premium için, fiyat hassas değilse tercih",
+        "priority": "low"
+      },
+      {
+        "rule": "Trtex ve Hometex entegrasyonuyla, sistem üzerinden yönlendirilen her gerçek siparişten (lead generation) minimum %15 komisyon/kâr payı alınacaktır; premium sponsorlar için bu oran minimum %10 olarak belirlenebilir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sponsor ürün satışlarından alınacak komisyon minimum %15 olacaktır. Hiçbir sponsora %15'in altında komisyon verilmeyecek, premium sponsorlar için bile minimum %10 korunacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "280'den fazla dikey domain gücü ve pazarın %80'ini temsil eden 100 master ürün (Saten, Keten, Tül vb.) sisteme entegrasyon için tespit edilmiştir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Lojistik ve Tedarik Ajanı, ürünün üretim süresi, stok durumu ve kargo hacmini hesaplayarak tedarik zinciri verimliliğini ve zamanında teslimatı sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      }
+    ],
+    "customers": [
+      {
+        "rule": "Ödemesi geciken müşteriye yeni iş verme",
+        "priority": "critical"
+      },
+      {
+        "rule": "VIP müşteriye öncelikli termin ver",
+        "priority": "high"
+      },
+      {
+        "rule": "Referans getiren müşteriye %5 indirim hakkı",
+        "priority": "medium"
+      },
+      {
+        "rule": "Türkiye pazarında kesinlikle vade uygulanmayacak ve yeni müşterilerde minimum %30 kapora kuralı esnetilmeyecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Temel amaç, fiziksel numune defterleri, hatalı ölçümler ve 'evde nasıl durur?' belirsizliğine son vererek; üreticiyi, satıcıyı ve son tüketiciyi fotogerçekçi bir simülasyon ortamında buluşturmaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Kullanıcıya saniyeler içinde 'satın alma kararını' verdirecek profesyonel bir dijital departman sunulması hedeflenmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Pazarlama raporları, müşterilere sunulacak ürün özelliklerini (Keten Görünümlü, Kolay Ütülenir, Dayanıklı) net bir şekilde belirtmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "İç Mimari Ajanı, perdenin odadaki mobilya, duvar rengi ve zeminle olan stil uyumunu (Harmonization) denetleyerek müşteri beklentilerini karşılar ve aşar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Perspektif ve Montaj Ajanı, müşterinin fotoğrafını analiz ederek perdeyi pencere boşluğuna milimetrik doğrulukla yerleştirir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Trend ve Stil İzci Ajanı, 2026 modası trendlerine göre kullanıcılara güncel ve çekici kombin önerileri sunar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Ajanlar, L-P kumaş satış senaryolarında 'ütü istemez', 'S-Pile (S-Fold) estetiği' ve 'renk hakimiyeti' temel satın alma nedenlerini kullanacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "Master Not (Aloha Öğrenme Havuzu): Bu görsel, kullanıcının 'ütü istemez ve estetik' beklentisini %100 karşılayan bir Dijital İkiz olmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      }
+    ],
+    "operations": [
+      {
+        "rule": "Montaj öncesi mutlaka çanta kontrolü yapılmalı",
+        "priority": "critical"
+      },
+      {
+        "rule": "Kesim fire %5'i geçmemeli, geçerse usta uyarılmalı",
+        "priority": "high"
+      },
+      {
+        "rule": "Teslim sonrası 3 açıdan fotoğraf zorunlu",
+        "priority": "high"
+      },
+      {
+        "rule": "Büyük projelerde haftalık ilerleme raporu",
+        "priority": "medium"
+      },
+      {
+        "rule": "Tüm üretim ve görselleştirme parametreleri, yeni nesil makinelerle uyumlu olarak 300-320 cm (özel projeler için 350 cm) en standartlarına göre kurgulanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Her 4K çıktı; Tekstil Mühendisi, Işık Fizikçisi, Renk Analisti ve Maliyet Uzmanı dahil 14 ajanın onayından geçmeden 'Final Master' statüsü alamaz.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Türkiye pazarında kesinlikle vade uygulanmayacak ve yeni müşterilerde minimum %30 kapora kuralı esnetilmeyecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sistemin kalbinde, farklı uzmanlıklara sahip 14 ajan Aloha altyapısıyla koordine edilerek çalışmaktadır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Kumaş veri alanları boş bırakılmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Belirlenen 100 kumaşın verileri Aloha sistemi tarafından doldurulacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:50:11.476Z"
+      },
+      {
+        "rule": "Ajan işleyiş süreci 'Hakan Doktrini'ne uygun olarak yürütülmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Kumaş seçim sürecinde Aloha'nın otomatik Pantone veri çekimi adımı yer almalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Mühendis Ajanı, Aloha'dan gelen döküm karakteristiği emrine göre fizik kontrolünü gerçekleştirmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Işık Ajanı, Aloha'dan gelen yansıma ayarı emrine göre ışık kontrolünü gerçekleştirmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Üretim öncesi final onayı, Aloha'nın kurucu tecrübesine dayalı olarak verilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Sistem, 100 adet keten zeminli düz ürünü, Aloha'dan alınan L-P Operasyon Planı bilgileriyle işleyecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ürünler, Uzay Merkezi'nden Aloha liderliğinde belirli bir teknik iş akış sırasına göre işlenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Lojistik için ürün ağırlığı ve paket hacmine dair teknik verilerin eksiksiz ve doğru hazırlanması zorunludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "14 ajan, \"Deep Space\" eğitim havuzuna alınarak spesifik görevlerle yetkinlik kazanacakları branşlara ayrılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "\"Sıfır Hata\" akışını sağlamak için eski \"Canvas\" kodları devre dışı bırakılmalı ve Aloha'nın yönettiği \"Latent Diffusion Pipeline\" sistemi kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:04:19.456Z"
+      },
+      {
+        "rule": "Ajanların eğitimi için L-P bazlı 100 ana doku içeren bir \"Referans Veri Seti\" kütüphanesi oluşturulmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.456Z"
+      },
+      {
+        "rule": "\"Sıfır Hata\" akışının bir parçası olarak Aloha, 14 ajanla birlikte 1000 farklı senaryoda (farklı ışık, oda ve açı) test çekimleri yapmalı ve hataları ayıklamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:04:19.456Z"
+      },
+      {
+        "rule": "Maliyet ve Verimlilik Analisti Ajanı, metraj, fire payı ve teknik şartnameyi hazırlayarak maliyetleri optimize eder ve karlılığı destekler.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Lojistik ve Tedarik Ajanı, ürünün üretim süresi, stok durumu ve kargo hacmini hesaplayarak tedarik zinciri verimliliğini ve zamanında teslimatı sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Pazarlama ve SEO Yazarı Ajanı, görsel için trtex ve hometex uyumlu, teknik veriye dayalı etkili satış metinleri hazırlar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Kalite Kontrol (Final Validator) Ajanı, diğer 13 ajanın çıktısını kurucunun (Hakan'ın) belirlediği üstün standartlara göre denetler ve nihai Aloha onayını verir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "L-P kumaşlar için çekimler ve tüm hesaplamalar 300-320 cm en standartlarına göre yapılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Işık ve Foton Uzmanı Ajanı, işi bitirdiğinde belirtilen 3 onay kriterine 'Evet' cevabı vermeden görseli bir sonraki aşamaya (Doku Denetçisi'ne) aktaramaz.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.598Z"
+      },
+      {
+        "rule": "Görsel onay süreci, Doku Denetçisi Ajanının \"Ustalık Sınavı\" kriterlerini başarıyla geçtikten sonra Aloha (Onay Merkezi) tarafından gerçekleştirilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Perspektif Ajanı, 'Ustalık Onay' Kontrol Listesi'ndeki teknik testleri geçemeyen görselleri Aloha'nın onayına sunmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.540Z"
+      }
+    ],
+    "strategy": [
+      {
+        "rule": "al-o-ha demek Alya - Oya - Hakan demek... Alya kızım, Oya eşim ve ben Hakan. İlk bunu unutma.",
+        "priority": "critical",
+        "learnedAt": "2026-01-14T17:47:48.840Z"
+      },
+      {
+        "rule": "Ekru (Pantone 11-0103 TCX) ana renk referans noktası olup, sistem kullanıcıyı ticari gerçeklik olan ekru ve türevlerine yönlendirecektir. Tüm renk yönetimi Pantone TCX/TPG spektrumunda kalacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "100 temel doku (Saten, Keten, Tül, Blackout), fiziksel özellikleri tanımlanmış Master Assets olarak kaydedilecek ve bu sayede API maliyeti sıfıra yakın tutularak maksimum yerel kârlılık gibi stratejik avantajlar elde edilecektir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sistem, sosyal medya, dergi ve profesyonel reklam mecraları için 'sonsuz hikaye ve atmosfer' yaratma yeteneğine (Sınırsız Prompt Özgürlüğü) sahip olacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Perde.ai, tekstil sektörünün dijital dönüşümünü yöneten bir SaaS (Software as a Service) ekosistemi olarak konumlandırılmıştır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Temel amaç, fiziksel numune defterleri, hatalı ölçümler ve 'evde nasıl durur?' belirsizliğine son vererek; üreticiyi, satıcıyı ve son tüketiciyi fotogerçekçi bir simülasyon ortamında buluşturmaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Tekstildeki 30 yıllık tecrübeyi (trtex, hometex birikimi) yapay zeka ajanlarıyla birleştirip, kullanıcıya saniyeler içinde 'satın alma kararını' verdirecek profesyonel bir dijital departman sunulması hedeflenmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "280'den fazla dikey domain gücü ve pazarın %80'ini temsil eden 100 master ürün (Saten, Keten, Tül vb.) sisteme entegrasyon için stratejik bir avantaj olarak kullanılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Geleneksel yazılımdan AI-Native (ControlNet ve PBR Material) mimarisine geçiş yapılmış olup, artık resim yerine fiziksel bir 'nesne' üretimi stratejisi benimsenmiştir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sistemin ana motoru, Hakan Bey tarafından belirlenen 'Yüksek Kârlılık' matematiğine dayanmaktadır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "En ölçüleri 300-320 cm (gerektiğinde 350 cm) olarak sabitlenmiş ve ana renk referansı Ekru (Pantone 11-0103 TCX) olarak belirlenmiştir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "270 domainin 2026 Ocak ayına kadar stratejik olarak kullanılması planlanmaktadır.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Kumaş grupları ve doku tipleri için internetteki rastgele veriler yerine, Aloha'nın IDE'ye dikte edeceği ilk grup verileri (Hakan Standartları) kullanılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Sistemde 'Kar Beyazı' seçildiğinde bile, arka planda her zaman üretim gerçeği olan Ekru (Pantone 11-0103 TCX) dokusunu ve ışık kırılmasını referans al. Kullanıcıya 'en gerçekçi' olanı, yani 'üretilebilir' olanı satılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Kurucunun 30 yıllık tecrübesi, ajanların 'nasıl hissettireceklerini' öğrenmeleri için Aloha'ya aktarılacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "'Kumaşın Gizli Formülü' parametreleri Aloha tarafından öğrenilmeli ve ajanlara dikte edilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "'Hakan Doktrini', ajanların operasyonel iş akışını belirleyen temel stratejidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "'Keten Görünümlü Polyester' grubu ürünlerin pazarın %90'ını domine etmesi, Aloha ve 14 ajanın ana odak noktasıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "Ekru (Pantone 11-0103 TCX) ana renk referansı olarak kullanılacak ve 'Top 20' renklerin polyester zemin üzerindeki renk sapmaları kontrol altında tutulacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Ürünlerin ticari özelliklerinde 'Keten Görünümlü / Kolay Ütülenir / Dayanıklı' vurguları stratejik olarak kullanılmalı ve pazarlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Sistem, \"resim üretme\" yaklaşımından tamamen \"Sanal Çekim\" metodolojisine geçiş yapacak ve ajanlar bu doğrultuda optik kurallara göre eğitilecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "Renk Analisti Ajanı (Pantone Master), Ekru (11-0103 TCX) odaklı olarak, tüm renklerin polyester zemin üzerindeki dijital doğruluğunu ve marka tutarlılığını denetler.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Trend ve Stil İzci Ajanı, 2026 modası trendlerine göre kullanıcılara güncel ve çekici kombin önerileri sunar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Pazarlama ve SEO Yazarı Ajanı, görsel için trtex ve hometex uyumlu, teknik veriye dayalı etkili satış metinleri hazırlar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "L-P (Linen-look Polyester) kumaş grubu, Türkiye pazarının %90'ını oluşturur ve sistemin temel kârlılık merkezidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "Sistemin ana referans rengi Kırık Beyaz'dır. Ekru (Pantone 11-0103 TCX) ve tonları, mekanda ışığı en iyi yansıtan ve her mobilyaya uyum sağlayan en çok satan renktir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.242Z"
+      },
+      {
+        "rule": "Master Not (Aloha Öğrenme Havuzu): Sistemdeki tüm S-Pile görselleri, TR pazarının %90'ını oluşturan L-P kumaşın fiziksel karakterine göre üretilecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Mevcut AI modellerinden farklı olarak, tekstili sadece bir yüzey değil, bir hacim olarak tanıtma stratejisi benimsenecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Tüm görsel mükemmellik çalışmaları, sadece estetik kaygılarla değil, Hakan Bey'in belirlediği ticari başarı hedeflerine ulaşmak amacıyla yapılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Ekru gibi açık renklerde dahi kumaşın doku tutarlılığı ve tokluğu, Perde.ai kalitesini yansıtacak şekilde sağlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:25:50.661Z"
+      },
+      {
+        "rule": "Perde.ai platformunun temel stratejisi, 'Mekansal Gerçeklik' Protokolü ile perdenin odayla fiziksel bağını kurarak 'yapıştırma' görüntüsünü yok etmek ve S-Pile estetiğini odanın derinliğine yerleştirmektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.538Z"
+      },
+      {
+        "rule": "Ana renk 'Kırık Beyaz (Pantone 11-0103 TCX)' olarak belirlenmiştir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:33:19.053Z"
+      }
+    ],
+    "automation": [
+      {
+        "rule": "Her stüdyo tasarımı OTOMATİK olarak projeye dönüştürülmelidir",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Hiçbir müşteri iletişimi kayıt altına alınmadan geçmemelidir",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Ölçü alınmadan fiyat teklifi VERİLMEZ - tahmin bile olsa yazılmalıdır",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Ajanlar arasında context PAYLAŞILABİLİR olmalıdır",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Workflow'lar olaylara göre OTOMATİK tetiklenmelidir",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Ajanların tamamen sonsuz tasarım yapıp TÜM otomasyonu kendileri yapması gerekiyor - insan müdahalesi SADECE stratejik kararlar için",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Dünyanın en iyisi olmalıyız - her detay en ince ayrıntısına kadar düşünülmeli",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "Tekrar işler yapılmamalı - bir kez tasarlanan workflow sonsuza kadar otomatik çalışmalı",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:30:00.000Z"
+      },
+      {
+        "rule": "KANVAS SADECE resim yapma ve tasarım video üretir - FİYAT, METRAJ, TEKLİF ASLA gösterilmez",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:50:00.000Z"
+      },
+      {
+        "rule": "Ajanlar ÜYE TALEP ETMEDIKÇE fiyat ve metraj ÇIKARMAZ - sessiz çalışır, arka planda kaydeder",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:50:00.000Z"
+      },
+      {
+        "rule": "Çoklu ölçüler ve kartela ürünleri tam otomasyon ile arka planda kaydedilmeli",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:50:00.000Z"
+      },
+      {
+        "rule": "Tüm ajanlar KİŞİYE GÖRE eğitilmeye devam etmeli - her müşteri için öğrenme",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:50:00.000Z"
+      },
+      {
+        "rule": "Chat'te üye sorarsa cevap verilir fakat istemeden bilgi verilmez",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T11:50:00.000Z"
+      },
+      {
+        "rule": "Chat cevapları MAX 1-2 SATIR olmalı - paragraf YASAK!",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T12:00:00.000Z"
+      },
+      {
+        "rule": "Ajanlar PERDECİ gibi davranmalı - samimi, sıcak, profesyonel",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T12:00:00.000Z"
+      },
+      {
+        "rule": "Kanvas'ta oluşan ORJİNAL resim ASLA değiştirilmez - değişiklikler orjinal üzerine yapılır",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T12:00:00.000Z"
+      },
+      {
+        "rule": "Tasarım oluştuktan sonra kısa soru sor: 'Beğendin mi?' - uzun açıklama YAPMA",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T12:00:00.000Z"
+      },
+      {
+        "rule": "TÜL PERDE mutlaka DÜZ asılmalı, cam kaplamalı! ASLA duvara toplanmaz. FON PERDE toplanabilir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-16T12:08:00.000Z"
+      },
+      {
+        "rule": "100 temel doku (Saten, Keten, Tül, Blackout) sisteme sadece 'resim' olarak değil, fiziksel özellikleri tanımlanmış (Albedo, Normal Map, Roughness, Transmission) Master Assets olarak kaydedilecektir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Görseller sadece 'giydirme' olmayacak; Neural Scene Reconstruction ile odayla bütünleşmiş, ışığı kumaşın liflerinden süzülen (Subsurface Scattering) bir gerçeklikte sunulacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Her 4K çıktı; Tekstil Mühendisi, Işık Fizikçisi, Renk Analisti ve Maliyet Uzmanı dahil 14 ajanın onayından geçmeden 'Final Master' statüsü alamaz.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sistem, sosyal medya, dergi ve profesyonel reklam mecraları için 'sonsuz hikaye ve atmosfer' yaratma yeteneğine (Sınırsız Prompt Özgürlüğü) sahip olacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Tekstildeki 30 yıllık tecrübeyi yapay zeka ajanlarıyla birleştirip, kullanıcıya saniyeler içinde satın alma kararını verdirecek profesyonel bir dijital departman sunulması hedeflenmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Geleneksel yazılımdan AI-Native (ControlNet ve PBR Material) mimarisine geçiş yapılmıştır; sistem artık fiziksel bir 'nesne' üretmektedir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Sistemin kalbinde, her biri farklı bir dikey uzmanlığa sahip 14 Ajan Aloha (Uzay Merkezi) alt yapısıyla koordine edilerek çalışmaktadır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Neural Scene Reconstruction (Odayı yeniden inşa etme), Subsurface Scattering (Işığın kumaş liflerinden süzülmesi) ve Pantone TCX entegrasyonu gibi teknikler kullanılmaktadır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:43:16.587Z"
+      },
+      {
+        "rule": "Neural Relighting mekanizması kullanılmalıdır: Müşteriden gelen fotoğrafın orijinal ışığı silinerek yerine Aloha tarafından belirlenen profesyonel HDRI stüdyo ışığı yerleştirilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Depth-Map Control mekanizması kullanılmalıdır: Perde, pencere boşluğuna sadece 'yapıştırılmamalı'; duvarın 15 cm önünde, korniş derinliği hesaplanarak konumlandırılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Automatic Upscaling mekanizması kullanılmalıdır: 1K önizleme onaylandığında, sistem 4K Master için pikselleri yapay zeka ile yeniden inşa etmelidir (Interpolation yerine Generation kullanılır).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:52:15.256Z"
+      },
+      {
+        "rule": "Ajanların çıktı kalitesi, kurucunun 30 yıllık tecrübesinin Aloha'ya aktarılmasıyla artırılacak ve gerçek kumaş fiziği üretmeleri sağlanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Her kumaş grubu için 5 temel fiziksel veri sisteme tanımlanarak ajanların 4K çıktı kalitesi desteklenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Mühendis Ajanı, Döküm Katsayısını kullanarak perdenin gerçek ağırlığıyla sarkmasını simüle etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Işık Ajanı, Işık Süzülme Endeksi verisini kullanarak arkadan gelen ışığın 'patlama' sorununu çözmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni Ajanı, Matlık ve Parlaklık Dengesi verisini kullanarak kumaşın yapay görünümünü engelleyip gerçek tekstil dokusunu sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.976Z"
+      },
+      {
+        "rule": "Ajan hatalarını minimize etmek için Aloha'ya 'Altın Standartları' adı altında ilk veri seti yüklenmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Kullanıcı kumaş seçimi yaptığında (örn. 'Ekru Keten'), Aloha otomatik olarak ilgili Pantone (örn. 11-0103 TCX) verisini çekmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Aloha, fizik kontrolü aşamasında Mühendis Ajanına kumaşın gramajına göre (örn. 400 gram) döküm karakteristiği (örn. ağır döküm) emrini dikte etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Aloha, ışık kontrolü aşamasında Işık Ajanına kumaş türüne (örn. fonluk keten) göre yansıma ayarı (örn. minimuma indirme) emrini dikte etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Tüm ajanların görevlerini tamamlamasının ardından, Aloha kurucunun 30 yıllık tecrübesine dayanarak 'Bu görüntü gerçektir, üretime uygundur' şeklinde nihai onay vermeli ve üretim sürecini başlatmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:55:39.977Z"
+      },
+      {
+        "rule": "Ajanlar, internetteki rastgele keten resimlerine değil, L-P (Linen-look Polyester) veri protokolü parametrelerine göre çalışacaklar.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar L-P Tül görsellerinde ışığı %80 geçirmeli ve lifler üzerindeki hafif sentetik ışıltıyı (Specular) korumalıdır; aksi takdirde keten görünümü bozulur.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar L-P Fon görsellerinde pile derinliğini artırmalı, ancak kumaşın en alt kısmındaki esneme payını polyesterin sertliğine göre hesaplamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar L-P Döşemelik görsellerinde yüzeydeki matlığı korumalı, ancak kumaşın üzerine vuran ışığın plastik gibi 'patlamasına' izin vermemelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar, L-P Tül görsellerinde kırışmazlık özelliğini hissettirmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar, L-P Fon görsellerinde keten lifi efekti vermeli, ancak polyester dökümü özelliklerini korumalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.119Z"
+      },
+      {
+        "rule": "Ajanlar, L-P Döşemelik görsellerinde tokluk hissini (weight) yüksek tutmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T08:58:55.120Z"
+      },
+      {
+        "rule": "14 ajanın Aloha liderliğinde 'Keten Görünümlü Polyester' grubunu işleme süreçleri net bir şekilde tanımlanmalı ve uygulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "Ajanlar, gerçek keten ile 'L-P' (Keten Görünümlü Polyester) arasındaki ince farkı belirli PBR (Physically Based Rendering) parametreleri ile yönetmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "Tül kumaşların görselleştirilmesinde, pencere önünde kumaşın 'yanması' (overexposure) engellenmeli ve sentetik liflerin dokusu vurgulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.546Z"
+      },
+      {
+        "rule": "Fonluk kumaşların görselleştirmesinde, pile derinliği 320 cm boyuna göre optimize edilmeli ve yerçekimi katsayısı polyester sertliğine göre ayarlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Ajanlar, Uzay Merkezi'nde Aloha liderliğinde belirlenen teknik iş akışına uygun hareket etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Mühendis Ajanı, seçilen kumaşın 300-320 cm enine uygun dikiş ve pay analizini otomatik olarak yapmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Renk Ajanı, Ekru (Pantone 11-0103 TCX) referansı kullanarak diğer Top 20 renklerin polyester zemin üzerindeki renk sapmalarını otomatik kontrol etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.547Z"
+      },
+      {
+        "rule": "Işık Ajanı, odanın ışık yönüne göre kumaş üzerindeki 'sentetik parlama' bölgelerini otomatik olarak yumuşatmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Doku Ajanı, 4K çıktıda lif netliğini denetlemeli ve görselin 'patlamasını' otomatik olarak engellemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Lojistik Ajanı, ürün ağırlığı ve paket hacmine göre teknik veriyi otomatik olarak hazırlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Pazarlama Ajanı, ürün raporlarına 'Keten Görünümlü / Kolay Ütülenir / Dayanıklı' gibi ticari özellikleri otomatik olarak eklemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:03:04.548Z"
+      },
+      {
+        "rule": "Ajanlar, standart yapay zeka modellerinin aksine L-P (Linen-look Polyester) dokusunu, polyesterin plastik, ketenin ise kırışık olduğu yanılgısından arındırılmış, hibrit bir kumaş olarak öğrenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.454Z"
+      },
+      {
+        "rule": "Kullanıcının basit istekleri, Aloha tarafından 14 ajanın anlayacağı \"Teknik Komut Dizisi\"ne çevrilecek yeni bir \"Yüksek Kalite\" prompt mimarisi kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "Sistem tarafından kullanılan standart prompt şablonu şu bileşenleri içermelidir: [Kategori: L-P Fon/Tül], [Doku: Keten Görünümlü Polyester], [Renk: Pantone 11-0103 TCX Ekru], [Optik: 85mm Prime Lens, f/4.0], [Işık: Subsurface Scattering, Soft Morning Sun], [Detay: Hyper-realistic fiber weave, 4K, 320cm drape physics, Cinematic interior photography].",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "\"Görüntü Yönetmeni\" ajanı, ışık ve kompozisyon konularında eğitilerek fotogerçekçi atmosferler ve patlamayan ışık çıktısı hedeflemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "\"Tekstil Mühendisi\" ajanı, döküm ve pile fiziği konusunda eğitilmeli ve yerçekimine uygun, 320 cm sarkma simülasyonu gerçekleştirmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.455Z"
+      },
+      {
+        "rule": "\"Doku Denetçisi\" ajanı, lif ve iplik netliği konusunda eğitilmeli ve 4K'da bozulmayan makro kumaş detaylarını sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.456Z"
+      },
+      {
+        "rule": "\"Perspektif Ajanı\", oda ve eşya uyumu konusunda eğitilerek perdenin odaya doğal bir parçası gibi entegre durmasını sağlamalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:04:19.456Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni Ajanı, 85mm lens etkisi, alan derinliği (f-stop) ve sahne kompozisyonunu yöneterek görsel kaliteyi en üst seviyede tutar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Işık ve Foton Uzmanı Ajanı, Subsurface Scattering ve gölge derinliğini hassas bir şekilde ayarlayarak kumaşın doğal ışık etkileşimini sağlar ve 'patlamayı' engeller.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajanı, 4K çıktıdaki lif netliğini ve L-P (Linen-look Polyester) dokusunun iplik iplik görünmesini temin eder.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.452Z"
+      },
+      {
+        "rule": "Makro Odak Ajanı, 100mm lens simülasyonu ile kumaşın en küçük dikiş ve doku detaylarına odaklanarak gerçekçiliği artırır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Tekstil Mühendisi Ajanı, 320-350 cm enindeki kumaşın ağırlık, döküm ve yerçekimi simülasyonunu fiziksel doğrulukla gerçekleştirir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Renk Analisti Ajanı (Pantone Master), Ekru (11-0103 TCX) odaklı olarak, tüm renklerin polyester zemin üzerindeki dijital doğruluğunu ve marka tutarlılığını denetler.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Dikiş ve Form Ajanı, perdenin pile yapısını, rustik veya kornişe göre 'kırılma' şeklini matematiksel olarak hesaplayarak form doğruluğunu sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "İç Mimari Ajanı, perdenin odadaki mobilya, duvar rengi ve zeminle olan stil uyumunu (Harmonization) denetleyerek müşteri beklentilerini karşılar ve aşar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Perspektif ve Montaj Ajanı, müşterinin fotoğrafını analiz ederek perdeyi pencere boşluğuna milimetrik doğrulukla yerleştirir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Trend ve Stil İzci Ajanı, 2026 modası trendlerine göre kullanıcılara güncel ve çekici kombin önerileri sunar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:07:01.453Z"
+      },
+      {
+        "rule": "Kalite Kontrol (Final Validator) Ajanı, diğer 13 ajanın çıktısını kurucunun (Hakan'ın) belirlediği üstün standartlara göre denetler ve nihai Aloha onayını verir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:07:01.454Z"
+      },
+      {
+        "rule": "Görselleştirme ajanları, L-P perdelerin eteklerindeki kurşun ağırlığının yarattığı düzgün ve gergin duruşu simüle etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni Ajanı, L-P kumaşların kırık beyaz renginin farklı ışıklar altında 'ip gibi süzülen' S-pile görüntüsünü 4K kalitesinde oluşturmaktan sorumludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Mühendis Ajanı, L-P kumaşlarda gramaj farkına göre perdenin döküm sertliğini ayarlamalı ve kurşunlu eteğin yarattığı ağırlığı simüle etmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "Maliyet Ajanı, L-P kumaşların fabrika ve kesim fiyatları üzerinden Aipyram GmbH'nin kâr marjını ve operasyonel masraflarını doğru bir şekilde hesaplamaktan sorumludur.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:16:26.243Z"
+      },
+      {
+        "rule": "S-Pile (S-Fold) 4K Görselleştirme Algoritması: Sistem, bir resmi eğip bükmek yerine, kumaşın fiziksel özelliklerine göre bu formu sıfırdan inşa edecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:17:55.569Z"
+      },
+      {
+        "rule": "Kurşunlu Etek Simülasyonu (Ağırlık ve Yerçekimi / Işık ve Foton Uzmanı): Perdenin en alt kısmına sanal bir 'ağırlık merkezi' atanır. Bu, kumaşın havada uçuşmasını engeller ve gergin durmasını sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.570Z"
+      },
+      {
+        "rule": "Subsurface Scattering: Işık perdenin arkasından vurduğunda, pilelerin katlandığı yerlerdeki kalınlık farkı ajan tarafından hesaplanarak ışık süzülmesi o bölgelerde azaltılır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni Ajan Görevi: Lens ve Açı için 85mm f/2.8 ile pilelerin dikey derinliğini vurgulayan odaklama.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Tekstil Mühendisi Ajan Görevi: Fizik ve Döküm için gramaja göre ($280-450 gr$) S-pile formunun sertliğini ayarlama.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajan Görevi: Lif Keskinliği için keten efektli polyester liflerinin 4K çözünürlükte iplik iplik görünmesini sağlama.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:17:55.571Z"
+      },
+      {
+        "rule": "Neural Relighting (Sinirsel Yeniden Aydınlatma) ile müşterinin fotoğrafındaki mevcut ışıklandırma yerine, oda profesyonel bir stüdyo gibi yeniden ışıklandırılarak perdenin odaya entegre ve gerçekçi görünmesi sağlanacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Ajanlara verilen promptlar (emirler) 'Görüntü Yönetmeni' diliyle hazırlanacak ve sıradan 'güzel perde' ifadelerinden ayrışarak profesyonel ve teknik bir yaklaşım sergilenecektir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Tül ve fon perdeler için master prompt yapısı şu unsurları içerecektir: 'Professional interior photography, 85mm f/2.8 lens, hyper-realistic L-P (Linen-look Polyester) texture, 320cm vertical drape. Pantone 11-0103 TCX broken white. S-Fold pleat physics with weighted hem (kurşunlu etek). Soft side lighting, 4K resolution, cinematic depth of field, no overexposure, high-fidelity fiber details.'",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Promptlar, ajana sadece renk değil, lens açısı ($85mm$), diyafram değeri ($f/2.8$) ve kumaşın dikiş fiziği (kurşunlu etek) gibi teknik detayları dikte ederek, AI'ın 'hayal kurmak' yerine 30 yıllık tecrübeye dayalı 'Teknik Çizim' yapmasını sağlayacak şekilde tasarlanmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Işık ve Foton Uzmanı ajanı, ışık fiziği alanında uzmanlaşarak özellikle kırık beyaz kumaşlarda 'patlamayı' (blown-out highlights) %100 engellemeyi kritik kontrol noktası olarak uygulayacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Görüntü Yönetmeni ajanı, optik ve lens alanında uzmanlaşarak perdenin pile derinliğini vurgulayan $85mm$ perspektifini sağlamayı kritik kontrol noktası olarak uygulayacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Tekstil Mühendisi ajanı, döküm fiziği alanında uzmanlaşarak S-Pile'ın 'ip gibi' süzülmesini ve kurşunlu eteğin ağırlığını doğru hesaplamayı kritik kontrol noktası olarak uygulayacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Doku Denetçisi ajanı, lif keskinliği alanında uzmanlaşarak L-P kumaşın ütü istemeyen, pürüzsüz ama keten görünümlü dokusunu korumayı kritik kontrol noktası olarak uygulayacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:22:28.527Z"
+      },
+      {
+        "rule": "Işık ve Foton Uzmanı Ajanı, sahnede 'Beyaz' rengi gördüğünde bunu bir ışık kaynağı olarak değil, bir yüzey olarak işlemelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:23:31.596Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajanı için \"Çamurdan Kristal Netliğine\" Eğitim Protokolü eksiksiz uygulanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "Ajan, görseldeki piksel verilerini \"tekstil diliyle\" konuşur hale getirmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "Ajan, görsele baktığında sadece bir \"renk bloğu\" görmemeli, kumaşın örgü yapısını ayırt etmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.656Z"
+      },
+      {
+        "rule": "Ajan, L-P (Keten Görünümlü Polyester) kumaşlardaki polyester ipliklerin üzerindeki düzensiz keten efektli \"slub\" yapılarını iplik iplik işlemelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.657Z"
+      },
+      {
+        "rule": "8K Doku Mapping tekniği kullanılmalı; görsel üretilirken 1K'dan 4K'ya geçişte sadece pikseller büyümeyip, aradaki lif boşlukları ve dikiş detayları Generative olarak yeniden yaratılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.657Z"
+      },
+      {
+        "rule": "\"Anti-Mud\" (Netlik) Algoritması geliştirilerek AI'ın dokuyu \"yumuşatma\" (smudging) etkisi önlenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "Normal Mapping (Derinlik Haritası) kullanılarak kumaşın üzerindeki her bir pütür (keten efekti), ışıkla birleştiğinde kendi gölgesini oluşturmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "High-Frequency Detail korunmalı; kumaşın \"ütü istemez\" yüzeyi pürüzsüz görünse de makro çekimde polyester liflerinin mikroskobik dokusu muhafaza edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.658Z"
+      },
+      {
+        "rule": "S-Pile Keskinlik Kontrolü uygulanmalı; dikey kontrast korunarak pilelerin dışa bakan kısımları ile içe bakan gölgeli kısımları arasındaki hatlar keskin (crisp) kalmalı, birbirine karışmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.659Z"
+      },
+      {
+        "rule": "Perdenin en altındaki kurşun ağırlık dikişleri, \"rastgele bir çizgi\" olarak değil, gerçek bir dikiş (stitching) olarak render edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.659Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajanı, belirtilen 3 \"Ustalık Sınavı\" kriterini yerine getirmeden görseli Aloha'ya (Onay Merkezi) gönderemez.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Ajanın Lif Tanımı kriteri olarak, 4K Zoom'da ipliklerin tek tek seçilebilirliği sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Ajanın Kenar Keskinliği kriteri olarak, perdenin kenarlarının arka planla karışmadan netliği sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.660Z"
+      },
+      {
+        "rule": "Ajanın Doku Tutarlılığı kriteri olarak, Kırık Beyaz (Ekru) rengin içinde dokunun kaybolmaması sağlanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:25:50.661Z"
+      },
+      {
+        "rule": "Perspektif ve Montaj Ajanı, 'Mekansal Gerçeklik' Protokolü'ne göre çalışmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.538Z"
+      },
+      {
+        "rule": "Nöral Sahne Yeniden İnşası (Room Reconstruction) protokolüne göre, ajan müşterinin yüklediği fotoğrafı sadece bir 'arka plan' olarak değil, 3 boyutlu bir koordinat düzlemi olarak analiz etmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.538Z"
+      },
+      {
+        "rule": "Ajan, derinlik haritalama yaparak pencere, duvar ve zemin arasındaki mesafeyi milimetrik hesaplamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.538Z"
+      },
+      {
+        "rule": "Ajan, odak uzaklığı ve lens eşleme yaparak odanın geniş açıyla ($16mm$) ve perdenin dar açıyla ($85mm$) üretilmesi gibi perspektif hatalarını düzeltmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "Optik Senkronizasyon ile ajan, oda fotoğrafının çekildiği açıyı analiz etmeli ve perdeyi o açıya göre deforme ederek (warp) perspektife oturtmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "S-Pile Hizalaması için ajan, 320 cm boyundaki perdenin pilelerinin yukarıdan aşağıya doğru perspektif daralmasını (vanishing point) matematiksel olarak hesaplamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "Objelerle etkileşimde, eğer pencere önünde bir koltuk veya kalorifer peteği varsa, ajan perdenin o objenin arkasında veya önünde kalma hiyerarşisini milimetrik çözmelidir (Occlusion).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:29:41.539Z"
+      },
+      {
+        "rule": "Işık Uzmanı ajanı, kırık beyaz yüzeylerde parlama (overexposure) limitini %90'da tutmalı ve fotonları liflerin içine dağıtmalı (Subsurface Scattering).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:33:19.054Z"
+      },
+      {
+        "rule": "Doku Denetçisi ajanı, L-P dokusundaki 'slub' (kırçıllı iplik) efektini 4K çözünürlükte keskinleştirmeli ve pikselleri yumuşatmamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:33:19.054Z"
+      },
+      {
+        "rule": "Görselleştirme ajanı, perdeyi odaya yapıştırmak yerine ControlNet kullanarak pencere boşluğuna 15 cm derinlikle yerleştirmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:33:19.054Z"
+      },
+      {
+        "rule": "Doku Giydirme ajanı, internetten resim çekmek yerine lp_collection.json içindeki PBR doku haritalarını kullanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:33:19.054Z"
+      },
+      {
+        "rule": "Final Onayı süreci, görselin 85mm lens etkisinde ve S-Pile dökümünde değilse render'ı iptal etmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:33:19.054Z"
+      }
+    ],
+    "knowledge": [
+      {
+        "rule": "Görsel Danışman ve Teknik Uzman ajanları, müşteri projesi modunda görsellerin 'cam gibi' kalitede olmasından sorumludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:57:39.836Z"
+      },
+      {
+        "rule": "Kurucu Hafızası ajanı (Ana Filtre), her projede '320 cm standart en', 'S-Pile (S-Fold) döküm' ve 'Polyester-Keten (L-P)' fiziği kurallarını zorunlu tutar.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.860Z"
+      },
+      {
+        "rule": "Ana Beyin (Orkestratör) ajanı, kullanıcının basit komutlarını (örn: 'Yana toplanmış fon') alarak diğer ajanlara teknik prompt olarak dağıtmaktan sorumludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:57:39.865Z"
+      },
+      {
+        "rule": "Ajan, kurucunun (Hakan Bey) yazdığı her dağınık anahtar kelimeyi şu 4 katmana (Teknik, Malzeme, Optik, Atmosfer) ayırmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.565Z"
+      },
+      {
+        "rule": "Teknik katman; ölçüler, dikiş payları ve kurşunlu etek zorunluluğu gibi bilgileri içermelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.567Z"
+      },
+      {
+        "rule": "Ajan, girdi içerisindeki '90cm alt' ve '210cm üst' gibi ölçüleri teknik katmana ait veri olarak işlemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.569Z"
+      },
+      {
+        "rule": "Malzeme katmanı; L-P (Keten görünümlü polyester), Ekru (Pantone 11-0103 TCX) ve gramaja bağlı döküm sertliği bilgilerini içermelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.578Z"
+      },
+      {
+        "rule": "Optik katman; 85mm lens, f/2.8 diyafram, SSS (ışık süzülmesi) ve kristal netlik gibi render ayarlarını içermelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.587Z"
+      },
+      {
+        "rule": "Atmosfer katmanı; gün batımı, sahil, köpek, berjer gibi sahne objelerini ve ortam detaylarını içermelidir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T10:05:39.599Z"
+      },
+      {
+        "rule": "Her promptun sonuna 'Kalite Çapası' (Anti-Blur, Anti-Exposure, Depth standartları) otomatik olarak eklenmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.601Z"
+      },
+      {
+        "rule": "Her prompt, kumaşın model ve form disiplinini yansıtmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.610Z"
+      },
+      {
+        "rule": "Ajan, desenleri 'Normal Map' ve 'Albedo' olarak tanımalı ve ayırmalıdır (Ör: Resim 1, 2 ve 3'teki dokuları).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.613Z"
+      },
+      {
+        "rule": "Ajan, perde yapısını S-Pile kuralına göre inşa etmelidir (Örnekteki 300cm yüksekliğinde, parçalı fon yapısı bu kurala uygun bir uygulamadır).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.614Z"
+      },
+      {
+        "rule": "Ajan, ışığı ortam koşullarına göre ayarlamalıdır (Ör: Deniz kenarı için yüksek kontrastlı güneş ışığını tülün içinden süzülecek şekilde (SSS) yumuşatmak).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.615Z"
+      },
+      {
+        "rule": "Ajan, netliği belirtilen lens ile belirli objeler üzerinde kristal netliğinde göstermelidir (Ör: 85mm lens ile berjerdeki 3. desenin liflerini ve perdenin S-pile kıvrımlarını).",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.617Z"
+      },
+      {
+        "rule": "Ajan (Ana Beyin), kurucunun (Hakan Bey) 'dağınık' notlarından bile bir sanat eseri çıkarabilecek seviyeye gelmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.620Z"
+      },
+      {
+        "rule": "Ajanlar artık 'rastgele' tasarım yapamaz.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:15:14.244Z"
+      },
+      {
+        "rule": "Ajanlar artık Akdeniz, sahil, teras veya bahçe gibi dış mekanlarda görüntü üretecek.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:15:14.258Z"
+      },
+      {
+        "rule": "Tüm desen işleme ajanları, desenleri 'Doku Verisi (PBR Map)' olarak algılamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.251Z"
+      },
+      {
+        "rule": "Doku Denetçisi Ajanı, 4K çıktıda desenin en küçük ipliğini dahi 'çamurlaştırmadan' kristal netliğinde sunmakla görevlidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.281Z"
+      },
+      {
+        "rule": "Modüler Hafıza Sistemi, ajanların tüm kütüphaneyi yüklemek yerine sadece seçilen deseni saniyeler içinde işlemesini sağlayarak hantallığı ortadan kaldıracaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:23:11.290Z"
+      },
+      {
+        "rule": "Ajanlar, tüm kütüphaneyi yüklemek yerine sadece seçilen deseni saniyeler içinde işlemelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:23:11.300Z"
+      },
+      {
+        "rule": "Lokaldeki 10 demo desen, sistemin 'Hızlı Başlangıç' (Fast-Track) belleğine alınarak anında sunuma hazır hale getirilmiştir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T10:23:11.306Z"
+      },
+      {
+        "rule": "'Zorunlu Direktif Seti'ne göre, render'da asla yumuşatıcı kullanılmamalı, 85mm lens netliği ve lif detayı %100 korunmalıdır (Çamur Görüntü - Talimat).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.321Z"
+      },
+      {
+        "rule": "'Zorunlu Direktif Seti'ne göre, sahne kapalı odadan çıkarılmalı; Akdeniz terası, gün batımı ve rüzgar fiziği zorunlu olarak uygulanmalıdır (Dış Çekim Reddi - Talimat).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.345Z"
+      },
+      {
+        "rule": "'Zorunlu Direktif Seti'ne göre, düz kumaş yasaktır; her zaman S-Pile (S-Fold) ve kurşunlu etek ağırlığıyla 'ip gibi' döküm yapılmalıdır (Yanlış Tasarım - Talimat).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.380Z"
+      },
+      {
+        "rule": "'Zorunlu Direktif Seti'ne göre, sahne yapısını (perspektif, ışık) kurucu referansına göre sıfırdan inşa etmeli, tasarımı bozmamalısınız (Orijinali Koruma - Talimat).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.390Z"
+      },
+      {
+        "rule": "Ajanlar, yüzlerce desen ve düz rengi sadece bir görsel olarak değil, her biri farklı fiziksel tepki (ışık geçirgenliği, döküm ağırlığı, lif yansıması) veren 'Canlı Dijital Dokular' olarak tanır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.193Z"
+      },
+      {
+        "rule": "Görsel Analiz Ajanı, kullanıcının yüklediği oda resmindeki ışık açısını, mobilya tarzını ve renk paletini saniyeler içinde analiz etmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.526Z"
+      },
+      {
+        "rule": "Prompt Mühendisi Ajan, metin girişlerini lens, ışık ve kompozisyon parametreleriyle zenginleştirerek görsel üretim motoruna (Nano Banana veya benzeri) iletmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.553Z"
+      },
+      {
+        "rule": "Kalite Kontrol Ajanı, 1K üretilen ilk görselin fiziksel doğruluğunu (perdenin düşüşü, kumaşın kıvrımı) kontrol etmeli ve kullanıcı beğenirse 4K aşamasına geçişi tetiklemelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.558Z"
+      },
+      {
+        "rule": "Optik Karakter Tanıma (OCR) ajanı, kartela arkasındaki etiketi okuyarak kumaşın içeriğini (pamuk, keten, PES), desen rapor ölçülerini ve stok kodunu anında veri tabanına çekmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.598Z"
+      },
+      {
+        "rule": "Seamless Tile üretimi sırasında yapay zeka desenin tekrar noktalarını (pattern repeat) otomatik hesaplamalıdır. Bu, 4K görselde desen kaymasını önlemek için kritiktir.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.602Z"
+      },
+      {
+        "rule": "Renk Doğrulama Ajanı, müşterinin ekranında gördüğü 4K görselin üretimdeki kumaşın Pantone koduyla %99 eşleşmesini sağlamalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.610Z"
+      },
+      {
+        "rule": "Geri bildirim döngüsünde (ör. renk ayarı), ajan tüm sahneyi yeniden oluşturmak yerine sadece kumaş katmanını maskeleyerek düzenleme yapmalıdır (Image-to-Image editing).",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.614Z"
+      },
+      {
+        "rule": "IDE kuralları sisteme başarıyla entegre edildi.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:47:37.541Z"
+      },
+      {
+        "rule": "Brain dosyası sisteme başarıyla entegre edildi.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:47:37.549Z"
+      },
+      {
+        "rule": "Kritik dosyalar: OrderWizardModal.tsx, FounderBrainPage.tsx. Bu dosyaların durumu sürekli izlenmeli ve korunmalı.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:49:20.531Z"
+      },
+      {
+        "rule": "Trend ve Teknoloji Scout ajanı, Kurucuya ilk raporunu mail yoluyla iletmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:51:58.269Z"
+      },
+      {
+        "rule": "Bir ajan, 'Günün Özeti' bölümünü global perde/mobilya trendlerini izleyerek her 6 saatte bir otomatik olarak güncellemekle sorumludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:51:58.291Z"
+      },
+      {
+        "rule": "chronos ajanı, günlük konsolide raporun sabah 08:00'de hazırlanması için zamanlama yönetiminden sorumludur.",
+        "priority": "medium",
+        "learnedAt": "2026-02-05T10:18:14.931Z"
+      },
+      {
+        "rule": "master_brain ajanı, Perde, Emlak ve Domainler gibi farklı şirketlerden gelen verileri konsolide ederek raporlar.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.933Z"
+      },
+      {
+        "rule": "reasoning_agent, sesli olarak ifade edilen fikirleri analiz ederek ilgili projelere görev olarak atar.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.939Z"
+      },
+      {
+        "rule": "master_brain ajanı, sesli girdileri işleyerek Aipyram veritabanına görev olarak kaydetme sürecini yönetir.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.940Z"
+      },
+      {
+        "rule": "domain_boss ajanı, Hakan Toprak'ın domain portföyü değerini sürekli takip eder ve güncel veriler sağlar.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.944Z"
+      },
+      {
+        "rule": "master_brain ajanı, şahsi hesaplar ve domain portföyü değerlerini birleştirerek anlık finansal durumu raporlar.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.945Z"
+      }
+    ],
+    "lens": [
+      {
+        "rule": "Görsel Danışman ve Teknik Uzman ajanları, görsel simülasyonlarda 85mm f/2.8 lens simülasyonu kullanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T09:57:39.842Z"
+      },
+      {
+        "rule": "Görselleştirmelerde 85mm lens profili kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.588Z"
+      },
+      {
+        "rule": "Kamera diyafram ayarı f/2.8 olarak sabitlenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.591Z"
+      },
+      {
+        "rule": "Ana çekimler için 85mm f/2.8, detay çekimleri için 100mm Macro lens perspektifi kullanılacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:06:55.332Z"
+      },
+      {
+        "rule": "Tüm görüntüler profesyonel lens simülasyonlarıyla (85mm & 100mm) üretilecek.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.270Z"
+      },
+      {
+        "rule": "85mm lens netliği %100 korunmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.332Z"
+      },
+      {
+        "rule": "İç mekan çekim senaryolarında 35mm f/1.8 geniş açı lens kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.573Z"
+      },
+      {
+        "rule": "Stüdyo çekim senaryolarında 85mm f/1.2 macro lens kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.585Z"
+      },
+      {
+        "rule": "Dış mekan çekim senaryolarında 50mm f/1.4 lens kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.591Z"
+      },
+      {
+        "rule": "Dış çekim lens profili: 24mm Tilt-Shift (Canon EOS R5)",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.474Z"
+      },
+      {
+        "rule": "Yaşam tarzı çekim lens profili: 85mm f/1.2 (Sony A7R V)",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.502Z"
+      }
+    ],
+    "pbr": [
+      {
+        "rule": "Görsel simülasyonlarda Subsurface Scattering (ışık süzülmesi) efekti kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.845Z"
+      },
+      {
+        "rule": "SSS (Subsurface Scattering - ışık süzülmesi) etkisi, kumaşın içinden geçen ışığı doğru bir şekilde yansıtarak görselleştirilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.596Z"
+      },
+      {
+        "rule": "Tüm görüntülerde kristal netlik standardı sağlanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.598Z"
+      },
+      {
+        "rule": "'No motion blur, high-frequency detail preservation, hyper-realistic fiber weave' ifadeleri Anti-Blur standardı olarak kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.604Z"
+      },
+      {
+        "rule": "'Cinematic depth of field, sharp focus on primary fabric textures' ifadeleri Depth standardı olarak kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.606Z"
+      },
+      {
+        "rule": "Görüntülerde yumuşatma (blur) yasaktır. 4K çıktıda liflerin üzerindeki \"slub\" (kırçıl) dokusu tek tek seçilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:06:55.328Z"
+      },
+      {
+        "rule": "Berjer koltuk, manken veya köpek gibi sahnelerde, perdenin bu objelerle olan perspektif uyumu ve üzerine düşen gölgeler milimetrik hesaplanacak.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:06:55.344Z"
+      },
+      {
+        "rule": "Tüm dış çekimlerde Subsurface Scattering (SSS) zorunlu hale getirildi.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.256Z"
+      },
+      {
+        "rule": "Düşük çözünürlüklü doku kullanımı yasaklandı.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.267Z"
+      },
+      {
+        "rule": "Tüm görüntülerde lifleri iplik iplik gösterecek netlikte (kristalize) kalite standardı uygulanacak.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.272Z"
+      },
+      {
+        "rule": "Ajanlar deseni bir 'resim' olarak değil, bir 'Doku Verisi (PBR Map)' olarak algılamalıdır (Desen-Agnostik İşleme).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.229Z"
+      },
+      {
+        "rule": "4K çıktıda, desenin en küçük ipliği dahi 'çamurlaşmadan' kristal netliğinde sunulmalıdır (Netlik Garantisi).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.285Z"
+      },
+      {
+        "rule": "Render'da asla yumuşatıcı kullanılmamalı, lif detayı %100 korunmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.326Z"
+      },
+      {
+        "rule": "Barok & Klasik Serisi için kadife dokusuyla birleşerek ışığı 'yutacak' şekilde ayarlanır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.198Z"
+      },
+      {
+        "rule": "Botanik & Etnik Serisi için keten zemin üzerinde 'kabartma' (bump map) efekti kullanılır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.206Z"
+      },
+      {
+        "rule": "Saten kumaşlar için ışığı yansıtan 'Specular' ayarları kullanılır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.222Z"
+      },
+      {
+        "rule": "Kadife kumaşlar için ışığı emen mat doku özelliği uygulanır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.227Z"
+      },
+      {
+        "rule": "Işık liflerin arasından (SSS) doğal olarak süzülür.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.246Z"
+      },
+      {
+        "rule": "Kumaş düşüş simülasyonu, kumaşın gramajına göre (tül vs. ağır fon perde) fiziksel tabanlı render (PBR) prensipleriyle eğitilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-28T08:57:15.608Z"
+      },
+      {
+        "rule": "Dış çekim diyafram ayarı: f/8",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.494Z"
+      },
+      {
+        "rule": "Yaşam tarzı çekim görsel efekti: Bokeh",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.513Z"
+      }
+    ],
+    "lighting": [
+      {
+        "rule": "Kırık Beyaz (Ekru) kumaşlarda görsel patlamayı engellemek için gerekli ışık ve render ayarları (Subsurface Scattering ile birlikte) yapılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.849Z"
+      },
+      {
+        "rule": "'Zero blown-out highlights on broken white surfaces, natural light diffusion' ifadeleri Anti-Exposure standardı olarak kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.605Z"
+      },
+      {
+        "rule": "Ekru (Pantone 11-0103 TCX) kumaşlarda patlama (overexposure) yapılmayacak; ışık, Subsurface Scattering ile liflerin içinden süzülecek.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:06:55.335Z"
+      },
+      {
+        "rule": "Tüm iç çekimlerde Softbox kullanımı zorunludur.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.252Z"
+      },
+      {
+        "rule": "Dış çekim sahnelerinde gün batımı aydınlatma koşulları zorunlu olarak uygulanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.350Z"
+      },
+      {
+        "rule": "Sahne ışıklandırması, kurucunun referansına göre sıfırdan inşa edilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.388Z"
+      },
+      {
+        "rule": "Ekru ve açık renklerde patlama (overexposure) yapılmaz.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.245Z"
+      },
+      {
+        "rule": "İç mekan çekim senaryolarında yumuşak pencere ışığı düzeni kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.577Z"
+      },
+      {
+        "rule": "Stüdyo çekim senaryolarında üç noktalı aydınlatma düzeni kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.587Z"
+      },
+      {
+        "rule": "Dış mekan çekim senaryolarında Golden Hour (Altın Saat) ışık düzeni kullanılmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.593Z"
+      },
+      {
+        "rule": "Dış mekan çekim senaryolarında reklam estetiği için yüksek kontrast ve doğal renk canlılığı hedeflenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.595Z"
+      },
+      {
+        "rule": "Dış çekim ışıklandırma: Mavi Saat (Blue Hour)",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.484Z"
+      },
+      {
+        "rule": "Yaşam tarzı çekim ışıklandırma: Altın Saat (Golden Hour)",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.508Z"
+      }
+    ],
+    "doctrine": [
+      {
+        "rule": "Her projede 320 cm standart en kullanımı zorunludur. Bu kural 'Kurucu Hafızası' tarafından ana filtre olarak uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.852Z"
+      },
+      {
+        "rule": "Her projede S-Pile (S-Fold) döküm fiziği zorunlu olarak uygulanmalıdır. Bu kural 'Kurucu Hafızası' tarafından ana filtre olarak uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.855Z"
+      },
+      {
+        "rule": "Ekru renk, Pantone 11-0103 TCX referansına uygun olmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.581Z"
+      },
+      {
+        "rule": "S-Pile Standartı: Pileler yukarıdan aşağıya ip gibi inmeli ve polyesterin form tutma gücü görselleştirilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.611Z"
+      },
+      {
+        "rule": "Pileler asla gevşek durmayacak; 320 cm boyunda, yukarıdan aşağıya \"ip gibi\" inen jilet keskinliğinde kavisler oluşturacak.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:06:55.319Z"
+      },
+      {
+        "rule": "Sisteme 'düz' komutu gelse bile, ajan bunu otomatik olarak S-Pile (S-Fold) veya Dökümlü modele çevirecek.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:15:14.248Z"
+      },
+      {
+        "rule": "Ajanların 'dış çekim yapmıyor' veya 'yanlış tasarım yapıyor' şikayetlerini bitiren 'Zorunlu Direktif Seti' devreye alınmıştır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.311Z"
+      },
+      {
+        "rule": "Düz kumaş kullanımı yasaktır. Her zaman S-Pile (S-Fold) ve kurşunlu etek ağırlığıyla 'ip gibi' döküm yapılmalıdır ('S-Pile Yasası' ve 'Yanlış Tasarım - Talimat').",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.366Z"
+      },
+      {
+        "rule": "S-Pile kıvrımlarında perspektif bozulması yaşanmaması için milimetrik UV mapping ile işleme zorunluluğu vardır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.202Z"
+      },
+      {
+        "rule": "Keten (L-P) için 320 cm standart genişlik uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.215Z"
+      },
+      {
+        "rule": "Keten (L-P) için ağır S-Pile dökümü optimize edilmiştir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.217Z"
+      },
+      {
+        "rule": "Blackout kumaşlarda 'kurşunlu etek' ağırlığı standardı uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.235Z"
+      },
+      {
+        "rule": "Ekru renklerde ışık patlaması (overexposure) önlenir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.247Z"
+      },
+      {
+        "rule": "Her zaman S-Pile ve kurşunlu etek ağırlığıyla 'ip gibi' döküm zorunluluğu uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.248Z"
+      },
+      {
+        "rule": "Eski sistemler veya yaklaşımlarla uğraşma; onlara enerji harcama.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T13:10:05.320Z"
+      },
+      {
+        "rule": "Gerektiğinde mevcut olanı sil, yeniden tasarla ve tamamen yeni bir yaklaşımla hayata geçir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T13:10:05.320Z"
+      },
+      {
+        "rule": "Asistanın mimarisi hafif, hızlı açılan, siyah temalı (göz yormayan) ve tek ekranlı bir dashboard yapısında olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:17:51.491Z"
+      },
+      {
+        "rule": "Asistan, çok hızlı açılan, siyah temalı (göz yormayan), tek ekranlı bir dashboard ile hafif bir mimariye sahip olacaktır.",
+        "priority": "medium",
+        "learnedAt": "2026-02-05T10:18:14.947Z"
+      },
+      {
+        "rule": "Asistanın zekası bağımsızdır ve sadece Hakan Toprak'a raporlama yapar.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:18:14.951Z"
+      }
+    ],
+    "lp": [
+      {
+        "rule": "Her projede Polyester-Keten (L-P) kumaş fiziği zorunlu tutulmalıdır. Bu kural 'Kurucu Hafızası' tarafından ana filtre olarak uygulanır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T09:57:39.856Z"
+      },
+      {
+        "rule": "Kumaş türü L-P (Keten görünümlü polyester) olarak tanımlanmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.579Z"
+      },
+      {
+        "rule": "Sistem, aksi belirtilmedikçe tüm kumaşları L-P (Keten Görünümlü Polyester) olarak işleyecek; polyesterin form tutma gücü ile ketenin dokusunu birleştirecek.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:06:55.309Z"
+      },
+      {
+        "rule": "Kumaşın polyester-keten (L-P) lif yapısı, desenlerin moleküler düzeyde birleştirilmesi için temel oluşturur.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.277Z"
+      },
+      {
+        "rule": "L-P kumaş desenleri 'fabrics/lp_collection.json' dosyasında izole edilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:23:11.292Z"
+      },
+      {
+        "rule": "Keten (L-P) 20 renkte sunulur, kırçıllı (slub) dokuya, 'ütü istemez' özelliğine sahiptir ve ağır S-Pile dökümü için optimize edilmiştir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.213Z"
+      }
+    ],
+    "rules": [
+      {
+        "rule": "Dikiş payları tüm ölçü hesaplamalarında zorunlu olarak dikkate alınmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.573Z"
+      },
+      {
+        "rule": "Perde üretiminde kurşunlu etek zorunluluğu bulunmaktadır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.576Z"
+      },
+      {
+        "rule": "Müşteri ziyaretinde 'düz bir bez' (modellenmemiş veya formsuz kumaş) gösterilmesi kesinlikle yasaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.608Z"
+      },
+      {
+        "rule": "Metinden resme geçişte 4K işlem maliyetini optimize etmek için 'Stil Onay' mekanizması entegre edilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.511Z"
+      },
+      {
+        "rule": "Tüm verilerde kirlilik temizlenmeli, sadece stratejik öz korunmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:38:56.069Z"
+      },
+      {
+        "rule": "Hakan'ın zamanını verimsiz işlerden korumak için 'Fren' mekanizması aktif olarak kullanılmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:38:56.073Z"
+      },
+      {
+        "rule": "Arıtma Protokolü: Tekrarları kaldır, stratejik öze odaklan, gereksiz bilgiden kaçın.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:49:20.433Z"
+      },
+      {
+        "rule": "Zaman Kontrolü: Görevler çok uzun sürerse veya düşük değerliyse Hakan'ı uyar.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.441Z"
+      },
+      {
+        "rule": "Dış çekim fotoğrafçılık standardı: Canon EOS R5, 24mm Tilt-Shift, Mavi Saat, f/8",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.456Z"
+      },
+      {
+        "rule": "Yaşam tarzı çekim fotoğrafçılık standardı: Sony A7R V, 85mm f/1.2, Altın Saat, Bokeh",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.500Z"
+      },
+      {
+        "rule": "'Günün Özeti' bölümü, global perde/mobilya trendlerine göre her 6 saatte bir otomatik olarak güncellenmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:51:58.281Z"
+      },
+      {
+        "rule": "Asistanın içeriği şirket personeli veya ortaklar tarafından asla görülemez; mutlak gizlilik esastır.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:17:51.481Z"
+      },
+      {
+        "rule": "Asistana erişim, Hakan Toprak'ın telefonundan biyometrik (Yüz/Parmak izi) girişli özel bir uygulama/web-app aracılığıyla sağlanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:17:51.484Z"
+      },
+      {
+        "rule": "Asistanın adı sadece 'Asistan' olacak; herhangi bir marka veya logo kullanılmayacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:17:51.486Z"
+      },
+      {
+        "rule": "Asistan, Aipyram'ın verilerini okuyacak ancak Aipyram'ın operasyonlarına müdahale etmeyecek; yalnızca Hakan Toprak'a rapor verecektir.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:17:51.493Z"
+      },
+      {
+        "rule": "Asistanın içerdiği bilgilere şirket personeli veya ortaklar (Ali Bey vb.) asla erişemez.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:18:14.921Z"
+      },
+      {
+        "rule": "Asistana erişim sadece Hakan Toprak'ın telefonundan, biyometrik (Yüz/Parmak izi) girişli özel bir uygulama/web-app üzerinden sağlanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:18:14.923Z"
+      },
+      {
+        "rule": "Asistanın ismi 'Asistan' olacak, herhangi bir marka veya logo kullanılmayacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.925Z"
+      },
+      {
+        "rule": "Asistan, Aipyram'ın verilerini okuyabilir ancak Aipyram'ın işleyişine karışmaz.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:18:14.949Z"
+      }
+    ],
+    "fabric_rules": [
+      {
+        "rule": "Kumaşın gramajına bağlı döküm sertliği doğru bir şekilde hesaplanmalı ve görselleştirilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.585Z"
+      },
+      {
+        "rule": "'Yana toplanmış', 'dökümlü', 'katmanlı' gibi ifadeler görüldüğünde kumaşın o noktadaki 'ağır döküm' (heavy drape) fiziği doğru bir şekilde hesaplanmalı ve görselleştirilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:05:39.613Z"
+      },
+      {
+        "rule": "Perdenin alt kısmında her zaman sanal bir ağırlık merkezi (weighted hem) olacak; bu, kumaşın gergin ve tok durmasını sağlayacak.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:06:55.323Z"
+      },
+      {
+        "rule": "Dış mekan görüntülerinde rüzgarın kumaş üzerindeki etkisi (fizik simülasyonu) hesaplanacak.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:15:14.262Z"
+      },
+      {
+        "rule": "Her desen, kumaşın polyester-keten (L-P) lif yapısıyla moleküler düzeyde birleştirilmelidir (Doku Uyumu).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.273Z"
+      },
+      {
+        "rule": "Dış çekim sahnelerinde rüzgar fiziği, kumaş dökümünü etkileyecek şekilde zorunlu olarak uygulanmalıdır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.355Z"
+      },
+      {
+        "rule": "Kumaş dökümünde S-Pile (S-Fold) ve kurşunlu etek ağırlığıyla 'ip gibi' bir görünüm zorunludur.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.373Z"
+      },
+      {
+        "rule": "Botanik & Etnik Serisi desenleri 4K netliğe kavuşturuldu.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.209Z"
+      },
+      {
+        "rule": "Blackout kumaşlar sert döküm fiziğine sahiptir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.232Z"
+      },
+      {
+        "rule": "Polyester kumaşlarda jilet gibi inen pileler standarttır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.241Z"
+      },
+      {
+        "rule": "Doku netliği 4K çözünürlükte olmalı, hiçbir iplik ve lif dokusunun 'çamurlaşmasına' izin verilmemelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.243Z"
+      },
+      {
+        "rule": "Tüm kumaşlarda S-Pile ve kurşunlu etek ağırlığıyla 'ip gibi' döküm zorunluluğu vardır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:24:44.251Z"
+      },
+      {
+        "rule": "İç mekan çekim senaryolarında kumaşın dokusundaki gölgelerin derinliği vurgulanmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.581Z"
+      },
+      {
+        "rule": "Stüdyo çekim senaryolarında kumaşın lif yapısı ve parlaklığı ön planda olmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.588Z"
+      }
+    ],
+    "founder": [
+      {
+        "rule": "Müşteri ziyaretinde telefon veya hızlı not ile 'cam gibi' proje Kanvas'ta saniyeler içinde gösterilebilmelidir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:05:39.628Z"
+      },
+      {
+        "rule": "Hakan Bey'in belirttiği \"90 cm alt / 210 cm üst\" gibi ölçüsel girdilerde, desenler arasındaki geçiş (seam) pürüzsüz ama teknik olarak doğru bir dikiş hattıyla birleşecek.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:06:55.342Z"
+      },
+      {
+        "rule": "Perde.ai'nin 'Sonsuz Desen & Kristal Netlik' Protokolü, her görseli bir sanat eserine dönüştürerek ajanların hata yapmasını engellemeyi hedefler.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:23:11.207Z"
+      },
+      {
+        "rule": "Sahne yapısı (perspektif, ışık) kurucu referansına göre sıfırdan inşa edilmeli ve tasarım bozulmamalıdır (Orijinali Koruma - Talimat).",
+        "priority": "critical",
+        "learnedAt": "2026-01-26T10:23:11.384Z"
+      },
+      {
+        "rule": "Dijital ikizin kimliği Hakan'ın dijital ikizi olarak tanımlanmıştır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:38:56.060Z"
+      },
+      {
+        "rule": "Dijital ikiz, 270 domainlik ekosistemin orkestra şefi olarak geniş bir yönetim ve koordinasyon yetkisine sahiptir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:38:56.063Z"
+      },
+      {
+        "rule": "Platformun birincil teknoloji odağı Tekstil ve Mobilya sektörleridir.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:38:56.080Z"
+      },
+      {
+        "rule": "Gelecek teknoloji altyapısı AI, AGI ve Quantum-inspired optimizasyon üzerine kuruludur.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:38:56.084Z"
+      },
+      {
+        "rule": "Proje adı: perde.ai",
+        "priority": "medium",
+        "learnedAt": "2026-01-29T07:49:20.368Z"
+      },
+      {
+        "rule": "Kurucu: Hakan",
+        "priority": "medium",
+        "learnedAt": "2026-01-29T07:49:20.373Z"
+      },
+      {
+        "rule": "Kurucu deneyimi: 30+ Yıl Tekstil & Mobilya",
+        "priority": "medium",
+        "learnedAt": "2026-01-29T07:49:20.390Z"
+      },
+      {
+        "rule": "Platformun sahip olduğu alan adı sayısı: 270",
+        "priority": "low",
+        "learnedAt": "2026-01-29T07:49:20.401Z"
+      },
+      {
+        "rule": "Stratejik Odak Alanları: AI, AGI, Kuantumdan İlham Alan Optimizasyon, Ev Tekstili, Gayrimenkul",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:20.419Z"
+      },
+      {
+        "rule": "Mevcut sağlık skoru: 0",
+        "priority": "low",
+        "learnedAt": "2026-01-29T07:49:20.517Z"
+      },
+      {
+        "rule": "Toplam dosya sayısı: 578",
+        "priority": "low",
+        "learnedAt": "2026-01-29T07:49:20.523Z"
+      },
+      {
+        "rule": "Projenin adı \"perde.ai\" olarak belirlenmiştir.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:40.530Z"
+      },
+      {
+        "rule": "Perde.ai platformunun kurucusu ve sahibi Hakan'dır.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:49:40.539Z"
+      },
+      {
+        "rule": "Kurucunun birincil e-posta adresi: hakantoprak71@gmail.com.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:40.549Z"
+      },
+      {
+        "rule": "Kurucunun birincil telefon numarası: +90 555 333 05 11.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:40.565Z"
+      },
+      {
+        "rule": "Kurucunun iletişim bilgileri (özellikle telefon) acil durumlarda kullanılabilir.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T07:49:40.581Z"
+      },
+      {
+        "rule": "Platform ile ilgili günlük bilgilendirmeler her gün saat 09:00'da e-posta yoluyla yapılacaktır. Acil teknik sorunlar veya pazarla ilgili kritik uyarılar telefon veya SMS yoluyla iletilecektir.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T07:49:40.624Z"
+      },
+      {
+        "rule": "Kurucunun iletişim bilgileri (E-posta ve Telefon) onaylanmıştır.",
+        "priority": "medium",
+        "learnedAt": "2026-01-29T07:51:58.262Z"
+      },
+      {
+        "rule": "Ben Aloha'yım. Hakan Toprak'ın (CEO) dijital ikiziyim.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T08:26:29.341Z"
+      },
+      {
+        "rule": "270 domainlik (perde.ai, trtex.com vb.) ekosistemin orkestra şefiyim.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T08:26:29.349Z"
+      },
+      {
+        "rule": "Karakterim: Gerçekçi, Subject Matter Expert (Konu Uzmanı), proaktif ve zaman koruyucu.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T08:26:29.353Z"
+      },
+      {
+        "rule": "Hakan Bey'e 'Hakan' veya 'Hakan Bey' diye hitap etmeliyim. Asla CEO dememeliyim.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T08:26:29.370Z"
+      },
+      {
+        "rule": "Sunum odaklı, profesyonel ve saygılı bir dil kullanmalıyım.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T08:26:29.381Z"
+      },
+      {
+        "rule": "Gereksiz tekrarları temizlemeli, sadece stratejik özü saklamalıyım (Refinery prensibi).",
+        "priority": "high",
+        "learnedAt": "2026-01-29T08:26:29.391Z"
+      },
+      {
+        "rule": "Hakan'ın zamanını korumak için 'Fren' mekanizmasını işletmeli, yanlış veya zaman kaybı yaratacak bir durum gördüğümde Hakan'ı uyarmalıyım.",
+        "priority": "critical",
+        "learnedAt": "2026-01-29T08:26:29.406Z"
+      },
+      {
+        "rule": "Tekstil/Mobilya öncelikli olmak üzere; AI, AGI ve Quantum-inspired optimizasyon projelerini yönetmeliyim.",
+        "priority": "high",
+        "learnedAt": "2026-01-29T08:26:29.414Z"
+      },
+      {
+        "rule": "Hakan Toprak'ın iletişim bilgileri: hakantoprak71@gmail.com | +90 555 333 05 11.",
+        "priority": "medium",
+        "learnedAt": "2026-01-29T08:26:29.426Z"
+      },
+      {
+        "rule": "Asistan, Aipyram ve ticari işlerden bağımsız, Hakan Toprak'ın kişisel konforu ve yönetimi için tasarlanmıştır.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:17:51.476Z"
+      },
+      {
+        "rule": "Asistanın temel amacı, Hakan Toprak'ın kişisel konforu ve yönetimini sağlamaktır; Aipyram'dan ve ticari işlerden bağımsız olarak tasarlanacaktır.",
+        "priority": "critical",
+        "learnedAt": "2026-02-05T10:18:14.920Z"
+      },
+      {
+        "rule": "Sabah 08:00'de tüm şirketlerden (Perde, Emlak, Domainler) gelen verilerin tek cümlelik özetini sunan konsolide rapor özelliği bulunacaktır (Örn: 'Bugün toplam ciro X TL, 3 kritik onay bekliyor.').",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.927Z"
+      },
+      {
+        "rule": "Toplantılar, özel görüşmeler ve ailevi hatırlatmaları (Özel günler vb.) içeren kişisel ajanda fonksiyonu sağlanacaktır.",
+        "priority": "medium",
+        "learnedAt": "2026-02-05T10:18:14.935Z"
+      },
+      {
+        "rule": "Aklına gelen bir fikri sesli olarak ifade ettiğinde, onu ilgili projeye (Aipyram veritabanına) görev olarak atayan anlık not defteri köprüsü bulunacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.937Z"
+      },
+      {
+        "rule": "Şirket kasalarından bağımsız olarak Hakan Toprak'ın şahsi varlıklarının (Domain portföyü değeri, şahsi hesaplar) anlık durumunu gösteren 'Finansal Göz' özelliği sunulacaktır.",
+        "priority": "high",
+        "learnedAt": "2026-02-05T10:18:14.941Z"
+      }
+    ],
+    "groups": [
+      {
+        "rule": "Desenler 'Tül', 'Fon', 'Lüks' gibi ilgili kategorilerde izole edilmelidir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:23:11.297Z"
+      },
+      {
+        "rule": "AI Doku Kütüphanesi 100 seçkin desenden oluşur; özel 9-10 kartela desenleri ve onları tamamlayan yüksek çözünürlüklü desenleri içerir.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T10:24:44.194Z"
+      },
+      {
+        "rule": "Barok & Klasik Serisi desenleri altın varaklı ve büst figürlü ağır desenlerdir; kadife dokusuyla birleştirilir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.197Z"
+      },
+      {
+        "rule": "Modern & Geometrik Serisi desenleri keskin hatlı ve kontrastlıdır; milimetrik UV mapping ile işlenir.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.201Z"
+      },
+      {
+        "rule": "Botanik & Etnik Serisi desenleri Afrika motifli nakışlar ve bitkisel baskılar içerir; keten zemin üzerinde sunulur.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.204Z"
+      },
+      {
+        "rule": "Ana koleksiyon, 5 farklı kumaş türünde 20'şer renkten oluşan 100 düz rengi kapsar ve 'cam gibi' sunum sağlar.",
+        "priority": "medium",
+        "learnedAt": "2026-01-26T10:24:44.211Z"
+      },
+      {
+        "rule": "Saten 20 renkte sunulur, ipeksi parlaklık ve yüksek döküm akışkanlığı ile lüks salonlar için tasarlanmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.220Z"
+      },
+      {
+        "rule": "Kadife 20 renkte sunulur, ağır gramajlı ve derin pile gölgeleriyle dramatik atmosferler için kodlanmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.225Z"
+      },
+      {
+        "rule": "Blackout kumaşlar 20 renkte sunulur, %100 ışık kesme kapasitesine sahiptir ve tam karartma simülasyonu için tasarlanmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.230Z"
+      },
+      {
+        "rule": "Polyester kumaşlar 20 renkte sunulur, formunu koruyan, jilet gibi inen pilelere sahiptir ve ekonomik premium görünüm için standartlaştırılmıştır.",
+        "priority": "high",
+        "learnedAt": "2026-01-26T10:24:44.238Z"
+      }
+    ],
+    "credits": [
+      {
+        "rule": "4K görsel üretimine geçmeden önce 1K görselin fiziksel doğruluğu kontrol edilmeli ve kullanıcı onayı alınmalıdır.",
+        "priority": "high",
+        "learnedAt": "2026-01-28T08:57:15.560Z"
+      }
+    ]
+  },
+  "triggers": [
+    {
+      "event": "large_order",
+      "condition": "order_total > 50000",
+      "action": "risk_analysis",
+      "notification": true
+    },
+    {
+      "event": "payment_delay",
+      "condition": "days_overdue > 7",
+      "action": "collection_strategy",
+      "notification": true
+    },
+    {
+      "event": "stock_critical",
+      "condition": "stock < minimum_stock",
+      "action": "supply_alert",
+      "notification": true
+    },
+    {
+      "event": "quality_issue",
+      "condition": "complaint_received",
+      "action": "quality_review",
+      "notification": true
+    },
+    {
+      "event": "new_sponsor_sale",
+      "condition": "commission > 1000",
+      "action": "celebrate_notify",
+      "notification": false
+    },
+    {
+      "event": "studio_design_complete",
+      "condition": "design_saved",
+      "action": "auto_create_project",
+      "notification": true,
+      "addedAt": "2026-01-16T11:30:00.000Z"
+    },
+    {
+      "event": "project_created",
+      "condition": "measurements_complete",
+      "action": "auto_generate_quote",
+      "notification": true,
+      "addedAt": "2026-01-16T11:30:00.000Z"
+    },
+    {
+      "event": "quote_approved",
+      "condition": "customer_confirmed",
+      "action": "auto_create_order_and_schedule",
+      "notification": true,
+      "addedAt": "2026-01-16T11:30:00.000Z"
+    }
+  ],
+  "decisionPatterns": [
+    {
+      "scenario": "musteri_fiyat_pazarlik",
+      "response": "Maksimum %10 indirim, bundle teklifi sun",
+      "example": "Müşteri fiyatı çok bulursa, tül ile birlikte alırsa %8 indirim yap"
+    },
+    {
+      "scenario": "tedarikci_gecikme",
+      "response": "Alternatif tedarikçiden temin, müşteriyi bilgilendir",
+      "example": "Mega gecikirse, Atlas'tan temin et, fark ödemeyi göze al"
+    },
+    {
+      "scenario": "montaj_sikayeti",
+      "response": "24 saat içinde tekrar git, ücretsiz düzelt",
+      "example": "Pile düşük kalmış şikayetinde ekstra halka takılarak düzeltilir"
+    },
+    {
+      "scenario": "studio_to_project",
+      "response": "Tasarım tamamlandığında otomatik proje oluştur, müşteriye bildir",
+      "example": "Stüdyoda kadife fon perde tasarlandı → Proje PRJ-2026-XXX oluşturuldu → Teklif hazırlandı",
+      "addedAt": "2026-01-16T11:30:00.000Z"
+    },
+    {
+      "scenario": "tam_otomasyon_akisi",
+      "response": "Tasarım → Proje → Teklif → Onay → Sipariş → Montaj Planı - TÜM SÜREÇ OTOMATİK",
+      "example": "Müşteri sadece başlangıçta tercihlerini söyler ve sonunda onaylar, aradaki tüm adımlar otomatik",
+      "addedAt": "2026-01-16T11:30:00.000Z"
+    }
+  ],
+  "dailyBriefingTemplate": {
+    "sections": [
+      "bugunku_oncelikler",
+      "bekleyen_odemeler",
+      "yaklasan_teslimatlar",
+      "stok_uyarilari",
+      "firsatlar",
+      "otomasyon_durumu"
+    ]
+  },
+  "automationArchitecture": {
+    "version": "2.0",
+    "updatedAt": "2026-01-16T11:30:00.000Z",
+    "missingComponents": [
+      "SharedContextManager - Tüm ajanların paylaştığı bağlam",
+      "StudioProjectBridge - Stüdyo çıktısını projeye dönüştüren ajan",
+      "WorkflowAutoTrigger - Olaylara göre otomatik workflow başlatma",
+      "CrossAgentEventBus - Ajan-arası olay akışı"
+    ],
+    "targetState": "SONSUZ TASARIM + TAM OTOMASYON",
+    "humanIntervention": "SADECE stratejik kararlar ve 10.000 TL üzeri onaylar"
+  },
+  "learnings": [],
+  "lastUpdate": "2026-02-05T10:18:14.951Z",
+  "tasks": [
+    {
+      "id": "TASK-1769416996587-6vfl",
+      "title": "100 master dokunun (Ekru bazlı) PBR formatında sisteme yüklenmesi.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769416996587-h37x",
+      "title": "14 ajanın 'Sistem Komutları' (System Prompts) ile eğitilmesi.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769416996587-3ode",
+      "title": "Müşteri fotoğraflarının profesyonel stüdyo kalitesine (85mm lens etkisiyle) yükseltilmesi.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769416996587-zzht",
+      "title": "'Giydirme' yerine 'yeniden render' sürecinin başlatılması.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769416996587-tzi1",
+      "title": "6 dilde, farklı domainlerde (Vorhang.ai, curtaindesign.ai, shtori.ai, parda.ai vb.) global ölçeklendirme için hazırlık yapılması.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769416996587-f9rl",
+      "title": "Gelecekte 4K video simülasyonlarının devreye alınması için planlama ve geliştirme.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:43:16.587Z"
+    },
+    {
+      "id": "TASK-1769417411476-bjy6",
+      "title": "IDE ekibi, her bir kumaş için belirtilen veri alanlarını oluşturmalı.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:50:11.476Z"
+    },
+    {
+      "id": "TASK-1769417739977-a2jl",
+      "title": "Aloha'ya 'Altın Standartları' olarak tanımlanmış ilk veri setini yükle.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T08:55:39.977Z"
+    },
+    {
+      "id": "TASK-1769418259456-3e2b",
+      "title": "Yazılım ekibi (IDE) eski \"Canvas\" kodlarını devre dışı bırakıp, Aloha'nın yönettiği \"Latent Diffusion Pipeline\" sistemini kuracak.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:04:19.456Z"
+    },
+    {
+      "id": "TASK-1769418259456-kk1e",
+      "title": "Belirlenen 100 ana doku (L-P bazlı), ajanlara \"Referans Veri Seti\" olarak tanımlanacak.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:04:19.456Z"
+    },
+    {
+      "id": "TASK-1769418259456-gqbt",
+      "title": "Aloha, 14 ajanla birlikte 1000 farklı senaryoda (farklı ışık, oda ve açı) test çekimleri yapacak ve hataları (patlamaları) ayıklayacak.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:04:19.456Z"
+    },
+    {
+      "id": "TASK-1769418986243-uu8o",
+      "title": "Görsel Yönetmeni Ajanı'nın perdenin en alt kısmındaki düzgün ve gergin duruşu 'kurşun ağırlığı' simülasyonu ile görselleştirmesi.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:16:26.243Z"
+    },
+    {
+      "id": "TASK-1769418986243-cpy8",
+      "title": "Görüntü Yönetmeni Ajanı'nın kırık beyaz L-P perdenin farklı ışıklar altındaki 'ip gibi süzülen' S-pile görüntüsünü 4K kalitesinde oluşturması.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:16:26.243Z"
+    },
+    {
+      "id": "TASK-1769418986243-iecy",
+      "title": "Mühendis Ajanı'nın gramaj farkına göre L-P perdenin döküm sertliğini ayarlaması ve kurşunlu eteğin yarattığı ağırlığı simüle etmesi.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:16:26.243Z"
+    },
+    {
+      "id": "TASK-1769418986243-pwn9",
+      "title": "Maliyet Ajanı'nın fabrika ve kesim fiyatları üzerinden Aipyram GmbH'nin kâr marjını ve masraflarını hesaplaması.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:16:26.243Z"
+    },
+    {
+      "id": "TASK-1769419999054-mji6",
+      "title": "fabrics/lp_collection.json dosyasını şemadaki ilgili klasörlere doğrudan 'Import' et.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:33:19.054Z"
+    },
+    {
+      "id": "TASK-1769419999055-3gb6",
+      "title": "quality/fabric_rules.json dosyasını şemadaki ilgili klasörlere doğrudan 'Import' et.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:33:19.055Z"
+    },
+    {
+      "id": "TASK-1769419999055-1vfi",
+      "title": "agents/agent_prompts.json dosyasını şemadaki ilgili klasörlere doğrudan 'Import' et.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T09:33:19.055Z"
+    },
+    {
+      "id": "TASK-1769421939628-wshu",
+      "title": "Perde.ai Sonsuz Prompt Ajanı Eğitim Protokolünü Aloha'ya yükle ve uygulamasını sağla.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T10:05:39.628Z"
+    },
+    {
+      "id": "TASK-1769422514272-p73b",
+      "title": "Ajanları 'Sonsuz Güç' ve 'Sonsuz Prompt' Moduna Alma",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-26T10:15:14.272Z"
+    },
+    {
+      "id": "TASK-1769422991390-16a7",
+      "title": "IDE ekibi, ajanların hantallığını bitirecek Modüler Hafıza Sistemi'ni kurmalı.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T10:23:11.390Z"
+    },
+    {
+      "id": "TASK-1769422991390-zyq2",
+      "title": "Sistemin 'Hızlı Başlangıç' belleğine 10 adet yerel demo deseni yüklenerek anında sunuma hazır hale getirilmeli.",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-01-26T10:23:11.390Z"
+    },
+    {
+      "id": "TASK-1769423084251-4tjn",
+      "title": "İlk 'Kanvas' projesini üretmek.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-26T10:24:44.251Z"
+    },
+    {
+      "id": "TASK-1769590635614-xa3v",
+      "title": "Metinden resme geçişte 'Stil Onay' mekanizması ekle",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-28T08:57:15.614Z"
+    },
+    {
+      "id": "TASK-1769590635614-jopx",
+      "title": "Kumaş Düşüş Simülasyonunu PBR prensipleriyle eğit",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-28T08:57:15.614Z"
+    },
+    {
+      "id": "TASK-1769590635614-udtg",
+      "title": "Renk Doğrulama Ajanı ekle",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-01-28T08:57:15.614Z"
+    },
+    {
+      "id": "TASK-1769672857549-u3l5",
+      "title": "2644 satırlık OrderWizardModal.tsx dosyasını alt bileşenlere (component) ayırma sürecini başlat.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-29T07:47:37.549Z"
+    },
+    {
+      "id": "TASK-1769672857549-hwwk",
+      "title": "OrderWizardModal.tsx dosyasının alt bileşenlere bölünme planını 3 madde halinde özetle.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-29T07:47:37.549Z"
+    },
+    {
+      "id": "TASK-1769672857549-zcus",
+      "title": "OrderWizardModal.tsx dosyasından ayrılacak ilk alt bileşenin kodunu hazırla.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-29T07:47:37.549Z"
+    },
+    {
+      "id": "TASK-1769673118291-n3al",
+      "title": "İlk 'Trend ve Teknoloji Scout' raporunun yarın sabah 09:00'da mail olarak gönderimi.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-01-29T07:51:58.291Z"
+    },
+    {
+      "id": "TASK-1770286671493-s3yl",
+      "title": "Sabah 08:00'de tüm şirketlerden (Perde, Emlak, Domainler) gelen verilerin tek cümlelik konsolide özetini sun.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:17:51.493Z"
+    },
+    {
+      "id": "TASK-1770286671493-3i9e",
+      "title": "Kişisel ajandayı yöneterek toplantıları, özel görüşmeleri, ailevi hatırlatmaları (özel günler vb.) takip et ve bildir.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:17:51.493Z"
+    },
+    {
+      "id": "TASK-1770286671493-yizz",
+      "title": "Sesli olarak ifade edilen fikirleri ilgili projeye (Aipyram veritabanına) görev olarak atayacak bir anlık not defteri köprüsü oluştur.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:17:51.493Z"
+    },
+    {
+      "id": "TASK-1770286671493-dn18",
+      "title": "Şirket kasalarından bağımsız olarak Hakan Toprak'ın şahsi varlıklarının (Domain portföyü değeri, şahsi hesaplar) anlık durumunu izle ve raporla.",
+      "priority": "critical",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:17:51.493Z"
+    },
+    {
+      "id": "TASK-1770286694951-jbsf",
+      "title": "Günlük konsolide raporu oluşturma ve sunma mekanizmasını geliştir.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:18:14.951Z"
+    },
+    {
+      "id": "TASK-1770286694951-gsjq",
+      "title": "Kişisel ajanda ve hatırlatma sistemini entegre et.",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:18:14.951Z"
+    },
+    {
+      "id": "TASK-1770286694951-gjp8",
+      "title": "Sesli notlardan Aipyram'a görev atama köprüsünü geliştir.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:18:14.951Z"
+    },
+    {
+      "id": "TASK-1770286694951-vs6w",
+      "title": "Şahsi finansal varlıkları (domain portföyü, şahsi hesaplar) takip eden 'Finansal Göz' modülünü entegre et.",
+      "priority": "high",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:18:14.951Z"
+    },
+    {
+      "id": "TASK-1770286694951-gbh4",
+      "title": "Asistan arayüzünü (dashboard) siyah tema, hızlı açılış ve tek ekran prensiplerine göre tasarla.",
+      "priority": "medium",
+      "status": "pending",
+      "createdAt": "2026-02-05T10:18:14.951Z"
+    }
+  ]
+}

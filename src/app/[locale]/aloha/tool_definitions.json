@@ -1,0 +1,34 @@
+[
+  {
+    "tool_name": "rebuildIndex",
+    "description": "Holding'in sektörel ajanlarindaki ürünleri yeniden indexler (Arama motoru hizlandirmasi için).",
+    "parameters": {
+      "project": "trtex | hometex | perde | didimemlak"
+    },
+    "risk_level": "MODERATE"
+  },
+  {
+    "tool_name": "publishArticle",
+    "description": "Aloha İkizi tarafından sağlanan bir vizyon veya haber metninin, 12 sektörden ilgili olan(larına) canli yayinlanmasini sağlar.",
+    "parameters": {
+      "target_sector": "hometex | trtex | perde",
+      "content_markdown": "Yayına alınacak makalenin/haberin tam metni",
+      "synthetic_test_bypass": "boolean (Sentetik 1000 Müşteri Testinden geçmeden acil yayına alma izni)"
+    },
+    "risk_level": "WARNING"
+  },
+  {
+    "tool_name": "triggerPredictiveOracle",
+    "description": "Gelecek 15 günün tekstil/emlak analizlerini Sistem Vektör Belleğinden üretip (Kâhin Modülü) Hakan Toprak'a anindan pushlar.",
+    "parameters": {},
+    "risk_level": "NONE"
+  },
+  {
+    "tool_name": "generateImage",
+    "description": "Kelimelerden yeni fuar tasarımı, mockup veya arayüz (Gemini/Imagen/Midjourney) çıktısı alıp sisteme kaydeder.",
+    "parameters": {
+      "prompt": "Hayal edilecek sahnenin mimari/ürün/B2B komutu."
+    },
+    "risk_level": "NONE"
+  }
+]

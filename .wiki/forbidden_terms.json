@@ -1,0 +1,69 @@
+{
+  "version": "2.0",
+  "updated_at": "2026-04-10",
+  "rules": [
+    {
+      "id": "visual_forbidden",
+      "applies_to": ["image_prompt", "visual_description"],
+      "terms": ["karanlık", "kirli", "depo", "manifaturacı", "ucuz", "warehouse", "dark", "dirty", "messy", "cheap", "old", "storage", "budget", "eski"],
+      "action": "block",
+      "reason": "AIPyram marka estetiği — negatif çağrışımlı görseller yasak",
+      "alternatives": {
+        "karanlık": "loş aydınlatma",
+        "kirli": "ham doku",
+        "depo": "showroom",
+        "manifaturacı": "kumaş atölyesi",
+        "ucuz": "uygun fiyatlı",
+        "dark": "moody lighting",
+        "dirty": "raw texture",
+        "warehouse": "showroom",
+        "cheap": "value-oriented",
+        "old": "classic"
+      }
+    },
+    {
+      "id": "content_forbidden",
+      "applies_to": ["article", "seo_text", "product_description"],
+      "terms": ["en ucuz", "kalitesiz", "çin malı", "depo satışı", "manifaturacı"],
+      "action": "replace",
+      "reason": "B2B profesyonel ton — düşük kalite çağrışımı yasak",
+      "alternatives": {
+        "en ucuz": "en uygun fiyat-performans",
+        "kalitesiz": "standart altı",
+        "çin malı": "uzak doğu üretimi",
+        "depo satışı": "toptan satış noktası",
+        "manifaturacı": "tekstil tedarikçisi"
+      }
+    },
+    {
+      "id": "brand_wall",
+      "applies_to": ["article", "seo_text", "product_description", "image_prompt", "visual_description"],
+      "terms": ["Gemini", "GPT", "Claude", "OpenAI", "Anthropic", "Google AI", "ChatGPT", "GPT-4", "GPT-3"],
+      "action": "replace",
+      "reason": "BRAND WALL — Dış platform isimleri sızdırılamaz. Her şey TRTEX Intelligence markası altında kalmalı.",
+      "alternatives": {
+        "Gemini": "TRTEX Intelligence",
+        "GPT": "TRTEX IQ",
+        "Claude": "TRTEX Intelligence",
+        "OpenAI": "AIPYRAM",
+        "Anthropic": "AIPYRAM",
+        "Google AI": "TRTEX Intelligence",
+        "ChatGPT": "TRTEX IQ",
+        "GPT-4": "TRTEX Intelligence",
+        "GPT-3": "TRTEX Intelligence"
+      }
+    },
+    {
+      "id": "textile_corrections",
+      "applies_to": ["article", "product_description"],
+      "terms": [],
+      "action": "note",
+      "reason": "Sektörel doğruluk — keten kuralı ve pamuk blend bilgisi",
+      "notes": {
+        "keten": "Keten denildiğinde %100 polyester keten görünümlü kumaş kastedilir. Gerçek keten (flax) için açıkça 'doğal keten' veya '%100 linen' belirt. MALİYET HESABI keten bazlı YAPILAMAZ — polyester-linen blend bazlı yapılmalı.",
+        "pamuk": "Türk ev tekstilinde pamuk oranı genellikle %20-40 (polycotton blend). %100 pamuk nadir ve premium segmenttedir.",
+        "linen": "Linen = polyester-linen blend (keten görünümlü). Gerçek linen değil. Maliyet farkı 3-5x."
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+import Catalog from '@/components/tenant-perde/Catalog';
+import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
+import B2BGatekeeper from '@/components/auth/B2BGatekeeper';
+
+export default async function CatalogPage({ params }: { params: Promise<{ domain: string }> }) {
+  const { domain } = await params;
+
+  return (
+    <B2BGatekeeper>
+      <div className="min-h-screen bg-black">
+        <PerdeNavbar theme="light" />
+
+      <main className="pt-24">
+        <Catalog />
+        </main>
+      </div>
+    </B2BGatekeeper>
+  );
+}

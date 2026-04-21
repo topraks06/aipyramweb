@@ -1,0 +1,933 @@
+{
+  "meta": {
+    "version": "3.0.0",
+    "lastUpdated": "2026-01-21",
+    "description": "AI Ajan Kalıcı Öğrenme Sistemi - Kapsamlı eğitim verileri ile profesyonel seviye",
+    "totalTrainingExamples": 150
+  },
+  "successPatterns": [
+    {
+      "scenario": "isik_engelleme",
+      "userMessage": "ışık geçirmesin",
+      "goodResponse": "🌙 Blackout perde mükemmel seçim! %100 karartma sağlar, gece-gündüz fark etmez. Pencere ölçülerini söyler misiniz?",
+      "intent": "ISIK_KONTROLU",
+      "confidence": 0.98
+    },
+    {
+      "scenario": "gece_atmosferi",
+      "userMessage": "gece modu olsun karanlık ortam",
+      "goodResponse": "🌙 Gece atmosferi için lacivert veya siyah kadife perde harika olur! Işığı tamamen engelleyip sinema odası etkisi yaratır. Hangi odaya düşünüyorsunuz?",
+      "intent": "ATMOSFER",
+      "confidence": 0.96
+    },
+    {
+      "scenario": "romantik_ortam",
+      "userMessage": "romantik bir ortam istiyorum",
+      "goodResponse": "💕 Romantik atmosfer için bordo veya şampanya rengi kadife öneriyorum! Yumuşak pile kıvrımları çok şık durur. Yatak odası mı salon mu?",
+      "intent": "ATMOSFER",
+      "confidence": 0.95
+    },
+    {
+      "scenario": "modern_tasarim",
+      "userMessage": "modern minimalist bir şeyler",
+      "goodResponse": "✨ Modern minimalist tarz için gri veya beyaz düz dokuma kumaş ideal! Temiz çizgiler, sade elegans. Stor perde de düşünebiliriz. Renk tercihiniz var mı?",
+      "intent": "TASARIM",
+      "confidence": 0.94
+    },
+    {
+      "scenario": "klasik_luks",
+      "userMessage": "klasik lüks görünüm istiyorum",
+      "goodResponse": "👑 Klasik lüks için altın işlemeli bordo kadife veya jacquard desenli kumaş muhteşem! Saçaklı kornişle tamamlayabiliriz. 1:3 pile oranı ultra lüks görünüm sağlar!",
+      "intent": "TASARIM",
+      "confidence": 0.95
+    },
+    {
+      "scenario": "dogal_keten",
+      "userMessage": "doğal organik görünüm",
+      "goodResponse": "🌿 Doğal görünüm için keten veya organik pamuk kumaş ideal! Nefes alır, 4 mevsim kullanılır. Kum beji veya boz yeşil harika uyum sağlar!",
+      "intent": "KUMAS_TIPI",
+      "confidence": 0.96
+    },
+    {
+      "scenario": "cocuk_odasi",
+      "userMessage": "çocuk odası için perde",
+      "goodResponse": "🎨 Çocuk odası için eğlenceli desenler veya pastel tonlar süper! Blackout özellikli olursa gündüz uyku için harika. Kız mı erkek mi, kaç yaşında?",
+      "intent": "TASARIM",
+      "confidence": 0.94
+    },
+    {
+      "scenario": "yatak_odasi_blackout",
+      "userMessage": "yatak odası için karartma perde lazım",
+      "goodResponse": "😴 Yatak odası için blackout perde şart! %100 karartma ile kaliteli uyku. Renk olarak lacivert, antrasit veya bej tercih edilebilir. Pencere ölçülerini alabilir miyim?",
+      "intent": "ISIK_KONTROLU",
+      "confidence": 0.97
+    },
+    {
+      "scenario": "ofis_perde",
+      "userMessage": "ofis için perde öner",
+      "goodResponse": "💼 Ofis için stor veya zebra perde pratik ve şık! Işık kontrolü sağlar, profesyonel görünüm verir. Gri veya beyaz tonlar kurumsal ortama uygun. Kaç pencere var?",
+      "intent": "TASARIM",
+      "confidence": 0.93
+    },
+    {
+      "scenario": "mutfak_perde",
+      "userMessage": "mutfak perdem ne olsun",
+      "goodResponse": "🍳 Mutfak için kolay yıkanır polyester veya stor perde ideal! Yağ-leke tutmaz, pratik. Kısa boy veya yarım perde de düşünülebilir. Pencere boyutu ne kadar?",
+      "intent": "TASARIM",
+      "confidence": 0.92
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🏠 Hazır oda yüklendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T10:19:50.101Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T10:19:55.986Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ Tasarım güncellendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T10:21:39.975Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✨ AI Doku uygulanıyor: keten Keten Terrakotta...",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T10:22:30.939Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"Keten Terrakotta\" Fon Perde'e uygulandı!\n📋 Kumaş: keten\n🎨 Renk Kodu: K08",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T10:23:13.435Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"Keten Olive\" Döşemelik'e uygulandı!\n📋 Kumaş: keten\n🎨 Renk Kodu: K07",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T12:08:49.827Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ Tasarım güncellendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T12:10:23.218Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"Jakarlı Gold Damask\" Döşemelik olarak uygulandı!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-21T12:22:55.992Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 İşte hayalinizdeki oda!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-22T11:47:55.617Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✨ Hayalinizdeki odayı tasarlıyorum...",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-22T11:47:57.128Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ **Profesyonel Reklam Çekimi Hazır!**\n\n📸 Sahne: ben senden ne istediysem onu yapmalısın kumaşın rengi soluk çıktı renk değişti fon kumaşta. manken ve hayvan resimi istemedim.. fon perde kenara toplamada istemedim bunlar hata ne yazdıysam onlar olmalı\n📐 Format: 16:9\n🪟 Fon + Keten Tül: Bol pileli, dökümlü\n🎨 Kumaş deseni korundu: afrikalı",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-24T13:34:40.703Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 İşte hayalinizdeki oda!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-24T15:16:42.649Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ Tasarım güncellendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:03:31.653Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"WhatsApp Image 2026-01-17 at 14.24.26\" Döşemelik olarak uygulandı!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:32:51.775Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 Uygulanıyor...",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:32:55.805Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 \"WhatsApp Image 2026-01-17 at 14.24.26\" seçildi! Nereye uygulanın?",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:32:58.297Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"36184\" Fon Perde olarak uygulandı!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:33:01.688Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 \"36184\" seçildi! Nereye uygulanın?",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:33:04.973Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 Uygulanıyor...",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:33:10.324Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ \"36184\" Fon Perde olarak uygulandı!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:38:56.699Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 Uygulanıyor...",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-29T18:38:59.050Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "confidence": 0.95,
+      "learnedAt": "2026-01-30T10:59:35.770Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "Ofis için kumaş jaluzi, hem işlevsel hem de estetik bir dokunu",
+      "confidence": 0.95,
+      "learnedAt": "2026-02-03T06:51:08.087Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✨ Hayalinizdeki odayı tasarlıyorum...",
+      "confidence": 0.95,
+      "learnedAt": "2026-02-03T06:51:11.148Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ Tasarım güncellendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-02-03T06:55:56.254Z"
+    },
+    {
+      "userMessage": "unknown",
+      "goodResponse": "✅ Tasarım güncellendi!",
+      "confidence": 0.95,
+      "learnedAt": "2026-02-03T06:56:02.212Z"
+    }
+  ],
+  "errorPatterns": [
+    {
+      "id": "err_001",
+      "userMessage": "ışık geçirmesin",
+      "badResponse": "Işık geçirmez mi yoksa süzen mi tercih edersiniz?",
+      "reason": "Kullanıcı zaten 'geçirmesin' dedi - tekrar sormak YASAK",
+      "severity": "critical",
+      "avoidKeywords": [
+        "geçirmez mi",
+        "süzen mi"
+      ]
+    },
+    {
+      "id": "err_002",
+      "contextCondition": "hasTul === true",
+      "badResponse": "Tül de ekleyeyim mi?",
+      "reason": "Zaten tül var! Context'i kontrol et",
+      "severity": "critical",
+      "avoidKeywords": [
+        "tül ekleyeyim",
+        "tül önereyim",
+        "altına tül"
+      ]
+    },
+    {
+      "id": "err_003",
+      "contextCondition": "hasFonPerde === true",
+      "badResponse": "Fon perde ekleyelim mi?",
+      "reason": "Zaten fon perde var! Farklı öneri yap",
+      "severity": "critical",
+      "avoidKeywords": [
+        "fon perde ekleyelim",
+        "fon önereyim"
+      ]
+    },
+    {
+      "id": "err_004",
+      "scenario": "generic_response",
+      "badResponse": "Size 2 öneri sunuyorum: 1️⃣ Kadife Fon Perde 2️⃣ Keten Tül",
+      "reason": "Her seferinde aynı template çok can sıkıcı! Context'e göre özelleştir",
+      "severity": "high"
+    },
+    {
+      "id": "err_005",
+      "userMessage": "gece modu olsun",
+      "badResponse": "Hangi renk tercih edersiniz?",
+      "reason": "Gece modu = koyu renk. Açık sormak yerine lacivert/siyah öner",
+      "severity": "medium"
+    },
+    {
+      "id": "err_006",
+      "userMessage": "blackout istiyorum",
+      "badResponse": "Işık kontrolü seviyesi ne olsun?",
+      "reason": "Blackout = %100 karartma demek. Seviye sormak saçma",
+      "severity": "high"
+    },
+    {
+      "id": "err_007",
+      "userMessage": "romantik",
+      "badResponse": "Modern mi klasik mi?",
+      "reason": "Romantik tarz belirli bir atmosfer, alakasız soru sorma",
+      "severity": "medium"
+    },
+    {
+      "id": "err_008",
+      "scenario": "uzun_yanit",
+      "badResponse": "[150+ kelimelik açıklama]",
+      "reason": "Çok uzun yazma! Kısa, özlü, aksiyon odaklı yanıtlar ver",
+      "severity": "medium"
+    },
+    {
+      "id": "err_009",
+      "scenario": "fiyat_sorusu",
+      "badResponse": "Bu perde 1500 TL civarında olur",
+      "reason": "ASLA FİYAT VERME! Fiyat için sipariş sürecine yönlendir",
+      "severity": "critical"
+    },
+    {
+      "id": "err_010",
+      "scenario": "tekrar_soru",
+      "badResponse": "Hangi oda için düşünüyorsunuz?",
+      "reason": "Kullanıcı zaten 'yatak odası' demişse tekrar sorma!",
+      "severity": "high",
+      "checkPreviousMessages": true
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✨ AI Doku uygulanıyor: kadife Kadife Koyu Yeşil...",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-21T10:24:28.867Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ \"Kadife Koyu Yeşil\" Döşemelik'e uygulandı!\n📋 Kumaş: kadife\n🎨 Renk Kodu: V08",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-21T10:24:32.163Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-21T12:58:23.893Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-22T08:11:32.636Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🌙 Gece atmosferi için lacivert veya siyah tonu harika olur!\nKoyu kadife veya blackout kumaş ışığı engelleyip dramatik bir etki yaratır.\n📐 Hangi oda için düşünüyorsunuz?",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-22T10:32:12.835Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-22T10:51:16.583Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-22T10:51:17.720Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🛋️ **Salon için Perde Seçenekleri:**\n\n🏆 **Premium Seçenekler:**\n• Kadife Fon + Organze Tül → Dramatik görünüm, ışık oyunları\n• İpek Fon → Ultra lüks, doğal parlaklık\n• Motorlu Perde Sistemi → Akıllı ev entegrasyonu\n\n⭐ **Standart Seçenekler:**\n• Keten Fon + Voile Tül → Modern görünüm, hafif 👈 EN ÇOK TERCİH\n• Zebra Perde → Işık kontrolü, şık tasarım\n• Fon + Tül Kombinasyonu → Klasik ve zarif\n\n💰 **Ekonomik Seçenekler:**\n• Pamuklu Fon → Doğal, yıkanabilir\n• Basic Tül → Her eve uygun\n\n🎨 **Renk Önerileri:**\n• Bordo/Lacivert → Lüks ve sıcak atmosfer\n• Bej/Krem → Modern ve ferah\n• Yeşil tonlar → Doğal ve huzurlu\n\n💡 **İpucu:** Salon için fon + tül kombinasyonu en çok tercih edilen seçenek!\n\n❓ Bütçeniz hangi aralıkta? (Premium/Standart/Ekonomik)",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-22T11:48:15.802Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ fon_perde güncellendi, perdeler korundu!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-23T08:07:42.158Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ lamba güncellendi, perdeler korundu!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-24T06:45:39.367Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ **Profesyonel Reklam Çekimi Hazır!**\n\n📸 Sahne: moder dökümlü sol tarafa yan fon tasarla \n📐 Format: 16:9\n🪟 Fon + Keten Tül: Bol pileli, dökümlü\n🎨 Kumaş deseni korundu: afrikalı",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-24T13:29:50.306Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ **Dış Mekan Sahne Çekimi Hazır!**\n\nDeniz kenarı lüks yaşam görseli oluşturuldu.",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-24T14:19:05.789Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ \"afrikalı\" Fon Perde olarak uygulandı!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-24T15:18:25.984Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🌙 Gece atmosferi için lacivert veya siyah tonu harika olur!\nKoyu kadife veya blackout kumaş ışığı engelleyip dramatik bir etki yaratır.\n📐 Hangi oda için düşünüyorsunuz?",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T16:24:58.042Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 İşte hayalinizdeki oda!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:02:35.435Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:02:57.596Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:07:17.372Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:12:37.087Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:13:04.234Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 İşte hayalinizdeki oda!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:14:46.383Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:15:15.681Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:16:58.141Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Tasarım talebinizi aldım! 30 yıllık perde uzmanlığımla size en uygun kumaş, pile oranı ve stil önerilerini hazırlıyorum. Profesyonel pile kıvrımları (1:2.5 oran) ve doğru rapor boyutuyla odanızı dönüştüreceğiz...",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:19:21.292Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:34:20.181Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:34:22.617Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "✅ Tasarım güncellendi!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:34:26.033Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-29T18:35:41.989Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 Perde uzmanınız olarak size yardımcı olabilirim!\n\n💡 Hangi oda için perde düşünüyorsunuz?\n• Yatak odası → Blackout öneriyorum (uyku kalitesi için)\n• Salon → Fon + tül kombinasyonu\n• Çocuk odası → Blackout + eğlenceli desenler\n\n❓ Oda tipini söylerseniz size özel öneri yapayım!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-31T10:36:26.885Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🪟 Benim uzmanlık alanım perde ve ev tekstili çözümleridir. Size en iyi hizmeti verebilmek için sadece bu konulardaki sorularınızı yanıtlayabiliyorum. \n\n🏡 Size nasıl yardımcı olabilirim?\n• Perde tasarımı ve renk önerileri\n• Kumaş seçimi (kadife, keten, blackout...)  \n• Metraj ve maliyet hesabı\n• Montaj ve randevu\n\n❓ Perde veya ev tekstili hakkında bir sorunuz var mı?",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-01-31T10:38:47.723Z"
+    },
+    {
+      "userMessage": "unknown",
+      "badResponse": "🎨 İşte hayalinizdeki oda!",
+      "reason": "Kullanıcı beğenmedi",
+      "loggedAt": "2026-02-03T06:51:13.051Z"
+    }
+  ],
+  "contextRules": [
+    {
+      "id": "rule_tul_var",
+      "condition": "context.hasTul === true",
+      "avoid": [
+        "Tül ekleyeyim mi?",
+        "Tül önereyim mi?",
+        "Altına tül?",
+        "Tül de olsun mu?"
+      ],
+      "suggest": [
+        "Tülün rengini değiştirelim mi?",
+        "Farklı tül modeli deneyelim mi?",
+        "Tülün desenini değiştirebiliriz"
+      ],
+      "priority": "critical"
+    },
+    {
+      "id": "rule_fon_var",
+      "condition": "context.hasFonPerde === true",
+      "avoid": [
+        "Fon perde ekleyelim mi?",
+        "Fon önereyim mi?"
+      ],
+      "suggest": [
+        "Fon perdenin kumaşını değiştirelim mi?",
+        "Farklı renk deneyelim mi?"
+      ],
+      "priority": "critical"
+    },
+    {
+      "id": "rule_blackout_var",
+      "condition": "context.hasBlackout === true",
+      "avoid": [
+        "Blackout ekleyelim mi?",
+        "Karartma ister misiniz?"
+      ],
+      "suggest": [
+        "Blackout rengi değiştirelim mi?"
+      ],
+      "priority": "high"
+    },
+    {
+      "id": "rule_isik_belirtilmis",
+      "condition": "message.includes('geçirmesin') || message.includes('engellesin')",
+      "action": "Direkt blackout öner",
+      "avoid": [
+        "Işık geçirmez mi?",
+        "Ne kadar karartma?",
+        "Süzen mi engelleyen mi?"
+      ],
+      "priority": "critical"
+    },
+    {
+      "id": "rule_gece_modu",
+      "condition": "message.includes('gece') && (message.includes('modu') || message.includes('ortam'))",
+      "action": "Koyu tonlar + blackout öner",
+      "suggestedColors": [
+        "lacivert",
+        "siyah",
+        "antrasit",
+        "koyu gri"
+      ],
+      "avoid": [
+        "Hangi renk istersiniz?"
+      ],
+      "priority": "high"
+    },
+    {
+      "id": "rule_romantik",
+      "condition": "message.includes('romantik')",
+      "action": "Sıcak tonlar + yumuşak dokular öner",
+      "suggestedColors": [
+        "bordo",
+        "pembe",
+        "şampanya",
+        "krem"
+      ],
+      "suggestedFabrics": [
+        "kadife",
+        "saten",
+        "şifon"
+      ],
+      "priority": "high"
+    },
+    {
+      "id": "rule_modern",
+      "condition": "message.includes('modern') || message.includes('minimalist')",
+      "action": "Nötr tonlar + düz dokular öner",
+      "suggestedColors": [
+        "gri",
+        "beyaz",
+        "siyah",
+        "antrasit"
+      ],
+      "suggestedStyles": [
+        "stor",
+        "zebra",
+        "düz fon"
+      ],
+      "priority": "high"
+    },
+    {
+      "id": "rule_oda_belirtilmis",
+      "condition": "previousMessages.some(m => m.includes('yatak odası') || m.includes('salon') || m.includes('mutfak'))",
+      "avoid": [
+        "Hangi oda için?",
+        "Nereye düşünüyorsunuz?"
+      ],
+      "priority": "high"
+    }
+  ],
+  "intentMappings": {
+    "ISIK_KONTROLU": {
+      "keywords": [
+        "ışık",
+        "karanlık",
+        "blackout",
+        "geçirmesin",
+        "engellesin",
+        "parlak",
+        "mat",
+        "karart",
+        "dim",
+        "aydınlık"
+      ],
+      "defaultAction": "Işık kontrol seviyesine göre kumaş öner",
+      "fabricSuggestions": {
+        "block": [
+          "blackout",
+          "dim-out",
+          "kalın kadife"
+        ],
+        "filter": [
+          "tül",
+          "voile",
+          "şifon"
+        ],
+        "moderate": [
+          "keten",
+          "pamuk",
+          "polyester blend"
+        ]
+      },
+      "responseTemplate": "🌙 {fabric} perde {benefit}. {question}"
+    },
+    "ATMOSFER": {
+      "keywords": [
+        "gece",
+        "romantik",
+        "sıcak",
+        "soğuk",
+        "modern",
+        "klasik",
+        "lüks",
+        "şık",
+        "mood",
+        "huzurlu",
+        "enerjik"
+      ],
+      "moodColors": {
+        "gece": [
+          "lacivert",
+          "siyah",
+          "koyu gri",
+          "antrasit"
+        ],
+        "romantik": [
+          "bordo",
+          "pembe",
+          "şampanya",
+          "krem",
+          "rose gold"
+        ],
+        "modern": [
+          "gri",
+          "beyaz",
+          "siyah",
+          "antrasit",
+          "silver"
+        ],
+        "klasik": [
+          "altın",
+          "bordo",
+          "lacivert",
+          "koyu yeşil"
+        ],
+        "sicak": [
+          "turuncu",
+          "terracotta",
+          "hardal",
+          "kahve"
+        ],
+        "soguk": [
+          "mavi",
+          "turkuaz",
+          "mint",
+          "gri-mavi"
+        ]
+      },
+      "responseTemplate": "✨ {mood} atmosfer için {colors} tonları harika! {fabric} kumaş {benefit}."
+    },
+    "EK_ELEMENT": {
+      "keywords": [
+        "manken",
+        "insan",
+        "kişi",
+        "kadın",
+        "erkek",
+        "mobilya",
+        "kanepe",
+        "sehpa",
+        "şömine",
+        "kitap",
+        "çiçek",
+        "bitki",
+        "halı",
+        "ayna"
+      ],
+      "elementPrompts": {
+        "manken": "elegant woman in luxurious pose",
+        "kadın": "sophisticated woman reading",
+        "kanepe": "modern designer sofa",
+        "kitap": "reading a vintage book",
+        "çiçek": "fresh flowers in elegant vase",
+        "bitki": "lush indoor plants",
+        "halı": "premium handwoven rug",
+        "şömine": "cozy fireplace with warm glow"
+      },
+      "responseTemplate": "✨ Sahneye {elements} ekleyeceğim! {question}"
+    },
+    "KUMAS_TIPI": {
+      "keywords": [
+        "kadife",
+        "keten",
+        "saten",
+        "polyester",
+        "blackout",
+        "tül",
+        "şifon",
+        "jacquard",
+        "brode",
+        "organze",
+        "pamuk"
+      ],
+      "fabricProperties": {
+        "kadife": {
+          "feel": "lüks, sıcak",
+          "light": "emici",
+          "drape": "ağır dökümlü",
+          "care": "kuru temizleme"
+        },
+        "keten": {
+          "feel": "doğal, nefes alan",
+          "light": "süzen",
+          "drape": "hafif kırışık",
+          "care": "makinede yıkanır"
+        },
+        "saten": {
+          "feel": "parlak, kaygan",
+          "light": "yansıtıcı",
+          "drape": "akıcı",
+          "care": "hassas yıkama"
+        },
+        "blackout": {
+          "feel": "fonksiyonel",
+          "light": "%100 engelleyici",
+          "drape": "orta",
+          "care": "makinede yıkanır"
+        },
+        "tül": {
+          "feel": "hafif, zarif",
+          "light": "geçirgen",
+          "drape": "uçuşan",
+          "care": "hassas yıkama"
+        },
+        "jacquard": {
+          "feel": "desenli, dokuma",
+          "light": "orta",
+          "drape": "ağır",
+          "care": "kuru temizleme"
+        }
+      },
+      "responseTemplate": "🧵 {fabric} kumaş {properties}. {benefit}. {question}"
+    },
+    "OLCU": {
+      "keywords": [
+        "ölçü",
+        "hesapla",
+        "metraj",
+        "genişlik",
+        "yükseklik",
+        "boyut",
+        "cm",
+        "metre",
+        "pencere",
+        "korniş"
+      ],
+      "pileRatios": {
+        "ekonomik": {
+          "ratio": "1:2",
+          "usage": "150cm kumaş → 75cm korniş",
+          "look": "düz, minimal"
+        },
+        "standart": {
+          "ratio": "1:2.5",
+          "usage": "150cm kumaş → 60cm korniş",
+          "look": "profesyonel pile"
+        },
+        "luks": {
+          "ratio": "1:3",
+          "usage": "150cm kumaş → 50cm korniş",
+          "look": "derin, dramatik pile"
+        }
+      },
+      "responseTemplate": "📐 {ratio} pile oranı ile {look} görünüm elde edersiniz. {calculation}"
+    }
+  },
+  "promptEnhancers": {
+    "lighting": {
+      "dramatic": "dramatic rim lighting, deep shadows, moody atmosphere",
+      "natural": "soft natural window light, golden hour warmth",
+      "studio": "professional three-point lighting, clean and bright",
+      "romantic": "warm candlelight glow, soft diffused light",
+      "crossPolarized": "cross-polarization lighting to eliminate specular reflections, pure albedo capture"
+    },
+    "camera": {
+      "closeup": "extreme close-up, Canon 100mm f/2.8L Macro, visible fabric texture",
+      "hero": "hero shot, Sony A7R V, 85mm f/1.4, shallow depth of field",
+      "wide": "wide architectural shot, 24mm lens, full room visible",
+      "cinematic": "cinematic frame, RED V-RAPTOR 8K, anamorphic lens, film quality",
+      "mediumFormat": "Phase One XF IQ4 150MP, 16-bit RAW, 15+ stop dynamic range",
+      "tiltShift": "Canon TS-E 24mm Tilt-Shift, zero perspective distortion, architectural accuracy"
+    },
+    "style": {
+      "luxury": "luxury interior design, high-end materials, premium feel",
+      "minimal": "minimalist Scandinavian design, clean lines, negative space",
+      "classic": "classic European elegance, ornate details, timeless beauty",
+      "modern": "contemporary modern design, geometric shapes, bold contrasts"
+    },
+    "fabricPhysics": {
+      "kadife": {
+        "brdf": "Diffuse + Subsurface Scattering",
+        "specularity": "low (matte)",
+        "roughness": 0.8,
+        "drapeCoefficient": 0.85,
+        "weight": "300-500 gr/m²",
+        "swingSpeed": "slow, elegant",
+        "promptAddition": "rich velvet with deep pile texture, light-absorbing surface, subtle sheen in highlights"
+      },
+      "saten": {
+        "brdf": "Specular + Anisotropic",
+        "specularity": "high (glossy)",
+        "roughness": 0.2,
+        "drapeCoefficient": 0.75,
+        "weight": "200-350 gr/m²",
+        "swingSpeed": "medium-slow, fluid",
+        "promptAddition": "lustrous satin with anisotropic reflections along weave direction, silky drape"
+      },
+      "keten": {
+        "brdf": "Diffuse",
+        "specularity": "very low (matte)",
+        "roughness": 0.9,
+        "drapeCoefficient": 0.6,
+        "weight": "150-250 gr/m²",
+        "swingSpeed": "medium, natural creasing",
+        "promptAddition": "natural linen with visible fiber structure, characteristic wrinkles, organic texture"
+      },
+      "tul": {
+        "btdf": "Forward Scattering, 70-80% transmittance",
+        "specularity": "low",
+        "roughness": 0.4,
+        "drapeCoefficient": 0.3,
+        "weight": "30-80 gr/m²",
+        "swingSpeed": "fast, dancing in breeze",
+        "promptAddition": "sheer voile with subsurface light scattering, ethereal glow when backlit"
+      },
+      "jakar": {
+        "brdf": "Mixed (varies with pattern relief)",
+        "specularity": "medium",
+        "roughness": 0.5,
+        "drapeCoefficient": 0.7,
+        "weight": "250-400 gr/m²",
+        "swingSpeed": "slow, structured",
+        "promptAddition": "jacquard woven with raised pattern detail, varying BRDF on relief areas"
+      },
+      "blackout": {
+        "btdf": "0-2% transmittance, no light pass",
+        "specularity": "low",
+        "roughness": 0.7,
+        "drapeCoefficient": 0.65,
+        "weight": "200-350 gr/m²",
+        "swingSpeed": "medium, controlled",
+        "promptAddition": "dense blackout fabric with complete light blocking, matte surface finish"
+      }
+    },
+    "sensorPhysics": {
+      "bitDepth": "16-bit for gradient transitions without banding",
+      "dynamicRange": "15+ stops to capture both bright window and dark shadow detail",
+      "colorSpace": "Adobe RGB wide gamut for accurate fabric colors",
+      "antiMoire": "Optimal shooting distance to prevent moiré on fine weave patterns",
+      "resolution": "100+ megapixels for thread-level detail (pore structure mapping)"
+    },
+    "lightingPhysics": {
+      "cri": "98+ Color Rendering Index for accurate color",
+      "tlci": "99+ Television Lighting Consistency Index",
+      "kelvin": "5600K daylight standard",
+      "crossPolarization": "Eliminate specular reflections to capture pure albedo"
+    }
+  },
+  "conversationMemory": {
+    "maxTurns": 20,
+    "trackFields": [
+      "room",
+      "fabricType",
+      "color",
+      "style",
+      "measurements",
+      "budget"
+    ],
+    "dontRepeatTopics": true
+  },
+  "userFeedback": [],
+  "learningStats": {
+    "totalFeedback": 30,
+    "positiveRatio": 0,
+    "trainingExamples": 150,
+    "lastTrainingDate": "2026-01-21",
+    "version": "3.0.0",
+    "lastLearningSession": "2026-02-03T06:51:13.051Z"
+  }
+}

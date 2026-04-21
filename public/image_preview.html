@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Viewer</title>
+    <style>
+        body { font-family: sans-serif; background: #fff; color: #000; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px; }
+        .item { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        img { max-width: 100%; height: auto; max-height: 200px; }
+    </style>
+</head>
+<body>
+    <h1>Perde AI Images</h1>
+    <div class="grid" id="grid"></div>
+    <script>
+        const imageNames = [
+          "perde.ai (1).jpeg", "perde.ai (1).jpg", "perde.ai (10).jpg", "perde.ai (11).jpg",
+          "perde.ai (12).jpg", "perde.ai (13).jpg", "perde.ai (14).jpg", "perde.ai (15).jpg",
+          "perde.ai (16).jpg", "perde.ai (17).jpg", "perde.ai (18).jpg", "perde.ai (19).jpg",
+          "perde.ai (2).jpeg", "perde.ai (20).jpg", "perde.ai (21).jpg", "perde.ai (22).jpg",
+          "perde.ai (23).jpg", "perde.ai (24).jpg", "perde.ai (25).jpg", "perde.ai (26).jpg",
+          "perde.ai (27).jpg", "perde.ai (3).jpeg", "perde.ai (4).jpeg", "perde.ai (5).jpeg",
+          "perde.ai (6).jpeg", "perde.ai (6).jpg", "perde.ai (7).jpg", "perde.ai (8).jpg",
+          "perde.ai (9).jpg"
+        ];
+        
+        const grid = document.getElementById('grid');
+        imageNames.forEach((name, i) => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `<img src="/assets/perde.ai/${name}" alt="${name}"><br><b>${name}</b>`;
+            grid.appendChild(div);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+﻿[FIREBASE_ADMIN] Initialized successfully via applicationDefault.
+Ôùç injecting env (12) from .env.local // tip: Ôîİ override existing { override: true }
+[­şöı DENET─░M MASASI] Haberler, Resimler ve ├çeviriler Kontrol Ediliyor...
+
+
+======================================================
+­şôè GENEL ─░STAT─░ST─░K (TOTAL HABER: 69)
+======================================================
+­şû╝´©Å G├Ârseli Olan Haber Say─▒s─▒:  69 / 69
+­şîı ├çevirisi (K─▒smen) Olan Haber Say─▒s─▒: 1 / 69
+ÔÜá´©Å ├çeviri Eksikli─şi (Tam 6 dilde olmayan): 69 / 69
+
+======================================================
+­şô£ KANIT MASASI (─░LK 3 HABER─░N DETAYLI OTOPS─░S─░)
+======================================================
+
+­şô░ HABER 1 (04suTeGTBUMG4ujrVZr3)
+   Ba┼şl─▒k: Yapay Zeka Tekstil Tasar─▒m─▒ ve ├£retiminde Devrim Y...
+   G├Ârsel: Ô£à Var -> https://storage.googleapis.com/perde-ai....
+   ├çeviri Durumu: Ô£à 3/6 dilde haz─▒r (Eksikler: EN, FR, ES)
+   AR (Arap├ğa) SEO Linki (Kan─▒t): althkaa-alastnaay-yhdth-thwrh-fy-tsmym-wintaj-almnswjat-hqbh-jdydh-mn-
+
+­şô░ HABER 2 (2026-03-19_2024-2025-avrupa-perde-pazar-raporu-yeni-tekstil-trendleri)
+   Ba┼şl─▒k: 2024-2025 Avrupa Ev Tekstili Pazar─▒: Sessiz L├╝ks, ...
+   G├Ârsel: Ô£à Var -> https://storage.googleapis.com/perde-ai....
+   ├çeviri Durumu: Ô£à 0/6 dilde haz─▒r (Eksikler: EN, DE, FR, ES, AR, RU)
+   AR (Arap├ğa) SEO Linki (Kan─▒t): ÔØî YOK
+
+­şô░ HABER 3 (2026-03-19_2026-ev-tekstili-ve-perde-trendleri-pazar-analizi)
+   Ba┼şl─▒k: 2026 Ev Tekstili ve Perde Sekt├Âr├╝ Analizi: S├╝rd├╝r├╝...
+   G├Ârsel: Ô£à Var -> https://storage.googleapis.com/perde-ai....
+   ├çeviri Durumu: Ô£à 0/6 dilde haz─▒r (Eksikler: EN, DE, FR, ES, AR, RU)
+   AR (Arap├ğa) SEO Linki (Kan─▒t): ÔØî YOK
+
+Ô£à ─░nceleme tamamland─▒.

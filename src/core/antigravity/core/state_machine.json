@@ -1,0 +1,19 @@
+{
+  "valid_states": [
+    "PENDING",
+    "RECEIVED",
+    "PROCESSING",
+    "VERIFYING",
+    "COMPLETED",
+    "FAILED",
+    "RETRY"
+  ],
+  "transitions": {
+    "PENDING": ["RECEIVED", "FAILED"],
+    "RECEIVED": ["PROCESSING", "FAILED"],
+    "PROCESSING": ["VERIFYING", "FAILED"],
+    "VERIFYING": ["COMPLETED", "RETRY", "FAILED"],
+    "RETRY": ["PROCESSING", "FAILED"]
+  },
+  "enforcement": "VERIFYING state IS MANDATORY before reaching COMPLETED."
+}

@@ -1,0 +1,12 @@
+{
+  "contract_id": "news_output_v1",
+  "description": "TRTEX Haber Üretim Motoru Çıktı Şeması",
+  "strict_validation": true,
+  "schema": {
+    "title": { "type": "string", "required": true, "min_length": 15 },
+    "content": { "type": "string", "required": true, "min_words": 600 },
+    "seo_keywords": { "type": "array", "items": "string", "required": true, "min_count": 3 },
+    "images": { "type": "array", "items": "string", "required": true, "min_count": 2 },
+    "language": { "type": "string", "required": true }
+  }
+}
