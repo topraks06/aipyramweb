@@ -26,8 +26,8 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // Hakan Toprak's Master Admin Array - No hardcoded admin everywhere, just here
-  const ADMIN_EMAILS = ['hakantoprak71@gmail.com'];
+  // Master Admin Array - loaded from environment variables
+  const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',').filter(Boolean);
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {

@@ -60,10 +60,11 @@ for (const project of PROJECTS) {
     
   const envContent = `# ${project} — Google Cloud Native
 
-# Firebase (perde-ai projesi)
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBs1Ks2jeH2AXxTu8NqNMFeYQdsHA41Ztg
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=perde-ai.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=perde-ai
+# Firebase Configuration
+# Get these from https://console.firebase.google.com
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${normalizedName}.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=${normalizedName}
 
 # Auth
 JWT_SECRET=${normalizedName}-jwt-secret-2026-aipyram

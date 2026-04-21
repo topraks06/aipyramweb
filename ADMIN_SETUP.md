@@ -16,16 +16,17 @@
 Kurulum tamamlandıktan sonra:
 
 1. `http://localhost:3000/admin/login` adresine gidin
-2. Aşağıdaki bilgilerle giriş yapın:
-   - **E-posta:** hakantoprak71@gmail.com
-   - **Şifre:** oyaalya123
+2. `.env.local` dosyasında tanımlı olan kimlik bilgileriyle giriş yapın
 
 ## 📋 Giriş Bilgileri
 
+Kimlik bilgileri `.env.local` dosyasında saklanmalıdır:
 ```
-E-posta: hakantoprak71@gmail.com
-Şifre: oyaalya123
+NEXT_PUBLIC_ADMIN_EMAIL=your_email@example.com
+NEXT_PUBLIC_ADMIN_PASSWORD=your_password
 ```
+
+**NOT:** Gizli bilgileri repo'ya commit etmeyin.
 
 ## 🔧 Sorun Giderme
 

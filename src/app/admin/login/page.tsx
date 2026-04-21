@@ -9,13 +9,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Lock, Mail, Shield, ArrowLeft } from "lucide-react";
 
-// Sovereign Admin Credentials (Hardcoded — Single-Admin Architecture)
+// Sovereign Admin Credentials (from environment variables)
 const SOVEREIGN_ADMINS = [
-  { email: "hakantoprak71@gmail.com", password: "OyaAlya123" },
-  { email: "admin@aipyram.com", password: "AIPYRAM2026" },
+  { 
+    email: process.env.NEXT_PUBLIC_ADMIN_EMAIL || "", 
+    password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "" 
+  },
+  { 
+    email: process.env.NEXT_PUBLIC_ADMIN_EMAIL_2 || "", 
+    password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD_2 || "" 
+  },
 ];
 
-const SOVEREIGN_GOOGLE_EMAIL = "hakantoprak71@gmail.com";
+const SOVEREIGN_GOOGLE_EMAIL = process.env.NEXT_PUBLIC_SOVEREIGN_GOOGLE_EMAIL || "";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -59,9 +65,9 @@ export default function AdminLoginPage() {
       const { getAuth, signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
 
       const firebaseConfig = {
-        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBs1Ks2jeH2AXxTu8NqNMFeYQdsHA41Ztg",
-        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "aipyram-core.firebaseapp.com",
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "aipyram-core",
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "",
       };
 
       const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

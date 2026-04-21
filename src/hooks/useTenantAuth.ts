@@ -23,8 +23,8 @@ interface TenantAuthState {
   logout: () => Promise<void>;
 }
 
-// Admin e-posta listesi — her tenant için geçerli
-const ADMIN_EMAILS = ['hakantoprak71@gmail.com'];
+// Admin e-posta listesi — environment variables'dan yüklenir
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',').filter(Boolean);
 
 /**
  * Universal Tenant Auth Hook
