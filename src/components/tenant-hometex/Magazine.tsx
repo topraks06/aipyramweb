@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Clock, Sparkles, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-// import { db } from '../lib/firebase';
+import { HOMETEX_MAGAZINE_ARTICLES } from '@/lib/hometex-demoData';
 // import { collection, onSnapshot, query } from 'firebase/firestore';
 
 export default function Magazine() {
@@ -14,12 +14,7 @@ export default function Magazine() {
   useEffect(() => {
     // Mock Firebase data
     setTimeout(() => {
-      setArticles([
-        { id: '1', title: 'Global Tekstil Raporu 2026', isFeatured: true, category: 'Trend Raporu', timeToRead: '8 dk', image: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80', description: 'Ev tekstilinde yapay zeka devrimi.', author: 'Aipyram Intelligence' },
-        { id: '2', title: 'Avrupa Pazarında Yeni Tedarik Zincirleri', category: 'Analiz', timeToRead: '5 dk', image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80' },
-        { id: '3', title: 'Akıllı Kumaşlarda Patent Yarışı', category: 'Makale', timeToRead: '4 dk', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80' },
-        { id: '4', title: 'Yapay Zeka Tasarım Araçlarının Evrimi', category: 'Araştırma', timeToRead: '6 dk', image: 'https://images.unsplash.com/photo-1540574163026-643ea20d25b5?q=80' }
-      ]);
+      setArticles(HOMETEX_MAGAZINE_ARTICLES);
       setLoading(false);
     }, 800);
   }, []);

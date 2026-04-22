@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, MapPin, Download, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
+import { HOMETEX_EXHIBITORS } from '@/lib/hometex-demoData';
 
 export default function Exhibitors() {
   // Mock role for UI parity
@@ -17,11 +18,7 @@ export default function Exhibitors() {
   useEffect(() => {
     // Mock Data Fetch Instead of Firebase
     setTimeout(() => {
-      setExhibitors([
-        { id: '1', name: 'SOVEREIGN MILLS', desc: 'Sürdürülebilir lüks üretimde İngiliz dokuma teknikleri. Yeni 2026 İlkbahar Koleksiyonu fuar alanında.', coverImageUrl: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80', category: 'Premium', country: 'United Kingdom' },
-        { id: '2', name: 'AURORA TEXTILES', desc: 'Gelişmiş akıllı perde sistemleri ve motorlu mekanizmalar.', coverImageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80', category: 'Akıllı Ev', country: 'Germany' },
-        { id: '3', name: 'NOVA HOME', desc: 'Organik pamuk içerikli otel tekstili çözümleri.', coverImageUrl: 'https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80', category: 'Otel', country: 'Türkiye' }
-      ]);
+      setExhibitors(HOMETEX_EXHIBITORS);
       setLoading(false);
     }, 800);
   }, []);

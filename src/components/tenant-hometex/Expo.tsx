@@ -5,8 +5,7 @@ import { motion } from 'motion/react';
 import { ArrowRight, Filter, Search } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-// import { db } from '../lib/firebase';
-// import { collection, onSnapshot, query, limit } from 'firebase/firestore';
+import { HOMETEX_EXHIBITORS, HOMETEX_HALLS } from '@/lib/hometex-demoData';
 
 export default function Expo() {
   const [activeFilter, setActiveFilter] = useState('Tümü');
@@ -15,50 +14,12 @@ export default function Expo() {
 
   useEffect(() => {
     // Mock Data Fetch Instead of Firebase
-    setExhibitors([
-      { id: '1', name: 'SOVEREIGN MILLS', desc: 'Sürdürülebilir lüks üretimde İngiliz dokuma teknikleri. Yeni 2026 İlkbahar Koleksiyonu fuar alanında.', coverImageUrl: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80', category: 'Premium' },
-      { id: '2', name: 'AURORA TEXTILES', desc: 'Gelişmiş akıllı perde sistemleri ve motorlu mekanizmalar.', coverImageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80', category: 'Gold' },
-      { id: '3', name: 'NOVA HOME', desc: 'Organik pamuk içerikli otel tekstili çözümleri.', coverImageUrl: 'https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80', category: 'Silver' },
-      { id: '4', title: 'Yapay Zeka Tasarım Araçlarının Evrimi', category: 'Teknoloji', coverImageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2800' }
-    ]);
+    setExhibitors(HOMETEX_EXHIBITORS);
   }, []);
 
   const filters = ['Tümü', 'Döşemelik', 'Perdelik', 'Yatak & Banyo', 'Akıllı', 'Sürdürülebilir'];
 
-  const allHalls = [
-    { 
-      name: "Döşemelik & Mobilya", 
-      count: "142 Katılımcı", 
-      desc: "İtalyan kadifesinden, yüksek sürtünme dayanımlı kontrat kumaşlara kadar en geniş koleksiyon.",
-      image: "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2800&auto=format&fit=crop",
-      span: "col-span-12 lg:col-span-8",
-      aspect: "aspect-[16/9]"
-    },
-    { 
-      name: "Perdelik & Tül", 
-      count: "89 Katılımcı", 
-      desc: "Işık geçirgenliğini sanata dönüştüren inovatif dokumalar.",
-      image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2800&auto=format&fit=crop",
-      span: "col-span-12 lg:col-span-4",
-      aspect: "aspect-[3/4]"
-    },
-    { 
-      name: "Yatak & Banyo", 
-      count: "115 Katılımcı", 
-      desc: "Otel standartlarında organik pamuk, sürdürülebilir bambu karışımları.",
-      image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=2800&auto=format&fit=crop",
-      span: "col-span-12 lg:col-span-4",
-      aspect: "aspect-[3/4]"
-    },
-    { 
-      name: "Akıllı Perde Sistemleri", 
-      count: "92 Katılımcı", 
-      desc: "Motorize sistemler, UV korumalı, sürdürülebilir ve akustik yalıtımlı teknik tekstiller.",
-      image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2800&auto=format&fit=crop",
-      span: "col-span-12 lg:col-span-8",
-      aspect: "aspect-[16/9]"
-    }
-  ];
+  const allHalls = HOMETEX_HALLS;
 
   const filteredHalls = allHalls.filter(hall => {
     const matchesFilter = activeFilter === 'Tümü' || 

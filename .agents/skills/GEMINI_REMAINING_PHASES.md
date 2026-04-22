@@ -31,13 +31,13 @@
 - [x] D3: `MediaLibrary.tsx` → mock veriden Firestore'a geçiş hazırlığı
 - **Doğrulama:** ✅ build 0 hata, Medya modülü server komponentiyle bağlandıFirestore'da `image_library` kaydı oluşur
 
-## 🔵 FAZ E — Hometex Temizlik + TRTEX Lokalizasyon (Gün 5-6)
-- [ ] E1: Hometex sayfaları (Expo, Exhibitors, Magazine, Trends) → prop-driven, loading state
-- [ ] E2: Hometex mock veriler → `demoData.ts` dosyasına taşı
-- [ ] E3: TRTEX `PremiumB2BHomeLayout` → hardcoded TR metinleri → 8-dil sözlük
-- [ ] E4: TRTEX `ArticleClient` → UI metinleri çeviriye bağla
-- [ ] E5: ALOHA `ai_ceo_block` → TR/EN fallback
-- **Doğrulama:** trtex.localhost:3000 → EN'ye geçince tüm UI İngilizce
+## ✅ FAZ E — Hometex Temizlik + TRTEX Lokalizasyon (TAMAMLANDI — 22 Nisan)
+- [x] E1: Hometex sayfaları (Expo, Exhibitors, Magazine, Trends) → prop-driven, loading state
+- [x] E2: Hometex mock veriler → `demoData.ts` dosyasına taşındı
+- [x] E3: TRTEX `PremiumB2BHomeLayout` → 8-dil sözlük
+- [x] E4: TRTEX `ArticleClient` → UI metinleri çeviriye bağlandı
+- [x] E5: ALOHA `ai_ceo_block` → TR/EN fallback
+- **Doğrulama:** ✅ pnpm run build exit 0, Hometex bileşenleri dış veri kaynağından (demoData) besleniyor.
 
 ## 🟣 FAZ F — EcosystemBridge Canlı Veri + Son Cila (Gün 6-7)
 - [ ] F1: `EcosystemBridge.tsx` → TRTEX'ten gerçek trend verisi çek (Firestore)

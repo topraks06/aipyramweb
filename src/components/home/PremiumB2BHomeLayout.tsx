@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React, { useState } from 'react';
 import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
@@ -735,7 +735,7 @@ export default function PremiumB2BHomeLayout({
                   ? <li>{hero.insight.explanation}</li>
                   : Array.isArray(hero.ai_ceo_block?.executive_summary) 
                     ? hero.ai_ceo_block.executive_summary.slice(0,3).map((li:string,i:number)=><li key={i}>{li}</li>)
-                    : <li>{hero.ai_ceo_block?.executive_summary || "Piyasa analizi taranıyor..."}</li>}
+                    : <li>{hero.ai_ceo_block?.executive_summary || HL.scanningTender}</li>}
               </ul>
               {hero.insight?.direction && <div style={{marginTop:'1.2rem',display:'flex',gap:'.8rem',alignItems:'center', borderTop:'1px dashed #E8E8E3', paddingTop:'1rem'}}>
                 <span className="ds-pill" style={{background: hero.insight.direction === 'risk' ? 'var(--re)' : hero.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6', padding:'6px 10px', fontSize:'0.75rem'}}>{HL.marketDirection}: {hero.insight.direction === 'risk' ? HL.dirRisk : hero.insight.direction === 'opportunity' ? HL.dirOpp : HL.dirNeutral}</span>

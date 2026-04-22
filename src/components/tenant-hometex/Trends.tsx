@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Upload, Sparkles, BarChart3, ArrowRight, Camera, CheckCircle2 } from 'lucide-react';
+import { HOMETEX_TRENDS } from '@/lib/hometex-demoData';
 
 export default function Trends() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -192,32 +193,7 @@ export default function Trends() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-32">
-            {[
-              {
-                title: "Toprak Tonları & Doğal Keten",
-                desc: "Organik yaşam alanlarına dönüş. Ham keten, pişmiş toprak ve zeytin yeşilinin kusursuz uyumu.",
-                image: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80",
-                tag: "Sürdürülebilirlik"
-              },
-              {
-                title: "Maksimalist Desenler & Kadife",
-                desc: "Cesur iç mekanlar için zengin dokular. Koyu zümrüt, bordo ve altın varaklı detaylar.",
-                image: "https://images.unsplash.com/photo-1540574163026-643ea20d25b5?q=80",
-                tag: "Lüks Segment"
-              },
-              {
-                title: "Teknolojik Metalik İplikler",
-                desc: "Işığı yansıtan akıllı yüzeyler. Gümüş, bakır ve titanyum alaşımlı ipliklerin tekstile entegrasyonu.",
-                image: "https://images.unsplash.com/photo-1580828369019-2238ef8147d3?q=80",
-                tag: "İnovasyon"
-              },
-              {
-                title: "Okyanus Esintisi & Geri Dönüştürülmüş",
-                desc: "Sürdürülebilir lüks. Okyanus atıklarından elde edilen ipliklerle tasarlanan derin mavi ve turkuaz paletler.",
-                image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?q=80",
-                tag: "Eko-Tasarım"
-              }
-            ].map((board, i) => (
+            {HOMETEX_TRENDS.map((board, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, y: 40 }}
@@ -233,7 +209,7 @@ export default function Trends() {
                     className="w-full h-full object-cover grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-[3s] ease-out group-hover:scale-105"
                   />
                   <div className="absolute top-8 left-8 bg-black/90 backdrop-blur-md px-5 py-2.5 text-[9px] uppercase tracking-[0.3em] font-medium text-white border border-white/20">
-                    {board.tag}
+                    {board.tags?.[0] || 'Trend'}
                   </div>
                 </div>
                 <h3 className="text-4xl lg:text-5xl font-serif font-medium text-white mb-6 tracking-tight group-hover:text-zinc-400 transition-colors uppercase leading-[1.1]">{board.title}</h3>
