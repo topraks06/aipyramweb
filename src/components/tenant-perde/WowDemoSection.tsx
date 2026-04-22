@@ -1,15 +1,27 @@
-﻿'use client';
+'use client';
 
-import React from 'react';
-import { Upload, Camera, Sparkles, TrendingUp, Presentation } from 'lucide-react';
+import React, { Suspense, useState } from 'react';
+import { Sparkles, TrendingUp, Presentation, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
 import { PERDE_DICT } from './perde-dictionary';
+import dynamic from 'next/dynamic';
+
+// Lazy-load RoomVisualizer only when user clicks "Try Demo"
+const RoomVisualizer = dynamic(() => import('./RoomVisualizer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[60vh] bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-800">
+      <div className="w-8 h-8 border-2 border-zinc-700 border-t-white animate-spin rounded-full" />
+    </div>
+  ),
+});
 
 export default function WowDemoSection() {
     const searchParams = useSearchParams();
     const langKey = searchParams?.get('lang')?.toUpperCase() || 'TR';
     const T = PERDE_DICT[langKey]?.wow || PERDE_DICT['EN'].wow;
+    const [showDemo, setShowDemo] = useState(false);
 
     // Function to trigger the concierge via global event
     const handleTriggerConcierge = (action: string, message?: string) => {
@@ -26,7 +38,7 @@ export default function WowDemoSection() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#8B7355]/20 rounded-full blur-[120px] opacity-50 mix-blend-screen pointer-events-none"></div>
             </div>
 
-            <div className="max-w-4xl w-full z-10 flex flex-col items-center relative">
+            <div className="max-w-6xl w-full z-10 flex flex-col items-center relative">
                 
                 <div className="mb-6 flex items-center justify-center gap-4">
                     <span className="w-8 h-[1px] bg-zinc-700"></span>
@@ -43,54 +55,65 @@ export default function WowDemoSection() {
                     {T.desc}
                 </p>
 
-                {/* Upload Area */}
-                <div 
-                    onClick={() => handleTriggerConcierge('upload')}
-                    className="w-full max-w-3xl border-2 border-dashed border-zinc-700 hover:border-[#8B7355] bg-zinc-900/50 hover:bg-zinc-900/80 backdrop-blur-sm rounded-2xl p-12 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group shadow-2xl shadow-black/50"
-                >
-                    <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-zinc-700 group-hover:border-[#8B7355]">
-                        <Camera className="w-8 h-8 text-[#D4C3A3]" />
+                {/* Demo Visualizer OR CTA */}
+                {showDemo ? (
+                    <div className="w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl" style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}>
+                        <Suspense fallback={
+                            <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
+                                <div className="w-8 h-8 border-2 border-zinc-700 border-t-white animate-spin rounded-full" />
+                            </div>
+                        }>
+                            <RoomVisualizer isDemoMode={true} />
+                        </Suspense>
                     </div>
-                    <h3 className="text-2xl font-serif mb-2">{T.uploadBtn}</h3>
-                    <p className="text-zinc-500 text-sm mb-6 text-center">{T.uploadHint}</p>
-                    <button className="px-6 py-3 bg-white text-zinc-950 font-semibold text-[11px] uppercase tracking-widest rounded hover:bg-[#D4C3A3] transition-colors flex items-center gap-2">
-                        <Upload className="w-4 h-4" />
-                        {T.browse}
-                    </button>
-                </div>
+                ) : (
+                    <>
+                        {/* Big CTA Button to launch demo */}
+                        <motion.button 
+                            onClick={() => setShowDemo(true)}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full max-w-3xl bg-gradient-to-r from-[#8B7355] to-[#725e45] text-white py-8 rounded-2xl text-lg font-bold uppercase tracking-[0.15em] hover:shadow-[0_0_60px_rgba(139,115,85,0.3)] transition-all flex items-center justify-center gap-4 mb-12 border border-[#8B7355]/50"
+                        >
+                            <Sparkles className="w-6 h-6" />
+                            {T.uploadBtn || 'HEMEN ÜCRETSİZ DENEYİN'}
+                            <ArrowRight className="w-6 h-6" />
+                        </motion.button>
 
-                {/* Prompt Buttons */}
-                <div className="w-full max-w-3xl mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button 
-                        onClick={() => handleTriggerConcierge('chat', T.q1_q)}
-                        className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
-                    >
-                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
-                            <Sparkles className="w-4 h-4 text-[#D4C3A3]" />
-                        </div>
-                        <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q1_btn}&quot;</span>
-                    </button>
-                    
-                    <button 
-                        onClick={() => handleTriggerConcierge('chat', T.q2_q)}
-                        className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
-                    >
-                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
-                            <Presentation className="w-4 h-4 text-[#D4C3A3]" />
-                        </div>
-                        <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q2_btn}&quot;</span>
-                    </button>
+                        {/* Prompt Buttons */}
+                        <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button 
+                                onClick={() => handleTriggerConcierge('chat', T.q1_q)}
+                                className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
+                                    <Sparkles className="w-4 h-4 text-[#D4C3A3]" />
+                                </div>
+                                <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q1_btn}&quot;</span>
+                            </button>
+                            
+                            <button 
+                                onClick={() => handleTriggerConcierge('chat', T.q2_q)}
+                                className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
+                                    <Presentation className="w-4 h-4 text-[#D4C3A3]" />
+                                </div>
+                                <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q2_btn}&quot;</span>
+                            </button>
 
-                    <button 
-                        onClick={() => handleTriggerConcierge('chat', T.q3_q)}
-                        className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
-                    >
-                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
-                            <TrendingUp className="w-4 h-4 text-[#D4C3A3]" />
+                            <button 
+                                onClick={() => handleTriggerConcierge('chat', T.q3_q)}
+                                className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 flex items-center gap-3 transition-colors text-left group"
+                            >
+                                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-[#8B7355]/20">
+                                    <TrendingUp className="w-4 h-4 text-[#D4C3A3]" />
+                                </div>
+                                <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q3_btn}&quot;</span>
+                            </button>
                         </div>
-                        <span className="text-sm font-light text-zinc-300 group-hover:text-white">&quot;{T.q3_btn}&quot;</span>
-                    </button>
-                </div>
+                    </>
+                )}
                 
             </div>
         </section>

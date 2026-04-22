@@ -12,7 +12,23 @@ import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import toast from 'react-hot-toast';
 import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
 
-export default function RoomVisualizer() {
+// Demo oda görselleri (ücretsiz render için)
+const DEMO_ROOMS = [
+  { id: 'living', label: 'Oturma Odası', thumb: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&q=60' },
+  { id: 'bedroom', label: 'Yatak Odası', thumb: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300&q=60' },
+  { id: 'office', label: 'Ofis', thumb: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&q=60' },
+  { id: 'hotel', label: 'Otel Odası', thumb: 'https://images.unsplash.com/photo-1590490360182-c33d955735ed?w=300&q=60' },
+  { id: 'dining', label: 'Yemek Odası', thumb: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=300&q=60' },
+  { id: 'kids', label: 'Çocuk Odası', thumb: 'https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?w=300&q=60' },
+  { id: 'balcony', label: 'Balkon', thumb: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&q=60' },
+  { id: 'salon', label: 'Salon', thumb: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=300&q=60' },
+];
+
+interface RoomVisualizerProps {
+  isDemoMode?: boolean;
+}
+
+export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState('');
   
@@ -21,6 +37,9 @@ export default function RoomVisualizer() {
 
   // Lead Modal
   const [leadModalOpen, setLeadModalOpen] = useState(false);
+
+  // Demo mode state
+  const [selectedDemoRoom, setSelectedDemoRoom] = useState<string | null>(null);
 
   // History / Inputs
   const [renderHistory, setRenderHistory] = useState<{ url: string; originalUrl: string | null }[]>([]);
@@ -124,7 +143,8 @@ export default function RoomVisualizer() {
            imageBase64: targetImage,
            attachments: canvasAttachments.map(a => a.base64),
            variationCount,
-           tenantId
+           tenantId,
+           isDemoMode
          })
        });
 
@@ -255,6 +275,49 @@ export default function RoomVisualizer() {
         {/* Empty State / Initial File Dropzone */}
         {!resultImage && !stagedImage && !isProcessing && !variations && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03)_0%,transparent_100%)] z-10">
+
+             {/* Demo Mode: Room Selector Grid */}
+             {isDemoMode ? (
+               <div className="w-full max-w-5xl flex flex-col items-center">
+                 <div className="mb-6 flex items-center gap-3">
+                   <Sparkles className="w-5 h-5 text-[#D4C3A3]" />
+                   <h2 className="text-2xl md:text-3xl font-serif text-white">Bir Oda Seçin, AI Tasarlasın</h2>
+                 </div>
+                 <p className="text-zinc-400 text-sm mb-8 text-center max-w-xl">Aşağıdaki odalardan birini seçin. Yapay zeka otomatik olarak perdenizi tasarlayacak. <strong className="text-[#D4C3A3]">Giriş yapmadan, ücretsiz.</strong></p>
+                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                   {DEMO_ROOMS.map(room => (
+                     <button
+                       key={room.id}
+                       onClick={async () => {
+                         setSelectedDemoRoom(room.id);
+                         // Fetch the demo room image and trigger render
+                         try {
+                           const res = await fetch(room.thumb);
+                           const blob = await res.blob();
+                           const reader = new FileReader();
+                           reader.onloadend = () => {
+                             const base64 = reader.result as string;
+                             setStagedImage({ base64, mimeType: 'image/jpeg' });
+                           };
+                           reader.readAsDataURL(blob);
+                         } catch {
+                           toast.error('Demo oda yüklenemedi.');
+                         }
+                       }}
+                       className={`group relative overflow-hidden rounded-xl border-2 transition-all aspect-[4/3] ${
+                         selectedDemoRoom === room.id 
+                           ? 'border-[#8B7355] shadow-lg shadow-[#8B7355]/20' 
+                           : 'border-zinc-800 hover:border-zinc-600'
+                       }`}
+                     >
+                       <img src={room.thumb} alt={room.label} className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                       <span className="absolute bottom-3 left-3 text-white text-sm font-semibold tracking-wide">{room.label}</span>
+                     </button>
+                   ))}
+                 </div>
+               </div>
+             ) : (
              <div 
                className="w-full max-w-4xl aspect-[16/9] md:aspect-auto md:h-[60vh] border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center hover:border-blue-500/30 hover:bg-white/[0.02] transition-colors cursor-pointer group shadow-2xl bg-black/20 backdrop-blur-sm"
                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
@@ -288,6 +351,7 @@ export default function RoomVisualizer() {
                   İşlemlere başlamak için buraya <strong className="text-white font-medium">tıklayarak</strong> fotoğraf yükleyebilir veya <strong className="text-white font-medium">sürükleyip bırakabilirsiniz.</strong>
                 </p>
              </div>
+             )}
           </div>
         )}
 
@@ -512,12 +576,19 @@ export default function RoomVisualizer() {
                 </div>
               )}
 
-              {/* Watermark */}
-              <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex flex-wrap content-evenly justify-evenly -rotate-12 z-20 mix-blend-screen">
+              {/* Watermark — stronger in demo mode */}
+              <div className={`absolute inset-0 pointer-events-none flex flex-wrap content-evenly justify-evenly -rotate-12 z-20 mix-blend-screen ${isDemoMode ? 'opacity-[0.15]' : 'opacity-[0.03]'}`}>
                  {Array.from({length: 15}).map((_, i) => (
                    <span key={i} className="text-8xl font-black text-white m-8 tracking-widest uppercase font-serif">PERDE.AI</span>
                  ))}
               </div>
+              {/* Demo mode CTA: Sign up to remove watermark */}
+              {isDemoMode && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-black/80 backdrop-blur-md border border-[#8B7355]/50 px-6 py-3 rounded-xl flex items-center gap-4">
+                  <span className="text-white text-sm font-medium">Üye olun, filigran kalksın — 5 render ücretsiz!</span>
+                  <a href="/sites/perde.ai/register" className="bg-[#8B7355] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#725e45] transition-colors">ÜYE OL</a>
+                </div>
+              )}
 
               {/* B2B Teklif Al CTA */}
               <div className="absolute bottom-8 right-8 z-30 flex flex-col items-end gap-3">
