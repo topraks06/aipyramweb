@@ -13,11 +13,11 @@
 - **SEO/JSON-LD:** Domain layout'a tenant-aware metadata ve structured data eklendi ✅
 
 ### 🔴 KALAN GÖREVLER (Gemini devam edecek)
-- **Bölüm C:** Stripe ödeme altyapısı (stripeService.ts, checkout/webhook route)
-- **Bölüm E:** Email bildirim sistemi (notificationService.ts)
-- **Bölüm F:** Mobil responsive son cila
-- **B.2.13:** OrderConfirmation sayfası (`/checkout/success`)
-- **B.2.7:** CartSidebar Zustand global state entegrasyonu
+- **Bölüm G:** AŞAMA 7: Master Audit, Routing Sızıntısı ve TypeScript Temizliği
+- **G.1:** Tenant Navigasyon Sızıntıları (Hardcoded `<Link href="/">` düzeltmeleri)
+- **G.2:** Otonom Ajan (Aloha) TypeScript Çökme Onarımı (Exit Code 0 Hedefi)
+- **G.3:** Mobil Z-Index ve Scroll Lock Uyumluluğu
+- **G.4:** Vorhang/Perde.ai B2B Sipariş Dashboard Modülü
 
 ---
 
@@ -474,10 +474,27 @@ Gmail SMTP veya SendGrid ile email gönderimi
 ✅ HAFTA 1: Hometex sayfalarını Firestore'a bağla (A bölümü) — TAMAMLANDI
 ✅ HAFTA 2: Vorhang ana sayfa + ürün sayfaları (B.2.1-B.2.6) — TAMAMLANDI
 ✅ HAFTA 3: Seller Hub + ortak sayfalar (B.2.9-B.2.12 + D bölümü) — TAMAMLANDI
-🔴 HAFTA 4: Stripe entegrasyonu (C bölümü) — BEKLEMEDE
-🔴 HAFTA 5: Email + mobil responsive cila (E + F bölümü) — BEKLEMEDE
-🔴 HAFTA 6: OrderConfirmation, CartSidebar Zustand, ERP genişletme — BEKLEMEDE
+✅ HAFTA 4: Stripe entegrasyonu (C bölümü) — TAMAMLANDI
+✅ HAFTA 5: Email + mobil responsive cila (E + F bölümü) — TAMAMLANDI
+✅ HAFTA 6: OrderConfirmation, CartSidebar Zustand, ERP genişletme — TAMAMLANDI
+🔴 HAFTA 7: MASTER AUDIT & CİLA (Z-Index, TS Fixes, Routing Sızıntıları) — BEKLEMEDE
 ```
+
+---
+
+## 🏗️ BÖLÜM G: MASTER AUDIT & CİLA (AŞAMA 7 - CLAUDE & GEMINI İŞ BÖLÜMÜ)
+
+Hakan Bey'in emriyle sistemdeki tüm eksikler, sızıntılar ve "cila" niteliğindeki pürüzler giderilecektir. İşi Claude ve Gemini arasında bölüyoruz:
+
+### 🟢 CLAUDE'UN GÖREVLERİ (Arayüz & UX)
+1. **Tenant Routing Güvenliği:** `VorhangNavbar`, `PerdeFooter`, `OrderConfirmation`, vb. tüm sayfalarda bulunan `href="/..."` çağrılarını `const domainPath` ile dinamik hale getir (Sızıntıları engelle).
+2. **Mobil Scroll Lock:** Hamburger menüler açıkken sayfa kaymasını engellemek için `useScrollLock` kancası (hook) entegre et. Menü kapanınca / route değişince kilit açılsın.
+3. **Z-Index Standardizasyonu:** Hometex, Vorhang, TRTEX menülerinin Z-Index değerlerini tek bir anayasaya oturt (Navbar z-50, Mobil Menü z-100, Concierge z-120).
+
+### 🔵 GEMINI'NIN GÖREVLERİ (Backend & Stability)
+1. **Aloha TS Hata Temizliği:** `autoRepair.ts`, `imageAgent.ts`, `trtex-lead-agent.ts` içindeki tüm Type hataları çözülerek `pnpm tsc --noEmit` işlemi `Exit Code 0` yapacak.
+2. **Sipariş Dashboard:** Kullanıcıların `vorhang_orders` veya `perde_projects` kayıtlarını görebileceği `/sites/[domain]/dashboard` modülü kodlanacak.
+3. **Middleware Security Check:** `req.cookies.get('session')` bazlı yetkilendirmelerin son testleri.
 
 ## ⚠️ KONTROL KURALI
 Her iş bittiğinde:

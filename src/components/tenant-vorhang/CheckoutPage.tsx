@@ -1,88 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import VorhangNavbar from "./VorhangNavbar";
 import { Lock, ShieldCheck, ArrowRight, CreditCard } from "lucide-react";
 import Link from "next/link";
 import VorhangFooter from "./VorhangFooter";
+import { useCartStore } from "@/store/useCartStore";
+import { useRouter } from "next/navigation";
 
 export function CheckoutPage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
+  const { items, getTotal, clearCart } = useCartStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderResult, setOrderResult] = useState<any>(null);
 
-  // Mock total
-  const total = 439.49;
-  const basePriceEur = 369.32;
-  const vatEur = 70.17;
+  const total = getTotal();
   const shippingEur = 0;
+  // Calculate VAT out of total (e.g. 19% German VAT)
+  const basePriceEur = total / 1.19;
+  const vatEur = total - basePriceEur;
 
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/v1/master/vorhang/create-order', {
+      // Create Stripe Checkout Session
+      const res = await fetch('/api/stripe/marketplace-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productId: 'VOR-BUNDLE-01',
-          productName: 'Premium Leinen & Blackout Samt',
-          priceEur: basePriceEur,
-          vatEur: vatEur,
-          shippingEur: shippingEur,
-          totalEur: total,
+          items: items.map(i => ({ 
+            name: i.name, 
+            amountEur: i.price, 
+            quantity: i.quantity,
+            images: i.image ? [i.image] : undefined
+          })),
+          tenantId: 'vorhang',
           customerDetails: {
-             name: 'Gast Kunde',
+             name: 'Gast Kunde', // In real app, comes from form step 1
              country: 'DE',
-             vatId: ''
-          },
-          manufacturerId: 'perde_default_vendor' // TR'deki üreticiyi temsil eder
+          }
         })
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error || 'Checkout Error');
 
-      setOrderResult(data);
-      setSuccess(true);
+      // Redirect to Stripe Hosted Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Stripe URL not returned");
+      }
     } catch (err: any) {
       alert('Bestellung fehlgeschlagen: ' + err.message);
-    } finally {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 text-black">
-        <VorhangNavbar />
-        <main className="pt-32 pb-12 max-w-3xl mx-auto px-4 text-center">
-          <div className="bg-white p-12 border border-gray-100 shadow-sm rounded-sm">
-            <ShieldCheck className="w-16 h-16 text-green-600 mx-auto mb-6" />
-            <h1 className="text-4xl font-serif mb-4">Bestellung Erfolgreich!</h1>
-            <p className="text-gray-500 mb-8">
-              Ihre Zahlung wurde bestätigt. Der Auftrag wurde über das Sovereign Network direkt an den Hersteller in der Türkei weitergeleitet.
-            </p>
-            <div className="bg-gray-50 p-6 rounded-sm text-left max-w-md mx-auto space-y-4">
-               <div className="flex justify-between border-b border-gray-200 pb-2">
-                 <span className="text-gray-500">Bestellnummer:</span>
-                 <span className="font-mono font-bold">{orderResult?.orderId}</span>
-               </div>
-               <div className="flex justify-between border-b border-gray-200 pb-2">
-                 <span className="text-gray-500">Hersteller Status:</span>
-                 <span className="text-green-600 font-bold">In Produktion</span>
-               </div>
-               <div className="text-xs text-gray-400 mt-4 text-center">
-                 Eine Kopie dieses Auftrags wurde soeben an das B2B-Dashboard des türkischen Herstellers gesendet.
-               </div>
-            </div>
-          </div>
-        </main>
-        <VorhangFooter />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-black">
@@ -188,22 +169,30 @@ export function CheckoutPage() {
               <h3 className="font-bold font-serif text-lg">Zusammenfassung</h3>
               
               <div className="space-y-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Premium Leinen Vorhang (1x)</span>
-                  <span className="font-medium">€249.99</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Blackout Samt (2x)</span>
-                  <span className="font-medium">€189.50</span>
-                </div>
+                {!mounted ? (
+                  <div className="text-sm text-gray-500">Lade Warenkorb...</div>
+                ) : items.length === 0 ? (
+                  <div className="text-sm text-gray-500">Ihr Warenkorb ist leer.</div>
+                ) : (
+                  items.map(item => (
+                    <div key={item.id} className="flex justify-between text-sm">
+                      <span className="text-gray-600 truncate mr-4">{item.name} ({item.quantity}x)</span>
+                      <span className="font-medium whitespace-nowrap">€{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))
+                )}
                 <div className="h-px bg-gray-100" />
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Zwischensumme</span>
-                  <span className="font-medium">€439.49</span>
+                  <span className="font-medium">€{basePriceEur.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Versand</span>
                   <span className="font-medium text-green-600">Kostenlos</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">MwSt. (19%)</span>
+                  <span className="font-medium">€{vatEur.toFixed(2)}</span>
                 </div>
                 <div className="h-px bg-black" />
                 <div className="flex justify-between items-center">

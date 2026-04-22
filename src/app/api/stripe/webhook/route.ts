@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { adminDb } from "@/lib/firebase-admin";
 import { getTenant } from "@/lib/tenant-config";
+import { EventBus } from "@/core/events/eventBus";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
     apiVersion: "2025-02-24.acacia"
@@ -59,9 +60,31 @@ export async function POST(req: NextRequest) {
                                  tier: planId,
                                  lastRefillAt: new Date().toISOString()
                              });
-                         }
+                        }
                     });
                     console.log(`[Stripe Webhook] ${uid} kullanıcısına ${creditsToAdd} kredi eklendi.`);
+                }
+            } else if (session.metadata?.type === "marketplace_order") {
+                const orderId = session.metadata?.orderId;
+                if (orderId) {
+                    await adminDb.collection("vorhang_orders").doc(orderId).update({
+                        status: 'paid',
+                        paymentIntentId: session.payment_intent as string,
+                        updatedAt: new Date(),
+                    });
+                    console.log(`[Stripe Webhook] Marketplace siparişi onaylandı: ${orderId}`);
+                    
+                    // Sinyali yayınla (EventBus)
+                    await EventBus.emit({
+                        type: "VORHANG_ORDER_PAID",
+                        source: "stripe_webhook",
+                        tenant_id: "vorhang.ai",
+                        payload: {
+                            orderId,
+                            totalEur: session.amount_total ? session.amount_total / 100 : 0,
+                            vendorId: "AIPyram Sovereign Network"
+                        }
+                    });
                 }
             }
         }

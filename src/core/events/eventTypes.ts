@@ -24,6 +24,7 @@ export type EventType =
   | 'RFQ_EXPIRED'              // Talep süresi doldu
   | 'DEAL_INITIATED'           // Anlaşma başlatıldı
   | 'DEAL_COMPLETED'           // Anlaşma tamamlandı
+  | 'VORHANG_ORDER_PAID'       // Vorhang.ai ihracat siparişi ödendi
   | 'DEAL_FAILED'              // Anlaşma İptal Edildi (Negative Learning Signal)
   | 'QUOTATION_REJECTED'       // Teklif Reddedildi (Negative Learning Signal)
   | 'COMMISSION_EARNED'        // Komisyon kazanıldı

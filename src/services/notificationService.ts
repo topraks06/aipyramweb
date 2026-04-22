@@ -40,6 +40,7 @@ const BRAND_ROUTER: Record<string, TenantConfig> = {
   "perde.ai": { logo: "PERDE.AI", primaryColor: "#cda434", bgHex: "#0a0a0a", tone: "Lüks, Sofistike (Maison Objet Standardı)" },
   "trtex.com": { logo: "TRTEX B2B", primaryColor: "#10b981", bgHex: "#050505", tone: "Yüksek Yoğunluklu Ticari İstihbarat (Reuters Stili)" },
   "didimemlak.ai": { logo: "DIDIM PREMIUM", primaryColor: "#0ea5e9", bgHex: "#111827", tone: "Premium Yatırım & Güvenilir Escrow" },
+  "vorhang.ai": { logo: "VORHANG B2B", primaryColor: "#D4AF37", bgHex: "#ffffff", tone: "Alman Standartları & Şeffaf B2B Ticaret" },
   "aipyram-core": { logo: "AIPYRAM COMMAND", primaryColor: "#ef4444", bgHex: "#000000", tone: "Askeri Disiplin & Master Node Raporu" }
 };
 
@@ -98,6 +99,24 @@ export class NotificationService {
       const targetUser = tenant.includes("perde") ? ROLES.SALES_PERDE : ROLES.SALES_EMLAK;
       // Normalde bu "Saatlik Rapor" için Redis Queue'ya (Batch) atılır. Spam önleme amacıyla doğrudan WhatsApp ATILMAZ.
       console.log(`[🔇 A2A SİNYALİ BATCHLENDİ] ${tenant} üzerinden yeni talep geldi. WhatsApp atılmadı, saatlik rapora eklendi.`);
+    });
+
+    // 4. VORHANG MARKETPLACE - YENİ SİPARİŞ
+    EventBus.subscribe("VORHANG_ORDER_PAID", async (event) => {
+      const payload = event.payload;
+      const htmlBody = this.getTenantEmailHtml("vorhang.ai", "🔥 YENİ İHRACAT SİPARİŞİ", 
+        `<p>Avrupa'dan (DACH) yeni bir sipariş onaylandı!</p>
+         <ul>
+           <li><strong>Sipariş Kodu:</strong> ${payload?.orderId}</li>
+           <li><strong>Üretici:</strong> ${payload?.vendorId}</li>
+           <li><strong>Toplam:</strong> €${payload?.totalEur}</li>
+         </ul>
+         <p>Ledger kayıtları ve akıllı sözleşme oluşturuldu. Üretici onayına düştü.</p>`
+      );
+      await this.sendEmail(ROLES.MASTER.email, `🚀 YENİ İHRACAT: €${payload?.totalEur}`, htmlBody, "normal", "vorhang.ai");
+      
+      const waMsg = `🚀 [VORHANG B2B]\n\nYENI IHRACAT SIPARISI\nSipariş: ${payload?.orderId}\nTutar: €${payload?.totalEur}\n\nOtonom sistem komisyon ve ödeme akışını ledger'a kilitledi.`;
+      await this.sendWhatsApp(ROLES.MASTER.phone, waMsg, "vorhang.ai");
     });
   }
 

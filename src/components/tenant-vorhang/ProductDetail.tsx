@@ -4,8 +4,10 @@ import { Camera, ShieldCheck, ShoppingCart, Info, Star } from "lucide-react";
 import Link from "next/link";
 import VorhangNavbar from "./VorhangNavbar";
 import VorhangFooter from "./VorhangFooter";
+import { useCartStore } from "@/store/useCartStore";
 
 export function ProductDetail({ id, product: propProduct, seller: propSeller }: { id: string, product?: any, seller?: any }) {
+  const { addItem, openCart } = useCartStore();
   // Merge mock with props
   const product = {
     id: propProduct?.id || id,
@@ -22,6 +24,18 @@ export function ProductDetail({ id, product: propProduct, seller: propSeller }: 
       { label: "Breite", value: propProduct?.width || "300 cm" },
       { label: "MOQ", value: propProduct?.moq ? `${propProduct.moq}m` : "50m" }
     ]
+  };
+
+  const handleAddToCart = () => {
+    addItem({
+      id: product.id,
+      name: product.title,
+      price: product.price,
+      quantity: 1,
+      image: product.images ? product.images[0] : undefined,
+      sellerId: product.seller
+    });
+    openCart();
   };
 
   return (
@@ -98,7 +112,10 @@ export function ProductDetail({ id, product: propProduct, seller: propSeller }: 
                 In Ihrem Raum ansehen (KI-Render)
               </Link>
               
-              <button className="w-full border border-black text-black px-6 py-4 rounded-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-all">
+              <button 
+                onClick={handleAddToCart}
+                className="w-full border border-black text-black px-6 py-4 rounded-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-all"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 In den Warenkorb
               </button>

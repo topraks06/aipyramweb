@@ -102,6 +102,73 @@ export async function createCommissionCheckout(
 }
 
 // ═══════════════════════════════════════════════════════════════
+// STRIPE MARKETPLACE CHECKOUT — Vorhang.ai vb. için Sepet Ödemesi
+// ═══════════════════════════════════════════════════════════════
+
+export interface MarketplaceCheckoutParams {
+  orderId: string;
+  customerEmail?: string;
+  lineItems: {
+    name: string;
+    description?: string;
+    amountEur: number; // Euro (not cents)
+    quantity: number;
+    images?: string[];
+  }[];
+  successUrl: string;
+  cancelUrl: string;
+}
+
+/**
+ * Vorhang.ai gibi pazar yerleri için standart sepet ödeme sayfası oluşturur.
+ */
+export async function createMarketplaceCheckout(
+  params: MarketplaceCheckoutParams
+): Promise<{ sessionId: string; url: string } | null> {
+  if (!stripe) {
+    console.error("[STRIPE] Stripe bağlantısı yok. STRIPE_SECRET_KEY kontrol edin.");
+    return null;
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: params.customerEmail,
+      line_items: params.lineItems.map(item => ({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: item.name,
+            description: item.description,
+            images: item.images,
+          },
+          unit_amount: Math.round(item.amountEur * 100), // Convert to cents
+        },
+        quantity: item.quantity,
+      })),
+      metadata: {
+        orderId: params.orderId,
+        platform: "vorhang",
+        type: "marketplace_order",
+      },
+      success_url: params.successUrl,
+      cancel_url: params.cancelUrl,
+    });
+
+    console.log(`[STRIPE] Marketplace Checkout oluşturuldu: ${session.id} für Order ${params.orderId}`);
+
+    return {
+      sessionId: session.id,
+      url: session.url || "",
+    };
+  } catch (error: any) {
+    console.error("[STRIPE] Marketplace Checkout hatası:", error.message);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
 // STRIPE WEBHOOK — Ödeme doğrulama (POST /api/stripe/webhook)
 // ═══════════════════════════════════════════════════════════════
 

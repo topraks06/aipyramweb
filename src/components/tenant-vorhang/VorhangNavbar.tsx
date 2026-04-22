@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Menu, X, Globe, User, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CartSidebar } from "./CartSidebar";
+import { useCartStore } from "@/store/useCartStore";
 
 export default function VorhangNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { openCart, items } = useCartStore();
+  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
@@ -45,9 +47,13 @@ export default function VorhangNavbar() {
               <Globe className="w-4 h-4" />
               <span>DE</span>
             </button>
-            <button onClick={() => setIsCartOpen(true)} className="text-gray-300 hover:text-white transition-colors relative">
+            <button onClick={openCart} className="text-gray-300 hover:text-white transition-colors relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  {cartItemCount}
+                </span>
+              )}
             </button>
             <button className="bg-white text-black px-5 py-2 rounded-sm text-sm font-medium hover:bg-[#D4AF37] hover:text-white transition-all">
               Anmelden
@@ -56,9 +62,13 @@ export default function VorhangNavbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-            <button onClick={() => setIsCartOpen(true)} className="text-gray-300 hover:text-white relative">
+            <button onClick={openCart} className="text-gray-300 hover:text-white relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  {cartItemCount}
+                </span>
+              )}
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -100,7 +110,7 @@ export default function VorhangNavbar() {
         )}
       </AnimatePresence>
       
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSidebar />
     </nav>
   );
 }

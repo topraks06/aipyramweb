@@ -2,35 +2,11 @@
 
 import { X, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCartStore } from "@/store/useCartStore";
 
-// TODO: Replace with global state (e.g. Zustand) or context later.
-export function CartSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  // Mock Cart Items
-  const [items, setItems] = useState([
-    {
-      id: "prod-101",
-      title: "Premium Leinen Vorhang",
-      seller: "Hometex Elite",
-      price: 249.99,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=80",
-    },
-    {
-      id: "prod-102",
-      title: "Blackout Samt (Dunkelblau)",
-      seller: "Kaya Tekstil",
-      price: 189.50,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=400&q=80",
-    }
-  ]);
-
-  const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const removeItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
-  };
+export function CartSidebar() {
+  const { items, isOpen, closeCart, removeItem, getTotal } = useCartStore();
+  const total = getTotal();
 
   return (
     <>
@@ -38,7 +14,7 @@ export function CartSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () 
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-50 transition-opacity backdrop-blur-sm"
-          onClick={onClose}
+          onClick={closeCart}
         />
       )}
 
@@ -52,7 +28,7 @@ export function CartSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             <ShoppingBag className="w-5 h-5 text-black" />
             <span className="font-bold text-lg tracking-wider">WARENKORB</span>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={closeCart} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
@@ -72,12 +48,12 @@ export function CartSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 </div>
                 <div className="flex-1 flex flex-col">
                   <div className="flex justify-between items-start">
-                    <h4 className="font-semibold text-sm leading-tight text-black">{item.title}</h4>
+                    <h4 className="font-semibold text-sm leading-tight text-black">{item.name}</h4>
                     <button onClick={() => removeItem(item.id)} className="text-gray-400 hover:text-red-500 transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{item.seller}</p>
+                  <p className="text-xs text-gray-500 mt-1">{item.sellerId || "AIPyram"}</p>
                   <div className="mt-auto flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-600">Stk: {item.quantity}</span>
                     <span className="font-bold text-sm">€{item.price.toFixed(2)}</span>
@@ -97,7 +73,7 @@ export function CartSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             </div>
             <Link 
               href="/checkout"
-              onClick={onClose}
+              onClick={closeCart}
               className="w-full bg-black text-white py-4 font-bold tracking-widest text-xs flex justify-center items-center gap-2 hover:bg-yellow-600 transition-colors"
             >
               ZUR KASSE <ArrowRight className="w-4 h-4" />
