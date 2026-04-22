@@ -1,6 +1,6 @@
 import { adminDb } from '@/lib/firebase-admin';
 import crypto from 'crypto';
-import { AlohaDirective, WorkerTask } from '../aloha/aloha-directive-protocol';
+import { AlohaDirective, WorkerTask } from '../aloha-directive-protocol';
 
 // SINGLETON ZORLAMA — Maliye Bakanı v2
 // Kaçak GoogleGenAI instance KALDIRILDI. 
@@ -149,7 +149,7 @@ export class TrtexLeadAgent {
             const { buildTerminalPayload } = await import('@/core/aloha/terminalPayloadBuilder');
             const payload = await buildTerminalPayload();
             
-            cycleReport.payloadVersion = payload.version || 'unknown';
+            cycleReport.payloadVersion = payload.version?.toString() || 'unknown';
             cycleReport.intelligenceScore = payload.intelligenceScore || 0;
             
             console.log(`[TRTEX-LEAD] ✅ Payload v${payload.version} | IQ: ${payload.intelligenceScore}/100`);

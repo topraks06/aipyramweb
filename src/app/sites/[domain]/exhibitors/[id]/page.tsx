@@ -7,7 +7,7 @@ export default async function ExhibitorDetailPage({ params }: { params: Promise<
   const { domain, id } = await params;
 
   let exhibitor = null;
-  let products = [];
+  let products: any[] = [];
 
   try {
     const exhibitorDoc = await adminDb.collection('exhibitors').doc(id).get();

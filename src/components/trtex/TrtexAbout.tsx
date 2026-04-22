@@ -22,7 +22,7 @@ const stats = [
 export default function TrtexAbout() {
   return (
     <div className="min-h-screen bg-black text-white">
-      <TrtexNavbar payload={null} lang="tr" basePath="" />
+      <TrtexNavbar lang="tr" basePath="" />
       
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 border-b border-white/10">

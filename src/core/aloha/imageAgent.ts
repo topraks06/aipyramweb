@@ -349,10 +349,10 @@ export async function processMultipleImages(
   const catDetection = detectVisualCategory(title, content);
 
   // Görsel açılar: 1. Wide (Hero), 2. Medium (Metin içi), 3. Detail (Metin içi)
-  const shotPlan = [
-    { rule: 'wide', aspect: '16:9' as const },
-    { rule: 'medium', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') as const },
-    { rule: 'detail', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') as const },
+  const shotPlan: Array<{ rule: string, aspect: '1:1' | '3:4' | '4:3' | '16:9' | '9:16' }> = [
+    { rule: 'wide', aspect: '16:9' },
+    { rule: 'medium', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') },
+    { rule: 'detail', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') },
   ];
 
   const { GoogleGenAI } = require('@google/genai');

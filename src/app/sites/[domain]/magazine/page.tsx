@@ -5,7 +5,7 @@ import { adminDb } from '@/lib/firebase-admin';
 export default async function MagazinePage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
 
-  let articles = [];
+  let articles: any[] = [];
   try {
     const articlesSnap = await adminDb.collection('articles').orderBy('publishedAt', 'desc').get();
     articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));

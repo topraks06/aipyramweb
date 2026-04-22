@@ -7,7 +7,7 @@ import VorhangFooter from "@/components/tenant-vorhang/VorhangFooter";
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
-  let products = [];
+  let products: any[] = [];
   try {
     const productsSnap = await adminDb.collection('vorhang_products').get();
     products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));

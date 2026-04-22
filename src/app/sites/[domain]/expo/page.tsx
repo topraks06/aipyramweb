@@ -5,7 +5,7 @@ import { adminDb } from '@/lib/firebase-admin';
 export default async function ExpoPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
   
-  let exhibitors = [];
+  let exhibitors: any[] = [];
   try {
     const exhibitorsSnap = await adminDb.collection('exhibitors').get();
     exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));

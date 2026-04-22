@@ -9,6 +9,7 @@ import { alohaAI } from './aiClient';
 import { safeParseLLM, schemas } from './schemaGuard';
 import { recoverCycleState, endCycle } from './controlTower';
 import { recoverSafeModeState } from './strategicDecisionEngine';
+import type { AlohaDirective } from './aloha-directive-protocol';
 
 /**
  * READ NORMALIZATION — Firestore dokümanından tarih alanını güvenli oku
@@ -140,7 +141,6 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
     if (projectName === 'trtex') {
       console.log(`[ALOHA STRATEGY] 🧠 ALOHA CEO olarak Stratejik Karar (Directive) oluşturuyor...`);
       
-      const { AlohaDirective } = await import('./aloha-directive-protocol');
       const currentStrategy: AlohaDirective = {
          id: `DIR-${Date.now()}`,
          project: 'TRTEX',

@@ -218,8 +218,8 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     return <PerdeLandingPage />;
   }
   if (projectName === 'hometex') {
-    let articles = [];
-    let exhibitors = [];
+    let articles: any[] = [];
+    let exhibitors: any[] = [];
     try {
       const articlesSnap = await adminDb.collection('articles').orderBy('publishedAt', 'desc').limit(4).get();
       const exhibitorsSnap = await adminDb.collection('exhibitors').limit(6).get();
@@ -231,7 +231,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     return <HometexLandingPage articles={articles} exhibitors={exhibitors} />;
   }
   if (projectName === 'vorhang') {
-    let products = [];
+    let products: any[] = [];
     try {
       const productsSnap = await adminDb.collection('vorhang_products').limit(6).get();
       products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));

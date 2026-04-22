@@ -13,7 +13,7 @@ export interface ToolResult {
   success: boolean;
   message: string;
   data?: any;
-  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text';
+  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text' | 'quotePreview';
 }
 
 // ═══════════════════════════════════════════════════

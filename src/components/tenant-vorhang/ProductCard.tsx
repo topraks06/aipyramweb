@@ -23,6 +23,7 @@ export function ProductCard({
   price, 
   currency = "€", 
   imageUrl, 
+  images,
   isVerified = true 
 }: ProductCardProps) {
   return (

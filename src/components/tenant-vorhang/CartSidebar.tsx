@@ -44,7 +44,7 @@ export function CartSidebar() {
             items.map((item) => (
               <div key={item.id} className="flex gap-4 group">
                 <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100 shrink-0">
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 flex flex-col">
                   <div className="flex justify-between items-start">

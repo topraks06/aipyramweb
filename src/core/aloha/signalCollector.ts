@@ -267,7 +267,7 @@ Return ONLY JSON. NO MARKDOWN. NO COMMENTS.`,
         config: { temperature: 0.4 },
       });
 
-      const jsonMatch = result.text.match(/\{[\s\S]*\}/);
+      const jsonMatch = (result.text || '').match(/\{[\s\S]*\}/);
       if (!jsonMatch) continue;
 
       const parsed = JSON.parse(jsonMatch[0]);

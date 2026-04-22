@@ -87,11 +87,12 @@ export interface AuditIssue {
 }
 
 export interface RepairAction {
-  action: 'fill_content' | 'replace_image' | 'add_keywords' | 'fix_formatting' | 'add_ai_commentary' | 'add_images' | 'fix_alt_text' | 'fix_slug' | 'rebuild_terminal';
+  action: 'fill_content' | 'replace_image' | 'add_keywords' | 'fix_formatting' | 'add_ai_commentary' | 'add_images' | 'fix_alt_text' | 'fix_slug' | 'rebuild_terminal' | 'targeted_terminal_fix';
   articleId: string;
   title: string;
   reason: string;
   priority: number; // 1 = acil, 5 = düşük
+  targetCommand?: string;
 }
 
 export interface AuditReport {

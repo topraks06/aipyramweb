@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 export default async function ProductDetailPage({ params }: { params: Promise<{ domain: string, id: string }> }) {
   const { id } = await params;
 
-  let product = null;
-  let seller = null;
+  let product: any = null;
+  let seller: any = null;
 
   try {
     const productDoc = await adminDb.collection('vorhang_products').doc(id).get();

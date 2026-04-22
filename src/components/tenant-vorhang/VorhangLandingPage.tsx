@@ -1,6 +1,6 @@
 import VorhangNavbar from "./VorhangNavbar";
 import VorhangFooter from "./VorhangFooter";
-import { ArrowRight, ShieldCheck, Camera, Sparkles, TrendingUp, CheckCircle, Smartphone } from "lucide-react";
+import { ArrowRight, ShieldCheck, Camera, Sparkles, TrendingUp, CheckCircle, Smartphone, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 

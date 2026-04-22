@@ -20,7 +20,7 @@ export default function TrtexContact() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <TrtexNavbar payload={null} lang="tr" basePath="" />
+      <TrtexNavbar lang="tr" basePath="" />
 
       {/* Hero */}
       <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 border-b border-white/10">

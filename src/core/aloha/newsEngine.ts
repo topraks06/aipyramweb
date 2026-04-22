@@ -478,7 +478,7 @@ async function saveToFirestore(
       .limit(15)
       .get();
     
-    const latestArticles = latestSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const latestArticles = latestSnap.docs.map(d => ({ id: d.id, ...d.data() })) as any[];
     
     if (latestArticles.length > 0) {
       await adminDb.collection('trtex_terminal').doc('current').set({

@@ -113,7 +113,7 @@ export async function invokeAgent(invocation: AgentInvocation): Promise<AgentRes
   }
   
   // 5. EventBus sinyali fırlat
-  swarmBus.emit(`AGENT_COMPLETED_${agentType.toUpperCase()}`, { tenantId, ...result });
+  swarmBus.emit(`AGENT_COMPLETED_${agentType.toUpperCase()}`, result);
   
   // 6. Firestore'a ajan log kaydı
   try {
