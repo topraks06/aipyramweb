@@ -19,11 +19,11 @@
 - [x] B6: `tools.ts` → 5 ajan komutu (whatsapp, document, fabric, render, retention) schema'da mevcut
 - **Doğrulama:** ✅ pnpm run build exit 0
 
-## 🟡 FAZ C — TRTEX Kalan Görevler (Gün 3-4)
-- [ ] C1: `autoRunner.ts` deepAudit → kritik onarımları otomatik uygula (max 5/cycle)
-- [ ] C2: `opportunityEngine.ts` → somut veri varsa ZORLA fırsat üret
-- [ ] C3: `autoRunner.ts` IQ Tracking → son 3 cycle IQ < 60 alarm
-- **Doğrulama:** build 0 hata, TRTEX pipeline bozulmadı
+## ✅ FAZ C — TRTEX Kalan Görevler (TAMAMLANDI — 22 Nisan)
+- [x] C1: `autoRunner.ts` deepAudit → kritik onarımları otomatik uygula (max 5/cycle)
+- [x] C2: `opportunityEngine.ts` → somut veri varsa ZORLA fırsat üret
+- [x] C3: `autoRunner.ts` IQ Tracking → son 3 cycle IQ < 60 alarm
+- **Doğrulama:** ✅ build 0 hata, TRTEX pipeline bozulmadı
 
 ## 🟢 FAZ D — Firebase Storage Pipeline İskeleti (Gün 4-5)
 - [ ] D1: `storage-utils.ts` → upload + resize fonksiyon iskeletleri

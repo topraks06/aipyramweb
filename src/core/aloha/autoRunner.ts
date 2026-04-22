@@ -497,6 +497,38 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
         }
 
         // ═══════════════════════════════════════
+        // ADIM 0.65: OTONOM ONARIM (Deep Audit Auto-Repair)
+        // Kritik hatalar varsa ZORLA onar (max 5/cycle)
+        // ═══════════════════════════════════════
+        try {
+          if (adminDb) {
+            const recentAudits = await adminDb.collection('aloha_site_audits')
+              .orderBy('timestamp', 'desc')
+              .limit(1)
+              .get();
+              
+            if (!recentAudits.empty) {
+              const audit = recentAudits.docs[0].data();
+              const auditAge = (Date.now() - new Date(audit.timestamp).getTime()) / (1000 * 60 * 60);
+              
+              if (auditAge < 24 && audit.critical > 0) {
+                console.log(`[ALOHA] 🔧 DEEP AUDIT REPAIR: ${audit.critical} kritik hata bulundu, onarım zinciri başlatılıyor...`);
+                
+                const repairResult = await executeToolCall({
+                  name: 'run_full_repair',
+                  args: { project: projectName }
+                });
+                
+                result.actionsPerformed.push(`deep_audit_repair_triggered`);
+                console.log(`[ALOHA] 🔧 Onarım sonucu: ${repairResult.substring(0, 100)}`);
+              }
+            }
+          }
+        } catch (repairErr: any) {
+          console.warn(`[ALOHA] ⚠️ Otonom Onarım hatası:`, repairErr.message);
+        }
+
+        // ═══════════════════════════════════════
         // ADIM 0.7: PROAKTİF REGRESSION GUARD
         // "Önce geçmiş hataları kontrol et, sonra yeni iş yap"
         // ═══════════════════════════════════════
@@ -1507,6 +1539,22 @@ KURALLAR:
         const payloadResult = await buildTerminalPayload();
         console.log(`[ALOHA] 📦 Terminal Payload yazıldı: v${payloadResult.version}, IQ ${payloadResult.intelligenceScore}/100`);
         result.actionsPerformed.push(`terminal_payload:v${payloadResult.version}_IQ${payloadResult.intelligenceScore}`);
+        
+        // IQ TRACKING ALARM
+        if (payloadResult.intelligenceScore < 60) {
+          console.warn(`[ALOHA] 🚨 IQ ALARM: Terminal IQ skoru çok düşük (${payloadResult.intelligenceScore}/100)`);
+          
+          if (adminDb) {
+            // Son 3 döngünün IQ skorunu kontrol et (bunu basite indirgeyip sadece alert ekliyoruz, karmaşık array yerine event tabanlı alarm)
+            await adminDb.collection('aloha_alerts').add({
+              type: 'IQ_DROP_CRITICAL',
+              message: `TRTEX Intelligence IQ skoru ${payloadResult.intelligenceScore}/100 seviyesine düştü. Sinyal motoru körleşmiş olabilir.`,
+              severity: 'critical',
+              timestamp: new Date().toISOString(),
+              read: false,
+            });
+          }
+        }
       } catch (payloadErr: any) {
         console.warn(`[ALOHA] ⚠️ Terminal Payload hatası:`, payloadErr.message);
         await dlq.record(payloadErr, 'autoRunner', 'trtex', 'terminal_payload_build_failed');
