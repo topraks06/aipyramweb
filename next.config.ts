@@ -64,6 +64,9 @@ const nextConfig: NextConfig = {
         hostname: "storage.googleapis.com",
       },
       {
+        hostname: "images.unsplash.com",
+      },
+      {
         hostname: "*.firebasestorage.app",
       },
       {

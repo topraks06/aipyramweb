@@ -110,7 +110,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
         .trtex-lang-drop a:hover { background: ${dropHover} !important; }
       `}} />
       <nav 
-        className="relative z-[50] w-full" 
+        className="relative z-[10000] w-full" 
         style={{ background: bgColor, borderBottom: `1px solid ${borderColor}` }}
       >
         <div className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-[70px] lg:h-[80px]">
@@ -194,6 +194,15 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                 ))}
               </div>
             </div>
+
+            {/* AIPYRAM CONCIERGE (DESKTOP) */}
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'concierge' } }))}
+              className="ml-4 px-4 py-2 font-mono text-[0.75rem] font-bold uppercase tracking-widest transition-all"
+              style={{ background: '#D4AF37', color: '#000', border: 'none', cursor: 'pointer' }}
+            >
+              AIPyram Concierge
+            </button>
           </div>
 
           {/* MOBILE HAMBURGER BUTTON */}
@@ -254,6 +263,20 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                   </a>
                 ))}
               </div>
+            </div>
+
+            {/* AIPYRAM CONCIERGE (MOBILE) */}
+            <div className="mt-6">
+              <button 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'concierge' } }));
+                }}
+                className="w-full p-4 font-mono text-sm font-bold uppercase tracking-widest text-center"
+                style={{ background: '#D4AF37', color: '#000', border: 'none', cursor: 'pointer' }}
+              >
+                AIPyram Concierge
+              </button>
             </div>
           </div>
         </div>
