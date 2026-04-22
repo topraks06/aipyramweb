@@ -68,12 +68,26 @@ const MOCK_ASSETS: MediaAsset[] = [
   }
 ];
 
-export function MediaLibrary() {
+export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) {
   const [activeTenant, setActiveTenant] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
 
-  const filtered = MOCK_ASSETS.filter(a => {
+  // Firestore verisini MediaAsset formatına map'le
+  const mappedAssets: MediaAsset[] = initialAssets.length > 0 ? initialAssets.map((asset: any) => ({
+    id: asset.key || asset.id,
+    title: asset.category === "user_render" ? "Kullanıcı Render (Perde.ai)" : (asset.title || "İsimsiz Medya"),
+    url: asset.url_2k || asset.url_1k || asset.url,
+    thumbnailUrl: asset.url_1k || asset.url_2k || asset.url,
+    tenant: asset.tenant || "perde",
+    type: asset.source === "imagen" ? "render" : asset.source === "trtex_article" ? "news" : "product",
+    resolution: asset.url_4k ? "4K" : asset.url_2k ? "2K" : "1K",
+    status: "published",
+    createdAt: asset.createdAt || new Date().toISOString(),
+    tags: asset.tags || []
+  })) : MOCK_ASSETS;
+
+  const filtered = mappedAssets.filter(a => {
     if (activeTenant !== "all" && a.tenant !== activeTenant) return false;
     if (search && !a.title.toLowerCase().includes(search.toLowerCase()) && !a.tags.join(" ").includes(search.toLowerCase())) return false;
     return true;

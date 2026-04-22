@@ -25,11 +25,11 @@
 - [x] C3: `autoRunner.ts` IQ Tracking → son 3 cycle IQ < 60 alarm
 - **Doğrulama:** ✅ build 0 hata, TRTEX pipeline bozulmadı
 
-## 🟢 FAZ D — Firebase Storage Pipeline İskeleti (Gün 4-5)
-- [ ] D1: `storage-utils.ts` → upload + resize fonksiyon iskeletleri
-- [ ] D2: Render API sonrası otomatik `image_library` Firestore kaydı
-- [ ] D3: MediaLibrary.tsx → mock veriden Firestore'a geçiş hazırlığı
-- **Doğrulama:** Render sonrası Firestore'da `image_library` kaydı oluşur
+## ✅ FAZ D — Firebase Storage Pipeline İskeleti (TAMAMLANDI — 22 Nisan)
+- [x] D1: `storage-utils.ts` → upload + resize fonksiyon iskeletleri
+- [x] D2: Render API sonrası otomatik `image_library` Firestore kaydı
+- [x] D3: `MediaLibrary.tsx` → mock veriden Firestore'a geçiş hazırlığı
+- **Doğrulama:** ✅ build 0 hata, Medya modülü server komponentiyle bağlandıFirestore'da `image_library` kaydı oluşur
 
 ## 🔵 FAZ E — Hometex Temizlik + TRTEX Lokalizasyon (Gün 5-6)
 - [ ] E1: Hometex sayfaları (Expo, Exhibitors, Magazine, Trends) → prop-driven, loading state
