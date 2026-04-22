@@ -3,22 +3,24 @@
 import { Camera, ShieldCheck, ShoppingCart, Info, Star } from "lucide-react";
 import Link from "next/link";
 import VorhangNavbar from "./VorhangNavbar";
+import VorhangFooter from "./VorhangFooter";
 
-export function ProductDetail({ id }: { id: string }) {
-  // Mock Data
+export function ProductDetail({ id, product: propProduct, seller: propSeller }: { id: string, product?: any, seller?: any }) {
+  // Merge mock with props
   const product = {
-    id,
-    title: "Premium Blackout 'Elegance'",
-    seller: "Weber Textil GmbH",
-    price: 12.50,
-    rating: 4.8,
-    reviews: 124,
-    description: "Hochwertiger Verdunkelungsstoff für Hotels und anspruchsvolle Wohnräume. 100% blickdicht, schwer entflammbar (B1) und akustisch wirksam.",
+    id: propProduct?.id || id,
+    title: propProduct?.name || "Premium Blackout 'Elegance'",
+    seller: propSeller?.name || propProduct?.sellerName || "Weber Textil GmbH",
+    price: propProduct?.price || 12.50,
+    rating: propProduct?.rating || 4.8,
+    reviews: propProduct?.reviewCount || 124,
+    description: propProduct?.description || "Hochwertiger Verdunkelungsstoff für Hotels und anspruchsvolle Wohnräume. 100% blickdicht, schwer entflammbar (B1) und akustisch wirksam.",
+    images: propProduct?.images || null,
     specs: [
-      { label: "Material", value: "100% Polyester FR" },
-      { label: "Gewicht", value: "320 g/m²" },
-      { label: "Breite", value: "300 cm" },
-      { label: "Pflege", value: "Waschbar bei 30°C" }
+      { label: "Material", value: propProduct?.material || "100% Polyester FR" },
+      { label: "Gewicht", value: propProduct?.weight || "320 g/m²" },
+      { label: "Breite", value: propProduct?.width || "300 cm" },
+      { label: "MOQ", value: propProduct?.moq ? `${propProduct.moq}m` : "50m" }
     ]
   };
 
@@ -31,18 +33,26 @@ export function ProductDetail({ id }: { id: string }) {
           
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="aspect-[4/5] bg-gray-100 flex items-center justify-center text-gray-400 relative">
-               <span className="absolute top-4 right-4 bg-white px-3 py-1 text-xs font-bold flex items-center gap-1 shadow-md">
-                  <ShieldCheck className="w-4 h-4 text-green-600" /> Trust Score: 98/100
+            <div className="aspect-[4/5] bg-gray-100 flex items-center justify-center text-gray-400 relative overflow-hidden">
+               {product.images && product.images.length > 0 ? (
+                 <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+               ) : (
+                 <div className="text-center">
+                    <Camera className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                    <p className="text-sm">Produktbild</p>
+                 </div>
+               )}
+               <span className="absolute top-4 right-4 bg-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold flex items-center gap-2 shadow-md text-black">
+                  <ShieldCheck className="w-3 h-3 text-green-600" /> Trust Score: 98/100
                </span>
-               <div className="text-center">
-                  <Camera className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                  <p className="text-sm">Produktbild</p>
-               </div>
             </div>
             <div className="grid grid-cols-4 gap-4">
-               {[1,2,3,4].map(i => (
-                 <div key={i} className="aspect-square bg-gray-50 border border-gray-100 hover:border-[#D4AF37] cursor-pointer transition-colors" />
+               {[1,2,3,4].map((i, index) => (
+                 <div key={i} className="aspect-square bg-gray-50 border border-gray-100 hover:border-black cursor-pointer transition-colors overflow-hidden">
+                   {product.images && product.images[index] && (
+                     <img src={product.images[index]} alt="" className="w-full h-full object-cover" />
+                   )}
+                 </div>
                ))}
             </div>
           </div>
@@ -101,6 +111,7 @@ export function ProductDetail({ id }: { id: string }) {
           </div>
         </div>
       </main>
+      <VorhangFooter />
     </div>
   );
 }

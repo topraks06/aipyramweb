@@ -5,17 +5,12 @@ import { motion } from 'motion/react';
 import { ArrowRight, Filter, Search } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { HOMETEX_EXHIBITORS, HOMETEX_HALLS } from '@/lib/hometex-demoData';
+import { HOMETEX_HALLS } from '@/lib/hometex-demoData';
+import HometexFooter from './HometexFooter';
 
-export default function Expo() {
+export default function Expo({ exhibitors = [] }: { exhibitors?: any[] }) {
   const [activeFilter, setActiveFilter] = useState('Tümü');
   const [searchQuery, setSearchQuery] = useState('');
-  const [exhibitors, setExhibitors] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Mock Data Fetch Instead of Firebase
-    setExhibitors(HOMETEX_EXHIBITORS);
-  }, []);
 
   const filters = ['Tümü', 'Döşemelik', 'Perdelik', 'Yatak & Banyo', 'Akıllı', 'Sürdürülebilir'];
 
@@ -216,6 +211,7 @@ export default function Expo() {
           )}
         </div>
       </section>
+      <HometexFooter />
     </div>
   );
 }

@@ -5,6 +5,8 @@ import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
 import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
 import PerdeTerms from '@/components/tenant-perde/PerdeTerms';
 import { t } from '@/i18n/labels';
+import HometexTerms from '@/components/tenant-hometex/HometexTerms';
+import VorhangTerms from '@/components/tenant-vorhang/VorhangTerms';
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,14 @@ export default async function TermsPage({ params, searchParams }: any) {
         <PerdeFooter />
       </div>
     );
+  }
+
+  if (exactDomain.includes('hometex')) {
+    return <HometexTerms />;
+  }
+
+  if (exactDomain.includes('vorhang')) {
+    return <VorhangTerms />;
   }
 
   return (

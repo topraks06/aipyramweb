@@ -218,10 +218,27 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     return <PerdeLandingPage />;
   }
   if (projectName === 'hometex') {
-    return <HometexLandingPage />;
+    let articles = [];
+    let exhibitors = [];
+    try {
+      const articlesSnap = await adminDb.collection('articles').orderBy('publishedAt', 'desc').limit(4).get();
+      const exhibitorsSnap = await adminDb.collection('exhibitors').limit(6).get();
+      articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[HOMETEX] Firestore fetch error:', e);
+    }
+    return <HometexLandingPage articles={articles} exhibitors={exhibitors} />;
   }
   if (projectName === 'vorhang') {
-    return <VorhangLandingPage />;
+    let products = [];
+    try {
+      const productsSnap = await adminDb.collection('vorhang_products').limit(6).get();
+      products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[VORHANG] Firestore fetch error:', e);
+    }
+    return <VorhangLandingPage products={products} />;
   }
 
   // FAZ 1.4: basePath for localhost routing

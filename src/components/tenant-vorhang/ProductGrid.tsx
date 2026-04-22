@@ -17,11 +17,13 @@ const MOCK_PRODUCTS = [
   { id: "6", title: "Vorhangstange (Gold)", seller: "MetalCraft", price: 115.00, imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", isVerified: true, category: "Zubehör", color: "Gold" },
 ];
 
-export function ProductGrid() {
+export function ProductGrid({ products = [] }: { products?: any[] }) {
   const [activeCategory, setActiveCategory] = useState("Alle");
   const [activeColor, setActiveColor] = useState<string | null>(null);
 
-  const filteredProducts = MOCK_PRODUCTS.filter(p => {
+  const displayProducts = products.length > 0 ? products : MOCK_PRODUCTS;
+
+  const filteredProducts = displayProducts.filter(p => {
     if (activeCategory !== "Alle" && p.category !== activeCategory) return false;
     if (activeColor && p.color !== activeColor) return false;
     return true;

@@ -4,21 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Clock, Sparkles, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-import { HOMETEX_MAGAZINE_ARTICLES } from '@/lib/hometex-demoData';
-// import { collection, onSnapshot, query } from 'firebase/firestore';
+import HometexFooter from './HometexFooter';
 
-export default function Magazine() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Mock Firebase data
-    setTimeout(() => {
-      setArticles(HOMETEX_MAGAZINE_ARTICLES);
-      setLoading(false);
-    }, 800);
-  }, []);
-
+export default function Magazine({ articles = [] }: { articles?: any[] }) {
   const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
   const sideArticles = articles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
   const editorialPicks = articles.filter(a => a.id !== featuredArticle?.id).slice(3, 7);
@@ -51,14 +39,7 @@ export default function Magazine() {
         </motion.div>
       </section>
 
-      {loading ? (
-        <div className="flex justify-center items-center min-h-[50vh]">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs uppercase tracking-widest text-zinc-500 font-bold">Ajan Verileri Yükleniyor</span>
-          </div>
-        </div>
-      ) : articles.length === 0 ? (
+      {articles.length === 0 ? (
         <div className="flex justify-center items-center min-h-[50vh] border-b border-white/10 bg-zinc-950">
           <p className="text-zinc-500 text-sm uppercase tracking-widest font-bold">Henüz makale bulunmuyor.</p>
         </div>
@@ -160,6 +141,7 @@ export default function Magazine() {
           )}
         </>
       )}
+      <HometexFooter />
     </div>
   );
 }

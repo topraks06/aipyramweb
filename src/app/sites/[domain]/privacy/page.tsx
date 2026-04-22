@@ -5,6 +5,8 @@ import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
 import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
 import PerdePrivacy from '@/components/tenant-perde/PerdePrivacy';
 import { t } from '@/i18n/labels';
+import HometexPrivacy from '@/components/tenant-hometex/HometexPrivacy';
+import VorhangPrivacy from '@/components/tenant-vorhang/VorhangPrivacy';
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,14 @@ export default async function PrivacyPage({ params, searchParams }: any) {
         <PerdeFooter />
       </div>
     );
+  }
+
+  if (exactDomain.includes('hometex')) {
+    return <HometexPrivacy />;
+  }
+
+  if (exactDomain.includes('vorhang')) {
+    return <VorhangPrivacy />;
   }
 
   return (

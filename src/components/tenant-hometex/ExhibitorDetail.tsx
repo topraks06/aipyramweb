@@ -6,19 +6,16 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import { ArrowLeft, MapPin, Globe, Mail, Phone, Download, Sparkles, Languages, ChevronRight, Calculator, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import HometexFooter from './HometexFooter';
+
 // Mock modal
 const ProductUploadModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">Materyal Yükleme Sınırlandırıldı</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
 const B2BRequestModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">B2B Talebi Gönderildi</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
 
-export default function ExhibitorDetail() {
-  const params = useParams();
-  const id = params?.id as string || 'default';
+export default function ExhibitorDetail({ exhibitor, products = [] }: { exhibitor: any, products?: any[] }) {
   const role = 'consumer'; // Mock
   
   const [activeTab, setActiveTab] = useState<'showroom' | 'about' | 'contact'>('showroom');
-  const [exhibitor, setExhibitor] = useState<any>(null);
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [b2bModalState, setB2bModalState] = useState<{ isOpen: boolean, type: 'quote' | 'sample', productName: string }>({
     isOpen: false,
@@ -26,27 +23,7 @@ export default function ExhibitorDetail() {
     productName: ''
   });
 
-  useEffect(() => {
-    // Mock Data Fetch Instead of Firebase
-    setTimeout(() => {
-      setExhibitor({ 
-        id, 
-        name: id === '1' ? 'SOVEREIGN MILLS' : 'AURORA TEXTILES', 
-        category: 'Premium Üretici', 
-        country: 'Global', 
-        description: 'Sürdürülebilir lüks üretimde mükemmellik.',
-        coverImageUrl: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80',
-        logoUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80'
-      });
-      setProducts([
-        { id: 'p1', name: 'Kış 2026 Kadife Koleksiyonu', renderedImageUrl: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80', category: 'Döşemelik' },
-        { id: 'p2', name: 'Nova Blackout', renderedImageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80', category: 'Perdelik' }
-      ]);
-      setLoading(false);
-    }, 800);
-  }, [id]);
-
-  if (loading || !exhibitor) {
+  if (!exhibitor) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-black">
         <div className="flex flex-col items-center gap-4">
@@ -212,6 +189,7 @@ export default function ExhibitorDetail() {
           {activeTab === 'contact' && <div className="text-zinc-400">İletişim Formları sunucu bağlantısı bekleniyor.</div>}
         </div>
       </div>
+      <HometexFooter />
     </div>
   );
 }

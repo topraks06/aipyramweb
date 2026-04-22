@@ -4,24 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, MapPin, Download, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
-import { HOMETEX_EXHIBITORS } from '@/lib/hometex-demoData';
+import HometexFooter from './HometexFooter';
 
-export default function Exhibitors() {
+export default function Exhibitors({ exhibitors = [] }: { exhibitors?: any[] }) {
   // Mock role for UI parity
   const role = 'consumer'; 
   const [isSimulating, setIsSimulating] = useState(false);
-  const [exhibitors, setExhibitors] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedExhibitorId, setSelectedExhibitorId] = useState<string>('');
-
-  useEffect(() => {
-    // Mock Data Fetch Instead of Firebase
-    setTimeout(() => {
-      setExhibitors(HOMETEX_EXHIBITORS);
-      setLoading(false);
-    }, 800);
-  }, []);
 
   const handlePerdeAiClick = (e: React.MouseEvent) => {
     e.preventDefault(); 
@@ -84,16 +74,8 @@ export default function Exhibitors() {
         </motion.div>
       </section>
 
-      {/* Directory List */}
       <section className="pb-20 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        {loading ? (
-          <div className="flex justify-center items-center py-32 border-t border-white/10">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Ağ Taranıyor</span>
-            </div>
-          </div>
-        ) : exhibitors.length === 0 ? (
+        {exhibitors.length === 0 ? (
           <div className="flex justify-center items-center py-32 border-t border-white/10 bg-zinc-950">
             <p className="text-zinc-500 text-xs uppercase tracking-[0.2em] font-bold">Kayıtlı üretici bulunamadı.</p>
           </div>
@@ -180,6 +162,7 @@ export default function Exhibitors() {
           </div>
         )}
       </section>
+      <HometexFooter />
     </div>
   );
 }

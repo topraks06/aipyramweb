@@ -5,29 +5,9 @@ import { ArrowRight, Play, ChevronRight, BarChart2 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import HometexNavbar from './HometexNavbar';
-// Mock Firebase imports for now to avoid compilation issues
-// import { db } from '../lib/firebase';
-// import { collection, onSnapshot, query, limit, orderBy } from 'firebase/firestore';
+import HometexFooter from './HometexFooter';
 
-export default function HometexLandingPage() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [exhibitors, setExhibitors] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Mock Data instead of Firebase
-    setArticles([
-      { id: '1', title: 'Global Tekstil Raporu 2026', isFeatured: true, category: 'Özel Rapor', desc: 'Ev tekstilinde sürdürülebilirlik algısı ve yapay zeka entegrasyonu hakkında kapsamlı istihbarat.', timeToRead: '8 dk', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=2800' },
-      { id: '2', title: 'Avrupa Pazarında Yeni Tedarik Zincirleri', category: 'Trend Radarı', image: 'https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80&w=2800' },
-      { id: '3', title: 'Akıllı Kumaşlarda Patent Yarışı', category: 'Sektörel İnceleme', image: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80&w=2800' },
-      { id: '4', title: 'Yapay Zeka Tasarım Araçlarının Evrimi', category: 'Teknoloji', image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2800' }
-    ]);
-
-    setExhibitors([
-      { id: 'e1', name: 'SOVEREIGN MILLS', desc: 'Sürdürülebilir lüks üretimde İngiliz dokuma teknikleri. Yeni 2026 İlkbahar Koleksiyonu fuar alanında.', coverImageUrl: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80' },
-      { id: 'e2', name: 'AURORA TEXTILES', desc: 'Gelişmiş akıllı perde sistemleri ve motorlu mekanizmalar.', coverImageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80' },
-      { id: 'e3', name: 'NOVA HOME', desc: 'Organik pamuk içerikli otel tekstili çözümleri.', coverImageUrl: 'https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80' }
-    ]);
-  }, []);
+export default function HometexLandingPage({ articles = [], exhibitors = [] }: { articles?: any[], exhibitors?: any[] }) {
 
   const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
   const sidebarArticles = articles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
@@ -194,9 +174,160 @@ export default function HometexLandingPage() {
             </Link>
           </motion.div>
 
-          {/* Details omitted for brevity in mock mode, would follow similar porting pattern... */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+            {/* Featured Article */}
+            {featuredArticle ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="lg:col-span-7 group flex flex-col"
+              >
+                <Link href={`/sites/hometex.ai/magazine/${featuredArticle.id}`} className="block">
+                  <div className="relative aspect-[4/5] overflow-hidden mb-10 lg:mb-12 bg-zinc-900">
+                    <img 
+                      src={featuredArticle.coverImage || featuredArticle.image || "https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=2800&auto=format&fit=crop"} 
+                      alt={featuredArticle.title} 
+                      className="w-full h-full object-cover transition-transform duration-[3s] ease-out group-hover:scale-105 opacity-80"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                  <div className="flex items-center gap-5 mb-8 text-[10px] uppercase tracking-[0.3em] text-zinc-500">
+                    <span className="text-white font-medium">{featuredArticle.category || 'Özel Rapor'}</span>
+                    <span className="w-12 h-px bg-white/20" />
+                    <span>{featuredArticle.timeToRead || '5 dk'} Okuma</span>
+                  </div>
+                  <h3 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-medium text-white mb-8 group-hover:text-zinc-400 transition-colors leading-[1.1] tracking-tight">
+                    {featuredArticle.title}
+                  </h3>
+                  <p className="text-zinc-400 text-xl lg:text-2xl mb-16 font-light leading-relaxed">
+                    {featuredArticle.excerpt || featuredArticle.desc}
+                  </p>
+                </Link>
+                
+                {/* Magazine Insight Block */}
+                <div className="mt-auto bg-black p-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-10 relative border border-white/10">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-white" />
+                  <div className="flex items-start gap-8">
+                    <BarChart2 className="w-8 h-8 text-white shrink-0 mt-1 stroke-[1]" />
+                    <div>
+                      <h4 className="font-sans font-medium text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-4">Ticari İçgörü</h4>
+                      <p className="text-xl text-white font-medium leading-snug">Uzman Görüşü: 2026'da Akıllı Döşemeliklerin Pazar Payı %18 Artacak.</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <div className="lg:col-span-7 h-[70vh] bg-black border border-white/10 flex items-center justify-center">
+                <p className="text-zinc-500 text-[10px] uppercase tracking-[0.2em]">Ajan verileri bekleniyor...</p>
+              </div>
+            )}
+
+            {/* Sidebar Articles */}
+            <div className="lg:col-span-5 flex flex-col gap-20 lg:pt-40">
+              {sidebarArticles.map((article: any, i: number) => (
+                <Link href={`/sites/hometex.ai/magazine/${article.id}`} key={article.id} className="block">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.15 }}
+                    className="group cursor-pointer flex flex-col gap-8"
+                  >
+                    <div className="w-full aspect-[16/10] overflow-hidden bg-zinc-900 border border-white/10">
+                      <img 
+                        src={article.coverImage || article.image || "https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80&w=2800&auto=format&fit=crop"} 
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-[3s] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.3em] mb-4">{article.category || 'Trend Radarı'}</span>
+                      <h4 className="font-serif font-medium text-3xl sm:text-4xl text-white group-hover:text-zinc-400 transition-colors leading-tight tracking-tight">
+                        {article.title}
+                      </h4>
+                    </div>
+                  </motion.div>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Virtual Halls & Exhibitor Hub - Minimalist Gallery */}
+      <section className="py-24 lg:py-40 bg-black border-t border-white/10">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center max-w-5xl mx-auto mb-20 lg:mb-32"
+          >
+            <h2 className="text-5xl sm:text-6xl md:text-8xl font-serif font-medium mb-8 lg:mb-10 tracking-tighter uppercase text-white">Dijital İkiz Showroomlar</h2>
+            <p className="text-zinc-400 text-xl sm:text-2xl font-light leading-relaxed">
+              Üst düzey galerileri keşfedin ve en iyi üreticilerle doğrudan bağlantı kurun. 
+              Görsel hikaye anlatımı toptan ticaretle buluşuyor.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24">
+            {[
+              { name: "Döşemelik & Mobilya", count: "142 Katılımcı", image: "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2800&auto=format&fit=crop" },
+              { name: "Perdelik & Tül", count: "89 Katılımcı", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2800&auto=format&fit=crop" },
+              { name: "Yatak & Banyo Tekstili", count: "115 Katılımcı", image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=2800&auto=format&fit=crop" },
+              { name: "Halı & Zemin Kaplama", count: "64 Katılımcı", image: "https://images.unsplash.com/photo-1600166898405-da9535204843?q=80&w=2800&auto=format&fit=crop" },
+              { name: "Duvar Kağıdı & Dekor", count: "48 Katılımcı", image: "https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80&w=2800&auto=format&fit=crop" },
+              { name: "Akıllı Perde Sistemleri", count: "92 Katılımcı", image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2800&auto=format&fit=crop" }
+            ].map((hall, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: (i % 3) * 0.15 }}
+                className="group cursor-pointer block"
+              >
+                <div className="relative aspect-[3/4] overflow-hidden mb-10 bg-zinc-900 border border-white/10">
+                  <img 
+                    src={hall.image} 
+                    alt={hall.name}
+                    className="w-full h-full object-cover transition-transform duration-[3s] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-full bg-black/95 backdrop-blur-md flex items-center justify-center transform translate-y-8 group-hover:translate-y-0 transition-all duration-700 ease-[0.16,1,0.3,1] border border-white/10">
+                      <Play className="w-8 h-8 text-white ml-1 stroke-[1]" />
+                    </div>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-4xl font-serif font-medium text-white mb-4 tracking-tight uppercase">{hall.name}</h3>
+                  <p className="text-zinc-500 text-[10px] font-medium uppercase tracking-[0.3em]">{hall.count}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.6 }}
+            className="mt-32 text-center"
+          >
+            <Link href="/sites/hometex.ai/expo" className="group relative inline-flex items-center gap-6 text-xs uppercase tracking-[0.3em] font-medium text-white">
+              <span className="relative z-10">Tüm Holleri Görüntüle</span>
+              <span className="w-16 h-px bg-white group-hover:w-32 transition-all duration-700 ease-out" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      <HometexFooter />
     </div>
   );
 }

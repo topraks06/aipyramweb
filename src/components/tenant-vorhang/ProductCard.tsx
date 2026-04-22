@@ -3,17 +3,22 @@ import Link from "next/link";
 
 interface ProductCardProps {
   id: string;
-  title: string;
-  seller: string;
+  name?: string;
+  title?: string; // fallback
+  sellerName?: string;
+  seller?: string; // fallback
   price: number;
   currency?: string;
   imageUrl?: string;
+  images?: string[]; // fallback
   isVerified?: boolean;
 }
 
 export function ProductCard({ 
   id, 
+  name,
   title, 
+  sellerName,
   seller, 
   price, 
   currency = "€", 
@@ -24,8 +29,8 @@ export function ProductCard({
     <Link href={`/products/${id}`} className="block">
       <div className="bg-white p-4 border border-gray-100 shadow-sm group cursor-pointer hover:shadow-xl transition-all h-full flex flex-col">
         <div className="relative aspect-[4/5] bg-gray-100 mb-4 overflow-hidden">
-          {imageUrl ? (
-            <img src={imageUrl} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          {(imageUrl || (images && images.length > 0)) ? (
+            <img src={imageUrl || (images && images[0])} alt={name || title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-gray-400">
               <Sparkles className="w-8 h-8 opacity-20" />
@@ -42,8 +47,8 @@ export function ProductCard({
         
         <div className="flex justify-between items-start flex-1">
           <div>
-            <h3 className="font-medium text-lg text-black group-hover:text-[#D4AF37] transition-colors line-clamp-1">{title}</h3>
-            <p className="text-sm text-gray-500 mb-2">{seller}</p>
+            <h3 className="font-medium text-lg text-black group-hover:text-[#D4AF37] transition-colors line-clamp-1">{name || title}</h3>
+            <p className="text-sm text-gray-500 mb-2">{sellerName || seller}</p>
           </div>
           <div className="text-right pl-2 shrink-0">
             <p className="font-bold text-black">{currency}{price.toFixed(2)}</p>

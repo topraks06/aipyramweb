@@ -6,14 +6,16 @@ import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowLeft, Clock, Sparkles, ChevronRight, Share2, Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import HometexFooter from './HometexFooter';
 
-export default function MagazineDetail() {
-  const params = useParams();
-  const id = params?.id as string || 'cover';
+export default function MagazineDetail({ article }: { article: any }) {
   const role = 'consumer';
-  const [article, setArticle] = useState<any>(null);
-  const [relatedExhibitor, setRelatedExhibitor] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [relatedExhibitor, setRelatedExhibitor] = useState<any>({ 
+    id: '1', 
+    name: 'SOVEREIGN MILLS', 
+    country: 'United Kingdom',
+    coverImageUrl: 'https://images.unsplash.com/photo-1540574163026-643ea20d25b5?q=80' 
+  });
 
   // Parallax setup for Hero Image
   const heroRef = useRef<HTMLDivElement>(null);
@@ -21,40 +23,7 @@ export default function MagazineDetail() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  useEffect(() => {
-    // Mock Article Fetch
-    setTimeout(() => {
-      setArticle({
-        id: id,
-        title: "2027 İskandinav Dokunuşu: Organik Keten ve Ham İpek Geri Dönüyor",
-        category: "Trend Raporu",
-        author: "Aipyram Trend Birimi",
-        timeToRead: "7 dk",
-        date: "19 Nisan 2026",
-        image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80",
-        lead: "Sürdürülebilirlik rüzgarı ev tekstilinde ikinci dalgasını yaratırken, hiper-dijitalleşen dünyada dokunsal gerçekliğe dönüş başlıyor.",
-        content: `
-          <p>Son üç çeyreğin satın alma verilerini incelediğimizde, Avrupa merkezli perakendecilerin sentetik karışımlardan hızla uzaklaşarak <strong>saf keten ve ham ipek</strong> dokulara yöneldiğini görüyoruz. Aipyram küresel ticaret ağı üzerinden geçen siparişlerde, "organik", "işlenmemiş", ve "naturel" etiketli ürün taleplerinde %41'lik bir artış tespit edildi.</p>
-          
-          <h3>Dokunsal Gerçekliğe Dönüş (Tactile Reality)</h3>
-          <p>Yapay zeka ve sanal gerçeklik hayatımızın merkezine yerleştikçe, yaşam alanlarımızda aradığımız şey tam tersi bir yönelim gösteriyor: Asimetrik kusurluluktaki organik dokular. Kumaşlarda mükemmellik artık "yapaylık" olarak algılanırken, ipliğin doğal düğümleri (slub) ve boyanmamış ham tonlar lüksün yeni tanımını oluşturuyor.</p>
-          
-          <blockquote>"Gerçek lüks, kusursuzlukta değil, doğanın eşsiz izlerini taşıyan hikayelerde gizli."</blockquote>
-          
-          <p>Peki bu dönüşüm üreticiler için ne anlama geliyor? 2026 son çeyreğinden itibaren koleksiyonlarında geri dönüştürülmüş materyallerin oranını artırmayan ve mekanik bitirme işlemleriyle dokuya zarar vermeden doğal halini koruyan kumaşlar sunamayan firmalar, Kuzey Avrupa pazarındaki güçlerini kaybedebilirler.</p>
-        `
-      });
-      setRelatedExhibitor({ 
-        id: '1', 
-        name: 'SOVEREIGN MILLS', 
-        country: 'United Kingdom',
-        coverImageUrl: 'https://images.unsplash.com/photo-1540574163026-643ea20d25b5?q=80' 
-      });
-      setLoading(false);
-    }, 800);
-  }, [id]);
-
-  if (loading || !article) {
+  if (!article) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-black">
         <div className="flex flex-col items-center gap-4">
@@ -198,6 +167,7 @@ export default function MagazineDetail() {
           </div>
         </aside>
       </main>
+      <HometexFooter />
     </div>
   );
 }

@@ -1,14 +1,7 @@
-import ProductIngestionClient from '@/components/hometex/seller/ProductIngestionClient';
+import SellerIngestion from "@/components/tenant-vorhang/SellerIngestion";
 
-export const metadata = {
-  title: 'AI Catalog Ingestion | Hometex',
-  description: 'Upload your textile products to the global B2B catalog instantly with AI.',
-};
+export const dynamic = "force-dynamic";
 
-export default function HometexIngestionPage() {
-  return (
-    <div className="min-h-screen bg-zinc-50">
-      <ProductIngestionClient />
-    </div>
-  );
+export default function SellerIngestionPage() {
+  return <SellerIngestion />;
 }

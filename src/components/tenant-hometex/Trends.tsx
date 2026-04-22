@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Upload, Sparkles, BarChart3, ArrowRight, Camera, CheckCircle2 } from 'lucide-react';
 import { HOMETEX_TRENDS } from '@/lib/hometex-demoData';
+import HometexFooter from './HometexFooter';
 
 export default function Trends() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -219,6 +220,7 @@ export default function Trends() {
           </div>
         </div>
       </section>
+      <HometexFooter />
     </div>
   );
 }

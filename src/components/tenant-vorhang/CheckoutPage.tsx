@@ -4,6 +4,7 @@ import { useState } from "react";
 import VorhangNavbar from "./VorhangNavbar";
 import { Lock, ShieldCheck, ArrowRight, CreditCard } from "lucide-react";
 import Link from "next/link";
+import VorhangFooter from "./VorhangFooter";
 
 export function CheckoutPage() {
   const [step, setStep] = useState(1);
@@ -78,6 +79,7 @@ export function CheckoutPage() {
             </div>
           </div>
         </main>
+        <VorhangFooter />
       </div>
     );
   }
@@ -219,6 +221,7 @@ export function CheckoutPage() {
 
         </div>
       </main>
+      <VorhangFooter />
     </div>
   );
 }

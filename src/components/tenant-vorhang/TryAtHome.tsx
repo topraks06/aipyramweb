@@ -4,6 +4,7 @@ import { useState } from "react";
 import VorhangNavbar from "./VorhangNavbar";
 import { Camera, Upload, Sparkles, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import VorhangFooter from "./VorhangFooter";
 
 export default function TryAtHome() {
   const [step, setStep] = useState<1|2|3>(1);
@@ -105,6 +106,7 @@ export default function TryAtHome() {
 
         </div>
       </main>
+      <VorhangFooter />
     </div>
   );
 }
