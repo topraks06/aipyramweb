@@ -1,10 +1,27 @@
-﻿'use client';
+'use client';
 
-import React from 'react';
-import { ArrowRight, Newspaper, PackageSearch } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Newspaper, PackageSearch, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 export default function EcosystemBridge() {
+    const [latestNews, setLatestNews] = useState<any>(null);
+
+    useEffect(() => {
+        // TRTEX'ten gerçek veri çekme (örnek/mock veya API call)
+        const fetchTrtex = async () => {
+            try {
+                const res = await fetch('/api/v1/master/trtex/news-list?limit=1');
+                const data = await res.json();
+                if (data.success && data.data && data.data.length > 0) {
+                    setLatestNews(data.data[0]);
+                }
+            } catch (e) {
+                console.log('TRTEX fetch failed', e);
+            }
+        };
+        fetchTrtex();
+    }, []);
     return (
         <section className="py-24 px-6 md:px-12 bg-white">
             <div className="max-w-6xl mx-auto">
@@ -33,9 +50,19 @@ export default function EcosystemBridge() {
                             </div>
                             
                             <h3 className="text-xl md:text-2xl font-light mb-4">Pazar İstihbaratı ve <br/>Canlı Fırsat Radarı</h3>
-                            <p className="text-zinc-400 font-light text-sm mb-12 max-w-xs">
+                            <p className="text-zinc-400 font-light text-sm mb-6 max-w-xs">
                                 Perde.ai üzerinden TRTEX otonom haber hattına bağlanın. Sektör haberleri, hammadde fiyatları ve uluslararası talepler anında ekranınızda.
                             </p>
+
+                            {latestNews && (
+                                <div className="mb-6 p-4 bg-black/40 border border-white/10 rounded-md max-w-sm">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                        <span className="text-[10px] uppercase tracking-widest text-zinc-500">Son İstihbarat Sinyali</span>
+                                    </div>
+                                    <p className="text-sm font-medium text-white line-clamp-2">{latestNews.title}</p>
+                                </div>
+                            )}
                             
                             <div className="mt-auto">
                                 <Link href="https://trtex.com" target="_blank">
@@ -62,9 +89,18 @@ export default function EcosystemBridge() {
                             </div>
                             
                             <h3 className="text-xl md:text-2xl font-light mb-4">Fuar Teknolojisi ve <br/>Dijital Stand Katalogları</h3>
-                            <p className="text-zinc-500 font-light text-sm mb-12 max-w-xs">
+                            <p className="text-zinc-500 font-light text-sm mb-6 max-w-xs">
                                 Perde.ai ile dönüştürdüğünüz kumaşlar, Hometex.ai üzerinden otomatik olarak fuar ziyaretçilerine sunulur. Sanal fuarınızı cebinizde taşıyın.
                             </p>
+
+                            <div className="mb-8 p-4 bg-white/60 border border-zinc-200 rounded-md max-w-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Calendar className="w-3 h-3 text-[#D4C3A3]" />
+                                    <span className="text-[10px] uppercase tracking-widest text-zinc-600">Yaklaşan Etkinlik</span>
+                                </div>
+                                <p className="text-sm font-bold text-zinc-900">HOMETEX 2026 - İSTANBUL</p>
+                                <p className="text-xs text-zinc-500 mt-1">Sanal Standınızı Oluşturun</p>
+                            </div>
                             
                             <div className="mt-auto">
                                 <Link href="#" onClick={(e) => e.preventDefault()}>
