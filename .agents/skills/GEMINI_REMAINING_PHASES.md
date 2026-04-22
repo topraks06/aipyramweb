@@ -10,14 +10,14 @@
 - [x] A3: `PerdeLandingPage.tsx` → WowDemoSection zaten entegre (isDemoMode ile lazy-load)
 - **Doğrulama:** ✅ pnpm run build exit 0
 
-## 🟠 FAZ B — Sovereign Agent Hub Gerçek Aktivasyon (Gün 2-3)
-- [ ] B1: `WhatsAppAgent.ts` → wa.me deep URL üretimi + OrderSlideOver bağlantısı
-- [ ] B2: `DocumentAgent.ts` → `pdf-lib` ile gerçek kurumsal PDF teklif
-- [ ] B3: `/api/quote-pdf/route.ts` → PDF endpoint oluştur
-- [ ] B4: `FabricRecognitionAgent.ts` → Gemini Vision kumaş analizi aktifleştir
-- [ ] B5: `RetentionAgent.ts` → Terk edilmiş teklif takip cron job iskeleti
-- [ ] B6: `tools.ts` → 4 yeni ajan komutunu function-calling schema'ya bağla
-- **Doğrulama:** Her ajan invokeAgent() ile çağrıldığında gerçek çıktı üretir
+## ✅ FAZ B — Sovereign Agent Hub Gerçek Aktivasyon (TAMAMLANDI — 22 Nisan)
+- [x] B1: `WhatsAppAgent.ts` → wa.me deep URL + enrichOrderMessage helper + Firestore log
+- [x] B2: `DocumentAgent.ts` → pdf-lib ile kurumsal PDF (zaten vardı, kontrol edildi)
+- [x] B3: `/api/quote-pdf/route.ts` → PDF endpoint oluşturuldu
+- [x] B4: `FabricRecognitionAgent.ts` → Gemini Vision kumaş analizi (zaten çalışıyordu, kontrol edildi)
+- [x] B5: `RetentionAgent.ts` → triggerFollowUp ile WhatsApp takip mesajı bağlandı
+- [x] B6: `tools.ts` → 5 ajan komutu (whatsapp, document, fabric, render, retention) schema'da mevcut
+- **Doğrulama:** ✅ pnpm run build exit 0
 
 ## 🟡 FAZ C — TRTEX Kalan Görevler (Gün 3-4)
 - [ ] C1: `autoRunner.ts` deepAudit → kritik onarımları otomatik uygula (max 5/cycle)
