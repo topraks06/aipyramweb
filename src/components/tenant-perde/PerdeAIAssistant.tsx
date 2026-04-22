@@ -95,7 +95,7 @@ export default function PerdeAIAssistant() {
   const router = useRouter();
   const [locale, setLocale] = useState('tr');
   const d = DICT[locale] || DICT['tr'];
-  const { tenantId, user } = useTenantAuth();
+  const { tenantId, user } = useTenantAuth('perde');
   
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);

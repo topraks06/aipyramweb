@@ -44,7 +44,7 @@ interface TrtexNavbarProps {
   basePath: string;
   brandName?: string;
   lang?: string;
-  activePage?: 'home' | 'news' | 'tenders' | 'trade' | 'academy';
+  activePage?: 'home' | 'news' | 'tenders' | 'trade' | 'academy' | 'fairs' | 'index';
   theme?: NavTheme;
 }
 

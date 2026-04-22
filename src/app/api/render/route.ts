@@ -111,8 +111,7 @@ export async function POST(req: NextRequest) {
                         color: analysis.colorPalette[0] || 'bej',
                         productType: getTenant(tenantId).shortName.toLowerCase(),
                         source: 'imagen',
-                        tenant: tenantId,
-                        ownerId: uid || "anonymous"
+                        tenant: tenantId
                     });
                 } catch (libErr) {
                     console.error("Library save failed (ignoring for response):", libErr);

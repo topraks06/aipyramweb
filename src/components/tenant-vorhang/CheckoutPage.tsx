@@ -8,8 +8,79 @@ import Link from "next/link";
 export function CheckoutPage() {
   const [step, setStep] = useState(1);
 
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [orderResult, setOrderResult] = useState<any>(null);
+
   // Mock total
   const total = 439.49;
+  const basePriceEur = 369.32;
+  const vatEur = 70.17;
+  const shippingEur = 0;
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/v1/master/vorhang/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: 'VOR-BUNDLE-01',
+          productName: 'Premium Leinen & Blackout Samt',
+          priceEur: basePriceEur,
+          vatEur: vatEur,
+          shippingEur: shippingEur,
+          totalEur: total,
+          customerDetails: {
+             name: 'Gast Kunde',
+             country: 'DE',
+             vatId: ''
+          },
+          manufacturerId: 'perde_default_vendor' // TR'deki üreticiyi temsil eder
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setOrderResult(data);
+      setSuccess(true);
+    } catch (err: any) {
+      alert('Bestellung fehlgeschlagen: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gray-50 text-black">
+        <VorhangNavbar />
+        <main className="pt-32 pb-12 max-w-3xl mx-auto px-4 text-center">
+          <div className="bg-white p-12 border border-gray-100 shadow-sm rounded-sm">
+            <ShieldCheck className="w-16 h-16 text-green-600 mx-auto mb-6" />
+            <h1 className="text-4xl font-serif mb-4">Bestellung Erfolgreich!</h1>
+            <p className="text-gray-500 mb-8">
+              Ihre Zahlung wurde bestätigt. Der Auftrag wurde über das Sovereign Network direkt an den Hersteller in der Türkei weitergeleitet.
+            </p>
+            <div className="bg-gray-50 p-6 rounded-sm text-left max-w-md mx-auto space-y-4">
+               <div className="flex justify-between border-b border-gray-200 pb-2">
+                 <span className="text-gray-500">Bestellnummer:</span>
+                 <span className="font-mono font-bold">{orderResult?.orderId}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-200 pb-2">
+                 <span className="text-gray-500">Hersteller Status:</span>
+                 <span className="text-green-600 font-bold">In Produktion</span>
+               </div>
+               <div className="text-xs text-gray-400 mt-4 text-center">
+                 Eine Kopie dieses Auftrags wurde soeben an das B2B-Dashboard des türkischen Herstellers gesendet.
+               </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 text-black">
@@ -98,9 +169,10 @@ export function CheckoutPage() {
                   </button>
                   <button 
                     className="flex-1 bg-black text-white py-4 font-bold tracking-widest text-xs flex justify-center items-center gap-2 hover:bg-green-700 transition-colors"
-                    onClick={() => alert("Stripe payment process would start here.")}
+                    onClick={handleCheckout}
+                    disabled={loading}
                   >
-                    JETZT BEZAHLEN (€{total.toFixed(2)}) <Lock className="w-4 h-4" />
+                    {loading ? 'VERARBEITUNG...' : `JETZT BEZAHLEN (€${total.toFixed(2)})`} <Lock className="w-4 h-4" />
                   </button>
                 </div>
               </div>

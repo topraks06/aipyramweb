@@ -8,12 +8,17 @@ import { db } from '@/lib/firebase-client';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import { getTenant } from '@/lib/tenant-config';
 import OrderSlideOver from './OrderSlideOver';
+import { Accounting } from './Accounting';
+import { Inventory } from './Inventory';
+import { Wallet, Package } from 'lucide-react';
+
 
 const STATUS_LIST = [
   { id: 's1', label: 'Teklif', color: 'text-blue-400', bg: 'bg-blue-500/10' },
   { id: 's2', label: 'OnaylandÄ±', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 's3', label: 'Ãœretimde', color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
   { id: 's4', label: 'Kuruluma HazÄ±r', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+  { id: 'opportunity', label: 'FÄ±rsat', color: 'text-orange-400', bg: 'bg-orange-500/10' },
 ];
 
 const DEFAULT_CONFIG = {
@@ -29,6 +34,7 @@ const DEFAULT_CONFIG = {
 
 export default function B2B() {
   const { user, loading: authLoading, tenantId } = usePerdeAuth();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'accounting' | 'inventory'>('dashboard');
   const [dbProjects, setDbProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeOrder, setActiveOrder] = useState<any | null>(null);
@@ -48,17 +54,41 @@ export default function B2B() {
     
     const config = getTenant(tenantId);
     
-    const q = query(
+    const q1 = query(
       collection(db, config.projectCollection),
       where('authorId', '==', user.uid),
       orderBy('createdAt', 'desc')
     );
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setDbProjects(data);
+    const q2 = query(
+      collection(db, 'b2b_opportunities'),
+      orderBy('createdAt', 'desc')
+    );
+
+    let projects: any[] = [];
+    let opportunities: any[] = [];
+
+    const mergeData = () => {
+      // Sadece 5 global fırsatı göster, tabloyu şişirmesin
+      const recentOps = opportunities.slice(0, 5);
+      setDbProjects([...recentOps, ...projects].sort((a, b) => {
+        const tA = a.createdAt?.seconds || 0;
+        const tB = b.createdAt?.seconds || 0;
+        return tB - tA;
+      }));
       setLoading(false);
+    };
+
+    const unsub1 = onSnapshot(q1, (snapshot) => {
+      projects = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeData();
     });
-    return () => unsub();
+
+    const unsub2 = onSnapshot(q2, (snapshot) => {
+      opportunities = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeData();
+    });
+
+    return () => { unsub1(); unsub2(); };
   }, [user]);
 
   useEffect(() => {
@@ -138,18 +168,33 @@ export default function B2B() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-10">
-         <span className="bg-white/5 border border-white/10 text-white text-[10px] uppercase tracking-widest px-4 py-2 flex items-center gap-2 rounded-full cursor-pointer hover:bg-white/10">
-            <Plus className="w-3 h-3" /> Yeni KayÄ±t
-         </span>
-         {cfg.shortcuts?.map((shortcut: string, i: number) => (
-           <span key={i} className="bg-blue-500/10 border border-blue-500/20 text-blue-300 text-[10px] uppercase tracking-widest px-4 py-2 rounded-full cursor-pointer hover:bg-blue-500/20 transition-colors">
-              {shortcut}
-           </span>
-         ))}
+      <div className="flex flex-wrap gap-3 mb-10 border-b border-white/5 pb-4">
+         <button 
+           onClick={() => setActiveTab('dashboard')}
+           className={`px-4 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition-colors ${activeTab === 'dashboard' ? 'bg-blue-600 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10'}`}
+         >
+           Fırsatlar & Siparişler
+         </button>
+         <button 
+           onClick={() => setActiveTab('accounting')}
+           className={`px-4 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition-colors flex items-center gap-2 ${activeTab === 'accounting' ? 'bg-blue-600 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10'}`}
+         >
+           <Wallet className="w-3 h-3" /> Cari / Muhasebe
+         </button>
+         <button 
+           onClick={() => setActiveTab('inventory')}
+           className={`px-4 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition-colors flex items-center gap-2 ${activeTab === 'inventory' ? 'bg-blue-600 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10'}`}
+         >
+           <Package className="w-3 h-3" /> Stok / Envanter
+         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      {activeTab === 'accounting' && <Accounting projects={projectsToDisplay} />}
+      {activeTab === 'inventory' && <Inventory />}
+      
+      {activeTab === 'dashboard' && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
         {/* Adım 1: Etkileşim / Toplam Render */}
         <Card className="bg-zinc-900 border-white/10 rounded-xl overflow-hidden relative group">
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -222,7 +267,7 @@ export default function B2B() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {projectsToDisplay.map((order: any) => {
-                    const statusConfig = activeStatuses.find(s => s.id === order.status) || activeStatuses[0];
+                    const statusConfig = activeStatuses.find((s: any) => s.id === order.status) || activeStatuses[0];
                     const isAbandoned = order.status === 's1' && order.createdAt?.seconds && (Date.now()/1000 - order.createdAt.seconds > 86400); // older than 24 hr
                     return (
                       <tr key={order.id} className="hover:bg-white/5 transition-colors cursor-pointer group" onClick={() => setActiveOrder(order)}>
@@ -238,13 +283,29 @@ export default function B2B() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-zinc-200 font-medium">
+                          {order.source === 'vorhang_bridge' && (
+                            <span className="mr-2 inline-flex" title="Vorhang Avrupa Siparişi">🇪🇺</span>
+                          )}
+                          {order.source === 'trtex_news_trigger' && (
+                            <span className="mr-2 inline-flex text-orange-500" title="TRTEX Otonom Fırsat">🎯</span>
+                          )}
                           {order.customerName || 'Bilinmiyor'}
+                          {order.source === 'vorhang_bridge' && (
+                             <span className="ml-2 px-1.5 py-0.5 rounded text-[8px] font-bold bg-green-500/20 text-green-400 uppercase tracking-widest border border-green-500/30">İHRACAT</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-zinc-400">
                           {order.items?.length > 0 ? `${order.items.length} Kalem` : order.title || 'Ä°ÅŸ/Proje'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right font-medium text-white group-hover:text-blue-400 transition-colors">
-                          {formatCurrency(Number(order.grandTotal || order.amount || 0))}
+                          {order.source === 'vorhang_bridge' && order.exportTotal ? (
+                            <div className="flex flex-col items-end">
+                              <span>€{order.exportTotal.toFixed(2)}</span>
+                              <span className="text-[9px] text-zinc-500 mt-0.5">({formatCurrency(Number(order.grandTotal || order.amount || 0))})</span>
+                            </div>
+                          ) : (
+                            formatCurrency(Number(order.grandTotal || order.amount || 0))
+                          )}
                         </td>
                       </tr>
                     );
@@ -262,6 +323,8 @@ export default function B2B() {
           )}
         </CardContent>
       </Card>
+      </>
+      )}
       
       <OrderSlideOver 
         isOpen={!!activeOrder} 

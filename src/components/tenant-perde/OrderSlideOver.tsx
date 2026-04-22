@@ -12,7 +12,7 @@ interface OrderSlideOverProps {
 }
 
 export default function OrderSlideOver({ isOpen, onClose, order }: OrderSlideOverProps) {
-  const { tenantId } = useTenantAuth();
+  const { tenantId } = useTenantAuth('perde');
   const [isUpdating, setIsUpdating] = useState(false);
 
   if (!order) return null;

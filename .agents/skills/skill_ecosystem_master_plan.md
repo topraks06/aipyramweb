@@ -110,34 +110,34 @@ Hazır olduğunda → master'a merge → build test → onay → deploy. **Deplo
 
 ---
 
-## Trinity Ekosistem Bağlantısı
+## AIPYRAM SOVEREIGN ECOSYSTEM — BÜYÜK RESİM VE İŞ MODELLERİ
 
-```
-PERDE.AI ←→ TRTEX ←→ HOMETEX.AI ←→ VORHANG.AI (gelecek)
-  │              │              │
-  │ Master Brain │ İstihbarat   │ Fuar+Katalog
-  │ + Chat       │ Kolu         │ Kolu
-  │              │              │
-  └──────────────┴──────────────┘
-```
+Ekosistem 5 ana yapıdan (Sovereign Node) oluşur. İş zekası (Business Logic) bu roller etrafında örülmüştür:
 
-| Sistem | Perde.ai'ye Ne Verir | Perde.ai'den Ne Alır |
-|--------|---------------------|---------------------|
-| **TRTEX** | Haber, trend, fırsat radarı, fiyat verileri | Kullanıcı ilgi sinyalleri, ürün görselleri |
-| **Hometex.ai** | Fuar takvimi, stant bilgileri, ürün DB | Sipariş talepleri, render istekleri |
+### 1. AIPyram (Ana Beyin / Motor)
+- **Görev:** Ekosistemin görünmez "İşletim Sistemi"dir (OS).
+- **Hedef:** Son kullanıcıya hizmet etmez. Tüm yapay zeka ajanlarının (ALOHA), veritabanının, dil çevirilerinin ve API köprülerinin barındığı arka plan (backend) motorudur. Dilsiz bir hizmetkardır.
 
-### Fuar İş Akışı (TRTEX ↔ Perde.ai ↔ Hometex)
-1. Üye resimleri yükler → Perde.ai'ye
-2. TRTEX anında Perde.ai'ye ışınlar (admin kontrol VEYA üye panelden tetik)
-3. TRTEX'te haber yapılır ("Yeni ürün çıktı" gibi süslenir)
-4. Perde.ai tasarım yapar (render + katalog)
-5. Hometex'te sanal fuar standında yerini alır
-6. **Bu akış üyeler için geçerli olacak**
+### 2. TRTEX (Sektörel İstihbarat ve Medya Ağı)
+- **Görev:** Otonom İstihbarat Terminalidir. Yapay zeka ile sektörü tarar, trendleri yazar, yeni projeleri ve ihaleleri bulur.
+- **Hedef Kitle:** Sektörle uğraşan *herkes*. Üreticiden toptancıya, perakendeciden mimara kadar global tekstil ve iç mimari dünyası. Pazarın gazetesi ve hafiyesidir.
 
-### Perde.ai'nin Fuarla İlişkisi
-- **Perde.ai'nin fuarla doğrudan alakası YOK**
-- Fuar ile ilgili olan TRTEX ve Hometex
-- Perde.ai sadece resim yapıp gönderiyor — fuar motoru değil
+### 3. Perde.ai (Üretici & Perakendeci ERP / Satış Motoru)
+- **Görev:** İşin kalbi ve ana çalışma masasıdır. Hedef kitle küçük perakendeciler ve orta ölçekli toptancılardır. (Büyük fabrikalar için sadece sinir ağları üzerinden API bağlantısı kurulur).
+- **Tam Kapsamlı ERP:** Sadece bir "satış/komisyon" motoru değildir. Üyeler; **muhasebe, sipariş yönetimi, stok takibi** dâhil işletmelerinin TÜM ihtiyaçlarını buradan çözer. Başka hiçbir muhasebe veya CRM yazılımına ihtiyaç duymayacakları %100 kapsayıcı bir sistemdir. (Bu kural tüm projeler için geçerlidir).
+- **İş Modeli 1 (Komisyon):** Toptancı perakendeciye bu sistem üzerinden ürün sattığında, sistem aracı olur ve **komisyon alır**.
+- **İş Modeli 2 (Abonelik):** Perakendeci, son kullanıcısına (müşterisine) bir mekan tasarlarken (kusursuz otel/ev/ofis tasarımı) Perde.ai'nin render ve 3D altyapısını kullanır ve bunun için **aylık abonelik (üyelik ücreti)** öder.
+- **Kapsam:** Sadece perde ve ev tekstili DEĞİLDİR. Mobilya, aydınlatma, iç mekan tasarımı... Sınır yoktur. Çatı kavram "Sınırsız Tasarım"dır. (Örn: Bir giyim markası bile kıyafet tasarlayabilir, sistem sektör ayrımı yapmaksızın tasarım hizmeti verir. Üye girişte sektörünü chat'e yazarak veya profilden belirler).
+
+### 4. Hometex (Sanal Fuar ve İç Mekan Dergisi)
+- **Görev:** Global Ürün Vitrini. Kesinlikle "online satış / e-ticaret" platformu DEĞİLDİR. Perakende satış yapılmaz.
+- **Hedef:** Tıpkı fiziksel bir fuar veya prestijli bir iç mekan dergisi gibi çalışır. Firmaların ürünlerini "Wow!" dedirtecek şekilde global pazara sergiler. B2B bağlantılar ve büyük iş fırsatları oluşturur. Buradan müşteri bulan firmalardan komisyon/abonelik alınır.
+
+### 5. Vorhang (B2C & B2B Avrupa Satış Kapısı / E-Ticaret Pazar Yeri)
+- **Görev:** Avrupa (DACH) merkezli, son kullanıcının tasarım yaparak doğrudan satın aldığı "E-Ticaret Dönüşüm Hunisi"dir. 
+- **Pazar Yeri (Marketplace) Modeli:** Biz (AIPyram) doğrudan ürün satmayız. Bizim altyapımızda toptancı ve perakendeciler **"Dükkan Açarlar"** (Hepsiburada mantığı).
+- **Akıllı Sipariş Yönlendirme:** Dünyanın neresinden sipariş gelirse gelsin, sistem o siparişi en yakın perakendeciye veya kargo avantajı en yüksek olan dükkan sahibine otonom olarak yönlendirir.
+- **Ödeme Altyapısı Kuralı (Yemeksepeti Modeli):** Vorhang üzerinden (veya sistemdeki herhangi bir satın almadan) geçen *tüm ödemeler (Kredi Kartı/Stripe) önce BİZİM (AIPyram) havuz hesabımıza düşer*. İş sorunsuz bittikten sonra, biz ay sonunda veya hakediş döneminde iş ortaklarına/üreticilere toplu ödeme yaparız. Ödemeler asla doğrudan iş ortaklarının hesabına gitmez. Para her zaman merkezin kontrolündedir.
 
 ---
 

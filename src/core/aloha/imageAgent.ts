@@ -15,9 +15,9 @@ import crypto from 'crypto';
 // ═══════════════════════════════════════════════════════
 
 export type Category = 
-  | 'curtain_modern' | 'curtain_sheer' | 'curtain_blackout'
+  | 'curtain_modern' | 'curtain_sheer' | 'curtain_blackout' | 'curtain_store'
   | 'bedding_set' | 'bedding_luxury' | 'baby_bedding'
-  | 'towel_set' | 'bathrobe'
+  | 'towel_set' | 'towel_bath' | 'bathrobe'
   | 'table_runner' | 'table_linen'
   | 'decorative_pillow' | 'throw_blanket' | 'pouf'
   | 'upholstery' | 'sofa_fabric'
@@ -455,3 +455,9 @@ export async function processImageForContent(
 }
 
 export const COLOR_CONSTITUTION = { negative_colors: ['dark'], promptInjection: 'bright sunlight' };
+
+export function getImageCount(htmlContent: string): number {
+  const imgTags = (htmlContent.match(/<img/gi) || []).length;
+  const brGroups = (htmlContent.match(/<br\s*\/?>\s*<br\s*\/?>/gi) || []).length;
+  return Math.max(3, imgTags + Math.floor(brGroups / 2));
+}

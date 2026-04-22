@@ -44,6 +44,9 @@ export interface TerminalArticle {
   createdAt?: string;
   publishedAt?: string;
   status?: string;
+  routing_signals?: Record<string, number>;
+  translations?: Record<string, any>;
+  insight?: any;
 }
 
 export interface TerminalTickerItem {
@@ -97,6 +100,7 @@ export interface TerminalPayload {
   todayInsight: { market: string; risk: string; opportunity: string };
   fairsWithCountdown: TerminalFair[];
   uzakDoguRadari: any;
+  activeTenders: any[];
 
   // Meta
   menuConfig: { id: string; label: string; slug: string }[];

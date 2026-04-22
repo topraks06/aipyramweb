@@ -515,6 +515,8 @@ export default function ConciergeWidget() {
                     ? data.links.map((l: { href: string; label: string }) => ({ label: `${l.label} →`, href: l.href }))
                     : [];
 
+                let crossTenantDataCards: any[] = [];
+
                 // Eğer cross-tenant veya sektör analizi gerektiren bir niyet varsa Orchestrator'a başvur
                 if (intent === 'TREND' || intent === 'PERFORMANCE' || intent === 'PORTFOLIO' || entities.length > 0) {
                      const orchRes = await processQuery(text, intent, siteLocale, platform);
@@ -799,7 +801,7 @@ export default function ConciergeWidget() {
             <LeadCaptureModal 
                 isOpen={leadModalOpen} 
                 onClose={() => setLeadModalOpen(false)} 
-                context="B2B_TENDER" 
+                context={{ type: "TENDER" }} 
                 brandName="AIPyram Concierge" 
             />
         </>

@@ -139,14 +139,15 @@ async function fetchAlohaCategoryPayload(projectName: string, category: string, 
   }
 
   // ═══ FALLBACK INTELLIGENCE (If Dynamic Data Fails) ═══
+  const fallbackSlug = category.toLowerCase();
   if (categoryNews.length === 0) {
-    if (lowSlug === 'academy') {
+    if (fallbackSlug === 'academy') {
       categoryNews = [
         { id: 'acad-1', title: 'Küresel Tedarik Zinciri Yönetimi: 2026 Projeksiyonu', commercial_note: 'Tedarik zinciri risklerini minimize etmek için stratejik planlama rehberi.', createdAt: Date.now() - 3600000, category: 'EĞİTİM', slug: 'global-supply-chain-2026' },
         { id: 'acad-2', title: 'Tekstilde Sürdürülebilirlik ve Yeşil Mutabakat Uyum Süreci', commercial_note: 'AB ihracatçıları için kritik mevzuat ve uygulama adımları.', createdAt: Date.now() - 7200000, category: 'EĞİTİM', slug: 'sustainability-regulation' },
         { id: 'acad-3', title: 'B2B Dijital Pazarlama Stratejileri ve AI Entegrasyonu', commercial_note: 'Yapay zeka araçlarıyla ticaret ağınızı nasıl genişletirsiniz?', createdAt: Date.now() - 10800000, category: 'EĞİTİM', slug: 'b2b-digital-ai-strategies' }
       ];
-    } else if (lowSlug === 'opportunities' || lowSlug === 'firsatlar') {
+    } else if (fallbackSlug === 'opportunities' || fallbackSlug === 'firsatlar') {
       categoryNews = [
         { id: 'opp-1', title: 'Orta Doğu Pazarında Lüks Ev Tekstili Talebi Artıyor', commercial_note: 'Bölgedeki projeler için yüksek kaliteli döşemelik kumaş arayışı.', createdAt: Date.now() - 3600000, category: 'FIRSAT', slug: 'middle-east-market-demand' },
         { id: 'opp-2', title: 'Slovenya ve Hırvatistan: Yeni Tedarik Rotası Analizi', commercial_note: 'Balkanlar üzerinden Avrupa lojistik operasyonlarında maliyet avantajı.', createdAt: Date.now() - 7200000, category: 'FIRSAT', slug: 'balkans-logistics-route' },
@@ -269,7 +270,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   const displayCat = lang.toUpperCase() === 'TR' ? (catMap[catStr] || catStr) : catStr;
 
                   return (
-                  <a key={article.id} href={`${basePath}/${category}/${article.slug || article.id}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <a key={article.id} href={`${basePath}/${category}/${article.slug || article.id}?lang=${lang}`} style={{ textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                     {(article.images?.[0] || article.image_url) ? (
                       <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
                         <img src={article.images?.[0] || article.image_url} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

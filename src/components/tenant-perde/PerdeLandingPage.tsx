@@ -75,7 +75,7 @@ export default function PerdeLandingPage() {
                  </div>
 
                  <h1 className="font-serif text-5xl md:text-[5.5rem] mb-8 leading-[1.05] tracking-tight text-zinc-900">
-                    {HERO_SLIDES[currentSlide].title.split(' ').map((word, i) => (
+                    {HERO_SLIDES[currentSlide].title.split(' ').map((word: string, i: number) => (
                       <span key={i} className={i % 2 !== 0 ? "italic text-zinc-600" : ""}>{word} </span>
                     ))}
                  </h1>
