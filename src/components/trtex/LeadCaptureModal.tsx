@@ -5,7 +5,7 @@ interface LeadModalProps {
   isOpen: boolean;
   onClose: () => void;
   context: {
-    type: 'TENDER' | 'HOT_STOCK' | 'CAPACITY' | 'BRIEFING' | 'GENERAL';
+    type: 'TENDER' | 'HOT_STOCK' | 'CAPACITY' | 'BRIEFING' | 'GENERAL' | 'PERDE_DESIGN';
     title?: string;
     location?: string;
     score?: number;
@@ -20,6 +20,7 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [instantOffer, setInstantOffer] = useState<any>(null);
 
   if (!isOpen) return null;
 
@@ -28,6 +29,7 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
     HOT_STOCK: { title: 'STOK SATIN ALMA TALEBİ', sub: 'Bu fırsatla ilgilendiğinizi bildirin. Stok sahiplerine iletilecek.', icon: '🟢', color: '#16A34A' },
     CAPACITY: { title: 'ÜRETİM ORTAKLIĞI BAŞVURUSU', sub: 'Fason/ortaklık talebinizi iletin. AI eşleştirme başlasın.', icon: '🟡', color: '#EAB308' },
     BRIEFING: { title: 'HAFTALIK CEO BRİFİNG', sub: 'Her Pazartesi sabahı sektörün en kritik 3 sinyalini alın.', icon: '📊', color: '#3B82F6' },
+    PERDE_DESIGN: { title: 'B2B TASARIM & ÜRETİM TEKLİFİ', sub: 'Bu tasarım için özel fiyat teklifi hazırlayalım. Üretici ekibimiz sizinle iletişime geçecek.', icon: '✨', color: '#8B7355' },
     GENERAL: { title: 'İSTİHBARAT ALIMI', sub: 'Bu fırsata ilginizi bildirin.', icon: '🎯', color: '#8B5CF6' },
   };
 
@@ -38,14 +40,16 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
     setSubmitting(true);
 
     try {
-      await fetch('/api/leads', {
+      const res = await fetch('/api/leads/capture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: email.split('@')[0], // Extract a mock name from email
           email,
           company,
           phone,
           message,
+          role: 'buyer', // Default role for forms
           context_type: context.type,
           context_title: context.title || '',
           context_location: context.location || '',
@@ -54,6 +58,11 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
           createdAt: new Date().toISOString(),
         }),
       });
+      
+      const data = await res.json();
+      if (data.instant_offer) {
+        setInstantOffer(data.instant_offer);
+      }
       setSubmitted(true);
     } catch (err) {
       console.error('Lead submit error:', err);
@@ -88,16 +97,34 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
 
         {submitted ? (
           <div style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '.5rem', color: '#fff' }}>TALEBİNİZ ALINDI</div>
-            <div style={{ fontSize: '.85rem', color: '#999', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-              TRTEX AI sistemi talebinizi işleme aldı. 24 saat içinde eşleştirme sonuçları email adresinize iletilecektir.
-            </div>
+            {instantOffer ? (
+              <>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚡</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '.5rem', color: '#16A34A' }}>İLK TEKLİFİNİZ HAZIR</div>
+                <div style={{ fontSize: '.85rem', color: '#ccc', lineHeight: 1.6, marginBottom: '1.5rem', textAlign: 'left', background: '#111', padding: '1rem', border: '1px solid #333' }}>
+                  <div style={{ marginBottom: '0.5rem' }}><strong>💰 Tahmini Fiyat:</strong> {instantOffer.estimated_price}</div>
+                  <div style={{ marginBottom: '0.5rem' }}><strong>⏱ Teslim Süresi:</strong> {instantOffer.lead_time}</div>
+                  <div style={{ marginBottom: '0.5rem' }}><strong>🧵 Önerilen Kumaş:</strong> {instantOffer.suggested_material}</div>
+                  <div style={{ color: '#EAB308', marginTop: '1rem', fontWeight: 'bold' }}>{instantOffer.match_status}</div>
+                </div>
+                <div style={{ fontSize: '.75rem', color: '#999', marginBottom: '1.5rem' }}>
+                  Üreticilerimiz detaylı ve kesin teklifi WhatsApp/Email üzerinden sizinle paylaşacaktır.
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '.5rem', color: '#fff' }}>TALEBİNİZ ALINDI</div>
+                <div style={{ fontSize: '.85rem', color: '#999', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                  TRTEX AI sistemi talebinizi işleme aldı. 24 saat içinde eşleştirme sonuçları email adresinize iletilecektir.
+                </div>
+              </>
+            )}
             <button onClick={onClose} style={{
               background: label.color, border: 'none', color: '#fff',
               padding: '.8rem 2rem', fontWeight: 800, fontSize: '.85rem',
               cursor: 'pointer', letterSpacing: '0.05em',
-            }}>KAPAT</button>
+            }}>PANELDEN ÇIK</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>

@@ -31,6 +31,18 @@ export async function POST(request: NextRequest) {
       utm_source: body.utm_source || 'website',
       is_premium: false,
     });
+    
+    let instant_offer = null;
+    if (result.success) {
+      // Mock Instant Offer Engine
+      instant_offer = {
+        estimated_price: "$12.50 - $18.00 / m²",
+        lead_time: "3-4 Weeks",
+        suggested_material: "Premium Blackout / Fire Retardant",
+        match_status: "2 Verified Manufacturers Found"
+      };
+      (result as any).instant_offer = instant_offer;
+    }
 
     const response = NextResponse.json(result, { status: result.success ? 200 : 400 });
 

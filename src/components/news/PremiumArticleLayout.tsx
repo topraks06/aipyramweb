@@ -66,14 +66,31 @@ export default function PremiumArticleLayout({
   const [leadData, setLeadData] = useState({ name: '', email: '', role: 'wholesaler', country: '', interest: '' });
   const [leadStatus, setLeadStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
-  const handleLeadSubmit = (e: React.FormEvent) => {
+  const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLeadStatus('loading');
-    // Burada Firestore proxy endpoint'ine gidecek: fetch('/api/leads', ...)
-    setTimeout(() => {
+    
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: leadData.email,
+          company: leadData.name,
+          role: leadData.role,
+          country: leadData.country,
+          context_type: 'ARTICLE_LEAD',
+          context_title: title,
+          source: 'news_article',
+          target_intent: leadTarget,
+          createdAt: new Date().toISOString()
+        })
+      });
       setLeadStatus('success');
-      console.log("LEAD CAPTURED:", { ...leadData, intent: leadTarget, sourceArticle: article.id });
-    }, 1500);
+    } catch (err) {
+      console.error('Lead submit error:', err);
+      setLeadStatus('idle');
+    }
   };
 
   const articleCSS = `
@@ -171,10 +188,39 @@ export default function PremiumArticleLayout({
 
         {/* ═══ HERO IMAGE (16:9, content genişliğinde — ASLA TAŞMAZ) ═══ */}
         {heroImage && (
-          <figure style={{ margin: '0 0 3rem 0', overflow: 'hidden', background: '#F3F4F6' }}>
+          <figure style={{ margin: '0 0 1rem 0', overflow: 'hidden', background: '#F3F4F6' }}>
             <img src={heroImage} alt={title} style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
           </figure>
         )}
+
+        {/* ═══ PERDE.AI TELEPORT CTA ═══ */}
+        <div style={{ marginBottom: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <a 
+            href={`http://perde.localhost:3000/studio?inspiration=${encodeURIComponent(title)}`}
+            onClick={(e) => {
+              // Send telemetry signal in the background
+              fetch('/api/system/signals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  type: 'TELEPORT_INITIATED',
+                  source_tenant: 'trtex',
+                  target_tenant: 'perde',
+                  payload: { title }
+                })
+              }).catch(() => {});
+            }}
+            style={{ 
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              background: '#111', color: '#FFF', padding: '0.75rem 1.5rem', 
+              fontSize: '0.85rem', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', textDecoration: 'none'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#333'}
+            onMouseOut={(e) => e.currentTarget.style.background = '#111'}
+          >
+            ⚡ BU KUMAŞI PERDE.AI'DA TASARLA
+          </a>
+        </div>
         
         {/* BREADCRUMB */}
         <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: '2rem', fontFamily: 'var(--m)' }}>
@@ -311,7 +357,7 @@ export default function PremiumArticleLayout({
           </div>
         )}
 
-        {/* ═══ COMMERCIAL CTA (Asıl Para Makinesi / ÇİFT KATMANLI) ═══ */}
+        {/* ═══ COMMERCIAL CTA (Friction-less Deal Engine) ═══ */}
         {commercialCta && (
            <div style={{ marginTop: '3rem', padding: '3rem 2rem', background: 'linear-gradient(135deg, #0B0D0F 0%, #1A1A1A 100%)', color: '#FFF', textAlign: 'center', borderRadius: '8px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#CC0000', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem' }}>
@@ -321,22 +367,46 @@ export default function PremiumArticleLayout({
                 {commercialCta.value_proposition}
               </h3>
               
-              {/* PRIMARY CTA (AI-Driven) */}
-              <button 
-                onClick={() => { setLeadTarget(commercialCta.target_audience); setIsLeadModalOpen(true); }}
-                style={{ marginTop: '1.5rem', background: '#CC0000', color: '#FFF', border: 'none', padding: '1rem 2.5rem', fontSize: '1rem', fontWeight: 900, letterSpacing: '1px', cursor: 'pointer', transition: 'all 0.3s', textTransform: 'uppercase', width: '100%', maxWidth: '350px' }}>
-                {commercialCta.action_text}
-              </button>
+              {/* PRIMARY CTA (Fast Input) */}
+              {leadStatus === 'success' ? (
+                 <div style={{ marginTop: '1.5rem', background: '#16A34A', color: '#FFF', padding: '1.5rem', fontWeight: 900, borderRadius: '4px', letterSpacing: '1px' }}>
+                    ⚡ İLK TEKLİFİNİZ HAZIR! (AUTO-MATCH DEVREDE)
+                    <div style={{ fontSize: '0.8rem', fontWeight: 400, marginTop: '0.5rem', opacity: 0.9 }}>
+                      Sistem 2 potansiyel üretici buldu. Detaylı rapor WhatsApp/E-posta üzerinden iletilecek.
+                    </div>
+                 </div>
+              ) : (
+                <form onSubmit={(e) => {
+                  setLeadTarget(commercialCta.target_audience);
+                  handleLeadSubmit(e);
+                }} style={{ marginTop: '1.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <input 
+                    type="text" 
+                    placeholder="İş E-posta veya WhatsApp Numaranız" 
+                    required 
+                    onChange={e => setLeadData({...leadData, email: e.target.value, name: 'Hızlı İstihbarat Ziyaretçisi'})}
+                    style={{ padding: '1rem', minWidth: '300px', border: '1px solid #333', background: '#111', color: '#FFF', fontSize: '0.9rem', outline: 'none', fontFamily: 'var(--m)' }}
+                  />
+                  <button 
+                    type="submit"
+                    disabled={leadStatus === 'loading'}
+                    style={{ background: '#CC0000', color: '#FFF', border: 'none', padding: '1rem 2rem', fontSize: '0.9rem', fontWeight: 900, letterSpacing: '1px', cursor: 'pointer', transition: 'all 0.3s', textTransform: 'uppercase', opacity: leadStatus === 'loading' ? 0.7 : 1 }}>
+                    {leadStatus === 'loading' ? 'ALINIYOR...' : 'BU FIRSAT İÇİN TEKLİF AL (2 DK)'}
+                  </button>
+                </form>
+              )}
 
               {/* SECONDARY CTAS (Static) */}
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                 <button onClick={() => { setLeadTarget('register_free'); setIsLeadModalOpen(true); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#FFF', padding: '0.75rem 1.5rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', width: '100%', maxWidth: '165px' }}>
-                   Ücretsiz Üye Ol
-                 </button>
-                 <button onClick={() => { setLeadTarget('register_company'); setIsLeadModalOpen(true); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#FFF', padding: '0.75rem 1.5rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', width: '100%', maxWidth: '165px' }}>
-                   Firma Ekle
-                 </button>
-              </div>
+              {leadStatus !== 'success' && (
+                <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                   <button onClick={() => { setLeadTarget('register_free'); setIsLeadModalOpen(true); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#FFF', padding: '0.75rem 1.5rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', width: '100%', maxWidth: '165px' }}>
+                     Ücretsiz Üye Ol
+                   </button>
+                   <button onClick={() => { setLeadTarget('register_company'); setIsLeadModalOpen(true); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#FFF', padding: '0.75rem 1.5rem', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', width: '100%', maxWidth: '165px' }}>
+                     Firma Ekle
+                   </button>
+                </div>
+              )}
            </div>
         )}
 

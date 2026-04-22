@@ -4,6 +4,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircle, X, Send, Bot, User, Globe, TrendingUp, BarChart3, Network, ArrowRight, Minimize2, Maximize2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEcosystemActions } from "@/hooks/useEcosystemActions";
+import { DataCard } from "@/core/aloha/orchestrationLayer";
+import LeadCaptureModal from "@/components/trtex/LeadCaptureModal";
 
 /* ═══════════════════════════════════════════════════════════
    AIPyram Master Concierge — v3 Visual Intelligence Widget
@@ -27,6 +30,7 @@ interface ChatMessage {
     role: "user" | "assistant";
     text: string;
     visual?: VisualData;
+    dataCards?: DataCard[];
     links?: { label: string; href: string }[];
     timestamp: Date;
 }
@@ -364,6 +368,24 @@ function VisualDeck({ visual }: { visual: VisualData }) {
     );
 }
 
+/* ─── Data Card View (from Orchestrator) ─── */
+function DataCardView({ cards }: { cards: DataCard[] }) {
+    if (!cards || cards.length === 0) return null;
+    return (
+        <div className="flex flex-col gap-2 mt-2">
+            {cards.map((card, idx) => (
+                <div key={idx} className="bg-slate-800/80 rounded-lg p-3 border border-slate-700/50">
+                    <div className="flex items-center justify-between mb-1">
+                        <div className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">{card.title}</div>
+                        <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">{card.source_tenant.toUpperCase()}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">{card.content}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 /* ═══════════════════════════════════════════════════════
    MAIN WIDGET
    ═══════════════════════════════════════════════════════ */
@@ -377,6 +399,10 @@ export default function ConciergeWidget() {
 
     const siteLocale: Language = pathname.startsWith("/en") ? "en" : pathname.startsWith("/tr") ? "tr" : "de";
     const [isOpen, setIsOpen] = useState(false);
+    
+    // Lead Capture State
+    const [leadModalOpen, setLeadModalOpen] = useState(false);
+    const [leadContext, setLeadContext] = useState<any>({ type: 'GENERAL' });
     const [isExpanded, setIsExpanded] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState("");
@@ -397,6 +423,7 @@ export default function ConciergeWidget() {
     const headerTitle = isPerde ? "Perde.ai Assistant" : "AIPyram Concierge";
     const accentColor = isPerde ? "text-[#8B7355]" : "text-emerald-500";
 
+    const { processQuery, isOrchestrating } = useEcosystemActions();
     const [sessionId, setSessionId] = useState<string>('');
 
     useEffect(() => {
@@ -484,14 +511,37 @@ export default function ConciergeWidget() {
                 const { intent, entities } = classifyIntent(text);
                 const visual = generateVisual(intent, entities);
 
+                let finalLinks = data.links && data.links.length > 0
+                    ? data.links.map((l: { href: string; label: string }) => ({ label: `${l.label} →`, href: l.href }))
+                    : [];
+
+                // Eğer cross-tenant veya sektör analizi gerektiren bir niyet varsa Orchestrator'a başvur
+                if (intent === 'TREND' || intent === 'PERFORMANCE' || intent === 'PORTFOLIO' || entities.length > 0) {
+                     const orchRes = await processQuery(text, intent, siteLocale, platform);
+                     if (orchRes) {
+                         crossTenantDataCards = orchRes.data_cards || [];
+                         if (orchRes.executive_brief) {
+                             data.text += "\n\n💡 " + orchRes.executive_brief;
+                         }
+                         if (orchRes.suggested_actions && orchRes.suggested_actions.length > 0) {
+                             const actionLinks = orchRes.suggested_actions.map(act => {
+                               if (act.includes('VORHANG')) {
+                                 return { label: `⚡ ${act}`, href: '#vorhang' };
+                               }
+                               return { label: `⚡ ${act}`, href: '#lead' };
+                             });
+                             finalLinks = [...finalLinks, ...actionLinks];
+                         }
+                     }
+                }
+
                 const assistantMsg: ChatMessage = {
                     id: `ai-${Date.now()}`,
                     role: "assistant",
                     text: data.text,
                     visual,
-                    links: data.links && data.links.length > 0
-                        ? data.links.map((l: { href: string; label: string }) => ({ label: `${l.label} →`, href: l.href }))
-                        : undefined,
+                    dataCards: crossTenantDataCards,
+                    links: finalLinks.length > 0 ? finalLinks : undefined,
                     timestamp: new Date(),
                 };
                 setMessages(prev => [...prev, assistantMsg]);
@@ -642,19 +692,38 @@ export default function ConciergeWidget() {
                                     {/* Visual Deck */}
                                     {msg.visual && <VisualDeck visual={msg.visual} />}
 
+                                    {/* Data Cards from Orchestrator */}
+                                    {msg.dataCards && msg.dataCards.length > 0 && <DataCardView cards={msg.dataCards} />}
+
                                     {/* Navigation Links */}
                                     {msg.links && msg.links.length > 0 && (
                                         <div className="flex flex-wrap gap-1.5 mt-2">
-                                            {msg.links.map(link => (
+                                            {msg.links.map(link => {
+                                                const isAction = link.href === '#lead';
+                                                const isVorhang = link.href === '#vorhang';
+                                                const isSpecial = isAction || isVorhang;
+                                                
+                                                return (
                                                 <Link
-                                                    key={link.href}
-                                                    href={link.href}
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-800/50 hover:bg-slate-700/50 text-[10px] font-medium text-slate-300 hover:text-white rounded-lg border border-slate-700/50 transition-all"
-                                                    onClick={() => setIsOpen(false)}
+                                                    key={link.href + link.label}
+                                                    href={isVorhang ? "http://vorhang.localhost:3000/products" : link.href}
+                                                    className={`inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium rounded-lg border transition-all ${isSpecial ? 'bg-red-600/90 hover:bg-red-500 border-red-500 text-white shadow-sm shadow-red-900/50' : 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 hover:text-white border-slate-700/50'}`}
+                                                    onClick={(e) => {
+                                                        if (isAction) {
+                                                            e.preventDefault();
+                                                            setLeadContext({ type: 'GENERAL', title: msg.text.substring(0, 100) });
+                                                            setLeadModalOpen(true);
+                                                        } else if (isVorhang) {
+                                                            // For Vorhang we actually want to navigate to the href, so we just close the chat
+                                                            setIsOpen(false);
+                                                        } else {
+                                                            setIsOpen(false);
+                                                        }
+                                                    }}
                                                 >
                                                     {link.label}
                                                 </Link>
-                                            ))}
+                                            )})}
                                         </div>
                                     )}
                                 </div>
@@ -667,17 +736,18 @@ export default function ConciergeWidget() {
                         ))}
 
                         {/* Typing indicator */}
-                        {isTyping && (
+                        {(isTyping || isOrchestrating) && (
                             <div className="flex gap-2.5">
                                 <div className="w-6 h-6 rounded-full bg-red-600/20 flex items-center justify-center shrink-0">
                                     <Bot className="h-3 w-3 text-red-400" />
                                 </div>
-                                <div className="bg-slate-800/80 rounded-2xl rounded-bl-sm px-4 py-3">
-                                    <div className="flex gap-1">
+                                <div className="bg-slate-800/80 rounded-2xl rounded-bl-sm px-4 py-3 flex flex-col gap-2">
+                                    <div className="flex gap-1 items-center">
                                         <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                                         <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                                         <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                                     </div>
+                                    {isOrchestrating && <span className="text-[9px] text-emerald-500 animate-pulse">Ecosystem orchestrating...</span>}
                                 </div>
                             </div>
                         )}
@@ -725,6 +795,13 @@ export default function ConciergeWidget() {
                     </div>
                 </div>
             )}
+            
+            <LeadCaptureModal 
+                isOpen={leadModalOpen} 
+                onClose={() => setLeadModalOpen(false)} 
+                context="B2B_TENDER" 
+                brandName="AIPyram Concierge" 
+            />
         </>
     );
 }

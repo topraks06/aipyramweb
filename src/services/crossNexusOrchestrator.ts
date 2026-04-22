@@ -1,10 +1,10 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { ecosystemBus } from '@/core/events/ecosystemBus';
+import { EcosystemSignalType } from '@/core/events/signalTypes';
 
 export type NexusSignal = {
   id: string;
   source_agent: string;
-  event_type: "RAW_MATERIAL_CRISIS" | "MEGA_PROJECT_SOLD" | "TREND_ALERT" | "SECURITY_THREAT";
+  event_type: EcosystemSignalType | "RAW_MATERIAL_CRISIS" | "MEGA_PROJECT_SOLD" | "SECURITY_THREAT";
   payload: any;
   timestamp: string;
 };
@@ -19,15 +19,31 @@ export async function handleSynapseSignal(signal: Omit<NexusSignal, 'id' | 'time
     timestamp: new Date().toISOString()
   };
 
-  // 1. Log the signal to the Hive Mind Database
-  const signalDbPath = path.join(process.cwd(), 'src/core/swarm/cross-nexus-signals.json');
+  // 1. Log the signal to the Ecosystem Bus (Firestore + In-Memory)
+  let mappedSource: 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'master' = 'master';
+  if (signal.source_agent.includes('trtex')) mappedSource = 'trtex';
+  else if (signal.source_agent.includes('perde')) mappedSource = 'perde';
+  else if (signal.source_agent.includes('hometex')) mappedSource = 'hometex';
+
   try {
-    const rawData = await fs.readFile(signalDbPath, 'utf-8');
-    const signals: NexusSignal[] = JSON.parse(rawData);
-    signals.push(newSignal);
-    await fs.writeFile(signalDbPath, JSON.stringify(signals, null, 2), 'utf-8');
+    // Treat legacy event_types as TREND_ALERT or PRICE_SHIFT if not matching strictly, 
+    // but TS will cast for now. In real scenario, map carefully.
+    const mappedType = (signal.event_type === 'RAW_MATERIAL_CRISIS' ? 'PRICE_SHIFT' : 
+                       signal.event_type === 'MEGA_PROJECT_SOLD' ? 'LEAD_CAPTURED' : 
+                       signal.event_type === 'SECURITY_THREAT' ? 'TREND_ALERT' : 
+                       signal.event_type) as EcosystemSignalType;
+
+    await ecosystemBus.emit({
+      id: newSignal.id,
+      type: mappedType,
+      source_tenant: mappedSource,
+      target_tenant: 'all',
+      payload: newSignal.payload,
+      priority: 'high',
+      timestamp: newSignal.timestamp
+    });
   } catch (error) {
-    console.error("[CROSS-NEXUS] Hafıza okuma/yazma hatası:", error);
+    console.error("[CROSS-NEXUS] Sinyal yayınlama hatası:", error);
   }
 
   // 2. Cross-Agent Event Triggers (Otonom Reaksiyonlar)

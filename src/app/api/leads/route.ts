@@ -33,3 +33,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    if (!adminDb) {
+      return NextResponse.json({ leads: [] });
+    }
+
+    const leadsSnapshot = await adminDb.collection('trtex_leads')
+      .orderBy('createdAt', 'desc')
+      .limit(100)
+      .get();
+      
+    const leads = leadsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return NextResponse.json({ success: true, leads });
+  } catch (error: any) {
+    console.error('[LEADS GET API] Error:', error.message);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+

@@ -13,5 +13,10 @@
     "name": "Hometex VR B2B",
     "path": "./projects/hometex",
     "type": "nextjs"
+  },
+  "vorhang": {
+    "name": "Vorhang.ai Marketplace",
+    "path": "./projects/vorhang",
+    "type": "nextjs"
   }
 }

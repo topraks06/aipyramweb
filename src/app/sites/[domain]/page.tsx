@@ -2,6 +2,7 @@ import { adminDb } from "@/lib/firebase-admin";
 import PremiumB2BHomeLayout from '@/components/home/PremiumB2BHomeLayout';
 import PerdeLandingPage from '@/components/tenant-perde/PerdeLandingPage';
 import HometexLandingPage from '@/components/tenant-hometex/HometexLandingPage';
+import VorhangLandingPage from '@/components/tenant-vorhang/VorhangLandingPage';
 import IntelligenceTicker from "@/components/trtex/IntelligenceTicker";
 import OpportunityRadarWidget from "@/components/trtex/OpportunityRadarWidget";
 import type { Metadata } from 'next';
@@ -209,6 +210,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   let projectName = 'trtex';
   if (exactDomain.includes('hometex')) projectName = 'hometex';
   if (exactDomain.includes('perde')) projectName = 'perde';
+  if (exactDomain.includes('vorhang')) projectName = 'vorhang';
   const brandName = exactDomain.split('.')[0].toUpperCase();
 
   // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
@@ -217,6 +219,9 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   }
   if (projectName === 'hometex') {
     return <HometexLandingPage />;
+  }
+  if (projectName === 'vorhang') {
+    return <VorhangLandingPage />;
   }
 
   // FAZ 1.4: basePath for localhost routing

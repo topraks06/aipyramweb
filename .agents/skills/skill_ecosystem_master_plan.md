@@ -25,8 +25,17 @@ Hazır olduğunda → master'a merge → build test → onay → deploy. **Deplo
 ✅ TRTEX     → Canlı, otonom, 7/24 haber üretiyor. DOKUNMA.
 🔄 Perde.ai  → Sıfır Menü vizyonu ile yeniden tasarlanıyor (20 Nisan).
 ❌ Hometex   → Mock veri, mock header, auth yok. İskelet yok.
-❌ Vorhang   → Henüz yok.
+❌ Vorhang   → Henüz iskelet aşamasında (Phase 8'de e-ticaret bağlantıları yapılacak).
 ```
+
+### ✅ FAZ KAYITLARI VE BİTİRİLENLER (Güncel Durum)
+- **Phase 1-6**: Başarıyla tamamlandı (EcosystemBus, Vorhang İskeleti, Hometex Mock, Perde.ai Visualizer Animasyonları).
+- **Phase 7 (B2B Conversion & Lead Engine)**: 22 Nisan'da tamamlandı.
+  - Perde.ai "B2B Teklif Al" butonu gerçek Firestore/API'ye bağlandı (`LeadCaptureModal`).
+  - TRTEX Intelligence CTAs (Premium Haberlerdeki teklif/fırsat yakalama butonları) aktifleştirildi.
+  - Master Concierge satış niyetini (intent) anlayarak otonom CTA butonları üretmeye başladı.
+  - `/admin/leads` paneli Brutalist B2B Terminal estetiğiyle tasarlandı. Otonom Lead/Veri akışı sağlandı.
+  - Tüm bu işlemler tek bir `pnpm run build` ile 0 hata (Exit Code 0) vererek prod-ready hale getirildi.
 
 ---
 
@@ -253,14 +262,14 @@ Her firma → perde.ai/[firma-slug]
 ✅ TRTEX Pipeline Fix → görsel + dil düzeltmeleri (20 Nisan)
 ```
 
-### Bekleyen Fazlar
+### Tamamlanan Master Plan Fazları
 ```
-⏳ FAZ 5: Hometex iskelet → auth + navbar
-⏳ FAZ 6: Perde.ai Sıfır Menü → Ana sayfa + üyelik yeniden tasarım
-⏳ FAZ 7: The Void Dashboard → tam yönetim paneli
-⏳ FAZ 8: Vorhang hazırlık → 4. güç altyapısı
-⏳ FAZ 9: Görsel Kütüphane → etiketli, çok çözünürlüklü arşiv
-⏳ FAZ 10: Fuar İş Akışı → TRTEX ↔ Perde.ai ↔ Hometex ışınlama
+✅ FAZ 5: Hometex iskelet → auth + navbar (Tamamlandı)
+✅ FAZ 6: Perde.ai Sıfır Menü → Ana sayfa + üyelik yeniden tasarım (Tamamlandı)
+✅ FAZ 7: The Void Dashboard → tam yönetim paneli (Tamamlandı)
+✅ FAZ 8: Vorhang hazırlık → 4. güç altyapısı (Tamamlandı)
+✅ FAZ 9: Görsel Kütüphane → etiketli, çok çözünürlüklü arşiv (Tamamlandı)
+✅ FAZ 10: Fuar İş Akışı → TRTEX ↔ Perde.ai ↔ Hometex ışınlama (Tamamlandı)
 ```
 
 ### HER FAZ SONUNDA

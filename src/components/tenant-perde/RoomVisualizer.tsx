@@ -6,10 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import { PERDE_DICT } from './perde-dictionary';
 import Image from 'next/image';
 import { 
-  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight
+  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent
 } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import toast from 'react-hot-toast';
+import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
 
 export default function RoomVisualizer() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -17,6 +18,9 @@ export default function RoomVisualizer() {
   
   // Greeting logic
   const [greeting, setGreeting] = useState('Hoş Geldiniz');
+
+  // Lead Modal
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
 
   // History / Inputs
   const [renderHistory, setRenderHistory] = useState<{ url: string; originalUrl: string | null }[]>([]);
@@ -507,6 +511,76 @@ export default function RoomVisualizer() {
                   </div>
                 </div>
               )}
+
+              {/* Watermark */}
+              <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex flex-wrap content-evenly justify-evenly -rotate-12 z-20 mix-blend-screen">
+                 {Array.from({length: 15}).map((_, i) => (
+                   <span key={i} className="text-8xl font-black text-white m-8 tracking-widest uppercase font-serif">PERDE.AI</span>
+                 ))}
+              </div>
+
+              {/* B2B Teklif Al CTA */}
+              <div className="absolute bottom-8 right-8 z-30 flex flex-col items-end gap-3">
+                 <div className="flex gap-4">
+                     <button 
+                       onClick={async () => {
+                         toast.success('Vorhang.ai Pazaryerine Gönderiliyor...', { icon: '🚀' });
+                         try {
+                           await fetch('/api/system/signals', {
+                             method: 'POST',
+                             headers: { 'Content-Type': 'application/json' },
+                             body: JSON.stringify({
+                               type: 'VORHANG_PRODUCT_LISTED',
+                               source_tenant: 'perde',
+                               target_tenant: 'vorhang',
+                               payload: { image: activeOriginalUrl, seller: "Perde.ai Designer" }
+                             })
+                           });
+                           toast.success('Ürün başarıyla Vorhang.ai mağazanıza eklendi.');
+                         } catch (e) {
+                           toast.error('Gönderim başarısız.');
+                         }
+                       }}
+                       className="bg-black text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/20 flex items-center gap-2"
+                     >
+                       <ShoppingCart className="w-4 h-4" /> VORHANG'A GÖNDER
+                     </button>
+                     <button 
+                       onClick={async () => {
+                         toast.success('Hometex Sanal Fuara Işınlanıyor...', { icon: '🎪' });
+                         try {
+                           await fetch('/api/system/signals', {
+                             method: 'POST',
+                             headers: { 'Content-Type': 'application/json' },
+                             body: JSON.stringify({
+                               type: 'TELEPORT_INITIATED',
+                               source_tenant: 'perde',
+                               target_tenant: 'hometex',
+                               payload: { image: activeOriginalUrl }
+                             })
+                           });
+                           setTimeout(() => {
+                             window.location.href = 'http://hometex.localhost:3000/exhibitors/upload';
+                           }, 1500);
+                         } catch (e) {
+                           toast.error('Işınlanma başarısız.');
+                         }
+                       }}
+                       className="bg-[#111] text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/20 flex items-center gap-2"
+                     >
+                       <Tent className="w-4 h-4" /> SANAL FUARDA SERGİLE
+                     </button>
+                   <button className="bg-zinc-900/80 backdrop-blur text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/10 flex items-center gap-2">
+                      <Download className="w-4 h-4" /> İndir
+                   </button>
+                 </div>
+                 <button 
+                   onClick={() => setLeadModalOpen(true)}
+                   className="bg-[#8B7355] text-white px-8 py-4 w-full rounded-lg font-bold text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all shadow-[0_0_30px_rgba(139,115,85,0.4)] border border-[#8B7355]/50 flex items-center justify-center gap-2"
+                 >
+                    B2B TEKLİF AL
+                 </button>
+              </div>
             </div>
           </div>
         )}
@@ -529,6 +603,14 @@ export default function RoomVisualizer() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* B2B LEAD CAPTURE MODAL */}
+        <LeadCaptureModal
+          isOpen={leadModalOpen}
+          onClose={() => setLeadModalOpen(false)}
+          context={{ type: 'PERDE_DESIGN', title: 'Yapay Zeka Destekli Perde Tasarımı' }}
+          brandName="PERDE.AI"
+        />
 
       </div>
     </div>
