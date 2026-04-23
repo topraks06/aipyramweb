@@ -98,53 +98,150 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] flex overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#000000] flex overflow-hidden font-sans text-zinc-300">
       
-      {/* LEFT SIDEBAR: Navigasyon Menüsü */}
-      <aside className="w-64 border-r border-white/5 bg-black/80 hidden md:flex flex-col shrink-0">
-        <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-white flex items-center justify-center text-black font-bold text-[10px]">P</div>
-            <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-white">MASTER OS</span>
+      {/* LEFT SIDEBAR: High-Density Navigation */}
+      <aside className="w-[280px] border-r border-white/10 bg-[#030303] flex flex-col shrink-0 z-20">
+        
+        {/* Brand / Logo Area */}
+        <div className="h-14 border-b border-white/10 flex items-center px-5 shrink-0 bg-black">
+          <div className="flex items-center gap-3 w-full">
+            <div className="w-6 h-6 bg-white text-black font-black flex items-center justify-center text-[10px] tracking-tighter">OS</div>
+            <div className="flex-1">
+              <div className="text-[11px] font-black tracking-widest text-white leading-none">AIPYRAM</div>
+              <div className="text-[8px] tracking-[0.2em] text-blue-500 font-mono mt-1">SOVEREIGN CORE</div>
+            </div>
           </div>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-4 px-2">Kokpit Ağları</div>
-          {[
-            { name: 'Sistem Durumu', path: '/admin' },
-            { name: 'Sovereign Nodes', path: '/admin/tenants' },
-            { name: 'Ekonomi Motoru', path: '/admin/economy' },
-            { name: 'Kullanıcılar', path: '/admin/users' },
-            { name: 'Medya Arşivi', path: '/admin/media' },
-          ].map((item) => (
-            <Link 
-              key={item.name}
-              href={item.path} 
-              className="flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 rounded transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
+
+        {/* Navigation Categories */}
+        <nav className="flex-1 px-3 py-6 space-y-8 overflow-y-auto custom-scrollbar">
+          
+          {/* CATEGORY 1 */}
+          <div className="space-y-1">
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Core OS</div>
+            {[
+              { name: 'Data Plane', path: '/admin', icon: '◱' },
+              { name: 'Topology Map', path: '/admin/tenants', icon: '⚄' },
+            ].map((item) => (
+              <Link 
+                key={item.name}
+                href={item.path} 
+                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-blue-500"
+              >
+                <span className="text-zinc-600 group-hover:text-blue-500 font-mono text-[14px] leading-none">{item.icon}</span>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* CATEGORY 2 */}
+          <div className="space-y-1">
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Swarm Intelligence</div>
+            {[
+              { name: 'Agent Registry', path: '#', icon: '⚙' },
+              { name: 'Knowledge Base', path: '#', icon: '⌬' },
+              { name: 'Dead Letters', path: '#', icon: '⚠' },
+            ].map((item) => (
+              <Link 
+                key={item.name}
+                href={item.path} 
+                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-emerald-500"
+              >
+                <span className="text-zinc-600 group-hover:text-emerald-500 font-mono text-[14px] leading-none">{item.icon}</span>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* CATEGORY 3 */}
+          <div className="space-y-1">
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Finance & Security</div>
+            {[
+              { name: 'Economy Engine', path: '/admin/economy', icon: '⚡' },
+              { name: 'Identity & Auth', path: '/admin/users', icon: '⚿' },
+              { name: 'Media Archive', path: '/admin/media', icon: '◧' },
+            ].map((item) => (
+              <Link 
+                key={item.name}
+                href={item.path} 
+                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-amber-500"
+              >
+                <span className="text-zinc-600 group-hover:text-amber-500 font-mono text-[14px] leading-none">{item.icon}</span>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
         </nav>
-        <div className="p-4 border-t border-white/5">
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-[9px] uppercase tracking-widest text-zinc-500">Node Sağlam</span>
+        
+        {/* User / Session Area */}
+        <div className="p-4 border-t border-white/10 bg-black/50">
+          <div className="flex items-center justify-between px-2">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-zinc-500 uppercase font-mono tracking-widest">Active Session</span>
+              <span className="text-xs text-white truncate max-w-[150px]">{user.email}</span>
+            </div>
+            <button onClick={logout} className="text-[10px] uppercase text-red-500 hover:text-red-400 font-bold tracking-widest px-2 py-1 bg-red-500/10 rounded-sm">
+              ÇIKIŞ
+            </button>
           </div>
         </div>
       </aside>
 
-      {/* CENTER: Main Content & Header */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#050505]">
-        {/* Header */}
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-black/50 backdrop-blur z-10 shrink-0">
-          <h2 className="text-xs font-mono tracking-widest text-zinc-300">Terminal &gt; Genel Bakış</h2>
-          <div className="text-[10px] uppercase font-mono text-blue-500/70 tracking-widest">ENCRYPTED : ACTIVE</div>
+      {/* CENTER: Data Plane & Topbar */}
+      <div className="flex-1 flex flex-col min-w-0 bg-[#000000]">
+        
+        {/* Global Command Bar (Header) */}
+        <header className="h-14 border-b border-white/10 flex items-center justify-between px-6 bg-[#030303] z-10 shrink-0">
+          
+          {/* Node Switcher */}
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase text-zinc-600 tracking-widest">TARGET NODE:</span>
+            <select className="bg-transparent border border-white/10 text-[11px] text-white uppercase tracking-widest p-1 focus:outline-none focus:border-blue-500">
+              <option value="master">GLOBAL MASTER</option>
+              <option value="perde">PERDE.AI</option>
+              <option value="trtex">TRTEX.COM</option>
+              <option value="hometex">HOMETEX.AI</option>
+            </select>
+          </div>
+
+          {/* Omnibar / Command Palette */}
+          <div className="flex-1 max-w-lg mx-8 relative">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-500">
+              ⌘
+            </div>
+            <input 
+              type="text" 
+              placeholder="Komut veya veri ara (CMD+K)..." 
+              className="w-full bg-[#0A0A0A] border border-white/10 hover:border-white/20 focus:border-blue-500/50 text-xs text-white px-8 py-1.5 focus:outline-none transition-colors placeholder:text-zinc-600 tracking-wide font-mono rounded-none"
+            />
+            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+              <span className="bg-white/10 text-zinc-400 text-[9px] px-1.5 py-0.5 rounded-sm">CTRL+K</span>
+            </div>
+          </div>
+
+          {/* System Status Indicators */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-500 tracking-widest">12ms</span>
+            </div>
+            <div className="h-4 w-[1px] bg-white/10" />
+            <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">ENCRYPTED</span>
+          </div>
+
         </header>
 
-        {/* Scrollable Content */}
-        <main className="flex-1 overflow-y-auto p-8 scroll-smooth">
-          <div className="max-w-[1400px] mx-auto">
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto custom-scrollbar relative p-6">
+          {/* Subtle grid background for tech feel */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+          
+          <div className="relative z-10">
             {children}
           </div>
         </main>
