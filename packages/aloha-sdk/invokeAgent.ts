@@ -131,11 +131,32 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
       }
     }
 
+    // 3.5. Admin Training Injection (CORE BRAIN LOCK)
+    const { injectKnowledgeContext, writeSemanticMemory } = await import('./memory');
+    const adminRules = await injectKnowledgeContext(tenant, action);
+    
+    // Inject the rules into the payload so the tool can use them
+    if (adminRules) {
+      payload.sovereignContext = adminRules;
+    }
+
     // 4. Tool çalıştır
     const toolResult: ToolResult = await runTool(action, payload);
 
     const duration = Date.now() - start;
     const cost = getActionCost(action);
+
+    // 4.5. Semantic Memory Write Loop (RLHF)
+    await writeSemanticMemory({
+      tenant,
+      action,
+      uid,
+      payload,
+      outcome: toolResult.success,
+      message: toolResult.message,
+      data: toolResult.data,
+      createdAt: new Date().toISOString()
+    });
 
     // 5. Logla (aloha_sovereign_logs koleksiyonu)
     await logSovereignAction({
@@ -171,6 +192,19 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
 
     // DLQ kaydı — sistem çökerse veri kaybolmaz
     await logDLQ(tenant, action, err.message, payload);
+
+    // 4.5. Semantic Memory Write Loop (Crash)
+    const { writeSemanticMemory } = await import('./memory');
+    await writeSemanticMemory({
+      tenant,
+      action,
+      uid,
+      payload,
+      outcome: false,
+      message: `CRASH: ${err.message}`,
+      data: null,
+      createdAt: new Date().toISOString()
+    });
 
     return {
       success: false,

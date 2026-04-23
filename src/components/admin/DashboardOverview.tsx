@@ -15,6 +15,9 @@ import {
   Zap
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import DlqManager from "./DlqManager";
+import KnowledgeTrainer from "./KnowledgeTrainer";
+import EconomyEngineGraph from "./EconomyEngineGraph";
 import PerdeOrdersTable from "./PerdeOrdersTable";
 
 interface DashboardStats {
@@ -26,6 +29,7 @@ interface DashboardStats {
   failedTasks: number;
   totalSectors: number;
   automationRules: number;
+  totalCreditsSpent?: number;
 }
 
 export default function DashboardOverview() {
@@ -55,6 +59,7 @@ export default function DashboardOverview() {
           failedTasks: 0,
           totalSectors: 3,
           automationRules: 15,
+          totalCreditsSpent: 0,
         });
       }
     } catch (error) {
@@ -69,6 +74,7 @@ export default function DashboardOverview() {
           failedTasks: 0,
           totalSectors: 3,
           automationRules: 15,
+          totalCreditsSpent: 0,
       });
     } finally {
       setIsLoading(false);
@@ -140,34 +146,39 @@ export default function DashboardOverview() {
       description: "Aktif Pazar Alanı",
     },
     {
-      title: "OTOMASYON",
-      value: stats?.automationRules || 0,
+      title: "WALLET BURN",
+      value: stats?.totalCreditsSpent ? `$${stats.totalCreditsSpent.toFixed(2)}` : "$0",
       icon: TrendingUp,
-      description: "Tanımlı Kurallar",
+      description: "Toplam Otonom Maliyet",
     },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
         {statCards.map((stat, index) => (
-          <Card key={index} className="rounded-none border-2 border-foreground/10 hover:border-primary transition-all group">
+          <Card key={index} className="bg-black/40 border-white/5">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <span className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
+              <CardTitle className="text-xs font-mono tracking-widest text-zinc-500">
                 {stat.title}
-              </span>
-              <stat.icon className="h-4 w-4 text-foreground/40 group-hover:text-primary transition-colors" />
+              </CardTitle>
+              <stat.icon className="h-4 w-4 text-blue-500/50" />
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-black tracking-tighter group-hover:scale-105 transition-transform origin-left">
-                {stat.value}
-              </div>
-              <p className="text-[9px] font-bold text-muted-foreground mt-2 uppercase tracking-wider">
-                {stat.description}
-              </p>
+              <div className="text-2xl font-bold font-mono text-zinc-100">{stat.value}</div>
+              <p className="text-xs text-zinc-500 mt-1">{stat.description}</p>
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <DlqManager />
+        <KnowledgeTrainer />
+      </div>
+
+      <div className="mb-8">
+        <EconomyEngineGraph />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

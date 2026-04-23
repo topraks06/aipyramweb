@@ -1,7 +1,8 @@
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentRole, AgentCapability } from './types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 export class VisionaryOracle {
   public role: AgentRole = "VISIONARY";

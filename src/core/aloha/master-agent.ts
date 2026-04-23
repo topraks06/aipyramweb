@@ -1,4 +1,6 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { getProfileForProject } from "./profiles/index";
 import { processImageForContent } from '../aloha/imageAgent';
 import { executeTranslationAgent } from '../aloha/translationAgent';
@@ -10,7 +12,7 @@ if (!apiKey) {
   console.warn("⚠️ API Key eksik. Master Agent otonomisi kapalı.");
 }
 
-const ai = new GoogleGenAI({ apiKey: apiKey || "dummy" });
+const ai = alohaAI.getClient();
 
 /**
  * Mimarinin Kalbi: Tek Dosya Yönetimi

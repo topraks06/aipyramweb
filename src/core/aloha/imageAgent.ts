@@ -355,13 +355,8 @@ export async function processMultipleImages(
     { rule: 'detail', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') },
   ];
 
-  const { GoogleGenAI } = require('@google/genai');
-  const client = new GoogleGenAI({
-    vertexai: {
-      project: process.env.VERTEX_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'aipyram-web',
-      location: process.env.VERTEX_LOCATION || 'europe-west1'
-    }
-  });
+  const { alohaAI } = require('@/core/aloha/aiClient');
+  const client = alohaAI.getClient();
 
   for (let i = 0; i < 3; i++) {
     const plan = shotPlan[i];

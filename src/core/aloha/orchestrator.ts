@@ -1,10 +1,12 @@
+import { Schema, Type } from "@google/genai";
 import { getAgent } from "../registry/agentRegistry";
 import { AgentInput, AgentOutput, SwarmResult, AgentRole, CoreAgentRole, Agent } from "../agents/types";
-import { GoogleGenAI, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { queryMemoryBase } from "../memory/rag";
 import { AccountingAgent } from "./accountingAgent";
 
-const aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const aiClient = alohaAI.getClient();
 
 // Real AI Prompt Chaining Orchestrator
 export async function runSwarm(input: AgentInput, onProgress?: (msg: string, agent: string, status: 'info' | 'success' | 'warning' | 'error') => void): Promise<SwarmResult> {

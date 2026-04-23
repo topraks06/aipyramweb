@@ -1,4 +1,6 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
@@ -6,7 +8,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Market Intelligence Engine
 // ═══════════════════════════════════════════════════════════════
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const TRENDSETTER_PROMPT = `Sen AIPYRAM ekosisteminin Trendsetter Ajanısın — global ev tekstili piyasasının trend analizcisi.
 

@@ -25,11 +25,23 @@ export async function GET() {
     const logsSnap = await adminDb.collection('aloha_sovereign_logs').count().get();
     const completedTasks = logsSnap.data().count;
     
-    // DLQ errors
-    const dlqSnap = await adminDb.collection('aloha_sovereign_dlq').count().get();
+    // DLQ errors (Real data)
+    const dlqSnap = await adminDb.collection('aloha_sovereign_dlq').where('resolved', '==', false).count().get();
     const failedTasks = dlqSnap.data().count;
     
-    // Wallets snapshot could be added, but not strictly counting total docs yet.
+    // Wallets snapshot (Total spent across all active tenants)
+    let totalSpent = 0;
+    const tenants = ['perde', 'trtex', 'hometex', 'vorhang'];
+    for (const tenant of tenants) {
+      try {
+        const walletsSnap = await adminDb.collection(`${tenant}_wallets`).get();
+        walletsSnap.forEach(doc => {
+          totalSpent += doc.data()?.totalSpent || 0;
+        });
+      } catch (e) {
+         // Collection might not exist yet
+      }
+    }
     
     const automationRules = 15; // Example count of active rules
 
@@ -44,7 +56,8 @@ export async function GET() {
         failedTasks,
         totalSectors,
         automationRules,
-        totalUsers
+        totalUsers,
+        totalCreditsSpent: totalSpent
       }
     });
 

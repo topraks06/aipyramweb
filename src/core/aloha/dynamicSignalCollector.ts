@@ -1,4 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import Parser from "rss-parser";
 
 export async function getDynamicBrief(intent: string = "TREND"): Promise<string> {
@@ -8,7 +9,7 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
         return `Tekstil pazarında güncel ${intent} hedefleri inceleniyor.`;
     }
 
-    const aiClient = new GoogleGenAI({ apiKey });
+    const aiClient = alohaAI.getClient();
 
     // Melez Sinyal Mantığı: %70 Google (Spontaneous/Breaking), %30 RSS (Stable/Deep) 
     const isRssTurn = Math.random() < 0.3;

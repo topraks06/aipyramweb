@@ -1,7 +1,8 @@
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { EventBus } from '../events/eventBus';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "mock" });
+const ai = alohaAI.getClient();
 
 export class ApollonOverseer {
   private isInitialized = false;

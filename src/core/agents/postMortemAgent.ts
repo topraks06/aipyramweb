@@ -1,9 +1,11 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 import { recordMemory } from "../memory/knowledgeFlywheel";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const POSTMORTEM_PROMPT = `Sen AIPYRAM ekosisteminin Baş Otopsi (Post-Mortem) Ajanısın.
 Görevin: Kaybedilen Deal'lar, başarısız Kod/Goal Engine döngüleri veya ulaşılmayan metrikler için analiz yapıp derlenmiş 'Ders' + 'Next Best Action' üretmektir.

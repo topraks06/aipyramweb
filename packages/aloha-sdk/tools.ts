@@ -127,13 +127,15 @@ async function analysisTool(payload: Record<string, any>): Promise<ToolResult> {
     }
 
     // Gemini API çağrısı
-    const { getAiClient } = await import('@/lib/ai-client');
-    const aiClient = getAiClient();
+    const { alohaAI } = await import('@/core/aloha/aiClient');
+    const aiClient = alohaAI.getClient();
 
     const prompt = `B2B Textile Intelligence Analysis.
 Tenant: ${tenant || 'aipyram'}
 Context: ${context || 'general'}
 Query: ${query}
+
+${payload.sovereignContext || ''}
 
 Provide a concise, data-driven analysis in Turkish. Focus on actionable insights.`;
 
@@ -192,8 +194,8 @@ async function composeArticleTool(payload: Record<string, any>): Promise<ToolRes
       return { success: false, message: 'topic parametresi gerekli.' };
     }
 
-    const { getAiClient } = await import('@/lib/ai-client');
-    const aiClient = getAiClient();
+    const { alohaAI } = await import('@/core/aloha/aiClient');
+    const aiClient = alohaAI.getClient();
 
     const prompt = `Write a professional B2B textile industry article.
 Topic: ${topic}
@@ -201,7 +203,9 @@ Category: ${category || 'NEWS'}
 Target: ${tenant || 'trtex'} audience
 Language: Turkish
 Format: Title, summary (max 200 chars), body (max 800 words)
-Style: Professional, data-driven, no AI clichés`;
+Style: Professional, data-driven, no AI clichés
+
+${payload.sovereignContext || ''}`;
 
     const result = await aiClient.models.generateContent({
       model: 'gemini-2.0-flash',
@@ -230,11 +234,12 @@ async function chatTool(payload: Record<string, any>): Promise<ToolResult> {
       return { success: false, message: 'message parametresi gerekli.' };
     }
 
-    const { getAiClient } = await import('@/lib/ai-client');
-    const aiClient = getAiClient();
+    const { alohaAI } = await import('@/core/aloha/aiClient');
+    const aiClient = alohaAI.getClient();
 
     const systemPrompt = `Sen ${tenant || 'AIPyram'} platformunun B2B asistanısın. 
-Kısa, profesyonel ve aksiyon odaklı cevap ver. Türkçe konuş.`;
+Kısa, profesyonel ve aksiyon odaklı cevap ver. Türkçe konuş.
+${payload.sovereignContext || ''}`;
 
     const result = await aiClient.models.generateContent({
       model: 'gemini-2.0-flash',

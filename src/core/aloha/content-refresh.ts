@@ -1,3 +1,4 @@
+import { Schema, Type } from "@google/genai";
 /**
  * ALOHA Content Refresh Engine
  * 

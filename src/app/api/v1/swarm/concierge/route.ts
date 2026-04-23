@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import fs from 'fs';
 import path from 'path';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "mock" });
+const ai = alohaAI.getClient();
 
 export async function POST(request: Request) {
   try {

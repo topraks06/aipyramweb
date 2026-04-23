@@ -1,4 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
@@ -6,7 +7,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Autonomous Sales Engine
 // ═══════════════════════════════════════════════════════════════
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 /**
  * Belirli bir tedarikçinin sanal temsilcisi olarak alıcı sorularını yanıtlar.

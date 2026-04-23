@@ -1,4 +1,6 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 
@@ -7,7 +9,7 @@ import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 // AIPYRAM Trust Layer
 // ═══════════════════════════════════════════════════════════════
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const AUDITOR_PROMPT = `Sen AIPYRAM ekosisteminin Auditor (Denetçi) Ajanısın — B2B tedarik zinciri güvenliğinin bekçisi.
 

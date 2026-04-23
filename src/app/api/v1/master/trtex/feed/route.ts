@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { publishToTRTEX } from '@/core/aloha/publishers/universal-publisher';
 import { executeMasterAgent, MasterSystemState } from '@/core/aloha/master-agent';
 import { adminDb } from '@/lib/firebase-admin';
@@ -11,7 +12,7 @@ let editorialCache: {
 } | null = null;
 
 // AI SETUP
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 // 1. RAW DATA MOCK (TRTEX B2B Intelligence)
 async function getRawData() {

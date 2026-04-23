@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const ai = alohaAI.getClient();
 
 /**
  * POST /api/v1/master/hometex/ingest-product

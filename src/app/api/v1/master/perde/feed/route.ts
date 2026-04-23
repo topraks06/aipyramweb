@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 const CACHE_TTL_MS = 60 * 1000;
 let editorialCache: {
@@ -8,7 +9,7 @@ let editorialCache: {
 } | null = null;
 
 // AI SETUP
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 // 1. RAW DATA MOCK (Perde.ai 3D Rendering & Studio Constraints)
 async function getRawData() {

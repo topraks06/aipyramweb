@@ -1,11 +1,12 @@
-import { GoogleGenAI, Type } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentRole, AgentCapability } from './types';
 import { adminDb } from '../../lib/firebase-admin';
 import { NotificationService } from '../../services/notificationService';
 import { sandboxAgent } from './sandboxAgent';
 import { ActionRunner } from '../execution/actionRunner';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 export class AlohaMaster {
   public role: AgentRole = "ALOHA";

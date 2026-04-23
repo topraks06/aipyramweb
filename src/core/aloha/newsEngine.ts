@@ -367,13 +367,8 @@ async function photograph(title: string, category: string): Promise<string[]> {
 
   let imagenClient: any;
   try {
-    const { GoogleGenAI } = require('@google/genai');
-    imagenClient = new GoogleGenAI({
-      vertexai: {
-        project: process.env.VERTEX_PROJECT_ID || 'aipyram-web',
-        location: process.env.VERTEX_LOCATION || 'europe-west1',
-      }
-    });
+    const { alohaAI } = require('@/core/aloha/aiClient');
+    imagenClient = alohaAI.getClient();
   } catch (e: any) {
     console.error('[PHOTOGRAPHER] ❌ Vertex AI client hatası:', e.message);
     return [];

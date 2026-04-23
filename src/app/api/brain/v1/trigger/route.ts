@@ -1,8 +1,10 @@
+import { Schema, Type } from "@google/genai";
 import { NextResponse } from "next/server";
 import { runSwarm } from "@/core/aloha/orchestrator";
 import { getAgent } from "@/core/registry/agentRegistry";
 import { AgentInput, AgentOutput } from "@/core/agents/types";
-import { GoogleGenAI, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { pushToQueue } from "@/core/aloha/queue";
 
 // Security Key (In production, load from Firestore)
@@ -13,7 +15,7 @@ const VALID_API_KEYS = [
 ];
 
 // Fallback LLM Client for 'FAST' mode
-const aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const aiClient = alohaAI.getClient();
 
 export async function POST(req: Request) {
   try {

@@ -1,8 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { CodeRunnerAgent } from "./codeRunnerAgent";
 import * as fs from "fs";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 /**
  * TEST ANALYZER AGENT — Hata Oku → Düzelt → Tekrar (V10 IDE Loop)

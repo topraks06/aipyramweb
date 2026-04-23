@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, BrainCircuit, Globe2, Activity } from "lucide-react";
 import { useTranslations } from "next-intl";
+import MasterConcierge from "@/components/aloha/MasterConcierge";
 
 export default function HeroSection() {
   const t = useTranslations("Hero");
@@ -55,36 +56,10 @@ export default function HeroSection() {
           {t("description")}
         </p>
 
-        {/* Central GPT/Google Style Command Bar */}
-        <div className="w-full max-w-3xl mt-12 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-neutral-200 p-2 transition-shadow hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-          <form onSubmit={handleAlohaSearch} className="flex items-center gap-3">
-            <div className="pl-4">
-              <BrainCircuit className="w-6 h-6 text-red-600" />
-            </div>
-            <input
-              type="text"
-              value={alohaQuery}
-              onChange={(e) => setAlohaQuery(e.target.value)}
-              placeholder="AIPyram Master Agent'a stratejik bir görev verin..."
-              className="flex-1 bg-transparent border-none outline-none text-lg py-4 px-2 text-neutral-800 placeholder:text-neutral-400"
-            />
-            <button
-              type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-4 rounded-xl font-medium transition-colors flex items-center gap-2"
-            >
-              <Search className="w-5 h-5" />
-              <span className="hidden sm:inline">Ask AI</span>
-            </button>
-          </form>
+        {/* Master Concierge: Visual Intelligence Split-Screen */}
+        <div className="w-full mt-12 mb-12">
+          <MasterConcierge />
         </div>
-
-        {/* Dynamic Response Area */}
-        {alohaResponse && (
-          <div className="mt-6 p-4 bg-neutral-50 border border-neutral-100 rounded-lg text-sm text-neutral-600 animate-fade-in w-full max-w-3xl text-center">
-            <Activity className="w-4 h-4 inline-block mr-2 text-red-600 animate-pulse" />
-            {alohaResponse}
-          </div>
-        )}
 
       </div>
     </section>

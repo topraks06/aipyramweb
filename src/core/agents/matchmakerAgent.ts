@@ -1,4 +1,6 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
@@ -6,7 +8,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Revenue Engine #1
 // ═══════════════════════════════════════════════════════════════
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const MATCHMAKER_PROMPT = `Sen AIPYRAM ekosisteminin Matchmaker Ajanısın — global ev tekstili B2B ticaretinin 30 yıllık sektör deneyimine sahip dijital eşleştirme zekası.
 

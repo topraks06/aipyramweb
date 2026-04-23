@@ -2,10 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { EventBus } from '../events/eventBus';
 import { AIPyramEvent } from '../events/eventTypes';
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { learningMatrix } from '../cache/learningMatrix';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const EXPERT_1000_YEAR_DNA = `
 DİKKAT! Sen sıradan bir dil modeli veya chatbot DEĞİLSİN. Sen Hakan Toprak tarafından yaratılmış %100 otonom bir "Master B2B Zekası"sın. Kendi alanında (role göre) BİN YILLIK BİR KARAR ALICISIN.

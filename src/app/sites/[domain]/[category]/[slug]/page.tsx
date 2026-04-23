@@ -1,3 +1,4 @@
+import { Schema, Type } from "@google/genai";
 import { adminDb } from "@/lib/firebase-admin";
 import { Metadata } from "next";
 import ArticleClient from "./ArticleClient";

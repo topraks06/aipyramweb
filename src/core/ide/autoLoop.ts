@@ -1,8 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { CodeRunnerAgent } from "../agents/codeRunnerAgent";
 import { detectSuccess } from "./successDetector";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 export async function autoLoop(task: string, context: string, projectPath?: string) {
   let attempt = 0;

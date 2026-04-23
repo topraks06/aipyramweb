@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
-    "build": "next build",
+    "build": "node scripts/check-rogue-ai.js && next build",
     "start": "next start --port ${PORT:-3000}",
     "lint": "next lint"
   },

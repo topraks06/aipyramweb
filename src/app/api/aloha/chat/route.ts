@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { SYSTEM_PROMPT, tools, executeToolCall, logAlohaAction } from "@/core/aloha/engine";
 import { alohaMemory } from "@/core/aloha/memory";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = alohaAI.getClient();
 
 // SSE flush garantisi: Next.js cache/buffer'ı devre dışı bırak
 export const dynamic = "force-dynamic";

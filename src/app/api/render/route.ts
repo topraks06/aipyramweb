@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeRoom } from "@/lib/vision-analyzer";
 import { analyzeFabric } from "@/lib/agents/FabricRecognitionAgent";
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { generateMultiResolution, addImage } from "@/lib/image-library";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -9,7 +10,7 @@ import { adminDb, admin } from "@/lib/firebase-admin";
 import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
 import { getTenant } from "@/lib/tenant-config";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = alohaAI.getClient();
 
 let ratelimit: Ratelimit | null = null;
 try {

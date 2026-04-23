@@ -1,3 +1,4 @@
+import { Schema, Type } from "@google/genai";
 import * as fs from 'fs';
 import * as path from 'path';
 import { adminDb } from '@/lib/firebase-admin';

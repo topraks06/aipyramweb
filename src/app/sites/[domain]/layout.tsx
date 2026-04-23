@@ -1,3 +1,4 @@
+import { Schema, Type } from "@google/genai";
 import { ReactNode } from "react";
 import { Metadata } from "next";
 import PerdeClientWrapper from "@/components/tenant-perde/PerdeClientWrapper";

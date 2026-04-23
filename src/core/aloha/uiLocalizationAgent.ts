@@ -1,7 +1,8 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 const apiKey = process.env.GEMINI_API_KEY;
-const ai = new GoogleGenAI({ apiKey: apiKey || "dummy" });
+const ai = alohaAI.getClient();
 
 /**
  * 🌍 ALOHA GLOBAL YERELLEŞTİRME İŞÇİSİ (UI Localization Agent - 8 Languages)

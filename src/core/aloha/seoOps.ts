@@ -1,3 +1,4 @@
+import { Schema, Type } from "@google/genai";
 /**
  * ALOHA SEO/GEO OPS — Yeni Nesil Arama Motoru Optimizasyonu
  * 

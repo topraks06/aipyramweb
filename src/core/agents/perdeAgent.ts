@@ -1,9 +1,11 @@
+import { Schema, Type } from "@google/genai";
 import { EventBus } from '../events/eventBus';
 import { AIPyramEvent } from '../events/eventTypes';
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const PERDE_BRAND_DNA = {
   tone: "technical, architectural, spatial, sales-driven",

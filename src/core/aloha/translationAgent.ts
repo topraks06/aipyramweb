@@ -1,7 +1,9 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 const apiKey = process.env.GEMINI_API_KEY;
-const ai = new GoogleGenAI({ apiKey: apiKey || "dummy" });
+const ai = alohaAI.getClient();
 
 export interface TranslationInput {
   title: string;

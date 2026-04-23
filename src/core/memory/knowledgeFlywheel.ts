@@ -1,6 +1,8 @@
+import { Schema, Type } from "@google/genai";
 import { EventBus } from "../events/eventBus";
 import { addKnowledge } from "./rag";
-import { GoogleGenAI, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 /**
  * APEX NOTIFICATION & INTELLIGENCE ENGINE (V8.4 - FLYWHEEL EDITION)
@@ -8,7 +10,7 @@ import { GoogleGenAI, Type } from "@google/genai";
  * Özellikler: Dual-Signal (Success/Fail) Listening, Vector Memory, Cross-Tenant Intelligence
  */
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const FLYWHEEL_PROMPT = `Sen 15 B2B sektörüne (Örn: Tekstil, Gayrimenkul) hakim bir "Stratejist Dehası" ve İş Zekası (BI) ajanısın.
 GÖREV:

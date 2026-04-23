@@ -1,3 +1,4 @@
+import { alohaAI } from '@/core/aloha/aiClient';
 import { NextResponse } from "next/server";
 
 /**
@@ -14,7 +15,7 @@ export async function GET() {
   } else {
     try {
       const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
+      const ai = alohaAI.getClient();
       const res = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: "Sadece 'OK' yaz.",

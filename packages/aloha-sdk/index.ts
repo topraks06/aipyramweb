@@ -30,3 +30,6 @@ export {
 
 // Tools
 export { runTool, type ToolResult } from './tools';
+
+// Swarm Orchestration
+export { invokeSwarm, type SwarmTask, type SwarmResult } from './swarm';

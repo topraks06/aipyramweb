@@ -1,9 +1,10 @@
-import { GoogleGenAI } from '@google/genai';
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 let aiClient: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI {
   if (!aiClient) {
-    aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'dummy_key' });
+    aiClient = alohaAI.getClient();
   }
   return aiClient;
 }

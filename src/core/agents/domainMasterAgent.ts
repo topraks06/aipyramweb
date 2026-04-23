@@ -1,4 +1,6 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 import { adminDb } from "../../lib/firebase-admin";
 
 /**
@@ -7,7 +9,7 @@ import { adminDb } from "../../lib/firebase-admin";
  * Sadece Google Altyapısı - Sıfır Vercel/AWS Bağımlılığı
  */
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy" });
+const ai = alohaAI.getClient();
 
 const DOMAIN_DNA_PROMPT = `
 Sen AIPyram İmparatorluğu'nun (270 B2B alan adı) Baş Mimarı ve Baş Stratejistisin.

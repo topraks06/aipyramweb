@@ -1,11 +1,8 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { alohaAI } from '@/core/aloha/aiClient';
 import { saveToGoogleNativeMemory } from "./publishers/google-native-memory";
 import { learningMatrix } from "../cache/learningMatrix";
-import { alohaAI } from './aiClient';
+import { Schema, Type } from "@google/genai";
 
-// SINGLETON ZORLAMA: Kendi client'ı KULLANIMDAN KALDIRILDI — Maliye Bakanı v2
-// Eski: const aiClient = new GoogleGenAI({ apiKey });
-// Yeni: tüm çağrılar alohaAI.getClient() üzerinden yapılır (token takibi aktif)
 const getAI = () => alohaAI.getClient();
 
 /**
@@ -14,7 +11,6 @@ const getAI = () => alohaAI.getClient();
  */
 async function runScoutAgent(brief: string): Promise<string> {
     console.log("🕵️‍♂️ [SCOUT AGENT] Verilen brief inceleniyor, haber taslağı oluşturuluyor...");
-    
     const lessons = learningMatrix.getLessonsLearned("SCOUT_NEWS");
     const TODAY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const CURRENT_YEAR = new Date().getFullYear(); // 2026
