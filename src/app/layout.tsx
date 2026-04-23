@@ -160,7 +160,6 @@ export default async function RootLayout({
           {children}
           {!isPerde && <ConciergeWidget />}
           {isPerde && <PerdeClientWrapper />}
-          <CommandCenterWidget />
           <Toaster />
           <GlobalClientEffects />
         </AipyramAuthProvider>

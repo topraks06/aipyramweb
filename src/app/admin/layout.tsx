@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth/AipyramAuthProvider';
 import { ShieldAlert, Fingerprint } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, isAdmin, loginWithGoogle, loginWithEmail } = useAuth();
+  const { user, loading, isAdmin, loginWithGoogle, loginWithEmail, logout } = useAuth();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -100,10 +100,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-[#000000] flex overflow-hidden font-sans text-zinc-300">
       
-      {/* LEFT SIDEBAR: High-Density Navigation */}
-      <aside className="w-[280px] border-r border-white/10 bg-[#030303] flex flex-col shrink-0 z-20">
+      {/* SOL MENÜ: Minimal Geçmiş ve Ağ Geçişi */}
+      <aside className="w-[260px] border-r border-white/10 bg-[#030303] flex flex-col shrink-0 z-20">
         
-        {/* Brand / Logo Area */}
+        {/* Marka / Logo Alanı */}
         <div className="h-14 border-b border-white/10 flex items-center px-5 shrink-0 bg-black">
           <div className="flex items-center gap-3 w-full">
             <div className="w-6 h-6 bg-white text-black font-black flex items-center justify-center text-[10px] tracking-tighter">OS</div>
@@ -114,15 +114,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
 
-        {/* Navigation Categories */}
-        <nav className="flex-1 px-3 py-6 space-y-8 overflow-y-auto custom-scrollbar">
+        {/* Yeni Sohbet Butonu */}
+        <div className="p-3">
+          <Link href="/admin" className="flex items-center gap-2 w-full bg-white text-black hover:bg-zinc-200 transition-colors rounded p-2 text-[11px] font-bold uppercase tracking-widest justify-center">
+            <span className="text-lg leading-none">+</span> YENİ İŞLEM
+          </Link>
+        </div>
+
+        {/* Ağ Bağlantıları (Eskiden Menülerdi, Şimdi Hızlı Kısayollar) */}
+        <nav className="flex-1 px-3 py-2 space-y-4 overflow-y-auto custom-scrollbar">
           
-          {/* CATEGORY 1 */}
           <div className="space-y-1">
-            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Core OS</div>
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-2 px-3">Hızlı Analizler</div>
             {[
-              { name: 'Data Plane', path: '/admin', icon: '◱' },
-              { name: 'Topology Map', path: '/admin/tenants', icon: '⚄' },
+              { name: 'Sistem Durumu', path: '/admin', icon: '◱' },
+              { name: 'Ağ Haritası', path: '/admin/tenants', icon: '⚄' },
+              { name: 'Ekonomi Grafiği', path: '/admin/economy', icon: '⚡' },
             ].map((item) => (
               <Link 
                 key={item.name}
@@ -135,51 +142,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ))}
           </div>
 
-          {/* CATEGORY 2 */}
-          <div className="space-y-1">
-            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Swarm Intelligence</div>
-            {[
-              { name: 'Agent Registry', path: '#', icon: '⚙' },
-              { name: 'Knowledge Base', path: '#', icon: '⌬' },
-              { name: 'Dead Letters', path: '#', icon: '⚠' },
-            ].map((item) => (
-              <Link 
-                key={item.name}
-                href={item.path} 
-                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-emerald-500"
-              >
-                <span className="text-zinc-600 group-hover:text-emerald-500 font-mono text-[14px] leading-none">{item.icon}</span>
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* CATEGORY 3 */}
-          <div className="space-y-1">
-            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-3 px-3">Finance & Security</div>
-            {[
-              { name: 'Economy Engine', path: '/admin/economy', icon: '⚡' },
-              { name: 'Identity & Auth', path: '/admin/users', icon: '⚿' },
-              { name: 'Media Archive', path: '/admin/media', icon: '◧' },
-            ].map((item) => (
-              <Link 
-                key={item.name}
-                href={item.path} 
-                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-amber-500"
-              >
-                <span className="text-zinc-600 group-hover:text-amber-500 font-mono text-[14px] leading-none">{item.icon}</span>
-                {item.name}
-              </Link>
-            ))}
+          {/* Geçmiş (Temsili) */}
+          <div className="space-y-1 mt-6">
+            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-2 px-3">Son İşlemler</div>
+            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">TRTEX Haber Analizi...</div>
+            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">Aylık Kredi Raporu...</div>
+            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">Perde Sipariş Onayı...</div>
           </div>
 
         </nav>
         
-        {/* User / Session Area */}
+        {/* Kullanıcı / Oturum Alanı */}
         <div className="p-4 border-t border-white/10 bg-black/50">
           <div className="flex items-center justify-between px-2">
             <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-500 uppercase font-mono tracking-widest">Active Session</span>
+              <span className="text-[10px] text-zinc-500 uppercase font-mono tracking-widest">AKTİF YÖNETİCİ</span>
               <span className="text-xs text-white truncate max-w-[150px]">{user.email}</span>
             </div>
             <button onClick={logout} className="text-[10px] uppercase text-red-500 hover:text-red-400 font-bold tracking-widest px-2 py-1 bg-red-500/10 rounded-sm">
@@ -189,39 +166,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      {/* CENTER: Data Plane & Topbar */}
+      {/* MERKEZ: Ana Arayüz */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#000000]">
         
-        {/* Global Command Bar (Header) */}
+        {/* Global Üst Bar */}
         <header className="h-14 border-b border-white/10 flex items-center justify-between px-6 bg-[#030303] z-10 shrink-0">
           
-          {/* Node Switcher */}
+          {/* Ağ Seçici (Sovereign Node Switcher) */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase text-zinc-600 tracking-widest">TARGET NODE:</span>
+            <span className="text-[10px] uppercase text-zinc-600 tracking-widest">HEDEF AĞ:</span>
             <select className="bg-transparent border border-white/10 text-[11px] text-white uppercase tracking-widest p-1 focus:outline-none focus:border-blue-500">
-              <option value="master">GLOBAL MASTER</option>
-              <option value="perde">PERDE.AI</option>
-              <option value="trtex">TRTEX.COM</option>
-              <option value="hometex">HOMETEX.AI</option>
+              <option value="master">GLOBAL MERKEZ</option>
+              <option value="perde">PERDE DÜĞÜMÜ</option>
+              <option value="trtex">TRTEX DÜĞÜMÜ</option>
+              <option value="hometex">HOMETEX DÜĞÜMÜ</option>
             </select>
           </div>
 
-          {/* Omnibar / Command Palette */}
-          <div className="flex-1 max-w-lg mx-8 relative">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-500">
-              ⌘
-            </div>
-            <input 
-              type="text" 
-              placeholder="Komut veya veri ara (CMD+K)..." 
-              className="w-full bg-[#0A0A0A] border border-white/10 hover:border-white/20 focus:border-blue-500/50 text-xs text-white px-8 py-1.5 focus:outline-none transition-colors placeholder:text-zinc-600 tracking-wide font-mono rounded-none"
-            />
-            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-              <span className="bg-white/10 text-zinc-400 text-[9px] px-1.5 py-0.5 rounded-sm">CTRL+K</span>
-            </div>
-          </div>
-
-          {/* System Status Indicators */}
+          {/* Sistem Durum Göstergeleri */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="relative flex h-2 w-2">
@@ -231,17 +193,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="text-[10px] font-mono text-emerald-500 tracking-widest">12ms</span>
             </div>
             <div className="h-4 w-[1px] bg-white/10" />
-            <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">ENCRYPTED</span>
+            <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">ŞİFRELİ AĞ</span>
           </div>
 
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar relative p-6">
+        {/* Ana İçerik Alanı (Buraya Sınırsız Chat Arayüzü Gelecek) */}
+        <main className="flex-1 relative overflow-hidden flex flex-col">
           {/* Subtle grid background for tech feel */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
           
-          <div className="relative z-10">
+          <div className="relative z-10 flex-1 h-full">
             {children}
           </div>
         </main>
