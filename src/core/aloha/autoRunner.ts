@@ -529,6 +529,44 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
         }
 
         // ═══════════════════════════════════════
+        // ADIM 0.66: IQ ALARM KONTROLÜ
+        // Son 3 cycle IQ < 60 ise alarm ver
+        // ═══════════════════════════════════════
+        try {
+          if (adminDb) {
+            const iqSnap = await adminDb.collection('trtex_iq_history')
+              .orderBy('date', 'desc')
+              .limit(3)
+              .get();
+              
+            if (iqSnap.size === 3) {
+              const iqs = iqSnap.docs.map(d => d.data().iq);
+              if (iqs.every(iq => iq < 60)) {
+                console.warn(`[ALOHA] 🚨 IQ ALARM: Son 3 cycle zeka seviyesi 60'ın altında! (${iqs.join(', ')})`);
+                result.actionsPerformed.push('iq_alarm_triggered');
+                
+                // Alarmı executive history'e kaydet
+                const { recordTaskOutcome } = await import('./executiveLayer');
+                await recordTaskOutcome({
+                  task: 'iq_tracking_alarm',
+                  timestamp: new Date().toISOString(),
+                  input_context: `iq_history`,
+                  result: `Son 3 döngü IQ: ${iqs.join(', ')}`,
+                  outcome: 'critical_iq_drop',
+                  learning: 'Sistemin içerik ve sinyal kalitesi sürekli düşük kalıyor, acil müdahale gereklidir.',
+                  confidence: 1,
+                  should_repeat: false,
+                });
+              } else {
+                result.actionsPerformed.push('iq_tracking:stable');
+              }
+            }
+          }
+        } catch (iqErr: any) {
+          console.warn(`[ALOHA] ⚠️ IQ Alarm kontrolü hatası:`, iqErr.message);
+        }
+
+        // ═══════════════════════════════════════
         // ADIM 0.7: PROAKTİF REGRESSION GUARD
         // "Önce geçmiş hataları kontrol et, sonra yeni iş yap"
         // ═══════════════════════════════════════
