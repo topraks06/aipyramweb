@@ -58,6 +58,30 @@ export async function POST(req: NextRequest) {
             } catch (authErr) {
                 console.error("Auth session invalid", authErr);
             }
+        } else {
+            // 🛡️ Anonim Kullanıcı Kontrolü: Günde 1 Render (IP bazlı Firestore)
+            if (adminDb) {
+                const clientIp = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "127.0.0.1";
+                // IP adresinden '.' veya ':' gibi karakterleri güvenli document ID'ye çevir
+                const safeIp = clientIp.replace(/[\.:]/g, '_'); 
+                const today = new Date().toISOString().split('T')[0];
+                const ipDocId = `${safeIp}_${today}`;
+                
+                const ipRef = adminDb.collection('anon_renders').doc(ipDocId);
+                const ipSnap = await ipRef.get();
+                
+                if (ipSnap.exists && (ipSnap.data()?.count >= 1)) {
+                    return NextResponse.json({ error: "Günlük ücretsiz render hakkınızı doldurdunuz. Sınırsız render için lütfen üye olun." }, { status: 429 });
+                }
+                
+                // Hakkı var, sayacı artır
+                await ipRef.set({
+                    count: admin.firestore.FieldValue.increment(1),
+                    ip: clientIp,
+                    date: today,
+                    lastAt: new Date().toISOString()
+                }, { merge: true });
+            }
         }
 
         // 1. Analyze room
