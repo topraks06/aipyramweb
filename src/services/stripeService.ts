@@ -5,15 +5,18 @@ import Stripe from "stripe";
 // Test Mode → Production geçiş Hakan Bey onayıyla yapılır
 // ═══════════════════════════════════════════════════════════════
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+let stripeInstance: Stripe | null = null;
 
-if (!stripeSecretKey) {
-  console.warn("⚠️ STRIPE_SECRET_KEY eksik. Ödeme sistemi devre dışı.");
+export function getStripe(): Stripe | null {
+  if (stripeInstance) return stripeInstance;
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeSecretKey) {
+    console.warn("⚠️ STRIPE_SECRET_KEY eksik. Ödeme sistemi devre dışı.");
+    return null;
+  }
+  stripeInstance = new Stripe(stripeSecretKey);
+  return stripeInstance;
 }
-
-const stripe = stripeSecretKey
-  ? new Stripe(stripeSecretKey, { apiVersion: "2025-12-18.acacia" as any })
-  : null;
 
 // ═══════════════════════════════════════════════════════════════
 // KOMİSYON ORANI — Sektöre göre dinamik
@@ -64,6 +67,7 @@ export interface PlanCheckoutParams {
 export async function createCommissionCheckout(
   params: CreateCheckoutParams
 ): Promise<{ sessionId: string; url: string } | null> {
+  const stripe = getStripe();
   if (!stripe) {
     console.error("[STRIPE] Stripe bağlantısı yok. STRIPE_SECRET_KEY kontrol edin.");
     return null;
@@ -136,6 +140,7 @@ export interface MarketplaceCheckoutParams {
 export async function createMarketplaceCheckout(
   params: MarketplaceCheckoutParams
 ): Promise<{ sessionId: string; url: string } | null> {
+  const stripe = getStripe();
   if (!stripe) {
     console.error("[STRIPE] Stripe bağlantısı yok. STRIPE_SECRET_KEY kontrol edin.");
     return null;
@@ -186,6 +191,7 @@ export async function createMarketplaceCheckout(
 export async function createPlanCheckout(
   params: PlanCheckoutParams
 ): Promise<{ sessionId: string; url: string } | null> {
+  const stripe = getStripe();
   if (!stripe) {
     console.error("[STRIPE] Stripe bağlantısı yok. STRIPE_SECRET_KEY kontrol edin.");
     return null;
@@ -246,6 +252,7 @@ export function constructWebhookEvent(
   body: string | Buffer,
   signature: string
 ): Stripe.Event | null {
+  const stripe = getStripe();
   if (!stripe) return null;
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -266,7 +273,7 @@ export function constructWebhookEvent(
  * Stripe bağlantı kontrolü
  */
 export function isStripeReady(): boolean {
-  return stripe !== null;
+  return getStripe() !== null;
 }
 
-export { stripe };
+export { getStripe as stripe };

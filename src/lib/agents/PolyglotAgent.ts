@@ -1,4 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
 import { alohaAI } from '@/core/aloha/aiClient';
 let aiClient: any = null;
 function getAI(): any {
