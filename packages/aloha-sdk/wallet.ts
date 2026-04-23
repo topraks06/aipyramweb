@@ -20,6 +20,7 @@ export const ACTION_COST: Record<string, number> = {
   image_generation: 4,
   chat: 0.5,
   document: 2,
+  autonomous_cycle: 10, // Otonom döngü yüksek kredi harcar
   default: 1,
 };
 

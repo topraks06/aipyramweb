@@ -24,6 +24,7 @@ const ALLOWED_ACTIONS = [
   'chat',
   'document',
   'image_generation',
+  'autonomous_cycle', // TRTEX otonom döngüsü
 ] as const;
 
 type AllowedAction = typeof ALLOWED_ACTIONS[number];

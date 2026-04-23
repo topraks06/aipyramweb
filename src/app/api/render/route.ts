@@ -6,7 +6,7 @@ import { generateMultiResolution, addImage } from "@/lib/image-library";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { adminDb, admin } from "@/lib/firebase-admin";
-import { checkCredits, deductCredit } from "@/lib/aloha/WalletService";
+import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
 import { getTenant } from "@/lib/tenant-config";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -113,6 +113,11 @@ export async function POST(req: NextRequest) {
                         source: 'imagen',
                         tenant: tenantId
                     });
+                    
+                    // Sovereign Log
+                    if (uid) {
+                        await logSovereignAction(tenantId, 'render', { roomType: analysis.roomType }, { success: true });
+                    }
                 } catch (libErr) {
                     console.error("Library save failed (ignoring for response):", libErr);
                 }

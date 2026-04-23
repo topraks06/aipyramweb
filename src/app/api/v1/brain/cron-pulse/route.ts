@@ -53,12 +53,25 @@ export async function GET(request: Request) {
 
     // AUTO: Tam otonom operatör döngüsü (6 saatte 1 Cloud Scheduler ile)
     if (mode === 'auto') {
-      const { runFullAutonomousCycle } = await import('@/core/aloha/autoRunner');
-      const cycleResults = await runFullAutonomousCycle();
+      const { invokeAgent } = await import('@aipyram/aloha-sdk');
+      const PRIORITY_PROJECTS = ['trtex']; // Sadece TRTEX otonom
+      const cycleResults = [];
+
+      for (const tenant of PRIORITY_PROJECTS) {
+        const res = await invokeAgent({
+          tenant,
+          action: 'autonomous_cycle',
+          payload: { projectName: tenant }
+        });
+        if (res.success && res.data) {
+          cycleResults.push(res.data);
+        }
+      }
+
       results.auto = {
         projectsProcessed: cycleResults.length,
-        totalActions: cycleResults.reduce((sum, r) => sum + r.actionsPerformed.length, 0),
-        totalErrors: cycleResults.reduce((sum, r) => sum + r.errors.length, 0),
+        totalActions: cycleResults.reduce((sum, r) => sum + (r.actionsPerformed?.length || 0), 0),
+        totalErrors: cycleResults.reduce((sum, r) => sum + (r.errors?.length || 0), 0),
         details: cycleResults.map(r => ({
           project: r.project,
           actions: r.actionsPerformed,

@@ -39,8 +39,35 @@ export async function runTool(action: string, payload: Record<string, any>): Pro
     case 'image_generation':
       return await imageGenerationTool(payload);
 
+    case 'autonomous_cycle':
+      return await autonomousCycleTool(payload);
+
     default:
       return { success: false, message: `Bilinmeyen tool: ${action}` };
+  }
+}
+
+// ═══════════════════════════════════════
+// AUTONOMOUS CYCLE TOOL (Sovereign Otonom Zeka)
+// ═══════════════════════════════════════
+
+async function autonomousCycleTool(payload: Record<string, any>): Promise<ToolResult> {
+  try {
+    const { projectName } = payload;
+    if (!projectName) {
+      return { success: false, message: 'projectName parametresi gerekli.' };
+    }
+
+    const { runAlohaCycle } = await import('@/core/aloha/autoRunner');
+    const result = await runAlohaCycle(projectName);
+
+    return {
+      success: true,
+      data: result,
+      message: `${projectName} otonom döngüsü tamamlandı.`
+    };
+  } catch (err: any) {
+    return { success: false, message: `Otonom döngü hatası: ${err.message}` };
   }
 }
 
