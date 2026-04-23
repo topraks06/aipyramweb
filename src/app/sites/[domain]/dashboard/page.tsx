@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useTenantAuth } from '@/hooks/useTenantAuth';
-import { resolveTenantFromDomain } from '@/lib/tenant-config';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
+import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 import { db } from '@/lib/firebase-client';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
-import { Package, Users, Activity, TrendingUp, Search, RefreshCcw } from 'lucide-react';
+import { Package, Users, Activity, TrendingUp, Search, RefreshCcw, Loader2 } from 'lucide-react';
 
 export default function DashboardPage() {
     const pathname = usePathname() || '';
     const domain = pathname.split('/')[2];
-    const tenant = resolveTenantFromDomain(domain);
-    const { user, logout } = useTenantAuth(tenant.id);
+    const node = resolveNodeFromDomain(domain);
+    const { user, logout } = useSovereignAuth(node.id);
     
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -20,8 +20,8 @@ export default function DashboardPage() {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            // Using tenant's projectCollection for orders
-            const q = query(collection(db, tenant.projectCollection), orderBy('createdAt', 'desc'), limit(50));
+            // Using node's projectCollection for orders
+            const q = query(collection(db, node.projectCollection), orderBy('createdAt', 'desc'), limit(50));
             const snapshot = await getDocs(q);
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setOrders(data);
@@ -35,14 +35,14 @@ export default function DashboardPage() {
 
     useEffect(() => {
         fetchOrders();
-    }, [tenant.projectCollection]);
+    }, [node.projectCollection]);
 
     return (
         <div className="flex h-screen overflow-hidden">
             {/* SIDEBAR */}
             <div className="w-64 bg-[#0A0A0A] border-r border-[#1A1A1A] flex flex-col shrink-0">
                 <div className="p-6 border-b border-[#1A1A1A]">
-                    <h1 className="font-serif text-xl font-bold uppercase tracking-widest text-white">{tenant.shortName}</h1>
+                    <h1 className="font-serif text-xl font-bold uppercase tracking-widest text-white">{node.shortName}</h1>
                     <p className="text-[9px] text-[#D4AF37] font-mono tracking-widest mt-1">MASTER NODE</p>
                 </div>
                 <div className="flex-1 p-4 flex flex-col gap-2 font-mono text-[11px] uppercase tracking-wider text-zinc-400">
@@ -144,7 +144,7 @@ export default function DashboardPage() {
                                     ) : orders.length === 0 ? (
                                         <tr>
                                             <td colSpan={5} className="px-6 py-12 text-center text-zinc-500 text-xs font-mono uppercase tracking-widest">
-                                                No orders found in {tenant.projectCollection}
+                                                No orders found in {node.projectCollection}
                                             </td>
                                         </tr>
                                     ) : (

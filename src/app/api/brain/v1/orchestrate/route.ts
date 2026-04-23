@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       query: body.query,
       intent: body.intent,
       user_locale: body.locale,
-      tenant_context: body.tenantContext
+      node_context: body.nodeContext
     };
 
     const result = await orchestrateQuery(orchestrationReq);

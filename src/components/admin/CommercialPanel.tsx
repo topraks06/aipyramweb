@@ -196,7 +196,7 @@ export default function CommercialPanel() {
                                     headers: { "Content-Type": "application/json" },
                                     body: JSON.stringify({
                                         supplierId: "DEV_TEST_SUPPLIER_001",
-                                        tenant_id: "aipyram-core",
+                                        node_id: "aipyram-core",
                                         packageId: "starter"
                                     })
                                 });

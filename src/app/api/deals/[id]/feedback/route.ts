@@ -8,7 +8,7 @@ import { adminDb } from "@/lib/firebase-admin";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { tenant_id = "aipyram-core", outcome, reason, finalValue } = await req.json();
+    const { node_id = "aipyram-core", outcome, reason, finalValue } = await req.json();
 
     if (!outcome) {
       return NextResponse.json({ success: false, error: "outcome is required (WON or LOST)" }, { status: 400 });
@@ -37,7 +37,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const rfqId = dealData?.rfqId;
     
     await recordMemory({
-      tenant_id,
+      node_id,
       source: "Deal_Outcome",
       text: `Deal [${id}] for RFQ [${rfqId}] with Supplier [${supplierId}] was ${outcome}. Reason: ${reason || "N/A"}. Value: $${finalValue || 0}`,
       agentId: "MATCHMAKER",

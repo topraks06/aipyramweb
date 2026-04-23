@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMarketplaceCheckout } from "@/services/stripeService";
-import { getTenant } from "@/lib/tenant-config";
+import { getNode } from "@/lib/sovereign-config";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { items, orderId, tenantId = 'vorhang' } = body;
+    const { items, orderId, SovereignNodeId = 'vorhang' } = body;
 
-    const config = getTenant(tenantId);
+    const config = getNode(SovereignNodeId);
     
     const session = await createMarketplaceCheckout({
       orderId: orderId || `VOR-${Math.floor(1000 + Math.random() * 9000)}-DE`,

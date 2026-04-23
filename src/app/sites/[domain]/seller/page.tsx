@@ -1,4 +1,4 @@
-import SellerDashboard from "@/components/tenant-vorhang/SellerDashboard";
+import SellerDashboard from "@/components/node-vorhang/SellerDashboard";
 
 export const dynamic = "force-dynamic";
 

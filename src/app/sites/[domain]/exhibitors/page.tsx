@@ -1,5 +1,5 @@
-import HometexNavbar from '@/components/tenant-hometex/HometexNavbar';
-import Exhibitors from '@/components/tenant-hometex/Exhibitors';
+import HometexNavbar from '@/components/node-hometex/HometexNavbar';
+import Exhibitors from '@/components/node-hometex/Exhibitors';
 import { adminDb } from '@/lib/firebase-admin';
 
 export default async function ExhibitorsPage({ params }: { params: Promise<{ domain: string }> }) {

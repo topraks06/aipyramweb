@@ -1,4 +1,4 @@
-import { ProductDetail } from "@/components/tenant-vorhang/ProductDetail";
+import { ProductDetail } from "@/components/node-vorhang/ProductDetail";
 import { adminDb } from "@/lib/firebase-admin";
 import { notFound } from "next/navigation";
 

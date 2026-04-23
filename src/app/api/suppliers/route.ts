@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     const {
-      tenant_id = "aipyram-core", // Default tenant
+      node_id = "aipyram-core", // Default node
       companyName,
       region,
       products = [],
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     const newSupplier: Omit<FirestoreSupplier, "id"> = {
-      tenant_id,
+      node_id,
       companyName,
       region,
       products,

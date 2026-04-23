@@ -1,8 +1,7 @@
+import { GoogleGenAI } from '@google/genai';
 import { alohaAI } from '@/core/aloha/aiClient';
-// removed GoogleGenAI import
-
-let aiClient: GoogleGenAI | null = null;
-function getAI(): GoogleGenAI {
+let aiClient: any = null;
+function getAI(): any {
   if (!aiClient) {
     aiClient = alohaAI.getClient();
   }

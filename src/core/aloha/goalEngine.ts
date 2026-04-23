@@ -5,7 +5,7 @@ export type GoalPriority = "revenue" | "growth" | "experiment";
 
 export interface GoalDefinition {
   goalId: string;
-  tenant_id: string;
+  node_id: string;
   objective: string;          // e.g. "close_1_deal"
   priority: GoalPriority;
   definitionOfDone: any;      // e.g. { deal_status: "won", payment_received: true }
@@ -107,7 +107,7 @@ export class GoalEngine {
           return this.abort(goal, attempt, totalCost, "KILL_SWITCH_ACTIVE", previousContext);
         }
 
-        const allowance = await CostGuard.checkAllowance(goal.tenant_id, 0.1);
+        const allowance = await CostGuard.checkAllowance(goal.node_id, 0.1);
         if (!allowance.allowed) {
           return this.triggerFail(goal, attempt, totalCost, `GLOBAL_COST_LIMIT: ${allowance.reason}`, previousContext);
         }
@@ -173,7 +173,7 @@ export class GoalEngine {
      try {
       const { analyzeFailureTracker } = await import("../agents/postMortemAgent");
       await analyzeFailureTracker({
-        tenant_id: goal.tenant_id,
+        node_id: goal.node_id,
         context: `Goal: ${goal.objective}\nHistory: ${context}\nPriority: ${goal.priority}`,
         failureReason: reason,
         costWasted: cost

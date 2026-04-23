@@ -7,7 +7,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 /**
  * APEX NOTIFICATION & INTELLIGENCE ENGINE (V8.4 - FLYWHEEL EDITION)
  * Faz 4.3 / Kendi Kendini Eğiten Yapı
- * Özellikler: Dual-Signal (Success/Fail) Listening, Vector Memory, Cross-Tenant Intelligence
+ * Özellikler: Dual-Signal (Success/Fail) Listening, Vector Memory, Cross-Node Intelligence
  */
 
 const ai = alohaAI.getClient();
@@ -39,7 +39,7 @@ export class KnowledgeFlywheel {
 
   private static async analyzeDeal(event: any, outcome: "SUCCESS" | "FAIL" | "REJECTED") {
      const payload = event.payload;
-     const tenant = event.tenant_id || "aipyram-core";
+     const node = event.node_id || "aipyram-core";
      const id = payload?.rfqId || payload?.dealId || "unknown";
 
      console.log(`[🧠 FLYWHEEL] Tecrübe Madenciliği Başladı (Sonuç: ${outcome}) | ID: ${id}`);
@@ -93,9 +93,9 @@ export class KnowledgeFlywheel {
            console.warn(`[🧠 FLYWHEEL UYARI] Vektör üretilemedi. Düz metin olarak mühürleniyor.`, embedError);
        }
 
-       // 3. RAG / FIRESTORE MÜHÜRLEME (Cross-Tenant Intelligence)
+       // 3. RAG / FIRESTORE MÜHÜRLEME (Cross-Node Intelligence)
        await addKnowledge(
-         tenant, 
+         node, 
          parsed.category || (outcome === "SUCCESS" ? "successful_tactic" : "fatal_error"), 
          parsed.insight, 
          id,
@@ -103,7 +103,7 @@ export class KnowledgeFlywheel {
          parsed.isGlobal
        );
 
-       const logPrefix = parsed.isGlobal ? "[GLOBAL STRATEGY]" : `[${tenant.toUpperCase()} SPECIFIC]`;
+       const logPrefix = parsed.isGlobal ? "[GLOBAL STRATEGY]" : `[${node.toUpperCase()} SPECIFIC]`;
        console.log(`[🧠 FLYWHEEL] ${logPrefix} Yeni Sektörel İstihbarat Düğümü Firestore'a Mühürlendi.`);
 
      } catch (err) {
@@ -117,7 +117,7 @@ export class KnowledgeFlywheel {
  * KnowledgeFlywheel'ın RAG katmanına doğrudan veri yazar.
  */
 export async function recordMemory(params: {
-  tenant_id: string;
+  node_id: string;
   source: string;
   text: string;
   agentId: string;
@@ -125,14 +125,14 @@ export async function recordMemory(params: {
 }) {
   try {
     await addKnowledge(
-      params.tenant_id,
+      params.node_id,
       params.source,
       params.text,
       params.agentId,
       [],
       false
     );
-    console.log(`[🧠 MEMORY] ${params.source} kaydedildi (${params.tenant_id})`);
+    console.log(`[🧠 MEMORY] ${params.source} kaydedildi (${params.node_id})`);
   } catch (e) {
     console.warn(`[🧠 MEMORY] Kayıt başarısız:`, e);
   }

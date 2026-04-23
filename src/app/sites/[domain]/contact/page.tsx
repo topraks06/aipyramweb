@@ -1,9 +1,9 @@
-import Contact from '@/components/tenant-perde/Contact';
-import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
-import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
+import Contact from '@/components/node-perde/Contact';
+import PerdeNavbar from '@/components/node-perde/PerdeNavbar';
+import PerdeFooter from '@/components/node-perde/PerdeFooter';
 import TrtexContact from '@/components/trtex/TrtexContact';
-import HometexContact from '@/components/tenant-hometex/HometexContact';
-import VorhangContact from '@/components/tenant-vorhang/VorhangContact';
+import HometexContact from '@/components/node-hometex/HometexContact';
+import VorhangContact from '@/components/node-vorhang/VorhangContact';
 
 export default async function ContactPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;

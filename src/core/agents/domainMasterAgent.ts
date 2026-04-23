@@ -66,7 +66,7 @@ export class DomainMasterAgent {
   static async spawnDomainIdentity(domainName: string): Promise<string> {
     console.log(`[🏰 DOMAIN MASTER V8.6] Şehir Kuran Makine Ateşlendi: ${domainName}`);
 
-    const existingSnap = await adminDb.collection("tenant_configs").doc(domainName).get();
+    const existingSnap = await adminDb.collection("node_configs").doc(domainName).get();
     if (existingSnap.exists) {
        console.log(`[🏰 DOMAIN MASTER] İPTAL! ${domainName} zaten aktif bir mülk.`);
        return "EXISTING";
@@ -153,7 +153,7 @@ export class DomainMasterAgent {
       };
 
       // 2. FIRESTORE MÜHÜRLEME (Persistent Storage - Google Only)
-      await adminDb.collection("tenant_configs").doc(domainName).set(finalConfig);
+      await adminDb.collection("node_configs").doc(domainName).set(finalConfig);
 
       // 3. GCP LOAD BALANCER / SSL PROVISIONING (Placeholder)
       await this.provisionGCPInfrastructure(domainName);
@@ -186,17 +186,17 @@ export class DomainMasterAgent {
     }
   }
 
-  // GOOGLE-NATIVE: Firestore tenant cache senkronizasyonu
+  // GOOGLE-NATIVE: Firestore node cache senkronizasyonu
   private static async syncToFirestoreCache(domain: string, config: any) {
     console.log(`[⚡ FIRESTORE SYNC] ${domain} Ticari İstihbaratı Firestore cache'e aktarılıyor...`);
     try {
-      await adminDb.collection("tenant_cache").doc(domain).set({
+      await adminDb.collection("node_cache").doc(domain).set({
         config,
         updatedAt: Date.now(),
       });
-      console.log(`[⚡ FIRESTORE SYNC] Tenant Kimliği Firestore'a Mühürlendi!`);
+      console.log(`[⚡ FIRESTORE SYNC] Node Kimliği Firestore'a Mühürlendi!`);
     } catch (e) {
-      console.warn(`[⚡ FIRESTORE SYNC] Cache yazılamadı, ana config zaten tenant_configs'de.`);
+      console.warn(`[⚡ FIRESTORE SYNC] Cache yazılamadı, ana config zaten node_configs'de.`);
     }
   }
 }

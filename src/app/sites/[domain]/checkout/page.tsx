@@ -1,4 +1,4 @@
-import { CheckoutPage } from "@/components/tenant-vorhang/CheckoutPage";
+import { CheckoutPage } from "@/components/node-vorhang/CheckoutPage";
 
 export const dynamic = "force-dynamic";
 

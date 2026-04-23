@@ -14,7 +14,7 @@ import { adminDb } from '@/lib/firebase-admin';
 // ═══════════════════════════════════════
 
 export interface SovereignLogEntry {
-  tenant: string;
+  node: string;
   action: string;
   uid?: string;
   payload: Record<string, any>;
@@ -46,7 +46,7 @@ export async function logSovereignAction(entry: SovereignLogEntry): Promise<void
     );
 
     await adminDb.collection('aloha_sovereign_logs').add({
-      tenant: entry.tenant,
+      node: entry.node,
       action: entry.action,
       uid: entry.uid || 'system',
       payload: safePayload,
@@ -66,7 +66,7 @@ export async function logSovereignAction(entry: SovereignLogEntry): Promise<void
 // ═══════════════════════════════════════
 
 export async function logDLQ(
-  tenant: string,
+  node: string,
   action: string,
   error: string,
   payload: Record<string, any>
@@ -75,14 +75,14 @@ export async function logDLQ(
 
   try {
     await adminDb.collection('aloha_sovereign_dlq').add({
-      tenant,
+      node,
       action,
       error,
       payload: JSON.stringify(payload).substring(0, 2000),
       createdAt: new Date().toISOString(),
       resolved: false,
     });
-    console.error(`[DLQ] Hata kaydı oluşturuldu: ${tenant}/${action} → ${error}`);
+    console.error(`[DLQ] Hata kaydı oluşturuldu: ${node}/${action} → ${error}`);
   } catch (err: any) {
     console.error(`[DLQ] DLQ kaydı bile başarısız: ${err.message}`);
   }

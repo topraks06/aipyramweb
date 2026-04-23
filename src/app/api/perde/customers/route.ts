@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@aipyram/firebase';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,18 +11,18 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const uid = searchParams.get('uid'); 
-    const tenantConfig = getTenant('perde');
+    const SovereignNodeConfig = getNode('perde');
 
     if (!uid) {
       return NextResponse.json({ success: false, error: 'Kullanıcı kimliği (uid) gerekli.' }, { status: 400 });
     }
 
-    if (!tenantConfig.customerCollection) {
+    if (!SovereignNodeConfig.customerCollection) {
       return NextResponse.json({ success: false, error: 'Customer collection tanımlanmamış.' }, { status: 500 });
     }
 
     const customersSnap = await adminDb
-      .collection(tenantConfig.customerCollection)
+      .collection(SovereignNodeConfig.customerCollection)
       .where('dealerUid', '==', uid) // Bayinin kendi müşterileri
       .orderBy('createdAt', 'desc')
       .get();
@@ -49,8 +49,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'uid ve name zorunlu.' }, { status: 400 });
     }
 
-    const tenantConfig = getTenant('perde');
-    if (!tenantConfig.customerCollection) {
+    const SovereignNodeConfig = getNode('perde');
+    if (!SovereignNodeConfig.customerCollection) {
       throw new Error("Customer collection missing in config");
     }
 
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     };
 
-    const docRef = await adminDb.collection(tenantConfig.customerCollection).add(newCustomer);
+    const docRef = await adminDb.collection(SovereignNodeConfig.customerCollection).add(newCustomer);
 
     return NextResponse.json({ 
       success: true, 

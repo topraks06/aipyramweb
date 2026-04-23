@@ -50,14 +50,14 @@ export async function GET(req: Request) {
     await adminDb.collection('perde_wallets').doc('demo-dealer-1').set({
       balance: 1500,
       totalSpent: 450,
-      tenant: 'perde',
+      node: 'perde',
       createdAt: new Date().toISOString()
     }, { merge: true });
 
     await adminDb.collection('trtex_wallets').doc('auto-runner').set({
       balance: 5000,
       totalSpent: 120,
-      tenant: 'trtex',
+      node: 'trtex',
       createdAt: new Date().toISOString()
     }, { merge: true });
 

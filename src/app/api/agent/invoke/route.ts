@@ -2,10 +2,10 @@
  * SOVEREIGN AGENT API — Unified Endpoint
  * 
  * POST /api/agent/invoke
- * Tüm tenant'ların çağıracağı TEK endpoint.
- * Agent sadece Master'da çalışır — Tenant direkt agent çalıştırmaz.
+ * Tüm node'ların çağıracağı TEK endpoint.
+ * Agent sadece Master'da çalışır — Node direkt agent çalıştırmaz.
  * 
- * Body: { tenant, action, uid?, payload, idempotencyKey? }
+ * Body: { node, action, uid?, payload, idempotencyKey? }
  * Response: { success, data, creditUsed, duration, message }
  */
 
@@ -18,12 +18,12 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tenant, action, uid, payload, idempotencyKey } = body;
+    const { node, action, uid, payload, idempotencyKey } = body;
 
     // ═══ VALIDATION ═══
-    if (!tenant || typeof tenant !== 'string') {
+    if (!node || typeof node !== 'string') {
       return NextResponse.json(
-        { success: false, error: 'tenant parametresi zorunlu (string).' },
+        { success: false, error: 'node parametresi zorunlu (string).' },
         { status: 400 }
       );
     }
@@ -35,18 +35,18 @@ export async function POST(req: Request) {
       );
     }
 
-    // Tenant whitelist
-    const VALID_TENANTS = ['trtex', 'perde', 'hometex', 'vorhang', 'aipyram'];
-    if (!VALID_TENANTS.includes(tenant)) {
+    // Node whitelist
+    const VALID_NODES = ['trtex', 'perde', 'hometex', 'vorhang', 'aipyram'];
+    if (!VALID_NODES.includes(node)) {
       return NextResponse.json(
-        { success: false, error: `Geçersiz tenant: ${tenant}` },
+        { success: false, error: `Geçersiz node: ${node}` },
         { status: 400 }
       );
     }
 
     // ═══ INVOKE ═══
     const invocation: SovereignInvocation = {
-      tenant,
+      node,
       action,
       uid: uid || undefined,
       payload: payload || {},
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     try {
       const body = await req.clone().json().catch(() => ({}));
       await logDLQ(
-        body.tenant || 'unknown',
+        body.node || 'unknown',
         body.action || 'unknown',
         err.message,
         body.payload || {}

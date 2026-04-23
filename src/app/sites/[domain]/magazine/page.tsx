@@ -1,5 +1,5 @@
-import HometexNavbar from '@/components/tenant-hometex/HometexNavbar';
-import Magazine from '@/components/tenant-hometex/Magazine';
+import HometexNavbar from '@/components/node-hometex/HometexNavbar';
+import Magazine from '@/components/node-hometex/Magazine';
 import { adminDb } from '@/lib/firebase-admin';
 
 export default async function MagazinePage({ params }: { params: Promise<{ domain: string }> }) {

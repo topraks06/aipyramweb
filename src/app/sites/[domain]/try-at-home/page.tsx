@@ -1,4 +1,4 @@
-import TryAtHome from "@/components/tenant-vorhang/TryAtHome";
+import TryAtHome from "@/components/node-vorhang/TryAtHome";
 
 export const dynamic = "force-dynamic";
 

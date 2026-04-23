@@ -1,6 +1,6 @@
 import React from 'react';
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
@@ -9,12 +9,12 @@ export const dynamic = 'force-dynamic';
 async function approveOrder(formData: FormData) {
   'use server';
   const orderId = formData.get('orderId') as string;
-  const tenantId = formData.get('tenantId') as string;
+  const nodeId = formData.get('nodeId') as string;
   const domain = formData.get('domain') as string;
 
-  if (!orderId || !tenantId) return;
+  if (!orderId || !nodeId) return;
 
-  const config = getTenant(tenantId);
+  const config = getNode(nodeId);
   const orderRef = adminDb.collection(config.projectCollection).doc(orderId);
   
   await orderRef.update({
@@ -36,11 +36,11 @@ export default async function ApproveOrderPage({ params, searchParams }: { param
   }
 
   const exactDomain = decodeURIComponent(domain).split(":")[0];
-  let currentTenant = 'perde';
-  if (exactDomain.includes('hometex')) currentTenant = 'hometex';
-  else if (exactDomain.includes('trtex')) currentTenant = 'trtex';
+  let currentNode = 'perde';
+  if (exactDomain.includes('hometex')) currentNode = 'hometex';
+  else if (exactDomain.includes('trtex')) currentNode = 'trtex';
   
-  const config = getTenant(currentTenant);
+  const config = getNode(currentNode);
   const orderDoc = await adminDb.collection(config.projectCollection).doc(orderId).get();
 
   if (!orderDoc.exists) {
@@ -74,7 +74,7 @@ export default async function ApproveOrderPage({ params, searchParams }: { param
         ) : (
           <form action={approveOrder}>
             <input type="hidden" name="orderId" value={orderId} />
-            <input type="hidden" name="tenantId" value={currentTenant} />
+            <input type="hidden" name="nodeId" value={currentNode} />
             <input type="hidden" name="domain" value={domain} />
             
             <button type="submit" className="w-full py-4 bg-white text-black text-sm uppercase tracking-widest font-bold hover:bg-zinc-200 transition-colors">

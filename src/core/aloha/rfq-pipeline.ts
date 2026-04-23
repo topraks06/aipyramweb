@@ -40,7 +40,7 @@ EventBus.subscribe("RFQ_SUBMITTED", async (event: AIPyramEvent) => {
       await EventBus.emit({
         type: "SUPPLIER_MATCHED",
         source: "MATCHMAKER_AGENT",
-        tenant_id: event.tenant_id,
+        node_id: event.node_id,
         payload: {
           rfqId: rfq.id,
           rfqData: rfq,
@@ -89,7 +89,7 @@ EventBus.subscribe("SUPPLIER_MATCHED", async (event: AIPyramEvent) => {
         await EventBus.emit({
           type: "DEAL_READY", // HITL (Human In The Loop) bekleyen finale geçiş
           source: "AUDITOR_AGENT",
-          tenant_id: event.tenant_id,
+          node_id: event.node_id,
           payload: {
              ...payload,
              trustScore: resultData.trustScore,

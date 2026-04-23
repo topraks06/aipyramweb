@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant, tenantHasFeature, type TenantFeatures } from '@/lib/tenant-config';
+import { getNode, nodeHasFeature, type SovereignNodeFeatures } from '@/lib/sovereign-config';
 import { checkCredits, deductCredit, getAgentCost } from '@/lib/aloha/WalletService';
 import { swarmBus } from '@/lib/agents/EventBus';
 
@@ -27,7 +27,7 @@ export type AgentType =
 
 export interface AgentInvocation {
   agentType: AgentType;
-  tenantId: string;
+  SovereignNodeId: string;
   uid?: string;         // Kullanıcının Firebase UID'si
   payload: Record<string, any>;
 }
@@ -35,13 +35,13 @@ export interface AgentInvocation {
 export interface AgentResult {
   success: boolean;
   agentType: AgentType;
-  tenantId: string;
+  SovereignNodeId: string;
   message: string;
   data?: any;
   creditUsed?: number;
 }
 
-const FEATURE_MAP: Partial<Record<AgentType, keyof TenantFeatures>> = {
+const FEATURE_MAP: Partial<Record<AgentType, keyof SovereignNodeFeatures>> = {
   whatsapp: 'whatsapp',
   document: 'documents',
   fabric_analysis: 'fabricAnalysis',
@@ -54,61 +54,61 @@ const FEATURE_MAP: Partial<Record<AgentType, keyof TenantFeatures>> = {
  * Tüm ajan çağrıları buradan geçmek zorundadır.
  */
 export async function invokeAgent(invocation: AgentInvocation): Promise<AgentResult> {
-  const { agentType, tenantId, uid, payload } = invocation;
+  const { agentType, SovereignNodeId, uid, payload } = invocation;
   
   // 1. Feature flag kontrolü
   const requiredFeature = FEATURE_MAP[agentType];
-  if (requiredFeature && !tenantHasFeature(tenantId, requiredFeature)) {
-    return { success: false, agentType, tenantId, message: `${tenantId} için ${agentType} özelliği aktif değil.` };
+  if (requiredFeature && !nodeHasFeature(SovereignNodeId, requiredFeature)) {
+    return { success: false, agentType, SovereignNodeId, message: `${SovereignNodeId} için ${agentType} özelliği aktif değil.` };
   }
   
   // 2. Wallet kontrolü
   if (uid) {
-    const wallet = await checkCredits(tenantId, uid, agentType);
+    const wallet = await checkCredits(SovereignNodeId, uid, agentType);
     if (!wallet.allowed) {
-      return { success: false, agentType, tenantId, message: `Yetersiz kredi. Kalan: ${wallet.remaining}` };
+      return { success: false, agentType, SovereignNodeId, message: `Yetersiz kredi. Kalan: ${wallet.remaining}` };
     }
   }
   
   // 3. Ajana yönlendir
-  let result: AgentResult = { success: false, agentType, tenantId, message: "Ajan yüklenemedi." };
+  let result: AgentResult = { success: false, agentType, SovereignNodeId, message: "Ajan yüklenemedi." };
   try {
     switch (agentType) {
       case 'whatsapp': {
         const { sendMessage } = await import('@/lib/agents/WhatsAppAgent');
-        const res = await sendMessage(tenantId, payload.phone, payload.message, payload.orderId);
-        result = { success: res.success, agentType, tenantId, message: res.success ? 'WhatsApp gönderildi.' : 'Gönderim başarısız.' };
+        const res = await sendMessage(SovereignNodeId, payload.phone, payload.message, payload.orderId);
+        result = { success: res.success, agentType, SovereignNodeId, message: res.success ? 'WhatsApp gönderildi.' : 'Gönderim başarısız.' };
         break;
       }
       case 'document': {
         const { generateProforma } = await import('@/lib/agents/DocumentAgent');
-        const res = await generateProforma(tenantId, payload.orderId, payload.data);
-        result = { success: true, agentType, tenantId, message: 'PDF Üretildi.', data: { pdfUrl: res.pdfUrl } };
+        const res = await generateProforma(SovereignNodeId, payload.orderId, payload.data);
+        result = { success: true, agentType, SovereignNodeId, message: 'PDF Üretildi.', data: { pdfUrl: res.pdfUrl } };
         break;
       }
       case 'fabric_analysis': {
         const { analyzeFabric } = await import('@/lib/agents/FabricRecognitionAgent');
-        const res = await analyzeFabric(payload.imageBase64, tenantId);
-        result = { success: true, agentType, tenantId, message: 'Kumaş analiz edildi.', data: res };
+        const res = await analyzeFabric(payload.imageBase64, SovereignNodeId);
+        result = { success: true, agentType, SovereignNodeId, message: 'Kumaş analiz edildi.', data: res };
         break;
       }
       case 'retention': {
         const { checkAbandonedQuotes } = await import('@/lib/agents/RetentionAgent');
-        const res = await checkAbandonedQuotes(tenantId);
-        result = { success: true, agentType, tenantId, message: `Tarama tamamlandı. Bulunan terk: ${res.length}`, data: res };
+        const res = await checkAbandonedQuotes(SovereignNodeId);
+        result = { success: true, agentType, SovereignNodeId, message: `Tarama tamamlandı. Bulunan terk: ${res.length}`, data: res };
         break;
       }
       default:
-        result = { success: false, agentType, tenantId, message: `Ajan ${agentType} henüz hazır değil.` };
+        result = { success: false, agentType, SovereignNodeId, message: `Ajan ${agentType} henüz hazır değil.` };
     }
   } catch (error: any) {
     console.error(`[AgentRegistry] invokeAgent failed for ${agentType}:`, error);
-    result = { success: false, agentType, tenantId, message: `Hata: ${error.message}` };
+    result = { success: false, agentType, SovereignNodeId, message: `Hata: ${error.message}` };
   }
   
   // 4. Başarılıysa kredi düş
   if (result.success && uid) {
-    await deductCredit(tenantId, uid, agentType);
+    await deductCredit(SovereignNodeId, uid, agentType);
     result.creditUsed = await getAgentCost(agentType);
   }
   
@@ -120,7 +120,7 @@ export async function invokeAgent(invocation: AgentInvocation): Promise<AgentRes
      // Güvenli payload stringify
      const safePayload = JSON.stringify(payload, (k, v) => v?.length > 1000 ? '[TRUNCATED_BASE64]' : v);
      await adminDb.collection('aloha_agent_logs').add({
-        tenantId,
+        SovereignNodeId,
         agentType,
         uid: uid || 'anonymous',
         success: result.success,

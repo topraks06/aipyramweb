@@ -1319,7 +1319,7 @@ Would it make sense to explore this for your projects?
 ## 🧵 BÖLÜM 35: PERDE.AI BEYİN NAKLİ (14 Nisan 2026)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### KAYNAK: perde.ai (eski tenant) → AIPyram Master Aloha'ya nakledildi
+### KAYNAK: perde.ai (eski node) → AIPyram Master Aloha'ya nakledildi
 
 #### Nakledilen Dosyalar:
 - `knowledge_perde_brain.json` (32KB) — Kumaş fiziği, prompt zenginleştirme, ölçü hesaplama

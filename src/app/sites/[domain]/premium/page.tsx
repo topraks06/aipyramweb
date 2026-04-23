@@ -14,7 +14,7 @@ export default async function PremiumReportPage({ params, searchParams }: any) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', color: '#111', fontFamily: "'Inter', 'Helvetica', sans-serif" }}>
-      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="premium" theme="light" />
+      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage={"premium" as any} theme="light" />
 
       <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '4rem 2rem', flex: 1, width: '100%' }}>
         <div style={{ border: '4px solid #111', padding: '3rem', background: '#FFF', position: 'relative', overflow: 'hidden' }}>

@@ -9,8 +9,8 @@ export interface FabricResult {
   recommendedUse: string[];
 }
 
-export async function analyzeFabric(imageBase64: string, tenantId: string): Promise<FabricResult> {
-  console.log(`[FabricAgent] ${tenantId} için kumaş analizi yapılıyor...`);
+export async function analyzeFabric(imageBase64: string, SovereignNodeId: string): Promise<FabricResult> {
+  console.log(`[FabricAgent] ${SovereignNodeId} için kumaş analizi yapılıyor...`);
   
   const model = ai.getGenerativeModel({
     model: "gemini-2.5-flash",

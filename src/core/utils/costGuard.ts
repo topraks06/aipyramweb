@@ -8,7 +8,7 @@ export const AGENTS_ENABLED = process.env.AGENTS_GLOBAL_KILL_SWITCH !== "false";
 const DAILY_MAX_SPEND_USD = parseFloat(process.env.DAILY_MAX_SPEND_USD || "50.0");
 
 export interface AgentActionLog {
-  tenant_id: string;
+  node_id: string;
   agentRole: string;
   taskType: string;
   tokensUsed: number;
@@ -22,7 +22,7 @@ export interface AgentActionLog {
 
 export class CostGuard {
   
-  static async checkAllowance(tenant_id: string, requestedCostUsd: number = 0.5): Promise<{allowed: boolean, reason?: string}> {
+  static async checkAllowance(node_id: string, requestedCostUsd: number = 0.5): Promise<{allowed: boolean, reason?: string}> {
     if (!AGENTS_ENABLED) return { allowed: false, reason: "GLOBAL KILL SWITCH IS ACTIVE" };
     
     // In a prod environment this would hit Redis. Here we check Firestore.

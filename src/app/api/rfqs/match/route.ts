@@ -15,7 +15,7 @@ initializePipeline(); // Pipeline dinleyicilerini (Matchmaker -> Polyglot -> Aud
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rfq, tenant_id = "aipyram-core" } = body as { rfq: RFQData; tenant_id?: string };
+    const { rfq, node_id = "aipyram-core" } = body as { rfq: RFQData; node_id?: string };
 
     if (!rfq || !rfq.product) {
       return NextResponse.json(
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     await EventBus.emit({
       type: "RFQ_SUBMITTED",
       source: "API_GATEWAY",
-      tenant_id: tenant_id,
+      node_id: node_id,
       payload: rfq
     });
 

@@ -1,6 +1,6 @@
-import MyProjects from '@/components/tenant-perde/MyProjects';
-import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
-import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
+import MyProjects from '@/components/node-perde/MyProjects';
+import PerdeNavbar from '@/components/node-perde/PerdeNavbar';
+import PerdeFooter from '@/components/node-perde/PerdeFooter';
 
 export default function ProjectsPage() {
     return (

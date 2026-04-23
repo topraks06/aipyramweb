@@ -26,10 +26,10 @@ class AIPyramEventBus {
    */
   public async emit(event: AIPyramEvent) {
     if (!event.id) event.id = crypto.randomUUID();
-    if (!event.tenant_id) event.tenant_id = "master-nexus";
+    if (!event.node_id) event.node_id = "master-nexus";
     event.timestamp = event.timestamp || Date.now();
     
-    console.log(`[🔥 EventBus EMIT] Sinyal: ${event.type} | Tenant: ${event.tenant_id} | ID: ${event.id}`);
+    console.log(`[🔥 EventBus EMIT] Sinyal: ${event.type} | Node: ${event.node_id} | ID: ${event.id}`);
     
     // 1. Local Sync Execution (In-Memory)
     this.executeLocally(event);
@@ -41,7 +41,7 @@ class AIPyramEventBus {
         event_id: event.id,
         type: event.type,
         source: event.source,
-        tenant_id: event.tenant_id,
+        node_id: event.node_id,
         payload: JSON.stringify(event.payload || {}),
         createdAt: Date.now(),
       });

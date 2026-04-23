@@ -59,22 +59,22 @@ export default async function middleware(req: NextRequest) {
   // Define Master Node domains (Main UI + Admin)
   const isMainDomain = currentHost === 'localhost' || currentHost === '127.0.0.1' || currentHost.includes('aipyram');
   
-  // API, Admin and Multitenant Static Routes bypass
+  // API, Admin and Multinode Static Routes bypass
   if (url.pathname.startsWith('/api') || url.pathname.startsWith('/_next') || url.pathname.startsWith('/admin') || url.pathname.startsWith('/sites')) {
     if (!isMainDomain && url.pathname.startsWith('/admin')) {
-      return NextResponse.redirect(new URL('/', req.url)); // Block tenants from admin
+      return NextResponse.redirect(new URL('/', req.url)); // Block nodes from admin
     }
     return NextResponse.next();
   }
 
-  // 🌍 MULTI-TENANT DUMB-CLIENT RENDER LAYER
+  // 🌍 MULTI-NODE DUMB-CLIENT RENDER LAYER
   if (isMainDomain) {
     // Normal AIPYRAM Master Node (Uses next-intl)
     return intlMiddleware(req);
   }
 
   // Local dev: trtex.localhost → trtex.com, hometex.localhost → hometex.ai vb.
-  let tenantId = currentHost.replace(/^www\./, '');
+  let SovereignNodeId = currentHost.replace(/^www\./, '');
   if (currentHost.endsWith('.localhost')) {
     const sub = currentHost.replace('.localhost', '');
     // Bilinen domain uzantı eşleştirmesi
@@ -84,12 +84,12 @@ export default async function middleware(req: NextRequest) {
       'perde': 'perde.ai',
       'vorhang': 'vorhang.ai',
     };
-    tenantId = domainMap[sub] || `${sub}.com`;
-    console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → tenant: ${tenantId}`);
+    SovereignNodeId = domainMap[sub] || `${sub}.com`;
+    console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → node: ${SovereignNodeId}`);
   }
 
   // Rewrite requests to /sites/[domain]/[path]
-  url.pathname = `/sites/${tenantId}${url.pathname}`;
+  url.pathname = `/sites/${SovereignNodeId}${url.pathname}`;
   return NextResponse.rewrite(url);
 }
 

@@ -55,7 +55,7 @@ export function initializeSwarm() {
     try {
         await invokeAgent({ 
             agentType: 'document', 
-            tenantId: payload.tenantId, 
+            SovereignNodeId: payload.SovereignNodeId, 
             payload: { orderId: payload.orderId, data: payload.data } 
         });
     } catch(e) { console.error(e); }
@@ -69,7 +69,7 @@ export function initializeSwarm() {
         try {
             await invokeAgent({
                 agentType: 'whatsapp',
-                tenantId: payload.tenantId,
+                SovereignNodeId: payload.SovereignNodeId,
                 payload: { orderId: payload.payload.orderId, phone: payload.payload.phone, message: "Teklif PDF'iniz hazır." }
             });
         } catch(e) { console.error(e); }

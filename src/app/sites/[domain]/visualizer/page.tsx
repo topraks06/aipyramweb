@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LayoutDashboard } from 'lucide-react';
-import RoomVisualizer from '@/components/tenant-perde/RoomVisualizer';
+import RoomVisualizer from '@/components/node-perde/RoomVisualizer';
 import B2BGatekeeper from '@/components/auth/B2BGatekeeper';
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
   
   const exactDomain = decodeURIComponent(domain).split(":")[0];
   if (!exactDomain.includes('perde')) {
-     return <div className="p-12 text-center text-white bg-black">Access Denied. Only Perde.ai tenants can access the Visualizer.</div>;
+     return <div className="p-12 text-center text-white bg-black">Access Denied. Only Perde.ai nodes can access the Visualizer.</div>;
   }
 
   return (

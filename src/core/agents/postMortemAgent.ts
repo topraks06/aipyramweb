@@ -14,7 +14,7 @@ Girdi olarak başarısızlığın nedeni, bağlamı ve maliyeti verilecektir.
 Çıktı olarak net, eyleme geçirilebilir bir "Ticari Hafıza Dersi" ve ÇOK SPESİFİK bir 'Next Best Action' (Sonraki En İyi Hamle) çıkarmak zorundasın. Örn: 'fiyat yüksek -> %10 düşür', 'supplier yavaş -> alternatif öner'.`;
 
 export interface PostMortemInput {
-  tenant_id: string;
+  node_id: string;
   context: string;
   failureReason: string;
   costWasted?: number;
@@ -33,7 +33,7 @@ export async function analyzeFailureTracker(
     return { agent: "ALOHA", result: "{}", confidence: 0, tokensUsed: 0, costUSD: 0, durationMs: 0 };
   }
 
-  const allowance = await CostGuard.checkAllowance(failure.tenant_id, 0.05);
+  const allowance = await CostGuard.checkAllowance(failure.node_id, 0.05);
   if (!allowance.allowed) {
       return { agent: "ALOHA", result: "{}", confidence: 0, tokensUsed: 0, costUSD: 0, durationMs: 0 };
   }
@@ -80,7 +80,7 @@ export async function analyzeFailureTracker(
     const severityWeight = (failure.costWasted || 0) > 2 ? 5 : 1; 
 
     await recordMemory({
-      tenant_id: failure.tenant_id,
+      node_id: failure.node_id,
       source: "Post_Mortem_Autopsy",
       text: `DERS: ${parsed.lessonLearned}. YENİ HAMLE (Next Best Action): ${parsed.nextBestAction}. STRATEJİ: ${parsed.futureStrategy}. (Kök Neden: ${parsed.rootCause})`,
       agentId: "POSTMORTEM",
@@ -102,7 +102,7 @@ export async function analyzeFailureTracker(
     };
 
     CostGuard.logAction({
-        tenant_id: failure.tenant_id,
+        node_id: failure.node_id,
         agentRole: "POSTMORTEM",
         taskType: "failure_analysis",
         tokensUsed: output.tokensUsed || 0,

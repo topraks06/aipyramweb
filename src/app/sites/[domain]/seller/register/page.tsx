@@ -1,4 +1,4 @@
-import SellerOnboarding from "@/components/tenant-vorhang/SellerOnboarding";
+import SellerOnboarding from "@/components/node-vorhang/SellerOnboarding";
 
 export const dynamic = "force-dynamic";
 

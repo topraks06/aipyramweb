@@ -67,7 +67,7 @@ export async function queryMemoryBase(agentId: string = "APOLLON"): Promise<RAGD
  * Cross-Pollination: isGlobal bayrağı ile tüm ajanlara (15 sektör) tecrübe yayımı.
  */
 export async function addKnowledge(
-  tenantId: string, 
+  SovereignNodeId: string, 
   category: string, 
   content: string, 
   sourceId: string,
@@ -76,7 +76,7 @@ export async function addKnowledge(
 ): Promise<string | null> {
   try {
     const docRef = await addDoc(collection(db, "knowledge_base"), {
-      tenantId: isGlobal ? "global_strategy" : tenantId, // Cross-pollination check
+      SovereignNodeId: isGlobal ? "global_strategy" : SovereignNodeId, // Cross-pollination check
       agentId: "FLYWHEEL",
       category,
       source: `DealAnalyzer:${sourceId}`,

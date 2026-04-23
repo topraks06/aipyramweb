@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@aipyram/firebase';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 import { calculateItemPrice, type PriceCalcInput } from '@/services/perdePricingEngine';
 
 export const dynamic = 'force-dynamic';
@@ -13,14 +13,14 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const uid = searchParams.get('uid'); // Should be replaced with secure server-side auth token check
-    const tenantConfig = getTenant('perde');
+    const SovereignNodeConfig = getNode('perde');
 
     if (!uid) {
       return NextResponse.json({ success: false, error: 'Kullanıcı kimliği (uid) gerekli.' }, { status: 400 });
     }
 
     const ordersSnap = await adminDb
-      .collection(tenantConfig.projectCollection)
+      .collection(SovereignNodeConfig.projectCollection)
       .where('uid', '==', uid)
       .orderBy('createdAt', 'desc')
       .get();
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Eksik parametreler.' }, { status: 400 });
     }
 
-    const tenantConfig = getTenant('perde');
+    const SovereignNodeConfig = getNode('perde');
     let totalAmount = 0;
 
     // Fiyat hesaplama
@@ -77,10 +77,10 @@ export async function POST(req: Request) {
       createdAt: new Date(), // Firestore Timestamp instead of string can be handled directly with FieldValue.serverTimestamp() but new Date() is fine
     };
 
-    const docRef = await adminDb.collection(tenantConfig.projectCollection).add(newOrder);
+    const docRef = await adminDb.collection(SovereignNodeConfig.projectCollection).add(newOrder);
 
     // Optional: Call invokeAgent('document') here to generate a PDF for the order.
-    // fetch('.../api/agent/invoke', { method: 'POST', body: JSON.stringify({ tenant: 'perde', action: 'document', uid, payload: { orderId: docRef.id } })})
+    // fetch('.../api/agent/invoke', { method: 'POST', body: JSON.stringify({ node: 'perde', action: 'document', uid, payload: { orderId: docRef.id } })})
     // For now, we just create the order.
 
     return NextResponse.json({ 

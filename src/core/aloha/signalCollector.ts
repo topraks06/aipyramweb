@@ -199,6 +199,17 @@ async function produceIntelligencePayload(signal: any, gravity: number, project:
   const usedScenes = adminDb ? await adminDb.collection("core_memory").doc("campaign_memory").get().then(s => s.data()?.used_scenes || []) : [];
   const usedPalettes = adminDb ? await adminDb.collection("core_memory").doc("campaign_memory").get().then(s => s.data()?.used_palettes || []) : [];
   
+  // Dynamic Knowledge Fetch
+  let dynamicKnowledge = '';
+  if (adminDb) {
+    try {
+      const snap = await adminDb.collection('aloha_knowledge').where('active', '==', true).orderBy('createdAt', 'desc').limit(5).get();
+      if (!snap.empty) {
+        dynamicKnowledge = '\nSOVEREIGN DIRECTIVES (EK KURALLAR):\n' + snap.docs.map(d => `- [${d.data().topic}]: ${d.data().content}`).join('\n') + '\n\n';
+      }
+    } catch(e) { /* ignore */ }
+  }
+
   const memoryBlock = `USED SCENES: ${usedScenes.slice(-5).join(", ")}\nUSED PALETTES: ${usedPalettes.slice(-5).join(", ")}`;
 
   let finalParsed: any = null;
@@ -244,7 +255,7 @@ CONTENT TYPE CLASSIFICATION:
 Classify into ONE: MARKET_SIGNAL | NEWS_INTEL | TRADE_OPPORTUNITY | REGIONAL_RISK
 
 ${MASTER_RULE}
-
+${dynamicKnowledge}
 RAW SIGNAL:
 Title: ${signal.title}
 Summary: ${signal.summary}

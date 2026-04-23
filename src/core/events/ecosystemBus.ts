@@ -1,7 +1,7 @@
 import { EcosystemSignal, EcosystemSignalType, SignalSubscription } from './signalTypes';
 
 // ═══════════════════════════════════════════════════
-// AIPYRAM Ecosystem Bus — Cross-Tenant Event Communication
+// AIPYRAM Ecosystem Bus — Cross-Node Event Communication
 // Google-Native (Firestore + In-Memory)
 // ═══════════════════════════════════════════════════
 
@@ -12,13 +12,13 @@ class AIPyramEcosystemBus {
     console.log('[🧠 EcosystemBus] Google-Native v1.0 — Firestore + In-Memory Başlatıldı.');
   }
 
-  public subscribe(tenant: string, signalTypes: EcosystemSignalType[], handler: (signal: EcosystemSignal) => Promise<void>) {
+  public subscribe(node: string, signalTypes: EcosystemSignalType[], handler: (signal: EcosystemSignal) => Promise<void>) {
     for (const type of signalTypes) {
       if (!this.subscribers.has(type)) {
         this.subscribers.set(type, []);
       }
-      this.subscribers.get(type)?.push({ tenant, signalTypes, handler });
-      console.log(`[📡 EcosystemBus Subscribe] Tenant '${tenant}' dinliyor: '${type}'`);
+      this.subscribers.get(type)?.push({ node, signalTypes, handler });
+      console.log(`[📡 EcosystemBus Subscribe] Node '${node}' dinliyor: '${type}'`);
     }
   }
 
@@ -30,7 +30,7 @@ class AIPyramEcosystemBus {
     signal.timestamp = signal.timestamp || new Date().toISOString();
     signal.processed = false;
 
-    console.log(`[🔥 EcosystemBus EMIT] Type: ${signal.type} | Source: ${signal.source_tenant} | Target: ${signal.target_tenant} | ID: ${signal.id}`);
+    console.log(`[🔥 EcosystemBus EMIT] Type: ${signal.type} | Source: ${signal.source_node} | Target: ${signal.target_node} | ID: ${signal.id}`);
 
     // 1. Local execution
     this.executeLocally(signal);
@@ -42,8 +42,8 @@ class AIPyramEcosystemBus {
         await adminDb.collection("ecosystem_signals").add({
           id: signal.id,
           type: signal.type,
-          source_tenant: signal.source_tenant,
-          target_tenant: signal.target_tenant,
+          source_node: signal.source_node,
+          target_node: signal.target_node,
           payload: JSON.stringify(signal.payload || {}),
           priority: signal.priority,
           timestamp: signal.timestamp,
@@ -62,19 +62,19 @@ class AIPyramEcosystemBus {
     const subs = this.subscribers.get(signal.type);
     if (subs && subs.length > 0) {
       for (const sub of subs) {
-        // Hedef tenant kontrolü ('all' ise herkese, yoksa sadece hedefe VEYA hedeflenmiş bir gruba)
-        if (signal.target_tenant === 'all' || signal.target_tenant === sub.tenant) {
+        // Hedef node kontrolü ('all' ise herkese, yoksa sadece hedefe VEYA hedeflenmiş bir gruba)
+        if (signal.target_node === 'all' || signal.target_node === sub.node) {
           try {
             await sub.handler(signal);
           } catch (e) {
-            console.error(`[EcosystemBus] Local Execution Error for tenant ${sub.tenant} on signal ${signal.type}:`, e);
+            console.error(`[EcosystemBus] Local Execution Error for node ${sub.node} on signal ${signal.type}:`, e);
           }
         }
       }
     }
   }
 
-  public async getRecentSignals(tenant: string, limitCount: number = 20): Promise<EcosystemSignal[]> {
+  public async getRecentSignals(node: string, limitCount: number = 20): Promise<EcosystemSignal[]> {
     try {
       const { adminDb } = await import("@/lib/firebase-admin");
       if (!adminDb) return [];
@@ -83,9 +83,9 @@ class AIPyramEcosystemBus {
         .orderBy("createdAt", "desc")
         .limit(limitCount);
         
-      if (tenant !== 'master' && tenant !== 'all') {
+      if (node !== 'master' && node !== 'all') {
         // Bu sorgu Firestore index gerektirebilir, dikkatli kullanılmalı
-        query = query.where("target_tenant", "in", [tenant, "all"]);
+        query = query.where("target_node", "in", [node, "all"]);
       }
 
       const snapshot = await query.get();
@@ -94,8 +94,8 @@ class AIPyramEcosystemBus {
         return {
           id: data.id,
           type: data.type as EcosystemSignalType,
-          source_tenant: data.source_tenant as EcosystemSignal['source_tenant'],
-          target_tenant: data.target_tenant as EcosystemSignal['target_tenant'],
+          source_node: data.source_node as EcosystemSignal['source_node'],
+          target_node: data.target_node as EcosystemSignal['target_node'],
           payload: JSON.parse(data.payload || '{}'),
           priority: data.priority as EcosystemSignal['priority'],
           timestamp: data.timestamp,

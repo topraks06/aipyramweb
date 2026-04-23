@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { admin, adminDb } from "@/lib/firebase-admin";
-import { getTenant } from "@/lib/tenant-config";
+import { getNode } from "@/lib/sovereign-config";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { uid, tenantId = 'perde' } = body;
+        const { uid, SovereignNodeId = 'perde' } = body;
 
         if (!uid) {
             return NextResponse.json({ error: "Kullanıcı ID (uid) gereklidir." }, { status: 400 });
@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
         // Token security (Session verification should be here, but for now we trust the client to some extent as it requires auth on frontend)
         // More strict production environments would verify session token on headers.
 
-        const config = getTenant(tenantId);
+        const config = getNode(SovereignNodeId);
         if (!config.walletCollection) {
-            return NextResponse.json({ message: "Bu projede (tenant) cüzdan sistemi aktif değil." });
+            return NextResponse.json({ message: "Bu projede (node) cüzdan sistemi aktif değil." });
         }
 
         const walletRef = adminDb.collection(config.walletCollection).doc(uid);
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         // Initialize wallet with 10 free credits
         await walletRef.set({
             ownerId: uid,
-            tenant: tenantId,
+            node: SovereignNodeId,
             agentCredits: 10,
             renderCredits: 0, // Legacy fallback
             totalSpent: 0,

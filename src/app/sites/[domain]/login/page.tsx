@@ -1,21 +1,21 @@
-import { resolveTenantFromDomain } from '@/lib/tenant-config';
+import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 
-// Tenant → Login bileşen map'i (if/else cehennemi yerine)
-const tenantLoginMap: Record<string, () => Promise<any>> = {
-  perde: () => import('@/components/tenant-perde/auth/Login'),
-  hometex: () => import('@/components/tenant-hometex/auth/Login'),
+// Node → Login bileşen map'i (if/else cehennemi yerine)
+const nodeLoginMap: Record<string, () => Promise<any>> = {
+  perde: () => import('@/components/node-perde/auth/Login'),
+  hometex: () => import('@/components/node-hometex/auth/Login'),
 };
 
 export default async function LoginPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
   const exactDomain = decodeURIComponent(domain).split(":")[0];
   const basePath = `/sites/${exactDomain}`;
-  const tenant = resolveTenantFromDomain(exactDomain);
+  const node = resolveNodeFromDomain(exactDomain);
 
-  // Dinamik import — tenant'a göre doğru Login bileşeni
-  const loader = tenantLoginMap[tenant.id];
+  // Dinamik import — node'a göre doğru Login bileşeni
+  const loader = nodeLoginMap[node.id];
   if (!loader) {
-    // TRTEX veya tanımsız tenant → login sayfası yok
+    // TRTEX veya tanımsız node → login sayfası yok
     return (
       <main className="h-screen bg-black flex items-center justify-center text-zinc-600 text-sm font-mono">
         Bu site için giriş sayfası bulunmamaktadır.

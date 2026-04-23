@@ -1,5 +1,5 @@
-import ExhibitorDetail from '@/components/tenant-hometex/ExhibitorDetail';
-import HometexNavbar from '@/components/tenant-hometex/HometexNavbar';
+import ExhibitorDetail from '@/components/node-hometex/ExhibitorDetail';
+import HometexNavbar from '@/components/node-hometex/HometexNavbar';
 import { adminDb } from '@/lib/firebase-admin';
 import { notFound } from 'next/navigation';
 

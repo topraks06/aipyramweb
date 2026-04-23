@@ -8,7 +8,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { adminDb, admin } from "@/lib/firebase-admin";
 import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
-import { getTenant } from "@/lib/tenant-config";
+import { getNode } from "@/lib/sovereign-config";
 
 const ai = alohaAI.getClient();
 
@@ -28,7 +28,7 @@ try {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { imageBase64, prompt, attachments, tenantId = 'perde' } = body;
+        const { imageBase64, prompt, attachments, SovereignNodeId = 'perde' } = body;
 
         if (!imageBase64) {
             return NextResponse.json({ error: "Görsel gereklidir" }, { status: 400 });
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
                 uid = decodedToken.uid;
                 
                 // Kredi Kontrolü Merkezi Servisle (Sovereign Hub)
-                const walletCheck = await checkCredits(tenantId, uid, 'render');
+                const walletCheck = await checkCredits(SovereignNodeId, uid, 'render');
                 if (!walletCheck.allowed) {
                     return NextResponse.json({ error: "Yeterli render krediniz bulunmuyor (402 Payment Required)." }, { status: 402 });
                 }
@@ -63,14 +63,14 @@ export async function POST(req: NextRequest) {
         // 1. Analyze room
         // Extract plain base64 if it has data url scheme
         const cleanedBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-        const analysis = await analyzeRoom(cleanedBase64, tenantId);
+        const analysis = await analyzeRoom(cleanedBase64, SovereignNodeId);
 
         // 1.5 Analyze attachments (Fabrics)
         let fabricInjections = "";
         let baseFabricStyle = analysis.suggestedStyles[0] || 'beautiful';
         if (attachments && Array.isArray(attachments) && attachments.length > 0) {
              const fabricPromises = attachments.map(async (b64: string) => {
-                 return analyzeFabric(b64, tenantId);
+                 return analyzeFabric(b64, SovereignNodeId);
              });
              const fabricAnalyses = await Promise.all(fabricPromises);
              const fabricDescriptions = fabricAnalyses.map(f => `${f.composition} ${f.weaveType} in ${f.weightEstimate} weight`).join(" and ");
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
                 
                 // Kredi Düş (Merkezi Servis)
                 if (uid) {
-                    await deductCredit(tenantId, uid, 'render');
+                    await deductCredit(SovereignNodeId, uid, 'render');
                 }
 
                 // Add to library
@@ -110,15 +110,13 @@ export async function POST(req: NextRequest) {
                         style: analysis.suggestedStyles[0] || 'modern',
                         roomType: analysis.roomType,
                         color: analysis.colorPalette[0] || 'bej',
-                        productType: getTenant(tenantId).shortName.toLowerCase(),
+                        productType: getNode(SovereignNodeId).shortName.toLowerCase(),
                         source: 'imagen',
-                        tenant: tenantId
+                        node: SovereignNodeId
                     });
                     
                     // Sovereign Log
-                    if (uid) {
-                        await logSovereignAction(tenantId, 'render', { roomType: analysis.roomType }, { success: true });
-                    }
+                        await logSovereignAction({ node: SovereignNodeId, action: 'render', payload: { roomType: analysis.roomType }, result: { success: true } as any, duration: 0, cost: 0 });
                 } catch (libErr) {
                     console.error("Library save failed (ignoring for response):", libErr);
                 }

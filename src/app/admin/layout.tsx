@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/auth/AipyramAuthProvider';
 import { ShieldAlert, Fingerprint } from 'lucide-react';
@@ -12,6 +12,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [radarData, setRadarData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!user || !isAdmin) return;
+
+    const fetchRadar = async () => {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const json = await res.json();
+        if (json.success) setRadarData(json.data);
+      } catch (err) {
+        console.error('Radar data fetch failed', err);
+      }
+    };
+
+    fetchRadar();
+    const interval = setInterval(fetchRadar, 15000);
+    return () => clearInterval(interval);
+  }, [user, isAdmin]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,19 +46,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-zinc-800 border-t-white animate-spin rounded-full" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-indigo-600 animate-spin rounded-full" />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-zinc-950 border border-white/10 p-8 rounded-2xl shadow-2xl text-center">
-          <Fingerprint className="w-12 h-12 text-white/50 mx-auto mb-6" />
-          <h1 className="text-xl font-display uppercase tracking-widest text-white mb-2">AIPYRAM MASTER KOKPİT</h1>
-          <p className="text-xs text-zinc-500 mb-8 leading-relaxed">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white border border-slate-200 p-8 rounded-2xl shadow-sm text-center">
+          <Fingerprint className="w-12 h-12 text-slate-300 mx-auto mb-6" />
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 mb-2">AIPYRAM MASTER KOKPİT</h1>
+          <p className="text-sm text-slate-500 mb-8 leading-relaxed">
             Bu alana sadece sistem yöneticileri (Aipyram CEO) erişebilir. Sovereign Ağ Yönetimine geçmek için yetkinizi doğrulayın.
           </p>
           
@@ -47,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <input 
               type="email" 
               placeholder="Admin Email" 
-              className="w-full bg-black border border-white/10 p-3 text-xs text-white uppercase tracking-widest"
+              className="w-full bg-slate-50 border border-slate-200 p-3 text-sm text-slate-900 rounded-md focus:outline-none focus:border-indigo-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -55,28 +74,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <input 
               type="password" 
               placeholder="Şifre" 
-              className="w-full bg-black border border-white/10 p-3 text-xs text-white tracking-widest"
+              className="w-full bg-slate-50 border border-slate-200 p-3 text-sm text-slate-900 rounded-md focus:outline-none focus:border-indigo-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {errorMsg && <div className="text-red-500 text-[10px]">{errorMsg}</div>}
+            {errorMsg && <div className="text-red-500 text-xs">{errorMsg}</div>}
             <button 
               type="submit"
               disabled={isLoggingIn}
-              className="w-full bg-blue-600 text-white py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-blue-500 transition-colors"
+              className="w-full bg-indigo-600 text-slate-900 py-3 text-sm font-semibold rounded-md hover:bg-indigo-700 transition-colors"
             >
               {isLoggingIn ? "BAĞLANILIYOR..." : "E-POSTA İLE BAĞLAN"}
             </button>
           </form>
 
-          <div className="relative border-b border-white/10 mb-6">
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-zinc-950 px-2 text-[10px] text-zinc-600">VEYA</span>
+          <div className="relative border-b border-slate-200 mb-6">
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs text-slate-400">VEYA</span>
           </div>
 
           <button 
             onClick={loginWithGoogle}
-            className="w-full bg-white text-black py-4 text-xs font-bold uppercase tracking-[0.2em] rounded hover:bg-zinc-200 transition-colors"
+            className="w-full bg-slate-100 text-slate-700 py-3 text-sm font-semibold rounded-md hover:bg-slate-200 transition-colors"
           >
             GOOGLE İLE BAĞLAN
           </button>
@@ -87,113 +106,47 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
-        <div className="bg-red-500/10 border border-red-500/30 p-8 text-center max-w-sm">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white border border-red-200 shadow-sm rounded-lg p-8 text-center max-w-sm">
           <ShieldAlert className="w-10 h-10 text-red-500 mx-auto mb-4" />
-          <h2 className="text-red-500 font-bold uppercase tracking-widest mb-2">ERİŞİM REDDEDİLDİ</h2>
-          <p className="text-xs text-red-400/70">Bu terminal sadece Kurucu Onaylı hesaplara açıktır.</p>
+          <h2 className="text-red-600 font-bold text-lg mb-2">ERİŞİM REDDEDİLDİ</h2>
+          <p className="text-sm text-slate-500">Bu terminal sadece Kurucu Onaylı hesaplara açıktır.</p>
         </div>
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen bg-[#000000] flex overflow-hidden font-sans text-zinc-300">
+    <div className="min-h-screen bg-slate-50 flex overflow-hidden font-sans text-slate-600">
       
-      {/* SOL MENÜ: Minimal Geçmiş ve Ağ Geçişi */}
-      <aside className="w-[260px] border-r border-white/10 bg-[#030303] flex flex-col shrink-0 z-20">
-        
-        {/* Marka / Logo Alanı */}
-        <div className="h-14 border-b border-white/10 flex items-center px-5 shrink-0 bg-black">
-          <div className="flex items-center gap-3 w-full">
-            <div className="w-6 h-6 bg-white text-black font-black flex items-center justify-center text-[10px] tracking-tighter">OS</div>
-            <div className="flex-1">
-              <div className="text-[11px] font-black tracking-widest text-white leading-none">AIPYRAM</div>
-              <div className="text-[8px] tracking-[0.2em] text-blue-500 font-mono mt-1">SOVEREIGN CORE</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Yeni Sohbet Butonu */}
-        <div className="p-3">
-          <Link href="/admin" className="flex items-center gap-2 w-full bg-white text-black hover:bg-zinc-200 transition-colors rounded p-2 text-[11px] font-bold uppercase tracking-widest justify-center">
-            <span className="text-lg leading-none">+</span> YENİ İŞLEM
-          </Link>
-        </div>
-
-        {/* Ağ Bağlantıları (Eskiden Menülerdi, Şimdi Hızlı Kısayollar) */}
-        <nav className="flex-1 px-3 py-2 space-y-4 overflow-y-auto custom-scrollbar">
-          
-          <div className="space-y-1">
-            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-2 px-3">Hızlı Analizler</div>
-            {[
-              { name: 'Sistem Durumu', path: '/admin', icon: '◱' },
-              { name: 'Ağ Haritası', path: '/admin/tenants', icon: '⚄' },
-              { name: 'Ekonomi Grafiği', path: '/admin/economy', icon: '⚡' },
-            ].map((item) => (
-              <Link 
-                key={item.name}
-                href={item.path} 
-                className="group flex items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all border-l-2 border-transparent hover:border-blue-500"
-              >
-                <span className="text-zinc-600 group-hover:text-blue-500 font-mono text-[14px] leading-none">{item.icon}</span>
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Geçmiş (Temsili) */}
-          <div className="space-y-1 mt-6">
-            <div className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold mb-2 px-3">Son İşlemler</div>
-            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">TRTEX Haber Analizi...</div>
-            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">Aylık Kredi Raporu...</div>
-            <div className="px-3 py-2 text-[10px] text-zinc-500 truncate cursor-pointer hover:text-zinc-300">Perde Sipariş Onayı...</div>
-          </div>
-
-        </nav>
-        
-        {/* Kullanıcı / Oturum Alanı */}
-        <div className="p-4 border-t border-white/10 bg-black/50">
-          <div className="flex items-center justify-between px-2">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-zinc-500 uppercase font-mono tracking-widest">AKTİF YÖNETİCİ</span>
-              <span className="text-xs text-white truncate max-w-[150px]">{user.email}</span>
-            </div>
-            <button onClick={logout} className="text-[10px] uppercase text-red-500 hover:text-red-400 font-bold tracking-widest px-2 py-1 bg-red-500/10 rounded-sm">
-              ÇIKIŞ
-            </button>
-          </div>
-        </div>
-      </aside>
-
       {/* MERKEZ: Ana Arayüz */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#000000]">
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50">
         
         {/* Global Üst Bar */}
-        <header className="h-14 border-b border-white/10 flex items-center justify-between px-6 bg-[#030303] z-10 shrink-0">
+        <header className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white z-10 shrink-0 shadow-sm">
           
           {/* Ağ Seçici (Sovereign Node Switcher) */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase text-zinc-600 tracking-widest">HEDEF AĞ:</span>
-            <select className="bg-transparent border border-white/10 text-[11px] text-white uppercase tracking-widest p-1 focus:outline-none focus:border-blue-500">
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hedef Ağ:</span>
+            <select className="bg-white border border-slate-200 text-sm font-medium text-slate-700 py-1 px-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm cursor-pointer">
               <option value="master">GLOBAL MERKEZ</option>
               <option value="perde">PERDE DÜĞÜMÜ</option>
               <option value="trtex">TRTEX DÜĞÜMÜ</option>
               <option value="hometex">HOMETEX DÜĞÜMÜ</option>
+              <option value="vorhang">VORHANG DÜĞÜMÜ</option>
             </select>
           </div>
 
           {/* Sistem Durum Göstergeleri */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
               <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${radarData?.apiLatency > 400 ? 'bg-amber-400' : 'bg-emerald-400'} opacity-75`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${radarData?.apiLatency > 400 ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
               </div>
-              <span className="text-[10px] font-mono text-emerald-500 tracking-widest">12ms</span>
+              <span className={`text-xs font-mono font-medium ${radarData?.apiLatency > 400 ? 'text-amber-600' : 'text-emerald-600'}`}>{radarData?.apiLatency || 12}ms</span>
             </div>
-            <div className="h-4 w-[1px] bg-white/10" />
-            <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">ŞİFRELİ AĞ</span>
+            <div className="h-4 w-[1px] bg-slate-200" />
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">ŞİFRELİ AĞ</span>
           </div>
 
         </header>
@@ -201,9 +154,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Ana İçerik Alanı (Buraya Sınırsız Chat Arayüzü Gelecek) */}
         <div className="flex-1 flex overflow-hidden">
           
-          <main className="flex-1 relative overflow-hidden flex flex-col border-r border-white/10">
+          <main className="flex-1 relative overflow-hidden flex flex-col border-r border-slate-200 bg-white">
             {/* Subtle grid background for tech feel */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
             
             <div className="relative z-10 flex-1 h-full">
               {children}
@@ -211,83 +164,76 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </main>
 
           {/* SAĞ MENÜ: Sovereign HUD (Canlı Metrik Radarı) */}
-          <aside className="w-[280px] bg-[#030303] flex flex-col shrink-0 z-20 overflow-y-auto custom-scrollbar">
+          <aside className="w-[280px] bg-slate-50 flex flex-col shrink-0 z-20 overflow-y-auto custom-scrollbar border-l border-slate-200">
             
             {/* HUD Başlık */}
-            <div className="px-4 py-3 border-b border-white/10 bg-black/50">
-              <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-zinc-500">SİSTEM RADARI</span>
+            <div className="px-5 py-3 border-b border-slate-200 bg-white">
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">SİSTEM RADARI</span>
             </div>
 
-            <div className="p-4 space-y-6">
+            <div className="p-5 space-y-8">
               
               {/* Sistem Yükü */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">Sistem Yükü</span>
-                  <span className="text-[10px] font-mono text-emerald-500">Normal</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bellek Yükü</span>
+                  <span className={`text-xs font-bold ${radarData?.cpu > 300 ? 'text-amber-600' : 'text-emerald-600'}`}>{radarData?.cpu > 300 ? 'Yoğun' : 'Normal'}</span>
                 </div>
-                <div className="flex gap-1 h-8 items-end">
+                <div className="flex gap-1 h-10 items-end">
                   {[...Array(12)].map((_, i) => {
-                    const h = Math.random() * 60 + 20; // 20% to 80%
+                    const h = Math.random() * (radarData?.cpu ? (radarData.cpu / 5) : 60) + 10;
                     return (
-                      <div key={i} className="flex-1 bg-emerald-500/20 rounded-t-sm overflow-hidden flex items-end">
-                        <div className="w-full bg-emerald-500 transition-all duration-1000" style={{ height: `${h}%` }} />
+                      <div key={i} className="flex-1 bg-slate-200 rounded-t-sm overflow-hidden flex items-end">
+                        <div className={`w-full ${radarData?.cpu > 300 ? 'bg-amber-400' : 'bg-emerald-400'} transition-all duration-1000`} style={{ height: `${Math.min(100, h)}%` }} />
                       </div>
                     )
                   })}
                 </div>
-                <div className="flex justify-between text-[8px] font-mono text-zinc-500">
-                  <span>API: 12ms</span>
-                  <span>CPU: %14</span>
+                <div className="flex justify-between text-xs font-mono font-medium text-slate-500">
+                  <span>Ping: {radarData?.apiLatency || 12}ms</span>
+                  <span>RAM: {radarData?.cpu || 140} MB</span>
                 </div>
               </div>
 
               {/* Ajan Sağlığı */}
               <div className="space-y-3">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-2">Ajan Ekosistemi</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-3">Ajan Ekosistemi</span>
                 
-                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] uppercase font-mono text-zinc-300">ALOHA MASTER</span>
+                {radarData?.agentHealth ? radarData.agentHealth.map((agent: any) => (
+                  <div key={agent.id} className="bg-white border border-slate-200 p-3 rounded-md shadow-sm flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full bg-${agent.color}-500 ${agent.status === 'AKTİF' || agent.status === 'İŞLİYOR' || agent.status === 'HATA YAKALANDI' ? 'animate-pulse' : ''}`} />
+                      <span className="text-xs font-bold text-slate-700">{agent.name}</span>
+                    </div>
+                    <span className={`text-[10px] font-bold uppercase tracking-wide text-${agent.color}-600`}>{agent.status}</span>
                   </div>
-                  <span className="text-[9px] text-emerald-500">AKTİF</span>
-                </div>
-                
-                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span className="text-[10px] uppercase font-mono text-zinc-300">PERDE TASARIM</span>
-                  </div>
-                  <span className="text-[9px] text-blue-500">BEKLEMEDE</span>
-                </div>
-
-                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-[10px] uppercase font-mono text-zinc-300">TRTEX HABER</span>
-                  </div>
-                  <span className="text-[9px] text-red-500">HATA YAKALANDI</span>
-                </div>
+                )) : (
+                  <div className="text-xs font-medium text-slate-400">Veri Bekleniyor...</div>
+                )}
               </div>
 
               {/* Canlı Kredi Burn */}
-              <div className="space-y-2">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-1">Cüzdan / Kredi Tüketimi</span>
-                <div className="text-2xl font-mono font-bold text-white">$1,240<span className="text-sm text-zinc-500">.50</span></div>
-                <div className="flex items-center gap-2 text-[10px] font-mono text-red-400">
+              <div className="space-y-2 bg-white border border-slate-200 p-4 rounded-md shadow-sm">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">Kredi Tüketimi</span>
+                <div className="text-2xl font-mono font-bold text-slate-900">${(radarData?.totalCreditsSpent || 0).toLocaleString('en-US')}<span className="text-sm text-slate-400">.00</span></div>
+                <div className="flex items-center gap-2 text-xs font-medium text-emerald-600 mt-1">
                   <span>↑</span>
-                  <span>Son 1 saatte $4.20 harcandı</span>
+                  <span>Aktif API Havuzu</span>
                 </div>
               </div>
 
               {/* Aktif Görevler (Mini Log) */}
-              <div className="space-y-2">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-2">Kuyruktaki Görevler</span>
-                <div className="space-y-1 font-mono text-[9px] text-zinc-500">
-                  <div className="flex gap-2"><span className="text-blue-500">●</span> <span>Hometex data kazıması</span></div>
-                  <div className="flex gap-2"><span className="text-blue-500">●</span> <span>Ürün 3D render işlemi</span></div>
-                  <div className="flex gap-2"><span className="text-emerald-500">✔</span> <span>Kredi kartı tahsilatı</span></div>
+              <div className="space-y-3">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Kuyruktaki Görevler</span>
+                <div className="space-y-2 text-xs font-medium text-slate-600">
+                  {radarData?.activeTasks && radarData.activeTasks.length > 0 ? radarData.activeTasks.map((task: any, i: number) => (
+                    <div key={i} className="flex gap-2 items-start">
+                      <span className={`text-${task.color}-500 text-sm leading-none mt-0.5`}>{task.status === 'completed' ? '✔' : '●'}</span> 
+                      <span>{task.task}</span>
+                    </div>
+                  )) : (
+                     <div className="flex gap-2 items-center text-slate-400 italic"><span className="text-slate-300">-</span> <span>Sistem Boşta</span></div>
+                  )}
                 </div>
               </div>
 

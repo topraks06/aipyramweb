@@ -434,7 +434,7 @@ export default function AlohaControl() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Badge className={`rounded-none text-[9px] font-black uppercase ${
-                            proposal.impact === 'high' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'
+                            proposal.impact === 'high' ? 'bg-red-500 text-slate-900' : 'bg-amber-500 text-slate-900'
                           }`}>
                             {proposal.impact}
                           </Badge>
@@ -452,7 +452,7 @@ export default function AlohaControl() {
                       <div className="flex flex-col gap-1.5 flex-shrink-0">
                         <Button
                           size="sm"
-                          className="rounded-none h-8 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
+                          className="rounded-none h-8 px-3 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-black text-[10px] uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"
                           onClick={() => handleTechProposal(proposal.id, 'approve')}
                         >
                           <CheckCircle className="h-3 w-3 mr-1" /> ONAYLA
@@ -524,7 +524,7 @@ export default function AlohaControl() {
           />
           
           {streamLogs.length > 0 && (
-            <div className="bg-black text-green-500 font-mono text-xs p-4 rounded-none border border-green-500/30 w-full h-[250px] overflow-y-auto flex flex-col gap-1 shadow-inner custom-scrollbar">
+            <div className="bg-white text-green-500 font-mono text-xs p-4 rounded-none border border-green-500/30 w-full h-[250px] overflow-y-auto flex flex-col gap-1 shadow-inner custom-scrollbar">
               <div className="flex items-center gap-2 mb-2 text-green-400 border-b border-green-500/30 pb-2">
                 <Activity className="h-4 w-4 animate-pulse" />
                 <span className="uppercase font-bold tracking-wider">Ajan Operasyon Logları (Canlı)</span>
@@ -534,13 +534,13 @@ export default function AlohaControl() {
                 // SSE Log Seviyesi Renklendirmesi
                 let logColor = "text-green-400"; // default: info
                 if (log.includes("🟥") || log.includes("[HATA]") || log.includes("❌") || log.includes("[KRİTİK")) {
-                  logColor = "text-red-400"; // error
+                  logColor = "text-red-600"; // error
                 } else if (log.includes("⚠") || log.includes("[UYARI]") || log.includes("🔧")) {
                   logColor = "text-amber-400"; // warn
                 } else if (log.includes("✅") || log.includes("🟩") || log.includes("[BAŞARILI]")) {
-                  logColor = "text-emerald-400"; // success
+                  logColor = "text-emerald-600"; // success
                 } else if (log.includes("⚡") || log.includes("━━")) {
-                  logColor = "text-blue-400"; // status
+                  logColor = "text-blue-600"; // status
                 }
                 return (
                   <div key={idx} className="flex gap-2 animate-in fade-in slide-in-from-bottom-2">

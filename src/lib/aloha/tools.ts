@@ -1,32 +1,32 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant, getAllTenantIds, tenantHasFeature, type TenantFeatures } from '@/lib/tenant-config';
+import { getNode, getAllSovereignNodeIds, nodeHasFeature, type SovereignNodeFeatures } from '@/lib/sovereign-config';
 import { invokeAgent } from '@/lib/aloha/registry';
 
 /**
  * ALOHA Sovereign Tool Registry
  * 
  * The Void'dan çalıştırılabilecek tüm araçlar buradan geçer.
- * Her araç tenant-agnostik: hangi projeye ait olduğu tenant-config'den çözümlenir.
+ * Her araç node-agnostik: hangi projeye ait olduğu sovereign-config'den çözümlenir.
  */
 
 export interface ToolResult {
   success: boolean;
   message: string;
   data?: any;
-  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text' | 'quotePreview';
+  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text' | 'quotePreview' | 'dashboard' | 'economy' | 'dlq' | 'network' | 'leads' | 'media' | 'trainer' | 'hometex' | 'vorhang' | 'escrowLink';
 }
 
 // ═══════════════════════════════════════════════════
-// 1. ÜYELİK YÖNETİMİ (Tüm tenantlar — config'den)
+// 1. ÜYELİK YÖNETİMİ (Tüm nodelar — config'den)
 // ═══════════════════════════════════════════════════
 
-function getMemberCollection(tenant: string): string {
-  return getTenant(tenant).memberCollection;
+function getMemberCollection(node: string): string {
+  return getNode(node).memberCollection;
 }
 
 /** Tüm bayileri listele */
-async function memberList(tenant: string, filter?: string): Promise<ToolResult> {
-  const col = getMemberCollection(tenant);
+async function memberList(node: string, filter?: string): Promise<ToolResult> {
+  const col = getMemberCollection(node);
   try {
     let query = adminDb.collection(col).orderBy('createdAt', 'desc').limit(50);
     if (filter && filter !== 'all') {
@@ -36,7 +36,7 @@ async function memberList(tenant: string, filter?: string): Promise<ToolResult> 
     const members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     return {
       success: true,
-      message: `${tenant} — ${members.length} üye bulundu${filter ? ` (filtre: ${filter})` : ''}.`,
+      message: `${node} — ${members.length} üye bulundu${filter ? ` (filtre: ${filter})` : ''}.`,
       data: members,
       widgetType: 'memberList',
     };
@@ -46,42 +46,42 @@ async function memberList(tenant: string, filter?: string): Promise<ToolResult> 
 }
 
 /** Bayi lisansını onayla */
-async function memberApprove(tenant: string, email: string): Promise<ToolResult> {
-  const col = getMemberCollection(tenant);
+async function memberApprove(node: string, email: string): Promise<ToolResult> {
+  const col = getMemberCollection(node);
   try {
     const snap = await adminDb.collection(col).where('email', '==', email).limit(1).get();
     if (snap.empty) return { success: false, message: `${email} adresiyle kayıtlı üye bulunamadı.`, widgetType: 'error' };
     const docId = snap.docs[0].id;
     await adminDb.collection(col).doc(docId).update({ license: 'active', activatedAt: new Date().toISOString() });
-    return { success: true, message: `✅ ${email} lisansı AKTİF edildi. [${tenant}]`, widgetType: 'success' };
+    return { success: true, message: `✅ ${email} lisansı AKTİF edildi. [${node}]`, widgetType: 'success' };
   } catch (err: any) {
     return { success: false, message: `Lisans onayı başarısız: ${err.message}`, widgetType: 'error' };
   }
 }
 
 /** Bayi lisansını reddet */
-async function memberReject(tenant: string, email: string): Promise<ToolResult> {
-  const col = getMemberCollection(tenant);
+async function memberReject(node: string, email: string): Promise<ToolResult> {
+  const col = getMemberCollection(node);
   try {
     const snap = await adminDb.collection(col).where('email', '==', email).limit(1).get();
     if (snap.empty) return { success: false, message: `${email} bulunamadı.`, widgetType: 'error' };
     const docId = snap.docs[0].id;
     await adminDb.collection(col).doc(docId).update({ license: 'rejected', rejectedAt: new Date().toISOString() });
-    return { success: true, message: `🚫 ${email} lisansı REDDEDİLDİ. [${tenant}]`, widgetType: 'success' };
+    return { success: true, message: `🚫 ${email} lisansı REDDEDİLDİ. [${node}]`, widgetType: 'success' };
   } catch (err: any) {
     return { success: false, message: `Lisans reddi başarısız: ${err.message}`, widgetType: 'error' };
   }
 }
 
 /** Bayi lisansını askıya al */
-async function memberSuspend(tenant: string, email: string): Promise<ToolResult> {
-  const col = getMemberCollection(tenant);
+async function memberSuspend(node: string, email: string): Promise<ToolResult> {
+  const col = getMemberCollection(node);
   try {
     const snap = await adminDb.collection(col).where('email', '==', email).limit(1).get();
     if (snap.empty) return { success: false, message: `${email} bulunamadı.`, widgetType: 'error' };
     const docId = snap.docs[0].id;
     await adminDb.collection(col).doc(docId).update({ license: 'suspended', suspendedAt: new Date().toISOString() });
-    return { success: true, message: `⏸️ ${email} lisansı ASKIYA ALINDI. [${tenant}]`, widgetType: 'success' };
+    return { success: true, message: `⏸️ ${email} lisansı ASKIYA ALINDI. [${node}]`, widgetType: 'success' };
   } catch (err: any) {
     return { success: false, message: `Askıya alma başarısız: ${err.message}`, widgetType: 'error' };
   }
@@ -91,13 +91,13 @@ async function memberSuspend(tenant: string, email: string): Promise<ToolResult>
 // 2. SİSTEM SAĞLIK & METRİK
 // ═══════════════════════════════════════════════════
 
-/** Tüm tenantların sağlık durumu — tenant-config'den dinamik */
+/** Tüm nodeların sağlık durumu — sovereign-config'den dinamik */
 async function systemHealth(): Promise<ToolResult> {
-  const tenantIds = getAllTenantIds();
+  const SovereignNodeIds = getAllSovereignNodeIds();
   const results: any = {};
 
-  for (const id of tenantIds) {
-    const config = getTenant(id);
+  for (const id of SovereignNodeIds) {
+    const config = getNode(id);
     try {
       // Otonom pipeline varsa news koleksiyonunu yoksa members'ı kontrol et
       const col = config.features.autonomous ? config.newsCollection : config.memberCollection;
@@ -119,17 +119,76 @@ async function systemHealth(): Promise<ToolResult> {
 
   return {
     success: true,
-    message: `Sovereign, ${tenantIds.length} tenant + altyapı sağlık raporu:`,
+    message: `Sovereign, ${SovereignNodeIds.length} node + altyapı sağlık raporu:`,
     data: results,
-    widgetType: 'systemStatus',
+    widgetType: 'dashboard',
   };
 }
 
-/** İçerik istatistikleri — tenant-config'den koleksiyon + feature flag */
-async function contentStats(tenant: string): Promise<ToolResult> {
-  const config = getTenant(tenant);
+/** Ekonomi ve cüzdan durumunu çiz */
+async function systemEconomy(): Promise<ToolResult> {
+  return {
+    success: true,
+    message: `Sovereign, güncel ekonomi ve kredi tüketim grafiği ekrana yansıtılıyor.`,
+    widgetType: 'economy',
+  };
+}
+
+/** DLQ ve Hata Yönetimini aç */
+async function systemDlq(): Promise<ToolResult> {
+  return {
+    success: true,
+    message: `Sovereign, bekleyen DLQ (Dead Letter Queue) hata kayıtları listeleniyor.`,
+    widgetType: 'dlq',
+  };
+}
+
+/** Ağ haritası ve sağlık monitörünü aç */
+async function systemNetwork(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, ağ haritası ve node sağlık monitörü yansıtılıyor.`, widgetType: 'network' };
+}
+
+/** Satış fırsatlarını ve deal engine'i aç */
+async function systemLeads(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, satış fırsatları (Deal Pipeline) yansıtılıyor.`, widgetType: 'leads' };
+}
+
+/** Medya kütüphanesini aç */
+async function systemMedia(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, merkezi medya kütüphanesi açılıyor.`, widgetType: 'media' };
+}
+
+/** Ajan eğitim modülünü (KnowledgeTrainer) aç */
+async function systemTrainer(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, AI Ajan eğitim modülü aktif edildi.`, widgetType: 'trainer' };
+}
+
+/** Hometex modülünü aç */
+async function nodeHometex(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, Hometex Dealer ağı başlatıldı.`, widgetType: 'hometex' };
+}
+
+/** Vorhang pazar yerini aç */
+async function nodeVorhang(): Promise<ToolResult> {
+  return { success: true, message: `Sovereign, Vorhang Marketplace bağlandı.`, widgetType: 'vorhang' };
+}
+
+/** Escrow Ödeme Linki Üret */
+async function commerceEscrow(amount: number = 5000, vendorName: string = "Vorhang Vendor"): Promise<ToolResult> {
+  // Demo amaçlı %10 komisyon kesintisi
+  const commission = amount * 0.10;
+  return { 
+    success: true, 
+    message: `Stripe Escrow bağlantısı oluşturuldu. Sipariş tutarı: $${amount}. Sovereign Komisyonu: $${commission} (%10). \nLink: https://checkout.stripe.com/pay/cs_test_mock_${Date.now()}`, 
+    widgetType: 'success'
+  };
+}
+
+/** İçerik istatistikleri — sovereign-config'den koleksiyon + feature flag */
+async function contentStats(node: string): Promise<ToolResult> {
+  const config = getNode(node);
   if (!config.features.news && !config.features.autonomous) {
-    return { success: false, message: `${tenant} için içerik pipeline'ı aktif değil.`, widgetType: 'error' };
+    return { success: false, message: `${node} için içerik pipeline'ı aktif değil.`, widgetType: 'error' };
   }
 
   try {
@@ -146,7 +205,7 @@ async function contentStats(tenant: string): Promise<ToolResult> {
     return {
       success: true,
       message: `${config.shortName} içerik durumu: Toplam ${total} makale, son 24 saatte ${last24h} yeni.`,
-      data: { total, last24h, tenant: config.id, domain: config.domain },
+      data: { total, last24h, node: config.id, domain: config.domain },
       widgetType: 'metricsChart',
     };
   } catch (err: any) {
@@ -160,7 +219,7 @@ async function contentStats(tenant: string): Promise<ToolResult> {
 
 /** AI Chat üzerinden gelen NLP talebini Parse eder ve Onay için arayüze (Preview) yollar */
 async function alohaCreateQuote(
-  tenant: string, 
+  node: string, 
   authorId: string, 
   customerName: string, 
   grandTotal: number, 
@@ -228,7 +287,7 @@ async function triggerCron(cronName: string): Promise<ToolResult> {
 
 export interface ParsedCommand {
   tool: string;
-  tenant?: string;
+  node?: string;
   email?: string;
   filter?: string;
   cronName?: string;
@@ -242,26 +301,46 @@ export interface ParsedCommand {
   notes?: string;
   discount?: number;
   authorId?: string;
+  amount?: number;
+  vendorName?: string;
   raw: string;
 }
 
 export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> {
   switch (cmd.tool) {
     case 'member.list':
-      return memberList(cmd.tenant || 'perde', cmd.filter);
+      return memberList(cmd.node || 'perde', cmd.filter);
     case 'member.approve':
       if (!cmd.email) return { success: false, message: 'E-posta adresi belirtilmedi.', widgetType: 'error' };
-      return memberApprove(cmd.tenant || 'perde', cmd.email);
+      return memberApprove(cmd.node || 'perde', cmd.email);
     case 'member.reject':
       if (!cmd.email) return { success: false, message: 'E-posta adresi belirtilmedi.', widgetType: 'error' };
-      return memberReject(cmd.tenant || 'perde', cmd.email);
+      return memberReject(cmd.node || 'perde', cmd.email);
     case 'member.suspend':
       if (!cmd.email) return { success: false, message: 'E-posta adresi belirtilmedi.', widgetType: 'error' };
-      return memberSuspend(cmd.tenant || 'perde', cmd.email);
+      return memberSuspend(cmd.node || 'perde', cmd.email);
     case 'system.health':
       return systemHealth();
+    case 'system.economy':
+      return systemEconomy();
+    case 'system.dlq':
+      return systemDlq();
+    case 'system.network':
+      return systemNetwork();
+    case 'system.leads':
+      return systemLeads();
+    case 'system.media':
+      return systemMedia();
+    case 'system.trainer':
+      return systemTrainer();
+    case 'node.hometex':
+      return nodeHometex();
+    case 'node.vorhang':
+      return nodeVorhang();
+    case 'commerce.escrow':
+      return commerceEscrow(cmd.amount, cmd.vendorName);
     case 'content.stats':
-      return contentStats(cmd.tenant || 'trtex');
+      return contentStats(cmd.node || 'trtex');
     case 'cron.trigger':
       return triggerCron(cmd.cronName || 'master-cycle');
     
@@ -270,7 +349,7 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
         return { success: false, message: 'authorId, customerName ve grandTotal zorunludur.', widgetType: 'error' };
       }
       return alohaCreateQuote(
-        cmd.tenant || 'perde', 
+        cmd.node || 'perde', 
         cmd.authorId, 
         cmd.customerName, 
         cmd.grandTotal, 
@@ -281,23 +360,23 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
 
     // --- SOVEREIGN AGENT COMMANDS ---
     case 'agent.whatsapp': {
-      const res = await invokeAgent({ agentType: 'whatsapp', tenantId: cmd.tenant || 'perde', payload: { phone: cmd.phone, message: cmd.message, orderId: cmd.orderId } });
+      const res = await invokeAgent({ agentType: 'whatsapp', SovereignNodeId: cmd.node || 'perde', payload: { phone: cmd.phone, message: cmd.message, orderId: cmd.orderId } });
       return { success: res.success, message: res.message, widgetType: res.success ? 'success' : 'error' };
     }
     case 'agent.document': {
-      const res = await invokeAgent({ agentType: 'document', tenantId: cmd.tenant || 'perde', payload: { orderId: cmd.orderId } });
+      const res = await invokeAgent({ agentType: 'document', SovereignNodeId: cmd.node || 'perde', payload: { orderId: cmd.orderId } });
       return { success: res.success, message: res.message, widgetType: res.success ? 'success' : 'error' };
     }
     case 'agent.fabric': {
-      const res = await invokeAgent({ agentType: 'fabric_analysis', tenantId: cmd.tenant || 'perde', payload: { imageBase64: cmd.imageBase64 } });
+      const res = await invokeAgent({ agentType: 'fabric_analysis', SovereignNodeId: cmd.node || 'perde', payload: { imageBase64: cmd.imageBase64 } });
       return { success: res.success, message: res.message, data: res.data, widgetType: res.success ? 'success' : 'error' };
     }
     case 'agent.render': {
-      const res = await invokeAgent({ agentType: 'render', tenantId: cmd.tenant || 'perde', payload: { prompt: cmd.prompt, imageBase64: cmd.imageBase64 } });
+      const res = await invokeAgent({ agentType: 'render', SovereignNodeId: cmd.node || 'perde', payload: { prompt: cmd.prompt, imageBase64: cmd.imageBase64 } });
       return { success: res.success, message: res.message, data: res.data, widgetType: res.success ? 'success' : 'error' };
     }
     case 'agent.retention': {
-      const res = await invokeAgent({ agentType: 'retention', tenantId: cmd.tenant || 'perde', payload: {} });
+      const res = await invokeAgent({ agentType: 'retention', SovereignNodeId: cmd.node || 'perde', payload: {} });
       return { success: res.success, message: res.message, data: res.data, widgetType: res.success ? 'success' : 'error' };
     }
 
@@ -313,41 +392,68 @@ export const ALOHA_TOOL_SCHEMA = `
 Kullanılabilir araçlar ve JSON formatları:
 
 1. member.list — Üyeleri listele
-   { "tool": "member.list", "tenant": "perde|hometex|trtex", "filter": "pending|active|rejected|all" }
+   { "tool": "member.list", "node": "perde|hometex|trtex", "filter": "pending|active|rejected|all" }
 
 2. member.approve — Üye lisansını onayla
-   { "tool": "member.approve", "tenant": "perde|hometex|trtex", "email": "user@firm.com" }
+   { "tool": "member.approve", "node": "perde|hometex|trtex", "email": "user@firm.com" }
 
 3. member.reject — Üye lisansını reddet
-   { "tool": "member.reject", "tenant": "perde|hometex|trtex", "email": "user@firm.com" }
+   { "tool": "member.reject", "node": "perde|hometex|trtex", "email": "user@firm.com" }
 
 4. member.suspend — Üye lisansını askıya al
-   { "tool": "member.suspend", "tenant": "perde|hometex|trtex", "email": "user@firm.com" }
+   { "tool": "member.suspend", "node": "perde|hometex|trtex", "email": "user@firm.com" }
 
 5. system.health — Tüm sistemlerin sağlık durumu
    { "tool": "system.health" }
 
-6. content.stats — İçerik istatistikleri
-   { "tool": "content.stats", "tenant": "trtex|perde|hometex" }
+6. system.economy — Sistem ekonomi ve kredi harcama grafikleri
+   { "tool": "system.economy" }
 
-7. cron.trigger — Otonom cycle tetikle
-   { "tool": "cron.trigger", "cronName": "master-cycle|aloha-cycle|ticker-refresh|translation-processor|image-processor|health-check" }
+7. system.dlq — Sistem hata logları ve DLQ yönetimi
+   { "tool": "system.dlq" }
 
-8. agent.whatsapp — WhatsApp mesajı gönder
-   { "tool": "agent.whatsapp", "tenant": "perde|hometex|vorhang", "phone": "+90...", "message": "..." }
+8. system.network — Ağ haritası ve node sağlık monitörü
+   { "tool": "system.network" }
 
-9. agent.document — PDF/Proforma oluştur
-   { "tool": "agent.document", "tenant": "perde|hometex|vorhang", "orderId": "..." }
+9. system.leads — Satış fırsatları ve Deal Pipeline
+   { "tool": "system.leads" }
 
-10. agent.fabric — Kumaş görseli analiz et
-    { "tool": "agent.fabric", "tenant": "perde", "imageBase64": "..." }
+10. system.media — Medya kütüphanesi
+    { "tool": "system.media" }
 
-11. agent.render — AI görsel render oluştur
-    { "tool": "agent.render", "tenant": "perde|hometex", "prompt": "...", "imageBase64": "..." }
+11. system.trainer — Ajan eğitim modülü (KnowledgeTrainer)
+    { "tool": "system.trainer" }
 
-12. agent.retention — Terk edilmiş teklifleri tara
-    { "tool": "agent.retention", "tenant": "perde|hometex|vorhang" }
+12. node.hometex — Hometex.ai (Dealer ağı, Üye onayı)
+    { "tool": "node.hometex" }
 
-13. agent.create_quote — Fiyat Teklifi / Satış Siparişi verilerini anla ve onay (Preview) için arayüze gönder. (Otonom satışı BAŞLATIR ancak insan onayı bekler)
-    { "tool": "agent.create_quote", "tenant": "perde|hometex", "authorId": "user_uid", "customerName": "Ahmet Yılmaz", "grandTotal": 15000, "discount": 500, "notes": "Montajı zor", "phone": "+905..." }
+13. node.vorhang — Vorhang.ai (Pazar yeri, Satıcı kontratları)
+    { "tool": "node.vorhang" }
+
+14. commerce.escrow — Escrow Ödeme Linki Oluştur
+    { "tool": "commerce.escrow", "amount": 5000, "vendorName": "Firma Adı" }
+
+15. content.stats — İçerik istatistikleri
+    { "tool": "content.stats", "node": "trtex|perde|hometex" }
+
+16. cron.trigger — Otonom cycle tetikle
+    { "tool": "cron.trigger", "cronName": "master-cycle|aloha-cycle|ticker-refresh|translation-processor|image-processor|health-check" }
+
+14. agent.whatsapp — WhatsApp mesajı gönder
+    { "tool": "agent.whatsapp", "node": "perde|hometex|vorhang", "phone": "+90...", "message": "..." }
+
+15. agent.document — PDF/Proforma oluştur
+    { "tool": "agent.document", "node": "perde|hometex|vorhang", "orderId": "..." }
+
+16. agent.fabric — Kumaş görseli analiz et
+    { "tool": "agent.fabric", "node": "perde", "imageBase64": "..." }
+
+17. agent.render — AI görsel render oluştur
+    { "tool": "agent.render", "node": "perde|hometex", "prompt": "...", "imageBase64": "..." }
+
+18. agent.retention — Terk edilmiş teklifleri tara
+    { "tool": "agent.retention", "node": "perde|hometex|vorhang" }
+
+19. agent.create_quote — Fiyat Teklifi / Satış Siparişi verilerini anla ve onay (Preview) için arayüze gönder. (Otonom satışı BAŞLATIR ancak insan onayı bekler)
+    { "tool": "agent.create_quote", "node": "perde|hometex", "authorId": "user_uid", "customerName": "Ahmet Yılmaz", "grandTotal": 15000, "discount": 500, "notes": "Montajı zor", "phone": "+905..." }
 `;

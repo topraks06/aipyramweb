@@ -36,8 +36,8 @@ export async function handleSynapseSignal(signal: Omit<NexusSignal, 'id' | 'time
     await ecosystemBus.emit({
       id: newSignal.id,
       type: mappedType,
-      source_tenant: mappedSource,
-      target_tenant: 'all',
+      source_node: mappedSource,
+      target_node: 'all',
       payload: newSignal.payload,
       priority: 'high',
       timestamp: newSignal.timestamp

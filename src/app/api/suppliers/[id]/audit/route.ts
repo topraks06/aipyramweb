@@ -39,7 +39,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     // trust_scores koleksiyonuna kayıt at
     const trustRecord = {
-      tenant_id: supplier?.tenant_id || "aipyram-core",
+      node_id: supplier?.node_id || "aipyram-core",
       supplierId: id,
       score: resultData.trustScore,
       explanation: resultData.explanation || "Agent Explanation Unavailable.",
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { recordMemory } = await import("@/core/memory/knowledgeFlywheel");
     await recordMemory({
-      tenant_id: supplier?.tenant_id || "aipyram-core",
+      node_id: supplier?.node_id || "aipyram-core",
       source: "Supplier_Audit",
       text: `Supplier ${supplier?.companyName} scored ${resultData.trustScore}. Reason: ${resultData.explanation}`,
       agentId: "AUDITOR"

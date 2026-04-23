@@ -51,7 +51,7 @@ export default function DataIntegrityShield() {
         <div className="space-y-8 animate-fade-in">
             {/* Shield Status Hero */}
             <div className={`relative border-4 ${shieldActive ? "border-emerald-500/50" : "border-red-500/50"} bg-background p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-colors duration-500`}>
-                <div className={`absolute -top-4 -left-4 ${shieldActive ? "bg-emerald-500" : "bg-red-500"} text-white px-4 py-1 font-black uppercase text-xs tracking-widest transition-colors duration-500`}>
+                <div className={`absolute -top-4 -left-4 ${shieldActive ? "bg-emerald-500" : "bg-red-500"} text-slate-900 px-4 py-1 font-black uppercase text-xs tracking-widest transition-colors duration-500`}>
                     HALÜSINASYON KALKANI
                 </div>
 

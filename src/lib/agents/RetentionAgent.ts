@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 import { sendMessage, enrichOrderMessage } from './WhatsAppAgent';
 
 export interface AbandonedQuote {
@@ -16,10 +16,10 @@ export interface AbandonedQuote {
  * Retention Agent — Terk edilmiş teklifleri takip eder.
  * 48 saat içinde onaylanmamış teklifleri bulur ve WhatsApp takip mesajı hazırlar.
  */
-export async function checkAbandonedQuotes(tenantId: string): Promise<AbandonedQuote[]> {
-  console.log(`[RetentionAgent] ${tenantId} için terk edilmiş siparişler taranıyor...`);
+export async function checkAbandonedQuotes(SovereignNodeId: string): Promise<AbandonedQuote[]> {
+  console.log(`[RetentionAgent] ${SovereignNodeId} için terk edilmiş siparişler taranıyor...`);
   
-  const config = getTenant(tenantId);
+  const config = getNode(SovereignNodeId);
   const now = new Date();
   // 48 hours ago
   const twoDaysAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
@@ -33,11 +33,11 @@ export async function checkAbandonedQuotes(tenantId: string): Promise<AbandonedQ
       .get();
       
     const abandoned: AbandonedQuote[] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as AbandonedQuote));
-    console.log(`[RetentionAgent] ${tenantId} -> ${abandoned.length} adet terk edilmiş teklif bulundu.`);
+    console.log(`[RetentionAgent] ${SovereignNodeId} -> ${abandoned.length} adet terk edilmiş teklif bulundu.`);
     
     return abandoned;
   } catch (error) {
-    console.error(`[RetentionAgent] Hata (${tenantId}):`, error);
+    console.error(`[RetentionAgent] Hata (${SovereignNodeId}):`, error);
     return [];
   }
 }
@@ -46,10 +46,10 @@ export async function checkAbandonedQuotes(tenantId: string): Promise<AbandonedQ
  * Terk edilmiş teklifler için otomatik takip aksiyonu başlatır.
  * Her terk edilmiş teklif için WhatsApp taslak linki oluşturur.
  */
-export async function triggerFollowUp(tenantId: string): Promise<{ processed: number; results: any[] }> {
-  console.log(`[RetentionAgent] ${tenantId} için otomatik takip başlatılıyor...`);
+export async function triggerFollowUp(SovereignNodeId: string): Promise<{ processed: number; results: any[] }> {
+  console.log(`[RetentionAgent] ${SovereignNodeId} için otomatik takip başlatılıyor...`);
   
-  const abandoned = await checkAbandonedQuotes(tenantId);
+  const abandoned = await checkAbandonedQuotes(SovereignNodeId);
   const results: any[] = [];
 
   for (const quote of abandoned) {
@@ -67,11 +67,11 @@ export async function triggerFollowUp(tenantId: string): Promise<{ processed: nu
         `AIPyram B2B Takip Sistemi`
       ].join('\n');
 
-      const waResult = await sendMessage(tenantId, quote.customerPhone, followUpMessage, quote.id);
+      const waResult = await sendMessage(SovereignNodeId, quote.customerPhone, followUpMessage, quote.id);
       
       // Mark as follow-up sent
       try {
-        await adminDb.collection(getTenant(tenantId).projectCollection).doc(quote.id).update({
+        await adminDb.collection(getNode(SovereignNodeId).projectCollection).doc(quote.id).update({
           retentionFollowUpSentAt: new Date().toISOString(),
           retentionFollowUpLink: waResult.waLink
         });
@@ -83,6 +83,6 @@ export async function triggerFollowUp(tenantId: string): Promise<{ processed: nu
     }
   }
 
-  console.log(`[RetentionAgent] ${tenantId} -> ${results.length} teklif işlendi.`);
+  console.log(`[RetentionAgent] ${SovereignNodeId} -> ${results.length} teklif işlendi.`);
   return { processed: results.length, results };
 }

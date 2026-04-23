@@ -135,7 +135,7 @@ export default function DomainHealthMonitor() {
                                 {d.responseTime !== null && (
                                     <div className="flex items-center gap-1">
                                         <Clock className="h-3 w-3 text-muted-foreground" />
-                                        <span className={`text-[10px] font-mono font-bold ${d.responseTime < 1000 ? 'text-emerald-600 dark:text-emerald-400' :
+                                        <span className={`text-[10px] font-mono font-bold ${d.responseTime < 1000 ? 'text-emerald-600 dark:text-emerald-600' :
                                             d.responseTime < 3000 ? 'text-amber-600 dark:text-amber-400' :
                                                 'text-destructive'
                                             }`}>
@@ -144,7 +144,7 @@ export default function DomainHealthMonitor() {
                                     </div>
                                 )}
                                 <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${d.status === "online"
-                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-600"
                                     : d.status === "offline"
                                         ? "bg-destructive/10 text-destructive"
                                         : "bg-muted text-muted-foreground"

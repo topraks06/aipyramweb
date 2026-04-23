@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { getAllTenantIds, getTenant } from '@/lib/tenant-config';
+import { getAllSovereignNodeIds, getNode } from '@/lib/sovereign-config';
 import { Activity, AlertTriangle, Cpu, Wifi, WifiOff, RefreshCw, Clock } from 'lucide-react';
 
 interface ServiceHealth {
@@ -18,7 +18,7 @@ interface HealthData {
 /**
  * ALOHA Admin — Canlı Sağlık Kartları
  * /api/health/deep endpoint'inden veri çeker.
- * Tüm tenant'lar + altyapı bileşenlerinin canlı durumunu gösterir.
+ * Tüm node'lar + altyapı bileşenlerinin canlı durumunu gösterir.
  * Auto-refresh: 30 saniyede bir.
  */
 export default function HealthCards() {
@@ -47,7 +47,7 @@ export default function HealthCards() {
     return () => clearInterval(interval);
   }, [fetchHealth]);
 
-  const tenantIds = getAllTenantIds();
+  const SovereignNodeIds = getAllSovereignNodeIds();
 
   const getStatusColor = (status: string) => {
     if (status.includes('✅') || status.includes('ALIVE') || status.includes('CONFIGURED')) return 'text-green-500';
@@ -83,9 +83,9 @@ export default function HealthCards() {
         )}
       </div>
 
-      {/* Tenant Kartları */}
-      {tenantIds.map((id) => {
-        const config = getTenant(id);
+      {/* Node Kartları */}
+      {SovereignNodeIds.map((id) => {
+        const config = getNode(id);
         return (
           <div key={id} className="border border-white/5 p-3 hover:border-white/10 transition">
             <div className="flex items-center justify-between mb-1">

@@ -14,13 +14,13 @@ export type EcosystemSignalType =
   | 'FAIR_OPPORTUNITY'       // Hometex: fuar fırsatı
   | 'PRICE_SHIFT'            // TRTEX: fiyat değişimi
   | 'VORHANG_PRODUCT_LISTED' // Vorhang: yeni ürün listelendi
-  | 'TELEPORT_INITIATED';    // Sistem: cross-tenant geçiş yapıldı
+  | 'TELEPORT_INITIATED';    // Sistem: cross-node geçiş yapıldı
 
 export interface EcosystemSignal {
   id?: string;
   type: EcosystemSignalType;
-  source_tenant: 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'master';
-  target_tenant: 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'master' | 'all';
+  source_node: 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'master';
+  target_node: 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'master' | 'all';
   payload: Record<string, any>;
   priority: 'critical' | 'high' | 'normal' | 'low';
   timestamp?: string;
@@ -28,7 +28,7 @@ export interface EcosystemSignal {
 }
 
 export interface SignalSubscription {
-  tenant: string;
+  node: string;
   signalTypes: EcosystemSignalType[];
   handler: (signal: EcosystemSignal) => Promise<void>;
 }

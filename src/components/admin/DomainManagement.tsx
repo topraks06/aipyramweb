@@ -156,7 +156,7 @@ export default function DomainManagement() {
               Otonom Varlık Kurulumu
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md bg-black border-2 border-emerald-900 rounded-none text-emerald-400">
+          <DialogContent className="sm:max-w-md bg-white border-2 border-emerald-900 rounded-none text-emerald-600">
             <DialogHeader>
               <DialogTitle className="uppercase font-black tracking-widest flex items-center">
                 <Globe className="mr-2" /> DomainMaster İmparatorluk Motoru
@@ -170,7 +170,7 @@ export default function DomainManagement() {
                 <Label htmlFor="domainName" className="text-right uppercase text-xs font-bold text-emerald-600">Domain (.ai vb)</Label>
                 <Input
                   id="domainName"
-                  className="col-span-3 rounded-none border-2 border-emerald-900 bg-emerald-950/20 text-emerald-400 focus-visible:ring-emerald-500 font-mono"
+                  className="col-span-3 rounded-none border-2 border-emerald-900 bg-emerald-950/20 text-emerald-600 focus-visible:ring-emerald-500 font-mono"
                   value={newDomain.name}
                   onChange={(e) => setNewDomain({ ...newDomain, name: e.target.value })}
                   placeholder="hometex.ai"
@@ -180,7 +180,7 @@ export default function DomainManagement() {
                 <Label htmlFor="sector" className="text-right uppercase text-xs font-bold text-emerald-600">Sektör</Label>
                 <Input
                   id="sector"
-                  className="col-span-3 rounded-none border-2 border-emerald-900 bg-emerald-950/20 text-emerald-400 focus-visible:ring-emerald-500"
+                  className="col-span-3 rounded-none border-2 border-emerald-900 bg-emerald-950/20 text-emerald-600 focus-visible:ring-emerald-500"
                   value={newDomain.sector}
                   onChange={(e) => setNewDomain({ ...newDomain, sector: e.target.value })}
                   placeholder="Ev Tekstili"
@@ -189,7 +189,7 @@ export default function DomainManagement() {
             </div>
             <Button 
                 onClick={handleAutonomousActivation} 
-                className="w-full rounded-none font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 text-white border-2 border-emerald-400"
+                className="w-full rounded-none font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 text-slate-900 border-2 border-emerald-400"
                 disabled={isActivating}
             >
               {isActivating ? "MOTOR ÇALIŞIYOR..." : "OTONOM İNŞAAT BAŞLAT"}

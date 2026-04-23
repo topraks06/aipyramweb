@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 
 export interface WhatsAppResult {
   success: boolean;
@@ -8,11 +8,11 @@ export interface WhatsAppResult {
 }
 
 /**
- * WhatsApp Agent — Tenant-agnostik mesajlaşma servisi.
+ * WhatsApp Agent — Node-agnostik mesajlaşma servisi.
  * wa.me deep URL üretir ve isteğe bağlı olarak Firestore'a loglar.
  */
-export async function sendMessage(tenantId: string, phone: string, message: string, orderId?: string): Promise<WhatsAppResult> {
-  console.log(`[WhatsAppAgent] Sinyal Alındı: ${tenantId} -> ${phone}`);
+export async function sendMessage(SovereignNodeId: string, phone: string, message: string, orderId?: string): Promise<WhatsAppResult> {
+  console.log(`[WhatsAppAgent] Sinyal Alındı: ${SovereignNodeId} -> ${phone}`);
   console.log(`[WhatsAppAgent] Mesaj: ${message}`);
   
   const cleanPhone = phone.replace(/\D/g, '');
@@ -20,14 +20,14 @@ export async function sendMessage(tenantId: string, phone: string, message: stri
 
   if (orderId) {
     try {
-      const config = getTenant(tenantId);
+      const config = getNode(SovereignNodeId);
       await adminDb.collection(config.projectCollection).doc(orderId).update({
         status: 'wa_sent',
         lastWhatsAppMessageAt: new Date().toISOString(),
         lastWhatsAppLink: waLink
       });
     } catch (e) {
-      console.error(`[WhatsAppAgent] ${tenantId} projesi güncellenemedi: ${orderId}`, e);
+      console.error(`[WhatsAppAgent] ${SovereignNodeId} projesi güncellenemedi: ${orderId}`, e);
     }
   }
 
@@ -37,8 +37,8 @@ export async function sendMessage(tenantId: string, phone: string, message: stri
 /**
  * Sipariş verisinden zengin bir WhatsApp mesajı oluşturur.
  */
-export function enrichOrderMessage(orderData: any, tenantId: string): string {
-  const config = getTenant(tenantId);
+export function enrichOrderMessage(orderData: any, SovereignNodeId: string): string {
+  const config = getNode(SovereignNodeId);
   const lines = [
     `🏢 ${config.shortName} — B2B Teklif`,
     ``,

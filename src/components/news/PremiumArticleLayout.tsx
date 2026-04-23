@@ -204,8 +204,8 @@ export default function PremiumArticleLayout({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   type: 'TELEPORT_INITIATED',
-                  source_tenant: 'trtex',
-                  target_tenant: 'perde',
+                  source_node: 'trtex',
+                  target_node: 'perde',
                   payload: { title }
                 })
               }).catch(() => {});

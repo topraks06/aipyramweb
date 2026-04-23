@@ -1,4 +1,4 @@
-import Configurator from '@/components/tenant-perde/Configurator';
+import Configurator from '@/components/node-perde/Configurator';
 import Link from 'next/link';
 
 export default async function ConfiguratorPage({ params }: { params: Promise<{ domain: string }> }) {

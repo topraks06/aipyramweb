@@ -1,7 +1,7 @@
 /**
  * ALOHA SOVEREIGN WALLET — Kredi Sistemi
  * 
- * Her tenant'ın kendi cüzdanı: {tenant}_wallets
+ * Her node'ın kendi cüzdanı: {node}_wallets
  * Tüm işlemler atomic Firestore transaction ile çalışır.
  * Double-call koruması (idempotency) dahil.
  */
@@ -33,7 +33,7 @@ export function getActionCost(action: string): number {
 // ═══════════════════════════════════════
 
 export async function checkCredits(
-  tenant: string,
+  node: string,
   uid: string,
   action: string
 ): Promise<{ allowed: boolean; remaining: number; cost: number }> {
@@ -45,7 +45,7 @@ export async function checkCredits(
   }
 
   try {
-    const walletRef = adminDb.collection(`${tenant}_wallets`).doc(uid);
+    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
     const snap = await walletRef.get();
 
     if (!snap.exists) {
@@ -54,7 +54,7 @@ export async function checkCredits(
         balance: 50,
         totalSpent: 0,
         createdAt: new Date().toISOString(),
-        tenant,
+        node,
       });
       return { allowed: true, remaining: 50, cost };
     }
@@ -72,7 +72,7 @@ export async function checkCredits(
 // ═══════════════════════════════════════
 
 export async function deductCredit(
-  tenant: string,
+  node: string,
   uid: string,
   action: string
 ): Promise<{ success: boolean; newBalance: number }> {
@@ -83,7 +83,7 @@ export async function deductCredit(
   }
 
   try {
-    const walletRef = adminDb.collection(`${tenant}_wallets`).doc(uid);
+    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
 
     const newBalance = await adminDb.runTransaction(async (txn) => {
       const snap = await txn.get(walletRef);
@@ -95,7 +95,7 @@ export async function deductCredit(
         totalSpent: (snap.data()?.totalSpent ?? 0) + cost,
         lastAction: action,
         lastActionAt: new Date().toISOString(),
-        tenant,
+        node,
       }, { merge: true });
 
       return updated;
@@ -113,7 +113,7 @@ export async function deductCredit(
 // ═══════════════════════════════════════
 
 export async function addCredit(
-  tenant: string,
+  node: string,
   uid: string,
   amount: number
 ): Promise<{ success: boolean; newBalance: number }> {
@@ -122,7 +122,7 @@ export async function addCredit(
   }
 
   try {
-    const walletRef = adminDb.collection(`${tenant}_wallets`).doc(uid);
+    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
 
     const newBalance = await adminDb.runTransaction(async (txn) => {
       const snap = await txn.get(walletRef);
@@ -132,13 +132,13 @@ export async function addCredit(
       txn.set(walletRef, {
         balance: updated,
         lastCreditAt: new Date().toISOString(),
-        tenant,
+        node,
       }, { merge: true });
 
       return updated;
     });
 
-    console.log(`[WALLET] +${amount} kredi eklendi → ${tenant}/${uid} (yeni: ${newBalance})`);
+    console.log(`[WALLET] +${amount} kredi eklendi → ${node}/${uid} (yeni: ${newBalance})`);
     return { success: true, newBalance };
   } catch (err: any) {
     console.error(`[WALLET] addCredit hatası: ${err.message}`);
@@ -151,13 +151,13 @@ export async function addCredit(
 // ═══════════════════════════════════════
 
 export async function getBalance(
-  tenant: string,
+  node: string,
   uid: string
 ): Promise<number> {
   if (!adminDb) return 0;
 
   try {
-    const snap = await adminDb.collection(`${tenant}_wallets`).doc(uid).get();
+    const snap = await adminDb.collection(`${node}_wallets`).doc(uid).get();
     return snap.exists ? (snap.data()?.balance ?? 0) : 0;
   } catch {
     return 0;

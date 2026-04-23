@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getWeeklyDigest } from "@/lib/trtex-bridge";
 import { saveMessage, getRecentContext } from "@/lib/chat-memory";
 import { ALOHA_TOOL_SCHEMA, executeAlohaTool, ParsedCommand } from "@/lib/aloha/tools";
-import { getTenant } from "@/lib/tenant-config";
+import { getNode } from "@/lib/sovereign-config";
 
 /* ═══════════════════════════════════════════════════════
    /api/chat — AIPyram Master Concierge API
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         let message = "";
         let history = [];
         let sessionId = "";
-        let tenant = "aipyram";
+        let node = "aipyram";
         let authorId = "anonymous";
 
         if (contentType.includes("multipart/form-data")) {
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
             const file = formData.get("file") as File;
             const prompt = formData.get("prompt") as string;
             sessionId = formData.get("sessionId") as string || "";
-            tenant = formData.get("tenant") as string || "aipyram";
+            node = formData.get("node") as string || "aipyram";
             authorId = formData.get("authorId") as string || "anonymous";
             // ... (keep file handling) ...
             
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
             message = jsonBody.message;
             history = jsonBody.history || [];
             sessionId = jsonBody.sessionId || "";
-            tenant = jsonBody.tenant || "aipyram";
+            node = jsonBody.node || "aipyram";
             authorId = jsonBody.authorId || "anonymous";
         }
 
@@ -239,8 +239,8 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        const config = getTenant(tenant as any);
-        let finalSystemInstruction = tenant === 'perde' ? PERDE_SYSTEM_PROMPT : AIPYRAM_SYSTEM_PROMPT;
+        const config = getNode(node as any);
+        let finalSystemInstruction = node === 'perde' ? PERDE_SYSTEM_PROMPT : AIPYRAM_SYSTEM_PROMPT;
         
         if (config.features.salesEngine) {
             finalSystemInstruction += `\n\n${ALOHA_TOOL_SCHEMA}\nEĞER YUKARIDAKİ ARAÇLARDAN BİRİ TALEBİ KARŞILIYORSA, LÜTFEN ASIL METİN YANITINIZIN SONUNA ARAÇ İÇİN BİR JSON BLOĞU (RAW FORMAT: {"tool": "..."}) EKLEYİNİZ. MÜŞTERININ GÖRMESİ İÇİN ONA BİR METİN (Örn: "Hemen hallediyorum, onaylıyor musunuz?") YAZIN VE ALTINA JSON BLOĞUNU YERLEŞTİRİN. JSON bloğunu "\`\`\`json" gibi tagler içine ALMAYIN, doğrudan bir JSON objesi yazın.`;
@@ -296,9 +296,9 @@ export async function POST(req: NextRequest) {
                     // Remove the json block from the visible text
                     finalOutput = finalOutput.replace(jsonMatch[0], "").trim();
                     
-                    // Fallback to currently active tenant/uid logic if missing
+                    // Fallback to currently active node/uid logic if missing
                     const cmd: ParsedCommand = { ...jsonObj, raw: jsonMatch[0] };
-                    if (!cmd.tenant) cmd.tenant = tenant;
+                    if (!cmd.node) cmd.node = node;
                     if (!cmd.authorId) cmd.authorId = authorId;
                     
                     const toolRes = await executeAlohaTool(cmd);

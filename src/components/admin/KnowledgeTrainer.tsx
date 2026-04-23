@@ -40,7 +40,7 @@ export default function KnowledgeTrainer() {
   };
 
   return (
-    <Card className="border-blue-900/20 bg-black/40">
+    <Card className="border-blue-900/20 bg-white/80">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-blue-500" />
@@ -51,31 +51,31 @@ export default function KnowledgeTrainer() {
       <CardContent>
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-mono text-zinc-500 mb-1">BİLGİ BAŞLIĞI / ETİKET</label>
+            <label className="block text-xs font-mono text-slate-500 mb-1">BİLGİ BAŞLIĞI / ETİKET</label>
             <input
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Örn: TRTEX Fiyat Politikası 2026"
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none transition font-mono"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none transition font-mono"
             />
           </div>
           <div>
-            <label className="block text-xs font-mono text-zinc-500 mb-1">İÇERİK / KURAL (MARKDOWN DESTEKLİ)</label>
+            <label className="block text-xs font-mono text-slate-500 mb-1">İÇERİK / KURAL (MARKDOWN DESTEKLİ)</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Ajanların referans alacağı kuralları veya bilgileri girin..."
               rows={6}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-blue-500 focus:outline-none transition"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none transition"
             />
           </div>
           <div className="flex items-center justify-between pt-2">
             <div className="flex gap-2">
-              <button className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm transition">
+              <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-zinc-700 text-slate-700 rounded-lg text-sm transition">
                 <Upload className="w-4 h-4" /> Belge Yükle (PDF/TXT)
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm transition" title="Mevcut Hafızayı Gör">
+              <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-zinc-700 text-slate-700 rounded-lg text-sm transition" title="Mevcut Hafızayı Gör">
                 <Database className="w-4 h-4" />
               </button>
             </div>
@@ -84,7 +84,7 @@ export default function KnowledgeTrainer() {
               <button
                 onClick={handleSave}
                 disabled={isSaving || !topic || !content}
-                className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition"
+                className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-slate-900 rounded-lg text-sm font-medium transition"
               >
                 {isSaving ? <Brain className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
                 {isSaving ? "Senkronize Ediliyor..." : "Hafızaya Yaz"}

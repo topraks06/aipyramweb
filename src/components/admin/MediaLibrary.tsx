@@ -11,7 +11,7 @@ const MOCK_ASSETS: MediaAsset[] = [
     title: "Otel Odası Perde Render (V2)",
     url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80",
     thumbnailUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&q=60",
-    tenant: "perde",
+    node: "perde",
     type: "render",
     resolution: "4K",
     status: "published",
@@ -23,7 +23,7 @@ const MOCK_ASSETS: MediaAsset[] = [
     title: "TRTEX İplik Pazarı Kapak",
     url: "https://images.unsplash.com/photo-1605280263929-1c42c624165b?w=1200&q=80",
     thumbnailUrl: "https://images.unsplash.com/photo-1605280263929-1c42c624165b?w=400&q=60",
-    tenant: "trtex",
+    node: "trtex",
     type: "news",
     resolution: "2K",
     status: "published",
@@ -35,7 +35,7 @@ const MOCK_ASSETS: MediaAsset[] = [
     title: "Hometex Sanal Fuar Standı",
     url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
     thumbnailUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=60",
-    tenant: "hometex",
+    node: "hometex",
     type: "fair",
     resolution: "4K",
     status: "draft",
@@ -47,7 +47,7 @@ const MOCK_ASSETS: MediaAsset[] = [
     title: "Lüks İtalyan Kadife",
     url: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=1200&q=80",
     thumbnailUrl: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=400&q=60",
-    tenant: "vorhang",
+    node: "vorhang",
     type: "product",
     resolution: "4K",
     status: "published",
@@ -59,7 +59,7 @@ const MOCK_ASSETS: MediaAsset[] = [
     title: "Minimalist Ofis Stor Perde",
     url: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80",
     thumbnailUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=60",
-    tenant: "perde",
+    node: "perde",
     type: "render",
     resolution: "2K",
     status: "archived",
@@ -69,7 +69,7 @@ const MOCK_ASSETS: MediaAsset[] = [
 ];
 
 export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) {
-  const [activeTenant, setActiveTenant] = useState<string>("all");
+  const [activeNode, setActiveNode] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
 
@@ -79,7 +79,7 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
     title: asset.category === "user_render" ? "Kullanıcı Render (Perde.ai)" : (asset.title || "İsimsiz Medya"),
     url: asset.url_2k || asset.url_1k || asset.url,
     thumbnailUrl: asset.url_1k || asset.url_2k || asset.url,
-    tenant: asset.tenant || "perde",
+    node: asset.node || "perde",
     type: asset.source === "imagen" ? "render" : asset.source === "trtex_article" ? "news" : "product",
     resolution: asset.url_4k ? "4K" : asset.url_2k ? "2K" : "1K",
     status: "published",
@@ -88,7 +88,7 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
   })) : MOCK_ASSETS;
 
   const filtered = mappedAssets.filter(a => {
-    if (activeTenant !== "all" && a.tenant !== activeTenant) return false;
+    if (activeNode !== "all" && a.node !== activeNode) return false;
     if (search && !a.title.toLowerCase().includes(search.toLowerCase()) && !a.tags.join(" ").includes(search.toLowerCase())) return false;
     return true;
   });
@@ -99,7 +99,7 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h2 className="text-xl font-bold font-serif">Master Media Library</h2>
-          <p className="text-sm text-zinc-400 font-mono">GCS / Firestore Synced Archive</p>
+          <p className="text-sm text-slate-600 font-mono">GCS / Firestore Synced Archive</p>
         </div>
         
         <div className="flex items-center gap-4 w-full md:w-auto">
@@ -109,29 +109,29 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
               placeholder="Tag veya başlık ara..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 text-sm text-white px-10 py-2 rounded-md focus:outline-none focus:border-zinc-500 font-mono"
+              className="w-full bg-slate-50 border border-slate-200 text-sm text-slate-900 px-10 py-2 rounded-md focus:outline-none focus:border-zinc-500 font-mono"
             />
-            <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
           </div>
-          <button className="bg-zinc-900 border border-zinc-800 p-2 rounded-md hover:bg-zinc-800 transition-colors">
-            <Filter className="w-4 h-4 text-zinc-400" />
+          <button className="bg-slate-50 border border-slate-200 p-2 rounded-md hover:bg-slate-100 transition-colors">
+            <Filter className="w-4 h-4 text-slate-600" />
           </button>
         </div>
       </div>
 
-      {/* Tenant Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-zinc-800 pb-px">
-        {["all", "perde", "trtex", "hometex", "vorhang"].map(tenant => (
+      {/* Node Tabs */}
+      <div className="flex gap-2 mb-6 border-b border-slate-200 pb-px">
+        {["all", "perde", "trtex", "hometex", "vorhang"].map(node => (
           <button
-            key={tenant}
-            onClick={() => setActiveTenant(tenant)}
+            key={node}
+            onClick={() => setActiveNode(node)}
             className={`px-4 py-2 text-xs font-bold uppercase tracking-widest transition-colors ${
-              activeTenant === tenant 
-                ? "text-white border-b-2 border-white" 
-                : "text-zinc-500 hover:text-zinc-300"
+              activeNode === node 
+                ? "text-slate-900 border-b-2 border-white" 
+                : "text-slate-500 hover:text-slate-700"
             }`}
           >
-            {tenant === "all" ? "TÜMÜ" : tenant}
+            {node === "all" ? "TÜMÜ" : node}
           </button>
         ))}
       </div>
@@ -143,27 +143,27 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
             <div 
               key={asset.id}
               onClick={() => setSelectedAsset(asset)}
-              className="group relative bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden cursor-pointer hover:border-zinc-500 transition-colors aspect-square flex flex-col"
+              className="group relative bg-slate-50 border border-slate-200 rounded-lg overflow-hidden cursor-pointer hover:border-zinc-500 transition-colors aspect-square flex flex-col"
             >
-              <div className="flex-1 relative overflow-hidden bg-black">
+              <div className="flex-1 relative overflow-hidden bg-white">
                 <img 
                   src={asset.thumbnailUrl} 
                   alt={asset.title}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity group-hover:scale-105 duration-500"
                 />
                 {/* Resolution Badge */}
-                <div className="absolute top-2 right-2 bg-black/80 backdrop-blur text-[10px] font-mono px-2 py-0.5 rounded text-zinc-300 border border-zinc-700">
+                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-[10px] font-mono px-2 py-0.5 rounded text-slate-700 border border-slate-300">
                   {asset.resolution}
                 </div>
-                {/* Tenant Badge */}
-                <div className="absolute top-2 left-2 bg-black/80 backdrop-blur text-[10px] font-bold tracking-wider px-2 py-0.5 rounded text-white border border-zinc-700 uppercase">
-                  {asset.tenant}
+                {/* Node Badge */}
+                <div className="absolute top-2 left-2 bg-white/90 backdrop-blur text-[10px] font-bold tracking-wider px-2 py-0.5 rounded text-slate-900 border border-slate-300 uppercase">
+                  {asset.node}
                 </div>
               </div>
-              <div className="p-3 border-t border-zinc-800 bg-zinc-900/95">
-                <p className="text-xs text-white font-medium truncate mb-1">{asset.title}</p>
+              <div className="p-3 border-t border-slate-200 bg-slate-50/95">
+                <p className="text-xs text-slate-900 font-medium truncate mb-1">{asset.title}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] text-zinc-500 font-mono flex items-center gap-1">
+                  <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
                     <Database className="w-3 h-3" /> {new Date(asset.createdAt).toLocaleDateString()}
                   </span>
                   {asset.status === 'published' && <CheckCircle2 className="w-3 h-3 text-emerald-500" />}

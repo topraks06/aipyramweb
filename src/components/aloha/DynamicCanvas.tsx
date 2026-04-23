@@ -17,7 +17,7 @@ function SuccessWidget({ response }: { response: any }) {
         <p className="text-sm font-bold text-green-500 uppercase tracking-widest">İŞLEM BAŞARILI</p>
         <p className="text-xs text-green-500/70 font-mono mt-1">{response.alohaResponse}</p>
         {response.executedTool && (
-          <p className="text-[10px] text-green-600/50 font-mono mt-2">tool: {response.executedTool} | tenant: {response.tenant || 'global'}</p>
+          <p className="text-[10px] text-green-600/50 font-mono mt-2">tool: {response.executedTool} | node: {response.node || 'global'}</p>
         )}
       </div>
     </div>
@@ -30,7 +30,7 @@ function MetricsChartWidget({ response }: { response: any }) {
     <div className="border border-white/10 bg-black p-8 max-w-3xl mt-4">
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
         <div className="flex items-center gap-2 text-zinc-500 text-[10px] uppercase tracking-widest font-bold">
-          <LineChart className="w-4 h-4" /> {data?.tenant ? `${data.tenant.toUpperCase()} İÇERİK İSTATİSTİĞİ` : 'AKTİF KULLANICI NABZI'}
+          <LineChart className="w-4 h-4" /> {data?.node ? `${data.node.toUpperCase()} İÇERİK İSTATİSTİĞİ` : 'AKTİF KULLANICI NABZI'}
         </div>
         <div className="text-[10px] text-zinc-600 font-mono">GÜNCEL: REAL-TIME</div>
       </div>
@@ -70,7 +70,7 @@ function SystemStatusWidget({ response }: { response: any }) {
 
   return (
     <div className="space-y-4 max-w-4xl mt-4">
-      {/* Tenant kartları */}
+      {/* Node kartları */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {entries.map(([name, info]: [string, any]) => (
           <div key={name} className="border border-white/10 bg-black p-5">

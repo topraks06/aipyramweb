@@ -2,7 +2,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { adminDb } from '@/lib/firebase-admin';
 
 export interface ArchivalTask {
-  tenant: string;
+  node: string;
   collection: string;
   olderThanDays: number;
 }

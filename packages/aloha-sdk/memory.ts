@@ -1,7 +1,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 
 export interface SemanticMemoryLog {
-  tenant: string;
+  node: string;
   action: string;
   uid?: string;
   payload: any;
@@ -15,7 +15,7 @@ export interface SemanticMemoryLog {
  * 1. Admin Training Injection
  * Fetches active rules from `aloha_knowledge` and injects them into the agent's context.
  */
-export async function injectKnowledgeContext(tenant: string, action: string): Promise<string> {
+export async function injectKnowledgeContext(node: string, action: string): Promise<string> {
   if (!adminDb) return "";
 
   try {
@@ -53,7 +53,7 @@ export async function writeSemanticMemory(log: SemanticMemoryLog) {
     
     await memoryRef.set({
       id: memoryRef.id,
-      tenant: log.tenant,
+      node: log.node,
       action: log.action,
       uid: log.uid || "system",
       memoryType,

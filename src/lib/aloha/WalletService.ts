@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 
 // Define agent credit costs (Sovereign Economics)
 const AGENT_COSTS: Record<string, number> = {
@@ -18,11 +18,11 @@ export async function getAgentCost(agentType: string): Promise<number> {
   return AGENT_COSTS[agentType] || 0;
 }
 
-export async function checkCredits(tenantId: string, uid: string, agentType: string): Promise<{allowed: boolean, remaining: number}> {
+export async function checkCredits(SovereignNodeId: string, uid: string, agentType: string): Promise<{allowed: boolean, remaining: number}> {
   const cost = await getAgentCost(agentType);
   if (cost === 0) return { allowed: true, remaining: 999 };
 
-  const config = getTenant(tenantId);
+  const config = getNode(SovereignNodeId);
   const prefix = config.name.toLowerCase().split('.')[0];
   const walletCollection = `${prefix}_members`;
 
@@ -49,16 +49,16 @@ export async function checkCredits(tenantId: string, uid: string, agentType: str
       remaining: currentCredits 
     };
   } catch (error) {
-    console.error(`[WalletService] checkCredits error for ${uid} on ${tenantId}:`, error);
+    console.error(`[WalletService] checkCredits error for ${uid} on ${SovereignNodeId}:`, error);
     return { allowed: false, remaining: 0 };
   }
 }
 
-export async function deductCredit(tenantId: string, uid: string, agentType: string, customAmount?: number): Promise<void> {
+export async function deductCredit(SovereignNodeId: string, uid: string, agentType: string, customAmount?: number): Promise<void> {
   const cost = customAmount !== undefined ? customAmount : await getAgentCost(agentType);
   if (cost <= 0) return;
 
-  const config = getTenant(tenantId);
+  const config = getNode(SovereignNodeId);
   const prefix = config.name.toLowerCase().split('.')[0];
   const walletCollection = `${prefix}_members`;
   const walletRef = adminDb.collection(walletCollection).doc(uid);
@@ -85,7 +85,7 @@ export async function deductCredit(tenantId: string, uid: string, agentType: str
         }
       }
     });
-    console.log(`[WalletService] Deducted ${cost} credits from ${uid} for ${agentType} on ${tenantId}`);
+    console.log(`[WalletService] Deducted ${cost} credits from ${uid} for ${agentType} on ${SovereignNodeId}`);
   } catch (error) {
     console.error(`[WalletService] Failed to deduct credits for ${uid}:`, error);
   }

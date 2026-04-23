@@ -107,28 +107,24 @@ export default function DashboardOverview() {
       value: stats?.totalDomains || 0,
       icon: Globe,
       description: "Yönetilen Dijital Mülkler",
-      trend: "+0",
     },
     {
       title: "BOT EKOSİSTEMİ",
       value: stats?.totalAgents || 0,
       icon: Bot,
       description: "Tanımlı AI Ajanları",
-      trend: "+0",
     },
     {
       title: "AKTİF OPERASYON",
       value: stats?.activeAgents || 0,
       icon: Zap,
       description: "Çalışan Üniteler",
-      trend: "+0",
     },
     {
       title: "BEKLEYEN İŞLEM",
       value: stats?.pendingTasks || 0,
       icon: Clock,
       description: "Kuyruktaki Görevler",
-      trend: "+0",
     },
     {
       title: "BAŞARI ORANI",
@@ -137,14 +133,12 @@ export default function DashboardOverview() {
         : "100%",
       icon: CheckCircle2,
       description: "Operasyonel Verimlilik",
-      trend: "+0",
     },
     {
       title: "KRİTİK HATA",
       value: stats?.failedTasks || 0,
       icon: AlertCircle,
       description: "İnceleme Bekleyen",
-      trend: "-0",
       alert: stats?.failedTasks ? true : false,
     },
     {
@@ -152,47 +146,39 @@ export default function DashboardOverview() {
       value: stats?.totalSectors || 0,
       icon: Layers,
       description: "Aktif Pazar Alanı",
-      trend: "+0",
     },
     {
       title: "WALLET BURN",
       value: stats?.totalCreditsSpent ? `$${stats.totalCreditsSpent.toFixed(2)}` : "$0",
       icon: TrendingUp,
       description: "Toplam Otonom Maliyet",
-      trend: "+0.00",
     },
   ];
 
   return (
     <div className="space-y-6 animate-fade-in pb-20">
       
-      {/* KPI GRID - BRUTALIST */}
-      <div className="grid gap-px bg-white/10 border border-white/10 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      {/* KPI GRID - CORPORATE LIGHT */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         {statCards.map((stat, index) => (
-          <div key={index} className="bg-[#030303] hover:bg-[#080808] transition-colors p-5 relative group overflow-hidden">
-            {/* Subtle hover glow */}
-            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-            
-            <div className="flex flex-row items-center justify-between pb-3">
-              <span className="text-[10px] font-mono font-bold tracking-widest text-zinc-500 uppercase">
+          <div key={index} className="bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md transition-all p-5 relative group overflow-hidden">
+            <div className="flex flex-row items-center justify-between pb-3 border-b border-slate-50 mb-3">
+              <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
                 {stat.title}
               </span>
-              <stat.icon className={`h-4 w-4 ${stat.alert ? 'text-red-500 animate-pulse' : 'text-blue-500/50'}`} />
+              <stat.icon className={`h-4 w-4 ${stat.alert ? 'text-red-500 animate-pulse' : 'text-indigo-500'}`} />
             </div>
             
             <div className="flex items-baseline gap-3">
-              <div className={`text-3xl font-black font-mono tracking-tighter ${stat.alert ? 'text-red-500' : 'text-zinc-100'}`}>
+              <div className={`text-3xl font-bold tracking-tight ${stat.alert ? 'text-red-600' : 'text-slate-900'}`}>
                 {stat.value}
-              </div>
-              <div className={`text-[10px] font-mono ${stat.alert ? 'text-red-500' : 'text-emerald-500'}`}>
-                {stat.trend}
               </div>
             </div>
             
-            <p className="text-[10px] uppercase tracking-widest text-zinc-600 mt-3">{stat.description}</p>
+            <p className="text-xs font-medium text-slate-400 mt-2">{stat.description}</p>
             
             {/* Bottom active border line on hover */}
-            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-blue-500 group-hover:w-full transition-all duration-500" />
+            <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-indigo-600 group-hover:w-full transition-all duration-300" />
           </div>
         ))}
       </div>
@@ -201,37 +187,29 @@ export default function DashboardOverview() {
       <div className="grid gap-6 lg:grid-cols-3 mb-6">
         
         {/* LIVE TERMINAL STREAM (2 cols) */}
-        <div className="lg:col-span-2 border border-white/10 bg-[#030303] flex flex-col relative overflow-hidden group">
-          <div className="h-10 border-b border-white/10 bg-black/50 flex items-center px-4 justify-between cursor-pointer" onClick={() => setShowTerminal(!showTerminal)}>
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${showTerminal ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-600'}`} />
-              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest">
+        <div className="lg:col-span-2 border border-slate-200 bg-white rounded-xl shadow-sm flex flex-col relative overflow-hidden group">
+          <div className="h-12 border-b border-slate-100 bg-slate-50 flex items-center px-5 justify-between cursor-pointer" onClick={() => setShowTerminal(!showTerminal)}>
+            <div className="flex items-center gap-3">
+              <div className={`w-2.5 h-2.5 rounded-full ${showTerminal ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300'}`} />
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                 ALOHA_SOVEREIGN_LOGS {showTerminal ? '(LIVE)' : '(PAUSED)'}
               </span>
             </div>
-            <span className="text-[9px] font-mono text-zinc-500 hover:text-white transition-colors">
+            <span className="text-[10px] font-semibold text-slate-400 hover:text-indigo-600 transition-colors uppercase tracking-widest">
               {showTerminal ? '[ HIDE ]' : '[ SHOW STREAM ]'}
             </span>
           </div>
           
           {showTerminal && (
-            <>
-              <div className="p-4 h-[300px] overflow-hidden flex flex-col justify-end font-mono text-[10px] leading-relaxed space-y-1">
-                <div className="text-zinc-500">[{new Date().toISOString()}] SYSTEM BOOT: Swarm orchestrator initialized.</div>
-                <div className="text-zinc-500">[{new Date().toISOString()}] INFO: Handshake established with 33 autonomous agents.</div>
-                <div className="text-blue-400/80">[{new Date().toISOString()}] EXECUTE: invokeAgent(knowledge-trainer, tenant: master)</div>
-                <div className="text-emerald-500/80">[{new Date().toISOString()}] SUCCESS: Knowledge base vector embeddings updated. Latency: 42ms.</div>
-                <div className="text-blue-400/80">[{new Date().toISOString()}] EXECUTE: invokeAgent(content-generator, tenant: trtex)</div>
-                <div className="text-zinc-400">[{new Date().toISOString()}] AWAITING RESPONSE...</div>
-                <div className="text-zinc-600 mt-2 flex items-center gap-2"><span className="animate-pulse">_</span></div>
-              </div>
-              <div className="absolute top-10 left-0 right-0 h-1/2 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-            </>
+            <div className="p-5 h-[300px] overflow-hidden flex flex-col justify-end font-mono text-xs leading-relaxed space-y-2 bg-slate-900 text-slate-300">
+               <div className="text-slate-500 italic">Sistem Boşta. ALOHA verisi bekleniyor...</div>
+               <div className="text-slate-600 mt-2 flex items-center gap-2"><span className="animate-pulse">_</span></div>
+            </div>
           )}
         </div>
 
         {/* DLQ MANAGER (1 col) */}
-        <div className="border border-white/10 bg-[#030303]">
+        <div className="border border-slate-200 bg-white rounded-xl shadow-sm overflow-hidden">
           <DlqManager />
         </div>
       </div>
@@ -243,7 +221,7 @@ export default function DashboardOverview() {
       </div>
 
       {/* ORDERS TABLE */}
-      <div className="border border-white/10 bg-[#030303]">
+      <div className="border border-slate-200 bg-white rounded-xl shadow-sm overflow-hidden">
         <PerdeOrdersTable />
       </div>
 

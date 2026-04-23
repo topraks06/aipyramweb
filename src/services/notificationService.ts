@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 /**
  * APEX NOTIFICATION ENGINE (V8.3)
  * Faz 4.2 / Görünmez El Operasyonu
- * Özellikler: Multi-Tenant Branding, Role-Based Routing, Magic Links, Escalation Ladder
+ * Özellikler: Multi-Node Branding, Role-Based Routing, Magic Links, Escalation Ladder
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
@@ -27,16 +27,16 @@ const ROLES = {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// MULTI-TENANT BRANDING (Dinamik Şablon & Marka Kimliği)
+// MULTI-NODE BRANDING (Dinamik Şablon & Marka Kimliği)
 // ═══════════════════════════════════════════════════════════════
-interface TenantConfig {
+interface SovereignNodeConfig {
   logo: string;
   primaryColor: string;
   bgHex: string;
   tone: string; // İletişim Tonalitesi
 }
 
-const BRAND_ROUTER: Record<string, TenantConfig> = {
+const BRAND_ROUTER: Record<string, SovereignNodeConfig> = {
   "perde.ai": { logo: "PERDE.AI", primaryColor: "#cda434", bgHex: "#0a0a0a", tone: "Lüks, Sofistike (Maison Objet Standardı)" },
   "trtex.com": { logo: "TRTEX B2B", primaryColor: "#10b981", bgHex: "#050505", tone: "Yüksek Yoğunluklu Ticari İstihbarat (Reuters Stili)" },
   "didimemlak.ai": { logo: "DIDIM PREMIUM", primaryColor: "#0ea5e9", bgHex: "#111827", tone: "Premium Yatırım & Güvenilir Escrow" },
@@ -68,24 +68,24 @@ export class NotificationService {
 
     // 1. STRATEJİK İŞLEMLER (Master Onayı Gerektiren B2B Müzakereleri)
     EventBus.subscribe("DEAL_READY", async (event) => {
-      const tenant = event.tenant_id || "aipyram-core";
+      const node = event.node_id || "aipyram-core";
       const payload = event.payload;
       
       // Magic Link Yarat (Şifresiz 1-Click Action)
-      const token = jwt.sign({ action: "APPROVE_DEAL", dealId: payload?.rfqId, tenant }, JWT_SECRET, { expiresIn: "15m" });
+      const token = jwt.sign({ action: "APPROVE_DEAL", dealId: payload?.rfqId, node }, JWT_SECRET, { expiresIn: "15m" });
       const magicLink = `https://portal.aipyram.com/magic-action?t=${token}`;
 
       // ESCALATION LADDER (Merdivenli Yükseltme) - 5 Dk içinde onaylanmazsa seviye artar
       this.triggerEscalationLadder(payload?.rfqId, ROLES.MASTER.phone, ROLES.MASTER.email, payload?.companyName, magicLink);
 
       // Kademe 1: Kritik WhatsApp Vuruşu
-      const waMsg = `⚠️ [${BRAND_ROUTER[tenant]?.logo || 'AIPYRAM'}]\n\nMASTER ONAY BEKLENIYOR\nFirma: ${payload?.companyName}\nGüven: ${payload?.trustScore}\n\nTek Tıkla Kaporayı Kilitle (Şifresiz):\n${magicLink}\n\n(Link 15 dk geçerlidir)`;
-      await this.sendWhatsApp(ROLES.MASTER.phone, waMsg, tenant);
+      const waMsg = `⚠️ [${BRAND_ROUTER[node]?.logo || 'AIPYRAM'}]\n\nMASTER ONAY BEKLENIYOR\nFirma: ${payload?.companyName}\nGüven: ${payload?.trustScore}\n\nTek Tıkla Kaporayı Kilitle (Şifresiz):\n${magicLink}\n\n(Link 15 dk geçerlidir)`;
+      await this.sendWhatsApp(ROLES.MASTER.phone, waMsg, node);
     });
 
     // 2. OPERASYONEL HATALAR (Sistem Mühendisi)
     EventBus.subscribe("AGENT_KILL_SWITCH", async (event) => {
-      const htmlBody = this.getTenantEmailHtml("aipyram-core", "SİSTEM DURDURULDU", 
+      const htmlBody = this.getNodeEmailHtml("aipyram-core", "SİSTEM DURDURULDU", 
         `<p style="color:red">Otonom sistem, zararlı aktivite veya maliyet aşımı nedeniyle kilitlendi!</p>
          <p>Hata Detayı: ${event.payload?.reason}</p>`
       );
@@ -95,16 +95,16 @@ export class NotificationService {
 
     // 3. MÜŞTERİ BİLGİLENDİRMELERİ (Sektör Yöneticisine Düşük Öncelik - Batching)
     EventBus.subscribe("RFQ_SUBMITTED", async (event) => {
-      const tenant = event.tenant_id || "trtex.com";
-      const targetUser = tenant.includes("perde") ? ROLES.SALES_PERDE : ROLES.SALES_EMLAK;
+      const node = event.node_id || "trtex.com";
+      const targetUser = node.includes("perde") ? ROLES.SALES_PERDE : ROLES.SALES_EMLAK;
       // Normalde bu "Saatlik Rapor" için Redis Queue'ya (Batch) atılır. Spam önleme amacıyla doğrudan WhatsApp ATILMAZ.
-      console.log(`[🔇 A2A SİNYALİ BATCHLENDİ] ${tenant} üzerinden yeni talep geldi. WhatsApp atılmadı, saatlik rapora eklendi.`);
+      console.log(`[🔇 A2A SİNYALİ BATCHLENDİ] ${node} üzerinden yeni talep geldi. WhatsApp atılmadı, saatlik rapora eklendi.`);
     });
 
     // 4. VORHANG MARKETPLACE - YENİ SİPARİŞ
     EventBus.subscribe("VORHANG_ORDER_PAID", async (event) => {
       const payload = event.payload;
-      const htmlBody = this.getTenantEmailHtml("vorhang.ai", "🔥 YENİ İHRACAT SİPARİŞİ", 
+      const htmlBody = this.getNodeEmailHtml("vorhang.ai", "🔥 YENİ İHRACAT SİPARİŞİ", 
         `<p>Avrupa'dan (DACH) yeni bir sipariş onaylandı!</p>
          <ul>
            <li><strong>Sipariş Kodu:</strong> ${payload?.orderId}</li>
@@ -130,7 +130,7 @@ export class NotificationService {
     const escalationTimer = setTimeout(async () => {
       console.log(`[🚀 ESCALATION] 5 Dakika doldu! ${clientName} işlemi Hakan Bey tarafından onaylanmadı. Alarm Zili & E-Posta Tetikleniyor.`);
       
-      const htmlBody = this.getTenantEmailHtml("aipyram-core", "🔥 ZAMAN AŞIMI (ESCALATION)", 
+      const htmlBody = this.getNodeEmailHtml("aipyram-core", "🔥 ZAMAN AŞIMI (ESCALATION)", 
         `<p>Hakan Bey, bu anlaşma 5 dakikadır beklemede.</p>
          <p>Sistemin Otonom kalabilmesi için onayla/reddet yapmanız gerekiyor.</p>
          <a href="${magicLink}" style="display:inline-block; padding:15px 30px; background:#ef4444; color:#fff; text-decoration:none; font-weight:bold; border-radius:4px; margin-top:20px;">Tek Tıkla Onayla</a>`
@@ -150,8 +150,8 @@ export class NotificationService {
   // ═══════════════════════════════════════════════════════════════
   // DİNAMİK EMAIL & WHATSAPP GÖNDERİM MOTORLARI
   // ═══════════════════════════════════════════════════════════════
-  private static getTenantEmailHtml(tenantId: string, title: string, content: string) {
-    const brand = BRAND_ROUTER[tenantId] || BRAND_ROUTER["aipyram-core"];
+  private static getNodeEmailHtml(SovereignNodeId: string, title: string, content: string) {
+    const brand = BRAND_ROUTER[SovereignNodeId] || BRAND_ROUTER["aipyram-core"];
     
     return `
       <div style="font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: ${brand.bgHex}; color: #ffffff; padding: 40px; border: 1px solid #222; border-radius: 4px;">
@@ -179,8 +179,8 @@ export class NotificationService {
     `;
   }
 
-  static async sendEmail(to: string, subject: string, bodyHtml: string, priority: "normal" | "critical" = "normal", tenantId = "aipyram-core") {
-    const fromName = `${BRAND_ROUTER[tenantId]?.logo || 'AIPYRAM'}`;
+  static async sendEmail(to: string, subject: string, bodyHtml: string, priority: "normal" | "critical" = "normal", SovereignNodeId = "aipyram-core") {
+    const fromName = `${BRAND_ROUTER[SovereignNodeId]?.logo || 'AIPYRAM'}`;
     const mailSubject = priority === "critical" ? `[ACİL] ${subject}` : subject;
 
     if (this.resend) {
@@ -191,7 +191,7 @@ export class NotificationService {
           subject: mailSubject,
           html: bodyHtml,
         });
-        console.log(`[📧 EMAIL] Kimlik: ${tenantId} | Hedef: ${to} (Resend)`);
+        console.log(`[📧 EMAIL] Kimlik: ${SovereignNodeId} | Hedef: ${to} (Resend)`);
         return;
       } catch (err) {
         console.error(`[🚨 EMAIL HATA] Resend ile atılamadı, Gmail fallback deneniyor:`, err);
@@ -206,17 +206,17 @@ export class NotificationService {
           subject: mailSubject,
           html: bodyHtml,
         });
-        console.log(`[📧 EMAIL] Kimlik: ${tenantId} | Hedef: ${to} (Gmail)`);
+        console.log(`[📧 EMAIL] Kimlik: ${SovereignNodeId} | Hedef: ${to} (Gmail)`);
         return;
       } catch (err) {
         console.error(`[🚨 EMAIL HATA] Gmail ile atılamadı:`, err);
       }
     }
 
-    console.log(`[📧 MOCK EMAIL | ${tenantId}] To: ${to} | Konu: ${subject}`);
+    console.log(`[📧 MOCK EMAIL | ${SovereignNodeId}] To: ${to} | Konu: ${subject}`);
   }
 
-  static async sendWhatsApp(to: string, message: string, tenantId = "aipyram-core") {
+  static async sendWhatsApp(to: string, message: string, SovereignNodeId = "aipyram-core") {
     if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN && TWILIO_PHONE_NUMBER) {
        try {
           const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
@@ -246,7 +246,7 @@ export class NotificationService {
     // WhatsApp Fallback: Email!
     console.log(`[📱 WHATSAPP FALLBACK] Twilio yapılandırılmadı, Gmail ile Master'a (veyahut hedefe) yönlendiriliyor...`);
     const emailTarget = to === ROLES.MASTER.phone ? ROLES.MASTER.email : ROLES.MASTER.email;
-    const fallbackHtml = this.getTenantEmailHtml(tenantId, "WHATSAPP YEDEK SİNYALİ", `<p><strong>Orijinal Hedef No:</strong> ${to}</p><pre style="white-space:pre-wrap;font-family:inherit;">${message}</pre>`);
-    await this.sendEmail(emailTarget, "📱 Otonom WhatsApp Sinyali", fallbackHtml, "normal", tenantId);
+    const fallbackHtml = this.getNodeEmailHtml(SovereignNodeId, "WHATSAPP YEDEK SİNYALİ", `<p><strong>Orijinal Hedef No:</strong> ${to}</p><pre style="white-space:pre-wrap;font-family:inherit;">${message}</pre>`);
+    await this.sendEmail(emailTarget, "📱 Otonom WhatsApp Sinyali", fallbackHtml, "normal", SovereignNodeId);
   }
 }

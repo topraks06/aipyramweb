@@ -1,8 +1,8 @@
 import { adminDb } from "@/lib/firebase-admin";
 import PremiumB2BHomeLayout from '@/components/home/PremiumB2BHomeLayout';
-import PerdeLandingPage from '@/components/tenant-perde/PerdeLandingPage';
-import HometexLandingPage from '@/components/tenant-hometex/HometexLandingPage';
-import VorhangLandingPage from '@/components/tenant-vorhang/VorhangLandingPage';
+import PerdeLandingPage from '@/components/node-perde/PerdeLandingPage';
+import HometexLandingPage from '@/components/node-hometex/HometexLandingPage';
+import VorhangLandingPage from '@/components/node-vorhang/VorhangLandingPage';
 import IntelligenceTicker from "@/components/trtex/IntelligenceTicker";
 import OpportunityRadarWidget from "@/components/trtex/OpportunityRadarWidget";
 import type { Metadata } from 'next';

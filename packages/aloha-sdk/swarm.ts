@@ -2,7 +2,7 @@ import { invokeAgent } from './invokeAgent';
 import { alohaAI } from '@/core/aloha/aiClient';
 
 export interface SwarmTask {
-  tenant: string;
+  node: string;
   uid?: string;
   goal: string;
   context?: any;
@@ -26,7 +26,7 @@ export interface SwarmResult {
  * [3] VALIDATOR : Nihai çıktıyı denetler.
  */
 export async function invokeSwarm(task: SwarmTask): Promise<SwarmResult> {
-  const { tenant, uid, goal, context } = task;
+  const { node, uid, goal, context } = task;
   const aiClient = alohaAI.getClient();
 
   console.log(`[SWARM ORCHESTRATOR] Görev alındı: "${goal}"`);
@@ -65,7 +65,7 @@ Kabul edilen eylemler: ["analysis", "opportunity", "compose_article", "chat"]`;
     // Burada 1'e 1 ajanları Sovereign Gateway (invokeAgent) üzerinden çağırıyoruz.
     // Bu sayede her alt ajan için wallet, log ve rule injection kuralları tıkır tıkır işler.
     const result = await invokeAgent({
-      tenant,
+      node,
       action: action,
       uid,
       payload: { query: goal, context: accumulatedContext }

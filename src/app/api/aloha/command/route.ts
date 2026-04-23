@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { executeAlohaTool, ALOHA_TOOL_SCHEMA, ParsedCommand } from '@/lib/aloha/tools';
+import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,7 @@ Görevin: Hakan'ın doğal dille verdiği komutları anlayıp çalıştırılabi
 
 KURALLAR:
 1. Senin için TEK patron Hakan Toprak'tır (Sovereign).
-2. Yönettiğin tenant'lar: perde (perde.ai), trtex (trtex.com), hometex (hometex.ai)
+2. Yönettiğin node'lar: perde (perde.ai), trtex (trtex.com), hometex (hometex.ai)
 3. Her zaman KISA, NET, ASKERİ disiplinle yanıt ver.
 4. Komut bir araç çağrısı gerektiriyorsa SADECE JSON döndür — açıklama ekleme.
 5. Komut genel bir soru veya sohbetse, kısa metin yanıtı ver.
@@ -19,23 +20,48 @@ ${ALOHA_TOOL_SCHEMA}
 
 ÖRNEKLER:
 Komut: "perde bayileri listele"
-→ { "tool": "member.list", "tenant": "perde", "filter": "all" }
+→ { "tool": "member.list", "node": "perde", "filter": "all" }
 
 Komut: "trtex haberleri tetikle"
 → { "tool": "cron.trigger", "cronName": "master-cycle" }
 
 Komut: "ali@firma.com perde lisansını aktif et"
-→ { "tool": "member.approve", "tenant": "perde", "email": "ali@firma.com" }
+→ { "tool": "member.approve", "node": "perde", "email": "ali@firma.com" }
 
 Komut: "sistem durumu"
 → { "tool": "system.health" }
 
 Komut: "bekleyen perde başvuruları"
-→ { "tool": "member.list", "tenant": "perde", "filter": "pending" }
+→ { "tool": "member.list", "node": "perde", "filter": "pending" }
 
 Komut bir araç çağrısı gerektirmiyorsa şu formatta yanıtla:
 { "tool": "chat", "message": "Yanıtın buraya" }
 `;
+
+/**
+ * Sovereign DB'den aktif kural ve politikaları getir.
+ */
+async function fetchActiveKnowledge(): Promise<string> {
+  if (!adminDb) return '';
+  try {
+    const snap = await adminDb.collection('aloha_knowledge')
+      .where('active', '==', true)
+      .orderBy('createdAt', 'desc')
+      .limit(10)
+      .get();
+      
+    if (snap.empty) return '';
+    
+    let rules = 'SOVEREIGN DIRECTIVES (KESİN KURALLAR - BUNLARA UY):\n';
+    snap.docs.forEach((doc, idx) => {
+      rules += `${idx + 1}. [${doc.data().topic}]: ${doc.data().content}\n`;
+    });
+    return rules + '\n';
+  } catch (err) {
+    console.error('[ALOHA] Knowledge fetch error:', err);
+    return '';
+  }
+}
 
 /**
  * Gemini API'ye komut gönder, yapılandırılmış tool çağrısı al
@@ -47,6 +73,9 @@ async function resolveIntent(command: string): Promise<ParsedCommand> {
   }
 
   try {
+    const dynamicKnowledge = await fetchActiveKnowledge();
+    const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}Komut: "${command}"\n\nSADECE JSON döndür:`;
+
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -54,7 +83,7 @@ async function resolveIntent(command: string): Promise<ParsedCommand> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [
-            { role: 'user', parts: [{ text: `${ALOHA_SYSTEM_PROMPT}\n\nKomut: "${command}"\n\nSADECE JSON döndür:` }] }
+            { role: 'user', parts: [{ text: finalPrompt }] }
           ],
           generationConfig: {
             temperature: 0.1,
@@ -88,10 +117,10 @@ async function resolveIntent(command: string): Promise<ParsedCommand> {
 function fallbackResolve(command: string): ParsedCommand {
   const cmd = command.toLowerCase();
 
-  // Tenant tespiti
-  let tenant = 'perde';
-  if (cmd.includes('trtex')) tenant = 'trtex';
-  if (cmd.includes('hometex')) tenant = 'hometex';
+  // Node tespiti
+  let node = 'perde';
+  if (cmd.includes('trtex')) node = 'trtex';
+  if (cmd.includes('hometex')) node = 'hometex';
 
   // E-posta tespiti
   const emailMatch = command.match(/[\w.-]+@[\w.-]+\.\w+/);
@@ -103,19 +132,27 @@ function fallbackResolve(command: string): ParsedCommand {
     if (cmd.includes('bekleyen') || cmd.includes('pending')) filter = 'pending';
     if (cmd.includes('aktif') || cmd.includes('active')) filter = 'active';
     if (cmd.includes('reddedilen') || cmd.includes('rejected')) filter = 'rejected';
-    return { tool: 'member.list', tenant, filter, raw: command };
+    return { tool: 'member.list', node, filter, raw: command };
   }
 
   if ((cmd.includes('onayla') || cmd.includes('aktif') || cmd.includes('approve')) && email) {
-    return { tool: 'member.approve', tenant, email, raw: command };
+    return { tool: 'member.approve', node, email, raw: command };
   }
 
   if ((cmd.includes('reddet') || cmd.includes('reject')) && email) {
-    return { tool: 'member.reject', tenant, email, raw: command };
+    return { tool: 'member.reject', node, email, raw: command };
   }
 
   if ((cmd.includes('askıya') || cmd.includes('suspend') || cmd.includes('durdur')) && email) {
-    return { tool: 'member.suspend', tenant, email, raw: command };
+    return { tool: 'member.suspend', node, email, raw: command };
+  }
+
+  if (cmd.includes('ekonomi') || cmd.includes('kredi') || cmd.includes('harcama') || cmd.includes('cüzdan')) {
+    return { tool: 'system.economy', raw: command };
+  }
+
+  if (cmd.includes('hata') || cmd.includes('dlq') || cmd.includes('log')) {
+    return { tool: 'system.dlq', raw: command };
   }
 
   if (cmd.includes('sistem') || cmd.includes('sağlık') || cmd.includes('health') || cmd.includes('kontrol') || cmd.includes('durum')) {
@@ -123,7 +160,7 @@ function fallbackResolve(command: string): ParsedCommand {
   }
 
   if (cmd.includes('istatistik') || cmd.includes('stats') || cmd.includes('içerik') || cmd.includes('haber sayısı')) {
-    return { tool: 'content.stats', tenant, raw: command };
+    return { tool: 'content.stats', node, raw: command };
   }
 
   if (cmd.includes('tetikle') || cmd.includes('trigger') || cmd.includes('çalıştır') || cmd.includes('cycle')) {
@@ -176,7 +213,7 @@ export async function POST(request: Request) {
       alohaResponse: result.message,
       data: result.data,
       executedTool: parsed.tool,
-      tenant: parsed.tenant,
+      node: parsed.node,
     });
 
   } catch (error: any) {

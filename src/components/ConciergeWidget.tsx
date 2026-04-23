@@ -377,7 +377,7 @@ function DataCardView({ cards }: { cards: DataCard[] }) {
                 <div key={idx} className="bg-slate-800/80 rounded-lg p-3 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-1">
                         <div className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">{card.title}</div>
-                        <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">{card.source_tenant.toUpperCase()}</span>
+                        <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">{card.source_node.toUpperCase()}</span>
                     </div>
                     <p className="text-[11px] text-slate-400 leading-relaxed">{card.content}</p>
                 </div>
@@ -392,7 +392,7 @@ function DataCardView({ cards }: { cards: DataCard[] }) {
 export default function ConciergeWidget() {
     const pathname = usePathname();
     
-    // AIPYRAM ALOHA & TENANTS: Hide Concierge on master AI dashboard and Tenant sites
+    // AIPYRAM ALOHA & NODES: Hide Concierge on master AI dashboard and Node sites
     if (pathname.includes('/aloha') || pathname.includes('/admin') || pathname.startsWith('/sites/')) {
         return null;
     }
@@ -410,7 +410,7 @@ export default function ConciergeWidget() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-// Format based on tenant
+// Format based on node
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
     const host = mounted && typeof window !== 'undefined' ? window.location.hostname : '';
@@ -449,7 +449,7 @@ export default function ConciergeWidget() {
         }
     }, [isOpen]);
 
-    // Welcome message on first open — locale-aware and TENANT-AWARE
+    // Welcome message on first open — locale-aware and NODE-AWARE
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             let welcomeTexts;
@@ -515,13 +515,13 @@ export default function ConciergeWidget() {
                     ? data.links.map((l: { href: string; label: string }) => ({ label: `${l.label} →`, href: l.href }))
                     : [];
 
-                let crossTenantDataCards: any[] = [];
+                let crossNodeDataCards: any[] = [];
 
-                // Eğer cross-tenant veya sektör analizi gerektiren bir niyet varsa Orchestrator'a başvur
+                // Eğer cross-node veya sektör analizi gerektiren bir niyet varsa Orchestrator'a başvur
                 if (intent === 'TREND' || intent === 'PERFORMANCE' || intent === 'PORTFOLIO' || entities.length > 0) {
                      const orchRes = await processQuery(text, intent, siteLocale, platform);
                      if (orchRes) {
-                         crossTenantDataCards = orchRes.data_cards || [];
+                         crossNodeDataCards = orchRes.data_cards || [];
                          if (orchRes.executive_brief) {
                              data.text += "\n\n💡 " + orchRes.executive_brief;
                          }
@@ -542,7 +542,7 @@ export default function ConciergeWidget() {
                     role: "assistant",
                     text: data.text,
                     visual,
-                    dataCards: crossTenantDataCards,
+                    dataCards: crossNodeDataCards,
                     links: finalLinks.length > 0 ? finalLinks : undefined,
                     timestamp: new Date(),
                 };

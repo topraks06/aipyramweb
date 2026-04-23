@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ 
        message: "AIPyram Mühürlendi.",
        domain,
-       note: "Bu domainin kimliği Firestore'a 'tenant_configs' altına gömülmüştür. Dumb Client ilk ziyarette kimliğini giyecektir." 
+       note: "Bu domainin kimliği Firestore'a 'node_configs' altına gömülmüştür. Dumb Client ilk ziyarette kimliğini giyecektir." 
     }, { status: 201 });
 
   } catch (error: any) {

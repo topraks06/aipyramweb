@@ -4,11 +4,11 @@ import { invokeAgent } from "@/lib/aloha/registry";
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { orderId, phone, message, tenantId = 'perde' } = body;
+        const { orderId, phone, message, SovereignNodeId = 'perde' } = body;
 
         const result = await invokeAgent({
             agentType: 'whatsapp',
-            tenantId,
+            SovereignNodeId,
             payload: { phone, message, orderId }
         });
 

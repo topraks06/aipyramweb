@@ -37,7 +37,7 @@ export default function TrtexHeader({ domain, lang = "tr" }: { domain: string, l
   ];
 
   const handleLanguageChange = (code: string) => {
-    // Tenant domains don't use next-intl middleware directly in URL path, we pass it as a query param.
+    // Node domains don't use next-intl middleware directly in URL path, we pass it as a query param.
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
       url.searchParams.set("lang", code);

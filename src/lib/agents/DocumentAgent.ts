@@ -1,11 +1,11 @@
 import { admin, adminDb } from '@/lib/firebase-admin';
-import { getTenant } from '@/lib/tenant-config';
+import { getNode } from '@/lib/sovereign-config';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
-export async function generateProforma(tenantId: string, orderId: string, orderData: any): Promise<{pdfUrl: string}> {
-  console.log(`[DocumentAgent] ${tenantId} için PDF oluşturuluyor. Sipariş ID: ${orderId}`);
+export async function generateProforma(SovereignNodeId: string, orderId: string, orderData: any): Promise<{pdfUrl: string}> {
+  console.log(`[DocumentAgent] ${SovereignNodeId} için PDF oluşturuluyor. Sipariş ID: ${orderId}`);
   
-  const config = getTenant(tenantId);
+  const config = getNode(SovereignNodeId);
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage();
   const { width, height } = page.getSize();
@@ -26,12 +26,12 @@ export async function generateProforma(tenantId: string, orderId: string, orderD
   
   const pdfBytes = await pdfDoc.save();
   const bucketName = process.env.FIREBASE_STORAGE_BUCKET || "";
-  const mockPdfUrl = `https://storage.googleapis.com-mock-test/documents/${tenantId}/${orderId}_proforma.pdf`;
+  const mockPdfUrl = `https://storage.googleapis.com-mock-test/documents/${SovereignNodeId}/${orderId}_proforma.pdf`;
   let pdfUrl = mockPdfUrl;
 
   try {
      const bucket = admin.storage().bucket(bucketName);
-     const file = bucket.file(`documents/${tenantId}/${orderId}_proforma.pdf`);
+     const file = bucket.file(`documents/${SovereignNodeId}/${orderId}_proforma.pdf`);
      await file.save(Buffer.from(pdfBytes), { metadata: { contentType: 'application/pdf' } });
      await file.makePublic();
      pdfUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
@@ -46,7 +46,7 @@ export async function generateProforma(tenantId: string, orderId: string, orderD
         updatedAt: new Date().toISOString()
       });
     } catch (e) {
-      console.error(`[DocumentAgent] ${tenantId} projesi güncellenemedi: ${orderId}`, e);
+      console.error(`[DocumentAgent] ${SovereignNodeId} projesi güncellenemedi: ${orderId}`, e);
     }
   }
 

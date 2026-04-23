@@ -24,14 +24,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tenant_id = "aipyram-core", rfqId, matchId, buyerId, supplierId, negotiatedPrice, commissionRate = 0.03 } = body;
+    const { node_id = "aipyram-core", rfqId, matchId, buyerId, supplierId, negotiatedPrice, commissionRate = 0.03 } = body;
 
     if (!rfqId || !supplierId) {
       return NextResponse.json({ success: false, error: "rfqId and supplierId required" }, { status: 400 });
     }
 
     const docRef = await adminDb.collection("deals").add({
-        tenant_id,
+        node_id,
         rfqId,
         matchId: matchId || "MANUAL_UNLOCK",
         buyerId: buyerId || "UNKNOWN",

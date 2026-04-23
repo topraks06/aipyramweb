@@ -57,7 +57,7 @@ export type EventSource =
 
 export interface AIPyramEvent {
   id?: string;              // UUID for Idempotency (Auto-injected by Bus if missing)
-  tenant_id?: string;       // Mutli-tenant B2B isolation (Auto-injected by Bus if missing)
+  node_id?: string;       // Mutli-node B2B isolation (Auto-injected by Bus if missing)
   type: EventType;
   source: EventSource;
   payload: any;

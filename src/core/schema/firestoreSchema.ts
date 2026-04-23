@@ -13,7 +13,7 @@
  */
 export interface FirestoreRFQ {
   id: string;
-  tenant_id: string;            // Multi-domain support ("trtex", "hometex", "perde.ai")
+  node_id: string;            // Multi-domain support ("trtex", "hometex", "perde.ai")
   buyerRegion: string;          // "DACH", "Nordics", "Middle-East", "North-America" vb.
   buyerType: string;            // "Hotel Chain", "Retailer", "Wholesaler", "Boutique"
   product: string;              // "Sheer curtain fabric, 280cm width"
@@ -35,7 +35,7 @@ export interface FirestoreRFQ {
  */
 export interface FirestoreSupplier {
   id: string;
-  tenant_id: string;
+  node_id: string;
   companyName: string;
   region: string;               // "Turkey", "Germany", "China"
   products: string[];           // ["Curtain fabrics", "Upholstery", "Bedding"]
@@ -58,7 +58,7 @@ export interface FirestoreSupplier {
  */
 export interface FirestoreMatch {
   id: string;
-  tenant_id: string;
+  node_id: string;
   rfqId: string;
   supplierId: string;
   matchScore: number;           // 0-100
@@ -79,7 +79,7 @@ export interface FirestoreMatch {
  */
 export interface FirestoreDeal {
   id: string;
-  tenant_id: string;
+  node_id: string;
   rfqId: string;
   matchId: string;
   buyerId: string;
@@ -104,7 +104,7 @@ export interface DealMilestone {
  */
 export interface FirestoreTrustRecord {
   id: string;
-  tenant_id: string;
+  node_id: string;
   supplierId: string;
   score: number;
   explanation: string;          // Explainable Trust Score (Neden 72?)
@@ -123,7 +123,7 @@ export interface FirestoreTrustRecord {
  */
 export interface FirestoreAgentLog {
   id: string;
-  tenant_id: string;
+  node_id: string;
   agentRole: string;
   taskType: string;
   tokensUsed: number;

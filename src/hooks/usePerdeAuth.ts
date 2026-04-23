@@ -1,14 +1,14 @@
 'use client';
 
-import { useTenantAuth } from './useTenantAuth';
+import { useSovereignAuth } from './useSovereignAuth';
 
 /**
  * Perde.ai Auth Wrapper
  * Geriye dönük uyumluluk için korunuyor.
- * Tüm mantık useTenantAuth('perde') üzerinden geliyor.
+ * Tüm mantık useSovereignAuth('perde') üzerinden geliyor.
  */
 export function usePerdeAuth() {
-  const auth = useTenantAuth('perde');
+  const auth = useSovereignAuth('perde');
   return {
     ...auth,
     // Eski API uyumluluğu — registerDealer = registerMember
@@ -16,4 +16,4 @@ export function usePerdeAuth() {
   };
 }
 
-export type { LicenseStatus } from './useTenantAuth';
+export type { LicenseStatus } from './useSovereignAuth';

@@ -58,9 +58,9 @@ export default function RequestQuoteClient({ basePath, brandName, lang }: { base
     const combinedQuery = `REQUEST_QUOTE | Product: ${product} | Quantity: ${amount} | Destination: ${country} | Budget: ${budget || 'N/A'}`;
 
     try {
-      // trackTenantEvent("lead_created") simülasyonu
-      if (typeof window !== 'undefined' && (window as any).trackTenantEvent) {
-        (window as any).trackTenantEvent('lead_created', { type: 'quote', product });
+      // trackNodeEvent("lead_created") simülasyonu
+      if (typeof window !== 'undefined' && (window as any).trackNodeEvent) {
+        (window as any).trackNodeEvent('lead_created', { type: 'quote', product });
       }
 
       const res = await fetch('/api/lead', {

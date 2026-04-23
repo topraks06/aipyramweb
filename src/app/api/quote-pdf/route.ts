@@ -5,24 +5,24 @@ export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/quote-pdf
- * Body: { tenantId, orderId, orderData }
+ * Body: { SovereignNodeId, orderId, orderData }
  * Returns: { pdfUrl }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { tenantId, orderId, orderData } = body;
+    const { SovereignNodeId, orderId, orderData } = body;
 
-    if (!tenantId || !orderId) {
+    if (!SovereignNodeId || !orderId) {
       return NextResponse.json(
-        { error: 'tenantId ve orderId gerekli.' },
+        { error: 'SovereignNodeId ve orderId gerekli.' },
         { status: 400 }
       );
     }
 
-    console.log(`[API /quote-pdf] PDF üretimi başlatılıyor: ${tenantId} / ${orderId}`);
+    console.log(`[API /quote-pdf] PDF üretimi başlatılıyor: ${SovereignNodeId} / ${orderId}`);
 
-    const result = await generateProforma(tenantId, orderId, orderData || {});
+    const result = await generateProforma(SovereignNodeId, orderId, orderData || {});
 
     return NextResponse.json({
       success: true,

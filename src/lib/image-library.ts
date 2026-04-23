@@ -14,7 +14,7 @@ export interface LibraryImage {
     color: string;
     productType: string;
     source: 'imagen' | 'user_upload' | 'trtex_article';
-    tenant: 'perde' | 'trtex' | 'hometex';
+    node: 'perde' | 'trtex' | 'hometex';
     usageCount: number;
     createdAt: string;
 }

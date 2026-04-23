@@ -6,7 +6,7 @@ import GlobalClientEffects from "@/components/GlobalClientEffects";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { AipyramAuthProvider } from "@/components/auth/AipyramAuthProvider";
 import ConciergeWidget from "@/components/ConciergeWidget";
-import PerdeClientWrapper from "@/components/tenant-perde/PerdeClientWrapper";
+import PerdeClientWrapper from "@/components/node-perde/PerdeClientWrapper";
 
 import "./globals.css";
 

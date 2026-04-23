@@ -6,14 +6,14 @@ export interface OrchestrationRequest {
   query: string;
   intent: string;           
   user_locale: string;
-  tenant_context?: string;  
+  node_context?: string;  
 }
 
 export interface DataCard {
   type: 'trend' | 'product' | 'match' | 'price' | 'opportunity';
   title: string;
   content: string;
-  source_tenant: string;
+  source_node: string;
   action_url?: string;
   visual?: { chart_type: string; data: any };
 }
@@ -28,7 +28,7 @@ export interface OrchestrationResult {
 /**
  * ORCHESTRATION LAYER
  * "İtalya 500 oda otel" gibi karmaşık sorguları parçalar, 
- * tenant verilerini paralel çeker ve birleştirir.
+ * node verilerini paralel çeker ve birleştirir.
  */
 export async function orchestrateQuery(request: OrchestrationRequest): Promise<OrchestrationResult> {
   console.log(`[ORCHESTRATOR] 🧠 Sorgu analiz ediliyor: "${request.query}" | Intent: ${request.intent}`);
@@ -65,7 +65,7 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
     "suggested_actions" listesine KESİNLİKLE "⚡ BU PROJE İÇİN TEKLİF AL" aksiyonunu ekle (sistem bu metni görünce satış kapatma sürecini başlatır).
 
     Eğer niyet doğrudan PERAKENDE SATIN ALMA veya HAZIR ÜRÜN İNCELEME ise (örneğin "hazır perde al", "satın almak istiyorum"):
-    - "product" tipinde bir Data Card oluştur ve "source_tenant" değerini "vorhang" yap. 
+    - "product" tipinde bir Data Card oluştur ve "source_node" değerini "vorhang" yap. 
     - "suggested_actions" listesine KESİNLİKLE "🛒 SEPETE EKLE VEYA VORHANG'DA İNCELE" aksiyonunu ekle.
 
     JSON FORMATINDA DÖNDÜR:
@@ -76,7 +76,7 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
           "type": "trend|product|match|price|opportunity|design_mock",
           "title": "Kart Başlığı",
           "content": "Kart İçeriği (kısa)",
-          "source_tenant": "trtex|perde|hometex|vorhang",
+          "source_node": "trtex|perde|hometex|vorhang",
           "action_url": "https://...",
           "visual": { "chart_type": "image", "data": "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80" }
         }
@@ -104,8 +104,8 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
         if (validTypes.includes(sig)) {
           await ecosystemBus.emit({
             type: sig as EcosystemSignalType,
-            source_tenant: (request.tenant_context || 'master') as any,
-            target_tenant: 'all',
+            source_node: (request.node_context || 'master') as any,
+            target_node: 'all',
             payload: { query: request.query, intent: request.intent },
             priority: 'normal'
           });

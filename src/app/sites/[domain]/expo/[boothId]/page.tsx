@@ -1,4 +1,4 @@
-import BoothDetail from '@/components/tenant-hometex/BoothDetail';
+import BoothDetail from '@/components/node-hometex/BoothDetail';
 import Link from 'next/link';
 
 export default async function BoothDetailPage({ params }: { params: Promise<{ domain: string, boothId: string }> }) {

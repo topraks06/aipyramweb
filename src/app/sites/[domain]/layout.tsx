@@ -1,12 +1,12 @@
 import { Schema, Type } from "@google/genai";
 import { ReactNode } from "react";
 import { Metadata } from "next";
-import PerdeClientWrapper from "@/components/tenant-perde/PerdeClientWrapper";
-import { getTenantConfig, getTenantName } from "@/config/tenants";
+import PerdeClientWrapper from "@/components/node-perde/PerdeClientWrapper";
+import { resolveNodeFromDomain as getNodeConfig } from "@/lib/sovereign-config";
 
 /**
- * Tenant-aware dynamic metadata.
- * Her tenant için ayrı SEO title, description ve JSON-LD üretir.
+ * Node-aware dynamic metadata.
+ * Her node için ayrı SEO title, description ve JSON-LD üretir.
  */
 export async function generateMetadata({
   params,
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ domain: string }>;
 }): Promise<Metadata> {
   const { domain } = await params;
-  const config = getTenantConfig(domain);
+  const config = getNodeConfig(domain);
 
   if (!config) {
     return { title: "AIPyram" };
@@ -22,22 +22,21 @@ export async function generateMetadata({
 
   return {
     title: {
-      default: config.seo.title,
-      template: `%s | ${config.brand}`,
+      default: config.name,
+      template: `%s | ${config.name}`,
     },
-    description: config.seo.description,
+    description: config.name + " B2B Intelligence",
     openGraph: {
-      title: config.seo.title,
-      description: config.seo.description,
-      siteName: config.brand,
+      title: config.name,
+      description: config.name + " B2B Intelligence",
+      siteName: config.name,
       locale: config.locale === "de" ? "de_DE" : config.locale === "tr" ? "tr_TR" : "en_US",
       type: "website",
-      ...(config.seo.ogImage && { images: [{ url: config.seo.ogImage, width: 1200, height: 630 }] }),
     },
     twitter: {
       card: "summary_large_image",
-      title: config.seo.title,
-      description: config.seo.description,
+      title: config.name,
+      description: config.name + " B2B Intelligence",
     },
     robots: {
       index: true,
@@ -47,11 +46,11 @@ export async function generateMetadata({
 }
 
 /**
- * Tenant-aware JSON-LD structured data.
+ * Node-aware JSON-LD structured data.
  */
-function TenantJsonLd({ domain }: { domain: string }) {
-  const config = getTenantConfig(domain);
-  const tenantName = getTenantName(domain);
+function NodeJsonLd({ domain }: { domain: string }) {
+  const config = getNodeConfig(domain);
+  const nodeName = config?.shortName || "AIPyram";
 
   if (!config) return null;
 
@@ -59,10 +58,10 @@ function TenantJsonLd({ domain }: { domain: string }) {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: config.brand,
-    url: `https://${Object.keys(require("@/config/tenants").TENANT_CONFIG).find(k => k.includes(tenantName)) || "aipyram.com"}`,
-    description: config.seo.description,
-    logo: config.seo.ogImage,
+    name: config.name,
+    url: `https://${Object.keys(require("@/lib/sovereign-config").SOVEREIGN_NODES).find(k => k.includes(nodeName.toLowerCase())) || "aipyram.com"}`,
+    description: config.name + " B2B Intelligence",
+    logo: "",
     parentOrganization: {
       "@type": "Organization",
       name: "AIPyram Technologies",
@@ -74,9 +73,9 @@ function TenantJsonLd({ domain }: { domain: string }) {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: config.brand,
-    url: `https://${Object.keys(require("@/config/tenants").TENANT_CONFIG).find(k => k.includes(tenantName)) || "aipyram.com"}`,
-    description: config.seo.description,
+    name: config.name,
+    url: `https://${Object.keys(require("@/lib/sovereign-config").SOVEREIGN_NODES).find(k => k.includes(nodeName.toLowerCase())) || "aipyram.com"}`,
+    description: config.name + " B2B Intelligence",
     inLanguage: config.locale,
   };
 
@@ -106,7 +105,7 @@ export default async function DomainLayout({
   
   return (
     <>
-      <TenantJsonLd domain={exactDomain} />
+      <NodeJsonLd domain={exactDomain} />
       {children}
       {exactDomain.includes('perde') && <PerdeClientWrapper />}
     </>

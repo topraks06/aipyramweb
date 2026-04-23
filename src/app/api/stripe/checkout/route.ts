@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     } else if (type === 'marketplace') {
       checkoutSession = await createMarketplaceCheckout(payload);
     } else if (type === 'plan') {
-      const { planId, isYearly, tenantId, uid } = payload;
+      const { planId, isYearly, SovereignNodeId, uid } = payload;
       
       const planPrices: Record<string, { monthly: number, yearly: number }> = {
         starter: { monthly: 19.90, yearly: 15.90 },
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
       const origin = req.headers.get('origin') || 'http://localhost:3000';
       
       checkoutSession = await createPlanCheckout({
-        tenantId,
+        SovereignNodeId,
+        uid: uid || 'anonymous',
         planId,
         customerEmail: undefined, // Could add from user later
         amountUSD,

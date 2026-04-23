@@ -5,14 +5,14 @@ export function useEcosystemActions() {
   const [isOrchestrating, setIsOrchestrating] = useState(false);
   const [orchestrationError, setOrchestrationError] = useState<string | null>(null);
 
-  const processQuery = async (query: string, intent: string, locale: string, tenantContext?: string): Promise<OrchestrationResult | null> => {
+  const processQuery = async (query: string, intent: string, locale: string, nodeContext?: string): Promise<OrchestrationResult | null> => {
     setIsOrchestrating(true);
     setOrchestrationError(null);
     try {
       const response = await fetch('/api/brain/v1/orchestrate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, intent, locale, tenantContext })
+        body: JSON.stringify({ query, intent, locale, nodeContext })
       });
       
       if (!response.ok) {

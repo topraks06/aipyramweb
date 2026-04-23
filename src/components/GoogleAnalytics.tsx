@@ -1,9 +1,9 @@
 /**
  * ═══════════════════════════════════════════════════════
- * AIPYRAM MULTI-TENANT GA4 ANALYTICS
+ * AIPYRAM MULTI-NODE GA4 ANALYTICS
  * ═══════════════════════════════════════════════════════
  * 
- * Merkezi izleme bileşeni — tüm tenant siteleri otomatik tanır.
+ * Merkezi izleme bileşeni — tüm node siteleri otomatik tanır.
  * 
  * Kullanım:
  *   <GoogleAnalytics />   (root layout'a bir kez ekle, gerisini halleder)
@@ -12,9 +12,9 @@
  *   NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
  * 
  * Mimari:
- *   - Tenant hostname otomatik detect edilir
+ *   - Node hostname otomatik detect edilir
  *   - Cross-domain tracking tüm AIPYRAM domainleri arası aktif
- *   - Tek GA4 mülkü, tenant_id ile filtreleme
+ *   - Tek GA4 mülkü, node_id ile filtreleme
  */
 'use client';
 
@@ -22,7 +22,7 @@ import Script from 'next/script';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
 
-// AIPYRAM ekosistem domainleri (yeni tenant eklenince buraya ekle)
+// AIPYRAM ekosistem domainleri (yeni node eklenince buraya ekle)
 const ECOSYSTEM_DOMAINS = [
   'trtex.com',
   'perde.ai',
@@ -50,14 +50,14 @@ export default function GoogleAnalytics() {
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            // Tenant otomatik tespit
-            var currentTenant = window.location.hostname;
+            // Node otomatik tespit
+            var currentNode = window.location.hostname;
 
             gtag('config', '${GA_MEASUREMENT_ID}', {
               send_page_view: true,
               site_speed_sample_rate: 100,
               user_properties: {
-                tenant_id: currentTenant,
+                node_id: currentNode,
                 ecosystem: 'AIPYRAM'
               },
               linker: {
@@ -67,10 +67,10 @@ export default function GoogleAnalytics() {
             });
 
             // AIPYRAM Merkezi Olay Takip Fonksiyonu
-            window.trackTenantEvent = function(eventName, params) {
+            window.trackNodeEvent = function(eventName, params) {
               gtag('event', eventName, Object.assign({
-                event_category: 'Tenant_Action',
-                tenant_source: currentTenant,
+                event_category: 'Node_Action',
+                node_source: currentNode,
                 ecosystem: 'AIPYRAM'
               }, params || {}));
             };

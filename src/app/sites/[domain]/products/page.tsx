@@ -1,8 +1,8 @@
-import VorhangNavbar from "@/components/tenant-vorhang/VorhangNavbar";
-import { ProductGrid } from "@/components/tenant-vorhang/ProductGrid";
+import VorhangNavbar from "@/components/node-vorhang/VorhangNavbar";
+import { ProductGrid } from "@/components/node-vorhang/ProductGrid";
 import { Search } from "lucide-react";
 import { adminDb } from "@/lib/firebase-admin";
-import VorhangFooter from "@/components/tenant-vorhang/VorhangFooter";
+import VorhangFooter from "@/components/node-vorhang/VorhangFooter";
 
 export const dynamic = "force-dynamic";
 

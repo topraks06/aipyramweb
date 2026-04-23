@@ -1,12 +1,12 @@
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
-import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
-import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
-import PerdeTerms from '@/components/tenant-perde/PerdeTerms';
+import PerdeNavbar from '@/components/node-perde/PerdeNavbar';
+import PerdeFooter from '@/components/node-perde/PerdeFooter';
+import PerdeTerms from '@/components/node-perde/PerdeTerms';
 import { t } from '@/i18n/labels';
-import HometexTerms from '@/components/tenant-hometex/HometexTerms';
-import VorhangTerms from '@/components/tenant-vorhang/VorhangTerms';
+import HometexTerms from '@/components/node-hometex/HometexTerms';
+import VorhangTerms from '@/components/node-vorhang/VorhangTerms';
 
 export const dynamic = "force-dynamic";
 

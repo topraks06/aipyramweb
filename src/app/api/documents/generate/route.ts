@@ -4,11 +4,11 @@ import { invokeAgent } from "@/lib/aloha/registry";
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { orderId, data, tenantId = 'perde' } = body;
+        const { orderId, data, SovereignNodeId = 'perde' } = body;
 
         const result = await invokeAgent({
             agentType: 'document',
-            tenantId,
+            SovereignNodeId,
             payload: { orderId, data }
         });
 

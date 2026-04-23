@@ -1,5 +1,5 @@
-import HometexNavbar from '@/components/tenant-hometex/HometexNavbar';
-import Expo from '@/components/tenant-hometex/Expo';
+import HometexNavbar from '@/components/node-hometex/HometexNavbar';
+import Expo from '@/components/node-hometex/Expo';
 import { adminDb } from '@/lib/firebase-admin';
 
 export default async function ExpoPage({ params }: { params: Promise<{ domain: string }> }) {

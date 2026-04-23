@@ -47,7 +47,7 @@ export interface CreateCheckoutParams {
 }
 
 export interface PlanCheckoutParams {
-  tenantId: string;
+  SovereignNodeId: string;
   planId: string;
   uid: string;
   customerEmail?: string;
@@ -203,9 +203,9 @@ export async function createPlanCheckout(
             currency: "usd",
             product_data: {
               name: `AIPyram ${params.planId.toUpperCase()} Plan (${params.isYearly ? 'Yıllık' : 'Aylık'})`,
-              description: `${params.tenantId.toUpperCase()} için Sovereign lisans ve kredi.`,
+              description: `${params.SovereignNodeId.toUpperCase()} için Sovereign lisans ve kredi.`,
               metadata: {
-                tenantId: params.tenantId,
+                SovereignNodeId: params.SovereignNodeId,
                 planId: params.planId,
               },
             },
@@ -215,7 +215,7 @@ export async function createPlanCheckout(
         },
       ],
       metadata: {
-        tenantId: params.tenantId,
+        SovereignNodeId: params.SovereignNodeId,
         planId: params.planId,
         type: "plan",
       },

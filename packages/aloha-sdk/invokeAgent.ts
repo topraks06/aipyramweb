@@ -2,8 +2,8 @@
  * ALOHA SOVEREIGN GATEWAY — invokeAgent
  * 
  * TÜM SİSTEMİN KALBİ.
- * Her tenant bu fonksiyonu çağırır.
- * Hiçbir tenant direkt agent çalıştırmaz.
+ * Her node bu fonksiyonu çağırır.
+ * Hiçbir node direkt agent çalıştırmaz.
  * 
  * Akış: Whitelist → Rate Limit → Wallet → Tool → Log → Kredi Düş
  */
@@ -30,17 +30,17 @@ const ALLOWED_ACTIONS = [
 type AllowedAction = typeof ALLOWED_ACTIONS[number];
 
 // ═══════════════════════════════════════
-// RATE LIMITER (Tenant bazlı, in-memory)
+// RATE LIMITER (Node bazlı, in-memory)
 // ═══════════════════════════════════════
 
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(tenant: string): void {
+function checkRateLimit(node: string): void {
   const now = Date.now();
   const windowMs = 60_000; // 1 dakika
   const maxCalls = 50;
 
-  const key = `rl_${tenant}`;
+  const key = `rl_${node}`;
   const entry = rateLimitStore.get(key);
 
   if (!entry || now > entry.resetAt) {
@@ -50,7 +50,7 @@ function checkRateLimit(tenant: string): void {
 
   entry.count++;
   if (entry.count > maxCalls) {
-    throw new Error(`[RATE_LIMIT] ${tenant} için dakikalık limit aşıldı (${maxCalls}/dk)`);
+    throw new Error(`[RATE_LIMIT] ${node} için dakikalık limit aşıldı (${maxCalls}/dk)`);
   }
 }
 
@@ -70,7 +70,7 @@ function cleanupRateLimits() {
 // ═══════════════════════════════════════
 
 export interface SovereignInvocation {
-  tenant: string;
+  node: string;
   action: string;
   uid?: string;
   payload: Record<string, any>;
@@ -86,7 +86,7 @@ export interface SovereignResult {
 }
 
 export async function invokeAgent(invocation: SovereignInvocation): Promise<SovereignResult> {
-  const { tenant, action, uid, payload, idempotencyKey } = invocation;
+  const { node, action, uid, payload, idempotencyKey } = invocation;
   const start = Date.now();
 
   try {
@@ -114,13 +114,13 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
       };
     }
 
-    // 2. Tenant rate limit (50 call/dakika)
+    // 2. Node rate limit (50 call/dakika)
     cleanupRateLimits();
-    checkRateLimit(tenant);
+    checkRateLimit(node);
 
     // 3. Wallet kontrolü (uid varsa)
     if (uid) {
-      const wallet = await checkCredits(tenant, uid, action);
+      const wallet = await checkCredits(node, uid, action);
       if (!wallet.allowed) {
         return {
           success: false,
@@ -133,7 +133,7 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
 
     // 3.5. Admin Training Injection (CORE BRAIN LOCK)
     const { injectKnowledgeContext, writeSemanticMemory } = await import('./memory');
-    const adminRules = await injectKnowledgeContext(tenant, action);
+    const adminRules = await injectKnowledgeContext(node, action);
     
     // Inject the rules into the payload so the tool can use them
     if (adminRules) {
@@ -148,7 +148,7 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
 
     // 4.5. Semantic Memory Write Loop (RLHF)
     await writeSemanticMemory({
-      tenant,
+      node,
       action,
       uid,
       payload,
@@ -160,7 +160,7 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
 
     // 5. Logla (aloha_sovereign_logs koleksiyonu)
     await logSovereignAction({
-      tenant,
+      node,
       action,
       uid,
       payload,
@@ -171,7 +171,7 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
 
     // 6. Kredi düş (atomic Firestore transaction)
     if (uid && toolResult.success) {
-      await deductCredit(tenant, uid, action);
+      await deductCredit(node, uid, action);
     }
 
     // 7. Idempotency kaydet
@@ -191,12 +191,12 @@ export async function invokeAgent(invocation: SovereignInvocation): Promise<Sove
     const duration = Date.now() - start;
 
     // DLQ kaydı — sistem çökerse veri kaybolmaz
-    await logDLQ(tenant, action, err.message, payload);
+    await logDLQ(node, action, err.message, payload);
 
     // 4.5. Semantic Memory Write Loop (Crash)
     const { writeSemanticMemory } = await import('./memory');
     await writeSemanticMemory({
-      tenant,
+      node,
       action,
       uid,
       payload,

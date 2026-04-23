@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { resolveTenantFromDomain } from '@/lib/tenant-config';
+import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 import { Package, Users, Activity, TrendingUp, Search, RefreshCcw, Bell } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DemoDashboardPage() {
     const pathname = usePathname() || '';
     const domain = pathname.split('/')[2];
-    const tenant = resolveTenantFromDomain(domain);
+    const node = resolveNodeFromDomain(domain);
     
     // FAKE DATA FOR SALES PRESENTATION
     const fakeOrders = [
@@ -25,7 +25,7 @@ export default function DemoDashboardPage() {
             {/* SIDEBAR */}
             <div className="w-64 bg-[#0A0A0A] border-r border-[#1A1A1A] flex flex-col shrink-0">
                 <div className="p-6 border-b border-[#1A1A1A]">
-                    <h1 className="font-serif text-xl font-bold uppercase tracking-widest text-white">{tenant.shortName}</h1>
+                    <h1 className="font-serif text-xl font-bold uppercase tracking-widest text-white">{node.shortName}</h1>
                     <p className="text-[9px] text-green-500 font-mono tracking-widest mt-1 animate-pulse">DEMO MODE ACTIVE</p>
                 </div>
                 <div className="flex-1 p-4 flex flex-col gap-2 font-mono text-[11px] uppercase tracking-wider text-zinc-400">

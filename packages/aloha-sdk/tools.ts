@@ -120,7 +120,7 @@ async function renderTool(payload: Record<string, any>): Promise<ToolResult> {
 
 async function analysisTool(payload: Record<string, any>): Promise<ToolResult> {
   try {
-    const { query, context, tenant } = payload;
+    const { query, context, node } = payload;
 
     if (!query) {
       return { success: false, message: 'query parametresi gerekli.' };
@@ -131,7 +131,7 @@ async function analysisTool(payload: Record<string, any>): Promise<ToolResult> {
     const aiClient = alohaAI.getClient();
 
     const prompt = `B2B Textile Intelligence Analysis.
-Tenant: ${tenant || 'aipyram'}
+Node: ${node || 'aipyram'}
 Context: ${context || 'general'}
 Query: ${query}
 
@@ -188,7 +188,7 @@ async function opportunityTool(payload: Record<string, any>): Promise<ToolResult
 
 async function composeArticleTool(payload: Record<string, any>): Promise<ToolResult> {
   try {
-    const { topic, category, tenant } = payload;
+    const { topic, category, node } = payload;
 
     if (!topic) {
       return { success: false, message: 'topic parametresi gerekli.' };
@@ -200,7 +200,7 @@ async function composeArticleTool(payload: Record<string, any>): Promise<ToolRes
     const prompt = `Write a professional B2B textile industry article.
 Topic: ${topic}
 Category: ${category || 'NEWS'}
-Target: ${tenant || 'trtex'} audience
+Target: ${node || 'trtex'} audience
 Language: Turkish
 Format: Title, summary (max 200 chars), body (max 800 words)
 Style: Professional, data-driven, no AI clichés
@@ -228,7 +228,7 @@ ${payload.sovereignContext || ''}`;
 
 async function chatTool(payload: Record<string, any>): Promise<ToolResult> {
   try {
-    const { message, history, tenant } = payload;
+    const { message, history, node } = payload;
 
     if (!message) {
       return { success: false, message: 'message parametresi gerekli.' };
@@ -237,7 +237,7 @@ async function chatTool(payload: Record<string, any>): Promise<ToolResult> {
     const { alohaAI } = await import('@/core/aloha/aiClient');
     const aiClient = alohaAI.getClient();
 
-    const systemPrompt = `Sen ${tenant || 'AIPyram'} platformunun B2B asistanısın. 
+    const systemPrompt = `Sen ${node || 'AIPyram'} platformunun B2B asistanısın. 
 Kısa, profesyonel ve aksiyon odaklı cevap ver. Türkçe konuş.
 ${payload.sovereignContext || ''}`;
 

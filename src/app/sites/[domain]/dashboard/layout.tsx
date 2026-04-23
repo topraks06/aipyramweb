@@ -2,17 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useTenantAuth } from '@/hooks/useTenantAuth';
-import { resolveTenantFromDomain } from '@/lib/tenant-config';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
+import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 import { ShieldAlert, Loader2 } from 'lucide-react';
 
 export default function DashboardGuardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname() || '';
     const domain = pathname.split('/')[2];
-    const tenantConfig = resolveTenantFromDomain(domain);
-    const tenantId = tenantConfig.id;
+    const nodeConfig = resolveNodeFromDomain(domain);
+    const nodeId = nodeConfig.id;
     
-    const { user, loading, role } = useTenantAuth(tenantId);
+    const { user, loading, role } = useSovereignAuth(nodeId);
     const router = useRouter();
     const [authorized, setAuthorized] = useState(false);
 

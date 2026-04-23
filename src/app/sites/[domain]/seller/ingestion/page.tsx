@@ -1,4 +1,4 @@
-import SellerIngestion from "@/components/tenant-vorhang/SellerIngestion";
+import SellerIngestion from "@/components/node-vorhang/SellerIngestion";
 
 export const dynamic = "force-dynamic";
 

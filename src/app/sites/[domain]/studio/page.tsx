@@ -1,5 +1,5 @@
-import StudioLayout from '@/components/tenant-perde/studio/StudioLayout';
-import StudioContent from '@/components/tenant-perde/studio/StudioContent';
+import StudioLayout from '@/components/node-perde/studio/StudioLayout';
+import StudioContent from '@/components/node-perde/studio/StudioContent';
 
 export default async function StudioPage({ params }: { params: Promise<{ domain: string }> }) {
     const { domain } = await params;

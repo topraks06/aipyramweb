@@ -22,17 +22,17 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { type, tenantId, payload, priority = 'normal' } = body;
+    const { type, SovereignNodeId, payload, priority = 'normal' } = body;
     
-    if (!type || !tenantId) {
-      return NextResponse.json({ success: false, error: 'Missing type or tenantId' }, { status: 400 });
+    if (!type || !SovereignNodeId) {
+      return NextResponse.json({ success: false, error: 'Missing type or SovereignNodeId' }, { status: 400 });
     }
     
     if (!adminDb) return NextResponse.json({ success: false }, { status: 500 });
 
     const signalData = {
       type,
-      tenantId,
+      SovereignNodeId,
       payload,
       priority,
       status: 'pending',

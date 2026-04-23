@@ -1,4 +1,4 @@
-import { OrderConfirmation } from "@/components/tenant-vorhang/OrderConfirmation";
+import { OrderConfirmation } from "@/components/node-vorhang/OrderConfirmation";
 
 export const dynamic = "force-dynamic";
 

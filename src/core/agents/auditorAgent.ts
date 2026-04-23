@@ -109,7 +109,7 @@ export async function auditSupplier(
     };
 
     CostGuard.logAction({
-        tenant_id: "aipyram-core",
+        node_id: "aipyram-core",
         agentRole: output.agent,
         taskType: "supplier_audit",
         tokensUsed: output.tokensUsed || 0,

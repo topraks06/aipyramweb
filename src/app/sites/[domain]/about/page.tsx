@@ -1,9 +1,9 @@
-import AboutEnterprise from '@/components/tenant-perde/AboutEnterprise';
-import PerdeNavbar from '@/components/tenant-perde/PerdeNavbar';
-import PerdeFooter from '@/components/tenant-perde/PerdeFooter';
+import AboutEnterprise from '@/components/node-perde/AboutEnterprise';
+import PerdeNavbar from '@/components/node-perde/PerdeNavbar';
+import PerdeFooter from '@/components/node-perde/PerdeFooter';
 import TrtexAbout from '@/components/trtex/TrtexAbout';
-import HometexAbout from '@/components/tenant-hometex/HometexAbout';
-import VorhangAbout from '@/components/tenant-vorhang/VorhangAbout';
+import HometexAbout from '@/components/node-hometex/HometexAbout';
+import VorhangAbout from '@/components/node-vorhang/VorhangAbout';
 
 export default async function AboutPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;

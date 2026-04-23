@@ -132,7 +132,7 @@ JSON FORMATINDA YANIT VER:
 
     await adminDb.collection('hometex_products').doc(slug).set(docData);
     
-    // Cross-tenant bridge: Add to local user library so it can be seen in Visualizer
+    // Cross-node bridge: Add to local user library so it can be seen in Visualizer
     try {
       await adminDb.collection('perde_library').add({
          url_1k: imageUrl,
@@ -144,12 +144,12 @@ JSON FORMATINDA YANIT VER:
          color: parsedProduct.color || 'mixed',
          productType: 'hometex',
          source: 'hometex_ingestion',
-         tenant: 'hometex',
+         node: 'hometex',
          usageCount: 0,
          createdAt: new Date().toISOString()
       });
     } catch(e) {
-      console.warn('Cross-tenant bridge sync failed', e);
+      console.warn('Cross-node bridge sync failed', e);
     }
 
     console.log(`[HOMETEX-INGEST] ✅ Başarıyla eklendi: ${slug}`);

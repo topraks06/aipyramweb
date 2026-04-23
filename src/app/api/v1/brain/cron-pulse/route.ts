@@ -57,11 +57,11 @@ export async function GET(request: Request) {
       const PRIORITY_PROJECTS = ['trtex']; // Sadece TRTEX otonom
       const cycleResults = [];
 
-      for (const tenant of PRIORITY_PROJECTS) {
+      for (const node of PRIORITY_PROJECTS) {
         const res = await invokeAgent({
-          tenant,
+          node,
           action: 'autonomous_cycle',
-          payload: { projectName: tenant }
+          payload: { projectName: node }
         });
         if (res.success && res.data) {
           cycleResults.push(res.data);

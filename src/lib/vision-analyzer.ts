@@ -11,15 +11,15 @@ export interface RoomAnalysis {
 
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-import { getTenant } from "@/lib/tenant-config";
+import { getNode } from "@/lib/sovereign-config";
 
-export async function analyzeRoom(imageBase64: string, tenantId: string = 'perde'): Promise<RoomAnalysis> {
-    const config = getTenant(tenantId);
+export async function analyzeRoom(imageBase64: string, SovereignNodeId: string = 'perde'): Promise<RoomAnalysis> {
+    const config = getNode(SovereignNodeId);
     let systemInstruction = "Sen bir iç mimar asistanısın. Gönderilen odayı analiz et ve perde önerisi yap. SADECE JSON formatında Türkçe yanıt ver, hiçbir markdown veya ekstra açıklama olmadan.";
     
-    if (tenantId === 'hometex') {
+    if (SovereignNodeId === 'hometex') {
         systemInstruction = "Sen ev tekstili uzmanısın. Gönderilen görseli analiz et ve perde veya halı/mobilya gibi ev tekstili ürünleri/kumaşları için JSON formatında öneriler sun.";
-    } else if (tenantId === 'vorhang') {
+    } else if (SovereignNodeId === 'vorhang') {
         systemInstruction = "Du bist ein europäischer Innenarchitekt. Analysiere den Raum und mache Vorhang-Empfehlungen. Antworte NUR im JSON-Format auf Deutsch.";
     }
     const model = ai.getGenerativeModel({

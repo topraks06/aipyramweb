@@ -7,21 +7,32 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Firebase Admin not initialized' }, { status: 500 });
     }
 
-    // Gerçek bir senaryoda bu veri 'wallet_transactions' koleksiyonundan zaman serisi olarak çekilir
-    // Şimdilik, veritabanı yapımızda zaman serisi tutulmuyorsa anlık totalSpent'i gösterelim
-    // Veya Firebase'den geçmiş 24 saatin transaction'larını çekelim
+    // Gerçek Sovereign cüzdan verilerini çek
+    const walletsSnap = await adminDb.collection('sovereign_wallets').get();
+    let currentWallets: Record<string, number> = { trtex: 0, perde: 0, hometex: 0, vorhang: 0 };
     
-    // Fallback: Return empty array for now since we don't have historical data seeded.
-    // DUMB CLIENT: Asla mock gönderme. Veri yoksa boş array gönder.
-    const data: any[] = [];
-
-    // Örnek Firestore okuma (Eğer 'economy_history' diye bir tablo olsaydı):
-    /*
-    const historySnap = await adminDb.collection('economy_history').orderBy('timestamp', 'asc').limit(24).get();
-    historySnap.forEach(doc => {
-      data.push(doc.data());
+    walletsSnap.forEach(doc => {
+      const data = doc.data();
+      const node = doc.id; // trtex, perde, vs.
+      if (node in currentWallets) {
+        currentWallets[node] = data.consumed_credits || 0;
+      }
     });
-    */
+
+    // Anlık tabloyu simüle et (Zaman serisi olmadığı için tek/son nokta olarak gönderiyoruz)
+    // Gerçek sistemde bu "daily_cost" tablolarından map edilecektir.
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const data: any[] = [
+      {
+        time: timeStr,
+        trtex: currentWallets.trtex,
+        perde: currentWallets.perde,
+        hometex: currentWallets.hometex,
+        vorhang: currentWallets.vorhang
+      }
+    ];
 
     return NextResponse.json({
       success: true,

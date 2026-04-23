@@ -1,6 +1,6 @@
 export interface SupplierCreditBalance {
   id: string; // genelde supplierId ile aynıdır
-  tenant_id: string;
+  node_id: string;
   supplierId: string;
   balanceTokens: number; // Örn: 1 Token = 1 Lead Reveal
   lifetimeTokensPurchased: number;
@@ -11,7 +11,7 @@ export interface SupplierCreditBalance {
 
 export interface SupplierCreditTransaction {
   id: string;
-  tenant_id: string;
+  node_id: string;
   supplierId: string;
   amount: number;       // +10 (satın alma) veya -1 (lead açma)
   type: "PURCHASE" | "SPEND" | "REFUND" | "BONUS";
