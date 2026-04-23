@@ -23,10 +23,11 @@ export async function checkCredits(tenantId: string, uid: string, agentType: str
   if (cost === 0) return { allowed: true, remaining: 999 };
 
   const config = getTenant(tenantId);
-  if (!config.walletCollection) return { allowed: false, remaining: 0 };
+  const prefix = config.name.toLowerCase().split('.')[0];
+  const walletCollection = `${prefix}_members`;
 
   try {
-    const walletDoc = await adminDb.collection(config.walletCollection).doc(uid).get();
+    const walletDoc = await adminDb.collection(walletCollection).doc(uid).get();
     if (!walletDoc.exists) {
       return { allowed: false, remaining: 0 };
     }
@@ -58,7 +59,9 @@ export async function deductCredit(tenantId: string, uid: string, agentType: str
   if (cost <= 0) return;
 
   const config = getTenant(tenantId);
-  const walletRef = adminDb.collection(config.walletCollection).doc(uid);
+  const prefix = config.name.toLowerCase().split('.')[0];
+  const walletCollection = `${prefix}_members`;
+  const walletRef = adminDb.collection(walletCollection).doc(uid);
 
   try {
     await adminDb.runTransaction(async (t) => {

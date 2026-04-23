@@ -5,6 +5,7 @@ import AlohaInput from '@/components/aloha/AlohaInput';
 import DynamicCanvas from '@/components/aloha/DynamicCanvas';
 import TenantSelector from '@/components/aloha/TenantSelector';
 import HealthCards from '@/components/aloha/HealthCards';
+import DashboardOverview from '@/components/admin/DashboardOverview';
 
 export default function TheVoidAdmin() {
   const [intelItems, setIntelItems] = useState<any[]>([]);
@@ -68,12 +69,8 @@ export default function TheVoidAdmin() {
         {/* The Void: Dinamik Veri Sahnesi */}
         <section ref={scrollRef} className="flex-1 overflow-y-auto p-6 md:p-12 scroll-smooth border-x border-white/[0.02] mx-auto w-full max-w-[1600px]">
           {intelItems.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center space-y-8 opacity-10 pointer-events-none">
-              <h1 className="text-7xl md:text-9xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-black">THE VOID</h1>
-              <p className="font-mono text-sm uppercase tracking-[0.5em] text-white">Bekleniyor: Bir emir verin</p>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-600">
-                Aktif Tenant: {activeTenant.toUpperCase()} | Google-Native Architecture
-              </p>
+            <div className="pt-4">
+              <DashboardOverview />
             </div>
           ) : (
             <div className="pt-10">
