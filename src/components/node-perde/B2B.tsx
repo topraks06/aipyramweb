@@ -38,6 +38,7 @@ export default function B2B() {
   const [dbProjects, setDbProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeOrder, setActiveOrder] = useState<any | null>(null);
+  const [isCreateMode, setIsCreateMode] = useState(false);
   const [cfg, setCfg] = useState(() => {
     try {
        if (typeof window !== 'undefined') {
@@ -121,8 +122,7 @@ export default function B2B() {
     return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(val);
   };
 
-  const baseProjects = cfg.mockProjects || dbProjects;
-  const projectsToDisplay = baseProjects || [];
+  const projectsToDisplay = dbProjects || [];
   const activeStatuses = cfg.statusList || STATUS_LIST;
   const totalRevenue = projectsToDisplay.reduce((acc: any, curr: any) => acc + (Number(curr.grandTotal) || 0), 0);
   
@@ -151,14 +151,10 @@ export default function B2B() {
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <button 
-             onClick={() => {
-               if (typeof window !== 'undefined') {
-                 window.dispatchEvent(new CustomEvent('open_order_slide'));
-               }
-             }}
+             onClick={() => setIsCreateMode(true)}
              className="bg-white text-black font-bold uppercase tracking-widest text-[10px] px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-zinc-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)]"
           >
-             <Plus className="w-4 h-4" /> YENÄ° FÄ°Å KES
+             <Plus className="w-4 h-4" /> YENİ FİŞ KES
           </button>
           {cfg.shortcuts.map((shortcut: string, idx: number) => (
              <button key={idx} className="bg-zinc-900 border border-white/10 text-white font-bold uppercase tracking-widest text-[10px] px-6 py-3 rounded-lg hover:bg-zinc-800 transition-colors hidden sm:flex">
@@ -327,9 +323,10 @@ export default function B2B() {
       )}
       
       <OrderSlideOver 
-        isOpen={!!activeOrder} 
-        onClose={() => setActiveOrder(null)} 
-        order={activeOrder} 
+        isOpen={!!activeOrder || isCreateMode} 
+        onClose={() => { setActiveOrder(null); setIsCreateMode(false); }} 
+        order={activeOrder}
+        isCreateMode={isCreateMode}
       />
     </div>
   );

@@ -20,12 +20,8 @@ interface Product {
 export default function Catalog() {
   const { user, loading, SovereignNodeId } = usePerdeAuth();
   
-  // MOCK DATA INSTEAD OF FIREBASE
-  const [products, setProducts] = useState<Product[]>([
-    { id: '1', name: 'Blackout Keten Gri', category: 'Fon', price: 1250, stock: 45, createdAt: Date.now() },
-    { id: '2', name: 'Premium Ä°pek TÃ¼l', category: 'TÃ¼l', price: 850, stock: 120, createdAt: Date.now() },
-  ]);
-  const [isFetching, setIsFetching] = useState(false); // set false for mock
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
   
   // Basic add dialog state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -33,36 +29,37 @@ export default function Catalog() {
   const [newProduct, setNewProduct] = useState({ name: '', category: 'Fon', price: '', stock: '' });
 
   useEffect(() => {
-    if (user && SovereignNodeId) {
-      loadProducts();
-    }
-  }, [user, SovereignNodeId]);
-
-  const loadProducts = async () => {
-    if (!user) return;
-    try {
-      setIsFetching(true);
-      const q = query(
-        collection(db, 'products'),
-        where('SovereignNodeId', '==', SovereignNodeId),
-        orderBy('createdAt', 'desc')
-      );
-      const snap = await getDocs(q);
+    if (!user || !SovereignNodeId) return;
+    
+    setIsFetching(true);
+    const config = getNode(SovereignNodeId);
+    
+    // onSnapshot ile gerçek zamanlı dinleme
+    const q = query(
+      collection(db, config.productCollection || 'products'),
+      where('authorId', '==', user.uid),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const unsubscribe = onSnapshot(q, (snap) => {
       setProducts(snap.docs.map(d => ({ id: d.id, ...d.data() } as Product)));
-    } catch (e) {
-      console.error("Katalog yÃ¼klenirken hata oluÅŸtu:", e);
-    } finally {
       setIsFetching(false);
-    }
-  };
+    }, (error) => {
+      console.error("Katalog yüklenirken hata:", error);
+      setIsFetching(false);
+    });
+    
+    return () => unsubscribe();
+  }, [user, SovereignNodeId]);
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !SovereignNodeId) return;
     
+    const config = getNode(SovereignNodeId);
     try {
       setIsSubmitting(true);
-      await addDoc(collection(db, 'products'), {
+      await addDoc(collection(db, config.productCollection || 'products'), {
         ...newProduct,
         price: Number(newProduct.price),
         stock: Number(newProduct.stock),
@@ -73,10 +70,9 @@ export default function Catalog() {
 
       setNewProduct({ name: '', category: 'Fon', price: '', stock: '' });
       setShowAddForm(false);
-      loadProducts();
     } catch (e) {
       console.error(e);
-      alert("ÃœrÃ¼n eklenirken bir hata oluÅŸtu.");
+      alert("Ürün eklenirken bir hata oluştu.");
     } finally {
       setIsSubmitting(false);
     }

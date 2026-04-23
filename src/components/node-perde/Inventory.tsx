@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Layers, AlertCircle } from 'lucide-react';
+import { Package, Layers, AlertCircle, Loader2 } from 'lucide-react';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase-client';
+import { usePerdeAuth } from '@/hooks/usePerdeAuth';
+import { getNode } from '@/lib/sovereign-config';
 
 export function Inventory() {
-  // Simüle edilmiş stok verisi
-  const inventoryItems = [
-    { id: 1, name: 'Premium Blackout Kumaş (Antrasit)', sku: 'BLK-01', stock: 1240, unit: 'Metre', status: 'Yeterli', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { id: 2, name: 'Keten Fon Perdelik (Bej)', sku: 'KTN-04', stock: 85, unit: 'Metre', status: 'Kritik', color: 'text-red-400', bg: 'bg-red-500/10' },
-    { id: 3, name: 'Jakarlı Damask (Altın)', sku: 'JQD-02', stock: 450, unit: 'Metre', status: 'Yeterli', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { id: 4, name: 'Somfy Motor Sistemi (Sessiz)', sku: 'SMF-99', stock: 12, unit: 'Adet', status: 'Azalıyor', color: 'text-yellow-400', bg: 'bg-yellow-500/10' }
-  ];
+  const { user, SovereignNodeId } = usePerdeAuth();
+  const [inventoryItems, setInventoryItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || !SovereignNodeId) return;
+
+    const config = getNode(SovereignNodeId);
+    const q = query(
+      collection(db, config.productCollection || 'products'),
+      where('authorId', '==', user.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setInventoryItems(items);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user, SovereignNodeId]);
+
+  const criticalItemsCount = inventoryItems.filter(item => (item.stock || 0) < 10).length;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -17,7 +37,7 @@ export function Inventory() {
         <Package className="w-8 h-8 text-blue-400" />
         <div>
           <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Stok & Envanter</h2>
-          <p className="text-sm text-zinc-400">Üretim hammaddeleri ve Hometex / Vorhang entegre stok takibi.</p>
+          <p className="text-sm text-zinc-400">Üretim hammaddeleri ve katalog stok takibi.</p>
         </div>
       </div>
 
@@ -28,7 +48,7 @@ export function Inventory() {
               <div className="p-3 bg-blue-500/10 rounded-lg text-blue-400"><Layers className="w-6 h-6" /></div>
             </div>
             <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">Toplam Kalem</p>
-            <h3 className="text-4xl font-bold text-white">{inventoryItems.length}</h3>
+            <h3 className="text-4xl font-bold text-white">{loading ? '...' : inventoryItems.length}</h3>
           </CardContent>
         </Card>
         
@@ -38,7 +58,7 @@ export function Inventory() {
               <div className="p-3 bg-red-500/10 rounded-lg text-red-400"><AlertCircle className="w-6 h-6" /></div>
             </div>
             <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">Kritik Stok Uyarıları</p>
-            <h3 className="text-4xl font-bold text-white">1</h3>
+            <h3 className="text-4xl font-bold text-white">{loading ? '...' : criticalItemsCount}</h3>
           </CardContent>
         </Card>
       </div>
@@ -46,43 +66,55 @@ export function Inventory() {
       <Card className="bg-zinc-900 border-white/10">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg text-white">Depo Durumu</CardTitle>
-          <button className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 bg-white text-black hover:bg-zinc-200 transition-colors rounded">
-            Yeni Giriş Ekle
+          <button onClick={() => window.location.href = '/sites/perde/catalog'} className="text-[10px] font-bold uppercase tracking-widest px-4 py-2 bg-white text-black hover:bg-zinc-200 transition-colors rounded">
+            Kataloğa Git
           </button>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-[10px] text-zinc-500 uppercase tracking-widest bg-black/40 border-y border-white/10">
-                <tr>
-                  <th className="px-6 py-4 font-bold">Stok Kodu</th>
-                  <th className="px-6 py-4 font-bold">Ürün / Materyal</th>
-                  <th className="px-6 py-4 font-bold text-right">Miktar</th>
-                  <th className="px-6 py-4 font-bold">Durum</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {inventoryItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-zinc-500 font-mono text-xs">
-                      {item.sku}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-white font-medium">
-                      {item.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-white">
-                      {item.stock.toLocaleString('tr-TR')} <span className="text-zinc-500 text-xs font-normal ml-1">{item.unit}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${item.bg} ${item.color}`}>
-                        {item.status}
-                      </span>
-                    </td>
+          {loading ? (
+            <div className="py-12 flex justify-center"><Loader2 className="w-6 h-6 text-zinc-500 animate-spin" /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-[10px] text-zinc-500 uppercase tracking-widest bg-black/40 border-y border-white/10">
+                  <tr>
+                    <th className="px-6 py-4 font-bold">Stok Kodu / ID</th>
+                    <th className="px-6 py-4 font-bold">Ürün Adı</th>
+                    <th className="px-6 py-4 font-bold text-right">Miktar</th>
+                    <th className="px-6 py-4 font-bold">Durum</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {inventoryItems.map((item) => {
+                    const isCritical = (item.stock || 0) < 10;
+                    return (
+                      <tr key={item.id} className="hover:bg-white/5 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-zinc-500 font-mono text-xs">
+                          {item.id.substring(0, 8).toUpperCase()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-white font-medium">
+                          {item.name || 'İsimsiz Ürün'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-white">
+                          {(item.stock || 0).toLocaleString('tr-TR')} <span className="text-zinc-500 text-xs font-normal ml-1">Adet/M</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${isCritical ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                            {isCritical ? 'Kritik Seviye' : 'Yeterli'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {inventoryItems.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center text-zinc-500 text-xs">Katalogda henüz ürün bulunmuyor.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
