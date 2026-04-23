@@ -46,6 +46,17 @@ export interface CreateCheckoutParams {
   cancelUrl: string;
 }
 
+export interface PlanCheckoutParams {
+  tenantId: string;
+  planId: string;
+  uid: string;
+  customerEmail?: string;
+  amountUSD: number;
+  isYearly: boolean;
+  successUrl: string;
+  cancelUrl: string;
+}
+
 /**
  * Stripe Checkout Session oluşturur.
  * Tedarikçi komisyonunu ödemesi için bir ödeme sayfası döner.
@@ -164,6 +175,62 @@ export async function createMarketplaceCheckout(
     };
   } catch (error: any) {
     console.error("[STRIPE] Marketplace Checkout hatası:", error.message);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STRIPE PLAN CHECKOUT — Sovereign SaaS Abonelik Ödemeleri
+// ═══════════════════════════════════════════════════════════════
+
+export async function createPlanCheckout(
+  params: PlanCheckoutParams
+): Promise<{ sessionId: string; url: string } | null> {
+  if (!stripe) {
+    console.error("[STRIPE] Stripe bağlantısı yok. STRIPE_SECRET_KEY kontrol edin.");
+    return null;
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment", // Tek seferlik kredi yükleme gibi çalışıyor şimdilik
+      payment_method_types: ["card"],
+      customer_email: params.customerEmail,
+      client_reference_id: params.uid,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `AIPyram ${params.planId.toUpperCase()} Plan (${params.isYearly ? 'Yıllık' : 'Aylık'})`,
+              description: `${params.tenantId.toUpperCase()} için Sovereign lisans ve kredi.`,
+              metadata: {
+                tenantId: params.tenantId,
+                planId: params.planId,
+              },
+            },
+            unit_amount: Math.round(params.amountUSD * 100), // Cent
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        tenantId: params.tenantId,
+        planId: params.planId,
+        type: "plan",
+      },
+      success_url: params.successUrl,
+      cancel_url: params.cancelUrl,
+    });
+
+    console.log(`[STRIPE] Plan Checkout oluşturuldu: ${session.id} — $${params.amountUSD}`);
+
+    return {
+      sessionId: session.id,
+      url: session.url || "",
+    };
+  } catch (error: any) {
+    console.error("[STRIPE] Plan Checkout hatası:", error.message);
     return null;
   }
 }

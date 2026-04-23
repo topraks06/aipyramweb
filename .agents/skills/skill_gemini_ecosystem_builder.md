@@ -228,138 +228,247 @@ packages/
 
 ---
 
-## 🎨 FAZ 3: Perde.ai — Gerçek ERP (4-5 gün)
+## ⚡ FAZ S1: SOVEREIGN BEYİN (ŞİMDİ — En Öncelikli)
 
-### Mock'tan Kurtulma Listesi
-| Bileşen | Şu An | Hedef |
-|---------|-------|-------|
-| B2B.tsx | Mock sipariş verisi | Firestore `perde_orders` |
-| Catalog.tsx | Mock ürünler | Firestore `products` |
-| MyProjects.tsx | Mock projeler | Firestore `render_history` |
-| Accounting.tsx | Mock fatura | Firestore `perde_invoices` |
-| Inventory.tsx | Mock stok | Firestore `products` + stok |
-| RoomVisualizer.tsx | setTimeout simülasyon | `/api/render` gerçek Imagen |
-| OrderSlideOver.tsx | Statik JSON | Firestore sipariş akışı |
+> **MİMARİ KARAR:** Tenant mimarisinden TAM ÇIKIŞ. Sovereign Owner mimarisi.
+> **KURAL:** Sistem çalışırken mimari değişir, sistem DURMAZ.
+> **YÖNTEM:** Fiziksel taşıma YAPMA. Önce re-export yap. Fiziksel taşıma = fuar sonrası.
 
-### Yeni Oluşturulacak
-- `/api/render/route.ts` → Imagen 3.0 + Vision AI (mevcut iskelet, tamamla)
-- `src/lib/trtex-bridge.ts` → getWeeklyDigest() güçlendir (mevcut, az veri çekiyor)
-- Chat hafıza → `/api/chat/route.ts`'e session entegrasyonu
-- Pricing.tsx → Stripe checkout URL bağlantısı
+### S1.1 — packages/aloha-sdk/ Doldur (Re-export Yöntemi)
 
-### Doğrulama
-- Login → B2B panel gerçek veri gösteriyor
-- Chat hafızası korunuyor (sayfa kapat/aç → geçmiş var)
+**ÖNEMLİ:** `src/lib/aloha/` dosyalarını SİLME veya TAŞIMA. Sadece `packages/aloha-sdk/` içinden re-export yap. Import zinciri kırılmasın.
+
+#### [NEW] `packages/aloha-sdk/invokeAgent.ts`
+Kaynak mantık: `src/lib/aloha/registry.ts` → invokeAgent fonksiyonu
+Yeni Sovereign versiyonu:
+```typescript
+export async function invokeAgent({ tenant, action, uid, payload, idempotencyKey }: {
+  tenant: string;
+  action: string;
+  uid?: string;
+  payload: Record<string, any>;
+  idempotencyKey?: string;
+}) {
+  // 0. Idempotency check (double call koruması)
+  if (idempotencyKey) {
+    const existing = await checkIdempotency(idempotencyKey);
+    if (existing) return existing;
+  }
+
+  // 1. Action whitelist kontrolü
+  const ALLOWED_ACTIONS = ['render','analysis','opportunity','compose_article','chat','document','image_generation'];
+  if (!ALLOWED_ACTIONS.includes(action)) throw new Error(`Invalid action: ${action}`);
+
+  // 2. Tenant rate limit (50 call/dakika)
+  await checkRateLimit(tenant);
+
+  // 3. Feature flag kontrolü (tenant-config'den)
+  // 4. Wallet kontrolü (kredi yeterli mi?)
+
+  const start = Date.now();
+
+  // 5. Tool çalıştır
+  const result = await runTool(action, payload);
+
+  const duration = Date.now() - start;
+
+  // 6. Logla (aloha_sovereign_logs koleksiyonu)
+  await logSovereignAction({ tenant, action, uid, payload, result, duration, cost: ACTION_COST[action] || 1 });
+
+  // 7. Kredi düş (atomic Firestore transaction)
+  if (uid) await deductCredit(tenant, uid, action);
+
+  return { ...result, duration, creditUsed: ACTION_COST[action] || 1 };
+}
+```
+
+#### [NEW] `packages/aloha-sdk/wallet.ts`
+- `checkCredits(tenant, uid, action)` → Koleksiyon: `{tenant}_wallets`
+- `deductCredit(tenant, uid, action)` → Atomic Firestore transaction
+- `addCredit(tenant, uid, amount)` → Stripe webhook sonrası çağrılır
+- `getBalance(tenant, uid)` → Admin panel için
+
+Maliyet tablosu:
+```
+render = 5, analysis = 2, opportunity = 1, compose_article = 3,
+image_generation = 4, chat = 0.5, document = 2, default = 1
+```
+
+#### [NEW] `packages/aloha-sdk/logger.ts`
+Firestore koleksiyonu: `aloha_sovereign_logs`
+```
+{ tenant, action, uid, payload, result, cost, duration_ms, createdAt }
+```
+
+#### [NEW] `packages/aloha-sdk/tools.ts`
+Tool dispatch — switch(action) ile yönlendir:
+- `render` → Basit versiyon (fuar için mock/placeholder, gerçek Imagen sonra)
+- `analysis` → Gemini analiz çağrısı
+- `opportunity` → Fırsat motoru
+- `compose_article` → İçerik üretimi
+- `chat` → Chat completion
+
+#### [MODIFY] `packages/aloha-sdk/index.ts`
+Tüm export'ları birleştir.
+
+### S1.2 — packages/shared-firebase/ Doldur
+
+#### [MODIFY] `packages/shared-firebase/index.ts`
+```typescript
+export { adminDb } from '@/lib/firebase-admin';
+export { db, auth } from '@/lib/firebase-client';
+```
+
+### S1.3 — Unified Agent API
+
+#### [NEW] `src/app/api/agent/invoke/route.ts`
+```typescript
+// POST /api/agent/invoke
+// Body: { tenant, action, uid?, payload, idempotencyKey? }
+// Response: { success, data, creditUsed, duration, message }
+```
+- Request validation (tenant + action zorunlu)
+- try/catch + DLQ kaydı (sistem çökerse veri kaybolmaz)
+- Rate limiting (tenant bazlı, 50/dakika)
+
+### S1.4 — Perde Collection İzolasyonu
+
+#### [MODIFY] `src/lib/tenant-config.ts`
+Perde tenant config değişikliği:
+```
+projectCollection: 'projects' → 'perde_orders'
+walletCollection: 'wallets' → 'perde_wallets'
+```
+YENİ alanlar ekle:
+```
+customerCollection: 'perde_customers'
+productCollection: 'perde_products'
+renderCollection: 'perde_renders'
+```
+
+**NOT:** B2B.tsx zaten `config.projectCollection` kullanıyor (satır 58). Collection adı değişince otomatik çalışır.
+
+### S1.5 — Stripe Plan Desteği
+
+#### [MODIFY] `src/app/api/stripe/checkout/route.ts`
+Mevcut `commission` ve `marketplace` type'larına ek olarak `plan` type'ı ekle:
+```typescript
+if (type === 'plan') {
+  // planId: starter|pro|enterprise, isYearly: boolean
+  // Plan fiyatları: starter $15.90/$19.90, pro $63.90/$79.90, enterprise $199.90/$249.90
+  // metadata.tenant + metadata.planId ekle
+}
+```
+
+#### [MODIFY] `src/app/api/stripe/webhook/route.ts`
+Plan ödemesi sonrası:
+- `addCredit(tenant, uid, planCredits)` çağır (starter=100, pro=500, enterprise=2000)
+- `{tenant}_members` koleksiyonunda `license: 'active'` güncelle
+
+### S1.6 — Admin Sovereign Metrikleri
+
+#### [MODIFY] `src/app/admin/page.tsx`
+Yeni widget'lar ekle:
+- Toplam Sovereign Çağrı (aloha_sovereign_logs count)
+- Tenant Bazlı Kredi Durumu (4 tenant bakiye)
+- Son 10 İşlem Logu (tablo)
+- Hata Sayısı (DLQ count)
+
+### S1 Doğrulama
 - `pnpm run build` → Exit code: 0
+- `POST /api/agent/invoke` test
+- Admin panelde sovereign metrikler
+- `git add .; git commit -m "feat(sovereign): S1 Brain + Wallet + Logger + API"`
 
 ---
 
-## 🏠 FAZ 4A: Hometex.ai (2 gün)
+## ⚡ FAZ S2: PERDE.AI SOVEREIGN APP (S1 Bittikten Sonra)
 
-### Firestore'a Geçiş
-| Bileşen | Mock Kaynak | Hedef Firestore |
-|---------|-------------|-----------------|
-| HometexLandingPage | demoData.ts | `exhibitors` + `articles` |
-| Expo.tsx | demoData.ts | `exhibitors` |
-| Exhibitors.tsx | demoData.ts | `exhibitors` |
-| Magazine.tsx | demoData.ts | `articles` |
-| MagazineDetail.tsx | demoData.ts | `articles` doc |
-| Trends.tsx | demoData.ts | `articles` WHERE category='Trend' |
+> **Hedef:** Sipariş → Fiyat → Ödeme → Admin akışı. Para üreten ilk Sovereign app.
 
-### Kritik Düzeltmeler
-- HometexLandingPage → `/admin` linkini KALDIR
-- Firestore boşsa → demoData.ts graceful fallback (görseller demo kalabilir)
+### S2.1 — Order + Customer API
 
-### Seed Data
-**Dosya:** `scripts/seed-hometex.ts` → **YENİ**
-- 6 demo katılımcı (exhibitors)
-- 4 demo makale (articles)
-- Tek seferlik çalıştır → Firestore'a yaz
+#### [NEW] `src/app/api/perde/orders/route.ts`
+- `GET` → Kullanıcının siparişlerini listele (`perde_orders` koleksiyonu)
+- `POST` → Yeni sipariş oluştur (ölçü + ürün + müşteri + fiyat hesaplama)
 
-### Doğrulama
-- hometex.localhost:3000 → Sayfalar Firestore'dan veri gösteriyor
+#### [NEW] `src/app/api/perde/customers/route.ts`
+- `GET` → Müşteri listesi (`perde_customers`)
+- `POST` → Yeni müşteri kaydet
+
+### S2.2 — Pricing Engine
+
+#### [NEW] `src/services/perdePricingEngine.ts`
+Basit formül (karmaşık olmasın):
+```
+price = (width_cm * height_cm / 10000) * fabricPrice * quantity
+```
+Fabric fiyatları: blackout=450₺/m², tül=280, stor=520, fon=380, zebra=620
+
+### S2.3 — Stripe Bağlantı
+
+#### [MODIFY] `src/components/tenant-perde/Pricing.tsx`
+- `handleCheckout()` → body'ye `type: 'plan'` ekle (satır 27)
+- Zaten `/api/stripe/checkout` çağırıyor, sadece payload düzeltmesi
+
+#### [MODIFY] `src/components/tenant-perde/OrderSlideOver.tsx`
+- "Siparişi Onayla ve Öde" butonu → Stripe checkout URL
+
+### S2.4 — Admin Panel Perde Tablosu
+
+#### [MODIFY] `src/app/admin/page.tsx`
+- Perde sipariş tablosu (son 20 kayıt)
+- Durum değiştirme (teklif → onay → üretim → teslim)
+
+### S2 Doğrulama
+- Sipariş oluştur → Fiyat hesapla → Ödeme → Admin'de gör
 - `pnpm run build` → Exit code: 0
+- `git add .; git commit -m "feat(perde): S2 Orders + Pricing + Stripe"`
 
 ---
 
-## 🛒 FAZ 4B: Vorhang.ai Marketplace (3 gün)
+## ⚡ FAZ S3: TÜM TENANT BAĞLANTI (S2 Bittikten Sonra)
 
-### Eksik Altyapı
-| Parça | Durum | Yapılacak |
-|-------|-------|-----------|
-| Cart State | YOK | `src/store/vorhang-cart.ts` Zustand store |
-| Ürün Listeleme | Mock | Firestore `vorhang_products` bağla |
-| Ürün Detay | Mock | Firestore'dan çek, galeri, özellik tablosu |
-| Sepet Sidebar | İskelet | Zustand cart'a bağla, miktar güncelle |
-| Checkout | Form var, Stripe yok | Stripe Checkout Session entegre et |
-| Seller Dashboard | Mock | Firestore `vorhang_orders` bağla |
-| Seller Ingestion | İskelet | Ürün yükleme formu + Firestore yazma |
+### S3.1 — TRTEX → Sovereign Log
+- `autoRunner.ts` → Her cycle sonunda sovereign log kaydı
+- Mevcut ALOHA engine'e dokunma, sadece log ekle
 
-### Seed Data
-**Dosya:** `scripts/seed-vorhang.ts` → **YENİ**
-- 12 demo ürün (vorhang_products)
-- 3 demo satıcı (vorhang_sellers)
+### S3.2 — Hometex.ai → Firestore
+- `demoData.ts` → `hometex_exhibitors` + `hometex_articles` fallback ile
+- Seed script: `scripts/seed-hometex.ts` (6 katılımcı, 4 makale)
 
-### Doğrulama
-- Ürün listele → sepete ekle → checkout → Stripe URL oluşur
-- Seller login → sipariş listesi görünür
+### S3.3 — Vorhang.ai → Marketplace
+- Zustand cart store: `src/store/vorhang-cart.ts`
+- Products → `vorhang_products` koleksiyonu
+- Checkout → Stripe marketplace type
+- Seller → `vorhang_sellers` koleksiyonu
+
+### S3 Doğrulama
+- 4 tenant localhost çalışıyor, hepsi sovereign API üzerinden
 - `pnpm run build` → Exit code: 0
+- `git add .; git commit -m "feat(sovereign): S3 All tenants connected"`
 
 ---
 
-## ✨ FAZ 5: Son Cila (2-3 gün)
+## ⚡ FAZ S4: SON CİLA + DEPLOY (S3 Bittikten Sonra)
 
-### TypeScript
-- `pnpm tsc --noEmit` → 0 hata hedefi
-- `any` kullanımlarını minimize et
-- Unused import temizliği
+### S4.1 — TypeScript Temizliği
+- `pnpm tsc --noEmit` → 0 hata
+- `any` minimize, unused import sil
 
-### Mobil Responsive (4 tenant)
-- Navbar hamburger: scroll lock hook
+### S4.2 — Mobil Responsive
+- 4 tenant responsive kontrol
 - Z-Index: Navbar z-50, Menü z-100, Concierge z-120
-- Hero, grid, footer responsive kontrolü
 
-### Routing
-- Hardcoded `<Link href="/">` → tenant-aware path
-- VorhangNavbar, PerdeFooter, OrderConfirmation kontrol
+### S4.3 — Deploy
+- Google Cloud Run (tek deploy, 4 tenant)
+- DNS: trtex.com, perde.ai, hometex.ai, vorhang.ai
+- SSL + smoke test
+- Fuar demo senaryosu
 
-### Email Bildirim
-- `notificationService.ts` → Gmail SMTP test
-- Lead yakalama → admin email
-- Sipariş → müşteri email
-
----
-
-## 🚀 FAZ 6: Deploy & Fuar (2 gün)
-
-1. 4 tenant → Google Cloud Run deploy
-2. DNS: trtex.com, perde.ai, hometex.ai, vorhang.ai
-3. SSL sertifikaları
-4. Canlı smoke test
-5. Fuar demo senaryosu
-
----
-
-## 🏛️ FAZ 7: SOVEREIGN-READY ALTYAPI (Fuar sonrası, Q3 2026)
-
-### Neden Şimdiden Hazırlan?
-- AI ajanları satın alma/imza yapacak → paylaşımlı altyapıda sızıntı riski
-- EU AI Act → veri egemenliği zorunluluğu
-- Her tenant bağımsız deploy edilebilmeli
-
-### Şimdi Yapılacak Hazırlıklar (Kod organizasyonu)
-1. Ortak kodları `src/lib/shared/` altına topla (firebase, auth, stripe, i18n)
-2. Tenant-specific kodları net ayır (src/components/tenant-*/  zaten yapılmış ✅)
-3. API route'ları tenant-aware yap (zaten middleware ile yapılmış ✅)
-4. Veritabanı koleksiyonlarını tenant prefix ile ayır (trtex_, perde_, vorhang_ ✅)
-
-### Gelecekte Yapılacak (Faz 7 detay)
-1. Turborepo + pnpm workspace dönüşümü (apps/ + packages/)
-2. Tenant başına ayrı Firestore Named Database
-3. Tenant başına ayrı Cloud Run servisi
-4. API Gateway (Master Node)
-5. Secret Manager (tenant başına ayrı key namespace)
-6. Terraform IaC
+### S4 Doğrulama
+- Canlı siteler çalışıyor
+- `git add .; git commit -m "feat(sovereign): S4 Deploy + Final"`
 
 ---
 
@@ -367,13 +476,17 @@ packages/
 
 1. `pnpm run build` → **Exit code: 0**
 2. 4 tenant localhost render testi
-3. `git add . && git commit -m "feat(faz-X): açıklama"`
+3. `git add .; git commit -m "feat(sovereign-SX): açıklama"`
 4. Bu skill dosyasını oku → kurallara uy
 
-## 🔒 MUTLAK YASAKLAR
-1. npm/yarn kullanma → sadece pnpm
-2. 3. parti altyapı (Redis, AWS, Vercel, Pinecone) → sadece Google
-3. B2C içerik → sadece B2B
-4. Frontend'e doğrudan business logic → Dumb Client mimarisi
-5. ConciergeWidget'a büyük değişiklik → küçük entegrasyon OK
-6. Fiyatlar değiştirilmez (Keşfet: ücretsiz, Pro: $49, Enterprise: $199)
+## 🔒 SOVEREIGN MUTLAK KURALLARI
+1. **Agent sadece Master'da çalışır** — Tenant direkt agent çalıştırmaz
+2. **Her işlem loglanır** — `aloha_sovereign_logs` koleksiyonu
+3. **Her işlem kredi düşer** — Wallet atomic transaction
+4. **Ortak kod sadece `/packages`** — Re-export, fiziksel taşıma fuar sonrası
+5. **Veri izolasyonu** — Her tenant `{tenant}_*` koleksiyonları
+6. **Sıfır cache** — `force-dynamic` tüm sayfalarda
+7. **Google-native** — 3. parti (Redis, AWS, Vercel) YASAK
+8. npm/yarn kullanma → sadece pnpm
+9. B2C içerik YASAK → sadece B2B
+10. Frontend'e business logic koyma → Dumb Client mimarisi

@@ -46,6 +46,9 @@ export interface TenantConfig {
   newsCollection: string;
   projectCollection: string;  // Her tenant'ın sipariş/proje koleksiyonu
   walletCollection: string;   // Kredi/cüzdan koleksiyonu
+  customerCollection?: string; // Müşteri CRM koleksiyonu (Sovereign)
+  productCollection?: string;  // Ürün/Katalog koleksiyonu (Sovereign)
+  renderCollection?: string;   // AI Render geçmişi (Sovereign)
   theme: 'dark' | 'light';
   locale: string;
   features: TenantFeatures;
@@ -105,8 +108,11 @@ export const TENANTS: Record<TenantId, TenantConfig> = {
     shortName: 'PERDE.AI',
     memberCollection: 'perde_members',
     newsCollection: 'perde_news',
-    projectCollection: 'projects',
-    walletCollection: 'wallets',
+    projectCollection: 'perde_orders',
+    walletCollection: 'perde_wallets',
+    customerCollection: 'perde_customers',
+    productCollection: 'perde_products',
+    renderCollection: 'perde_renders',
     theme: 'light',
     locale: 'tr',
     features: {

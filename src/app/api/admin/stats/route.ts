@@ -21,12 +21,15 @@ export async function GET() {
     const signalsSnap = await adminDb.collection('ecosystem_signals').count().get();
     const pendingTasks = signalsSnap.data().count;
 
-    // 4. Tasks/Logs
-    const logsSnap = await adminDb.collection('aloha_agent_logs').count().get();
+    // 4. Tasks/Logs (Sovereign)
+    const logsSnap = await adminDb.collection('aloha_sovereign_logs').count().get();
     const completedTasks = logsSnap.data().count;
     
-    // We can simulate some failed tasks based on logs or default to 0
-    const failedTasks = 0;
+    // DLQ errors
+    const dlqSnap = await adminDb.collection('aloha_sovereign_dlq').count().get();
+    const failedTasks = dlqSnap.data().count;
+    
+    // Wallets snapshot could be added, but not strictly counting total docs yet.
     
     const automationRules = 15; // Example count of active rules
 
