@@ -178,22 +178,67 @@ export default function OrderSlideOver({ isOpen, onClose, order }: OrderSlideOve
 
             <div className="p-4 border-t border-zinc-100 bg-zinc-50 space-y-3">
               {order.status === 's1' && (
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2">
+                   <div className="flex gap-2">
+                     <button 
+                       disabled={isUpdating}
+                       onClick={() => handleUpdateStatus('s2')}
+                       className="flex-1 py-3 bg-emerald-600 text-white flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                     >
+                       <PlayCircle className="w-5 h-5" />
+                       Siparişi Üretime Al (Manuel)
+                     </button>
+                     <button 
+                       onClick={handleRefreshMock}
+                       className="px-4 py-3 bg-white border border-zinc-200 text-zinc-700 flex items-center justify-center gap-2 rounded-md text-sm hover:bg-zinc-100"
+                       title="Fiyat Güncelle"
+                     >
+                       <RefreshCw className="w-5 h-5" />
+                     </button>
+                   </div>
+                   
                    <button 
-                     disabled={isUpdating}
-                     onClick={() => handleUpdateStatus('s2')}
-                     className="flex-1 py-3 bg-emerald-600 text-white flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
-                   >
-                     <PlayCircle className="w-5 h-5" />
-                     Siparişi Üretime Al
-                   </button>
-                   <button 
-                     onClick={handleRefreshMock}
-                     className="px-4 py-3 bg-white border border-zinc-200 text-zinc-700 flex items-center justify-center gap-2 rounded-md text-sm hover:bg-zinc-100"
-                     title="Fiyat Güncelle + Tekrar Gönder"
-                   >
-                     <RefreshCw className="w-5 h-5" />
-                   </button>
+                       onClick={async () => {
+                         setIsUpdating(true);
+                         try {
+                            const res = await fetch('/api/stripe/checkout', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                  type: 'marketplace', 
+                                  payload: { 
+                                    orderId: order.id, 
+                                    customerEmail: order.customerEmail || '',
+                                    lineItems: order.items?.map((item: any) => ({
+                                      name: item.name || 'Perde.ai Sipariş',
+                                      amountEur: item.price || order.amount || 0,
+                                      quantity: item.qty || 1
+                                    })) || [{ name: 'Sipariş Ödemesi', amountEur: order.amount || 0, quantity: 1 }],
+                                    successUrl: `${window.location.origin}/b2b?payment=success`,
+                                    cancelUrl: `${window.location.origin}/b2b?payment=cancelled`
+                                  } 
+                                })
+                            });
+                            const data = await res.json();
+                            if (data.url) {
+                                // Müşteriye linki kopyala veya WhatsApp'a at
+                                navigator.clipboard.writeText(data.url);
+                                alert('Ödeme linki kopyalandı! Müşteriye gönderebilirsiniz.');
+                            } else {
+                                alert(data.error || 'Ödeme linki oluşturulamadı.');
+                            }
+                         } catch (err) {
+                            alert('Hata oluştu');
+                         } finally {
+                            setIsUpdating(false);
+                         }
+                       }}
+                       disabled={isUpdating || !order.amount}
+                       className="w-full py-3 bg-blue-600 text-white flex items-center justify-center gap-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                     >
+                       <CheckCircle className="w-5 h-5" />
+                       Stripe Ödeme Linki Oluştur
+                     </button>
                 </div>
               )}
               

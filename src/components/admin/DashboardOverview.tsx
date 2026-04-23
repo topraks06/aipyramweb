@@ -15,6 +15,7 @@ import {
   Zap
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import PerdeOrdersTable from "./PerdeOrdersTable";
 
 interface DashboardStats {
   totalDomains: number;
@@ -218,6 +219,8 @@ export default function DashboardOverview() {
           </div>
         </Card>
       </div>
+
+      <PerdeOrdersTable />
     </div>
   );
 }
