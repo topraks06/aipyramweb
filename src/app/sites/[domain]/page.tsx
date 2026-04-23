@@ -221,12 +221,21 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     let articles: any[] = [];
     let exhibitors: any[] = [];
     try {
-      const articlesSnap = await adminDb.collection('articles').orderBy('publishedAt', 'desc').limit(4).get();
-      const exhibitorsSnap = await adminDb.collection('exhibitors').limit(6).get();
+      const articlesSnap = await adminDb.collection('hometex_articles').orderBy('publishedAt', 'desc').limit(4).get();
+      const exhibitorsSnap = await adminDb.collection('hometex_exhibitors').limit(6).get();
       articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      if (articles.length === 0 || exhibitors.length === 0) {
+        const demoData = await import('@/lib/hometex-demoData');
+        if (articles.length === 0) articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
+        if (exhibitors.length === 0) exhibitors = demoData.HOMETEX_EXHIBITORS;
+      }
     } catch (e) {
       console.warn('[HOMETEX] Firestore fetch error:', e);
+      const demoData = await import('@/lib/hometex-demoData');
+      articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
+      exhibitors = demoData.HOMETEX_EXHIBITORS;
     }
     return <HometexLandingPage articles={articles} exhibitors={exhibitors} />;
   }

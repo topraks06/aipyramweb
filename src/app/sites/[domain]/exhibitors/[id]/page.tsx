@@ -10,15 +10,22 @@ export default async function ExhibitorDetailPage({ params }: { params: Promise<
   let products: any[] = [];
 
   try {
-    const exhibitorDoc = await adminDb.collection('exhibitors').doc(id).get();
+    const exhibitorDoc = await adminDb.collection('hometex_exhibitors').doc(id).get();
     if (exhibitorDoc.exists) {
       exhibitor = { id: exhibitorDoc.id, ...exhibitorDoc.data() };
       
-      const productsSnap = await adminDb.collection('products').where('exhibitorId', '==', id).get();
+      const productsSnap = await adminDb.collection('hometex_products').where('exhibitorId', '==', id).get();
       products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } else {
+      const demoData = await import('@/lib/hometex-demoData');
+      exhibitor = demoData.HOMETEX_EXHIBITORS.find(e => e.id === id) || null;
+      products = []; // Demo products can be added if needed
     }
   } catch (error) {
     console.error('Error fetching exhibitor detail:', error);
+    const demoData = await import('@/lib/hometex-demoData');
+    exhibitor = demoData.HOMETEX_EXHIBITORS.find(e => e.id === id) || null;
+    products = [];
   }
 
   if (!exhibitor) {

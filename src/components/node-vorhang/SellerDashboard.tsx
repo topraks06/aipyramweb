@@ -4,7 +4,14 @@ import VorhangNavbar from "./VorhangNavbar";
 import { LineChart, LayoutDashboard, Package, ShoppingBag, Settings, Plus, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
-export default function SellerDashboard() {
+export default function SellerDashboard({ orders = [], seller }: { orders?: any[], seller?: any }) {
+  const sellerName = seller?.name || "Weber Textil";
+  const displayOrders = orders.length > 0 ? orders : [
+    { id: '1001', item: 'Premium Blackout', amount: 562.50, status: 'In Bearbeitung' },
+    { id: '1002', item: 'Leinen Vorhang Beige', amount: 249.99, status: 'Versandt' },
+    { id: '1003', item: 'Zebra Rollo Grau', amount: 89.99, status: 'Abgeschlossen' }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 text-black">
       <VorhangNavbar />
@@ -37,7 +44,7 @@ export default function SellerDashboard() {
         {/* Main Content */}
         <main className="flex-1 p-6 md:p-10">
            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-serif">Willkommen, Weber Textil!</h1>
+              <h1 className="text-3xl font-serif">Willkommen, {sellerName}!</h1>
               <button className="bg-black text-white px-4 py-2 rounded-sm font-medium flex items-center gap-2 hover:bg-[#D4AF37] transition-colors">
                 <Plus className="w-4 h-4" /> Neues Produkt
               </button>
@@ -69,20 +76,20 @@ export default function SellerDashboard() {
                  <h2 className="font-medium text-lg">Aktuelle Bestellungen</h2>
               </div>
               <div className="divide-y divide-gray-50">
-                 {[1,2,3,4].map(i => (
-                    <div key={i} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
+                 {displayOrders.map((order, i) => (
+                    <div key={order.id || i} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer">
                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-400">
                              <Package className="w-5 h-5" />
                           </div>
                           <div>
-                             <p className="font-medium">Bestellung #VH-{1000+i}</p>
-                             <p className="text-sm text-gray-500">Premium Blackout • 45m</p>
+                             <p className="font-medium">Bestellung #VH-{order.id}</p>
+                             <p className="text-sm text-gray-500">{order.item || 'Produkt'} • {(order.items?.length || 1)}x</p>
                           </div>
                        </div>
                        <div className="text-right">
-                          <p className="font-medium">€562.50</p>
-                          <p className="text-xs text-yellow-600 bg-yellow-50 inline-block px-2 py-0.5 rounded mt-1">In Bearbeitung</p>
+                          <p className="font-medium">€{(order.amount || order.amountEur || 0).toFixed(2)}</p>
+                          <p className="text-xs text-yellow-600 bg-yellow-50 inline-block px-2 py-0.5 rounded mt-1">{order.status || 'In Bearbeitung'}</p>
                        </div>
                     </div>
                  ))}

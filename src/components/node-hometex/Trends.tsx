@@ -6,7 +6,7 @@ import { Upload, Sparkles, BarChart3, ArrowRight, Camera, CheckCircle2 } from 'l
 import { HOMETEX_TRENDS } from '@/lib/hometex-demoData';
 import HometexFooter from './HometexFooter';
 
-export default function Trends() {
+export default function Trends({ trends = HOMETEX_TRENDS }: { trends?: any[] }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -194,7 +194,7 @@ export default function Trends() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-32">
-            {HOMETEX_TRENDS.map((board, i) => (
+            {trends.map((board, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, y: 40 }}
