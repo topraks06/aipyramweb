@@ -671,7 +671,7 @@ export default function PremiumB2BHomeLayout({
         .ft{padding:2rem 0;background:var(--w);text-align:center;border-top:1px solid var(--b)}
         
         @media(max-width:1024px){.hsg{grid-template-columns:1fr}.opp-grid{grid-template-columns:repeat(2,1fr)}.rm-grid,.layer-fairs{grid-template-columns:repeat(2,1fr)}.layer-academy{grid-template-columns:1fr;}.tf-grid{grid-template-columns:1fr!important}}
-        @media(max-width:768px){.ngg,.opp-grid,.rm-grid,.ds-grid{grid-template-columns:1fr}.tf-grid{grid-template-columns:1fr!important}}
+        @media(max-width:768px){.ngg,.opp-grid,.rm-grid,.ds-grid,.layer-fairs{grid-template-columns:1fr}.tf-grid{grid-template-columns:1fr!important}}
       `}} />
 
       {/* ZONE 1: LIVE MARKET STREAM (KOMPAKT SİNTETİK TİCKER) — REORDERED TO TOP */}
@@ -711,7 +711,7 @@ export default function PremiumB2BHomeLayout({
         {hero && <div className="hsg">
           <a href={getLink(hero)} className="hiw" style={{position: 'relative'}}>
              {getImg(hero) ? (
-                <img src={getImg(hero)} alt=""/> 
+                <img src={getImg(hero)} alt="" loading="lazy" /> 
              ) : (
                 <div className="radar-box">
                   <div className="radar-content">
@@ -750,7 +750,7 @@ export default function PremiumB2BHomeLayout({
           {newsGrid.map((a:any)=>(
             <a key={a.id} href={getLink(a)} className="ngi">
               {getImg(a) ? (
-                 <img src={getImg(a)} alt="" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover',marginBottom:'.5rem'}}/>
+                 <img src={getImg(a)} alt="" loading="lazy" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover',marginBottom:'.5rem'}}/>
               ) : (
                  <div style={{width:'100%',aspectRatio:'16/9',marginBottom:'.5rem',background:'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
                    <div style={{position:'absolute',inset:0,opacity:0.5,backgroundImage:'radial-gradient(#D1D5DB 1px, transparent 1px)',backgroundSize:'12px 12px'}}></div>
@@ -783,7 +783,7 @@ export default function PremiumB2BHomeLayout({
                 <div className="layer-academy-card" key={i} style={{ padding: 0, overflow: 'hidden' }}>
                   {(a.image_url || (a.images && a.images[0])) && (
                     <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderBottom: '1px solid var(--b)' }}>
-                      <img src={a.image_url || a.images[0]} alt={getTitle(a)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={a.image_url || a.images[0]} alt={getTitle(a)} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   )}
                   <div style={{ padding: '1.5rem' }}>

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PerdeAIAssistant from "./PerdeAIAssistant";
+import dynamic from "next/dynamic";
 import OrderSlideOver from "./OrderSlideOver";
+
+const PerdeAIAssistant = dynamic(() => import("./PerdeAIAssistant"), { ssr: false });
 
 export default function PerdeClientWrapper() {
     const [isOrderSlideOpen, setIsOrderSlideOpen] = useState(false);

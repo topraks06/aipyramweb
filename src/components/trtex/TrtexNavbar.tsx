@@ -110,7 +110,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
         .trtex-lang-drop a:hover { background: ${dropHover} !important; }
       `}} />
       <nav 
-        className="relative z-[10000] w-full" 
+        className="relative z-50 w-full" 
         style={{ background: bgColor, borderBottom: `1px solid ${borderColor}` }}
       >
         <div className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-[70px] lg:h-[80px]">
@@ -145,7 +145,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                   </a>
 
                   {/* DESKTOP DROPDOWN */}
-                  <div className="trtex-dropdown hidden absolute left-0 top-full shadow-xl z-[20000] pt-2" style={{ background: dropBg, border: `1px solid ${dropBorder}` }}>
+                  <div className="trtex-dropdown hidden absolute left-0 top-full shadow-xl z-[60] pt-2" style={{ background: dropBg, border: `1px solid ${dropBorder}` }}>
                     {item.subs.map((sub, idx) => (
                       <a
                         key={idx}
@@ -222,7 +222,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
 
       {/* MOBILE FULLSCREEN MENU */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[9998] pt-[100px] overflow-y-auto" style={{ background: bgColor }}>
+        <div className="fixed inset-0 z-[100] pt-[100px] overflow-y-auto" style={{ background: bgColor }}>
           <div className="flex flex-col px-6 pb-20">
             {menuItems.map(item => (
               <div key={item.key} className="mb-6">

@@ -397,7 +397,7 @@ export default function ConciergeWidget() {
         return null;
     }
 
-    const siteLocale: Language = pathname.startsWith("/en") ? "en" : pathname.startsWith("/tr") ? "tr" : "de";
+    const siteLocale: Language = pathname.startsWith("/en") ? "en" : pathname.startsWith("/de") ? "de" : "tr";
     const [isOpen, setIsOpen] = useState(false);
     
     // Lead Capture State
@@ -624,7 +624,7 @@ export default function ConciergeWidget() {
             {/* Floating Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 right-6 z-[999] h-14 w-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${isOpen
+                className={`fixed bottom-6 right-6 z-[120] h-14 w-14 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center ${isOpen
                     ? "bg-slate-800 text-white rotate-0 scale-90"
                     : `${widgetBaseColor} text-white hover:scale-110 ${widgetHoverColor}`
                     }`}
@@ -639,7 +639,7 @@ export default function ConciergeWidget() {
             {/* Chat Panel */}
             {isOpen && (
                 <div
-                    className={`fixed z-[999] bg-slate-950 border border-slate-800 shadow-2xl shadow-black/50 flex flex-col transition-all duration-300 ${isExpanded
+                    className={`fixed z-[120] bg-slate-950 border border-slate-800 shadow-2xl shadow-black/50 flex flex-col transition-all duration-300 ${isExpanded
                         ? "bottom-0 right-0 w-full h-full md:w-[700px] md:h-[600px] md:bottom-6 md:right-6 md:rounded-2xl"
                         : "bottom-24 right-6 w-[380px] h-[520px] rounded-2xl"
                         }`}
