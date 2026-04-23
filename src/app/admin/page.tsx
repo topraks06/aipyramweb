@@ -49,12 +49,13 @@ export default function MasterKokpit() {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const executeCommand = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() && files.length === 0) return;
+  const executeCommand = async (e?: React.FormEvent, customText?: string) => {
+    if (e) e.preventDefault();
+    
+    const userText = customText || input;
+    if (!userText.trim() && files.length === 0) return;
 
     const attachments = files.map(f => f.name);
-    const userText = input;
 
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
@@ -191,17 +192,41 @@ export default function MasterKokpit() {
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black to-transparent pointer-events-none flex justify-center">
         <div className="w-full max-w-4xl bg-[#0A0A0A] border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] p-2 pointer-events-auto rounded">
           
-          {/* Mod Seçici */}
-          <div className="flex gap-2 mb-2 px-2">
-            <button onClick={() => setMode('chat')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'chat' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
-              <Terminal size={12} /> Sohbet
-            </button>
-            <button onClick={() => setMode('analysis')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'analysis' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
-              <FileSearch size={12} /> Analiz
-            </button>
-            <button onClick={() => setMode('action')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'action' ? 'bg-red-500/20 text-red-400 border border-red-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
-              <Zap size={12} /> Sistem Emri
-            </button>
+          {/* Mod Seçici ve Hızlı Komutlar */}
+          <div className="flex items-center justify-between mb-2 px-2">
+            <div className="flex gap-2">
+              <button onClick={() => setMode('chat')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'chat' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                <Terminal size={12} /> Sohbet
+              </button>
+              <button onClick={() => setMode('analysis')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'analysis' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                <FileSearch size={12} /> Analiz
+              </button>
+              <button onClick={() => setMode('action')} className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-colors flex items-center gap-2 ${mode === 'action' ? 'bg-red-500/20 text-red-400 border border-red-500/50' : 'text-zinc-500 hover:text-zinc-300'}`}>
+                <Zap size={12} /> Sistem Emri
+              </button>
+            </div>
+            
+            {/* Hızlı Emir Çipleri (Prompt Starters) */}
+            <div className="flex gap-2">
+              <button 
+                onClick={(e) => executeCommand(e, 'Canlı ekonomiyi çiz')}
+                className="text-[9px] font-mono tracking-widest text-emerald-500 hover:bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/30 transition-colors"
+              >
+                [⚡ EKONOMİ]
+              </button>
+              <button 
+                onClick={(e) => executeCommand(e, 'Hata analizi yap')}
+                className="text-[9px] font-mono tracking-widest text-red-500 hover:bg-red-500/10 px-2 py-1 rounded border border-red-500/30 transition-colors"
+              >
+                [⚠ HATALAR]
+              </button>
+              <button 
+                onClick={(e) => executeCommand(e, 'Sistem durumunu göster')}
+                className="text-[9px] font-mono tracking-widest text-blue-500 hover:bg-blue-500/10 px-2 py-1 rounded border border-blue-500/30 transition-colors"
+              >
+                [◱ SİSTEM]
+              </button>
+            </div>
           </div>
 
           {/* Dosya Önizleme */}

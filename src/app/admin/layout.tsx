@@ -199,14 +199,102 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Ana İçerik Alanı (Buraya Sınırsız Chat Arayüzü Gelecek) */}
-        <main className="flex-1 relative overflow-hidden flex flex-col">
-          {/* Subtle grid background for tech feel */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+        <div className="flex-1 flex overflow-hidden">
           
-          <div className="relative z-10 flex-1 h-full">
-            {children}
-          </div>
-        </main>
+          <main className="flex-1 relative overflow-hidden flex flex-col border-r border-white/10">
+            {/* Subtle grid background for tech feel */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+            
+            <div className="relative z-10 flex-1 h-full">
+              {children}
+            </div>
+          </main>
+
+          {/* SAĞ MENÜ: Sovereign HUD (Canlı Metrik Radarı) */}
+          <aside className="w-[280px] bg-[#030303] flex flex-col shrink-0 z-20 overflow-y-auto custom-scrollbar">
+            
+            {/* HUD Başlık */}
+            <div className="px-4 py-3 border-b border-white/10 bg-black/50">
+              <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-zinc-500">SİSTEM RADARI</span>
+            </div>
+
+            <div className="p-4 space-y-6">
+              
+              {/* Sistem Yükü */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">Sistem Yükü</span>
+                  <span className="text-[10px] font-mono text-emerald-500">Normal</span>
+                </div>
+                <div className="flex gap-1 h-8 items-end">
+                  {[...Array(12)].map((_, i) => {
+                    const h = Math.random() * 60 + 20; // 20% to 80%
+                    return (
+                      <div key={i} className="flex-1 bg-emerald-500/20 rounded-t-sm overflow-hidden flex items-end">
+                        <div className="w-full bg-emerald-500 transition-all duration-1000" style={{ height: `${h}%` }} />
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="flex justify-between text-[8px] font-mono text-zinc-500">
+                  <span>API: 12ms</span>
+                  <span>CPU: %14</span>
+                </div>
+              </div>
+
+              {/* Ajan Sağlığı */}
+              <div className="space-y-3">
+                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-2">Ajan Ekosistemi</span>
+                
+                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] uppercase font-mono text-zinc-300">ALOHA MASTER</span>
+                  </div>
+                  <span className="text-[9px] text-emerald-500">AKTİF</span>
+                </div>
+                
+                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="text-[10px] uppercase font-mono text-zinc-300">PERDE TASARIM</span>
+                  </div>
+                  <span className="text-[9px] text-blue-500">BEKLEMEDE</span>
+                </div>
+
+                <div className="bg-black border border-white/10 p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[10px] uppercase font-mono text-zinc-300">TRTEX HABER</span>
+                  </div>
+                  <span className="text-[9px] text-red-500">HATA YAKALANDI</span>
+                </div>
+              </div>
+
+              {/* Canlı Kredi Burn */}
+              <div className="space-y-2">
+                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-1">Cüzdan / Kredi Tüketimi</span>
+                <div className="text-2xl font-mono font-bold text-white">$1,240<span className="text-sm text-zinc-500">.50</span></div>
+                <div className="flex items-center gap-2 text-[10px] font-mono text-red-400">
+                  <span>↑</span>
+                  <span>Son 1 saatte $4.20 harcandı</span>
+                </div>
+              </div>
+
+              {/* Aktif Görevler (Mini Log) */}
+              <div className="space-y-2">
+                <span className="text-[9px] uppercase tracking-widest text-zinc-600 block mb-2">Kuyruktaki Görevler</span>
+                <div className="space-y-1 font-mono text-[9px] text-zinc-500">
+                  <div className="flex gap-2"><span className="text-blue-500">●</span> <span>Hometex data kazıması</span></div>
+                  <div className="flex gap-2"><span className="text-blue-500">●</span> <span>Ürün 3D render işlemi</span></div>
+                  <div className="flex gap-2"><span className="text-emerald-500">✔</span> <span>Kredi kartı tahsilatı</span></div>
+                </div>
+              </div>
+
+            </div>
+
+          </aside>
+        </div>
       </div>
 
     </div>
