@@ -2,6 +2,14 @@
 
 Bu belge, AntiGravity AI Ajanları için tartışmasız bir anayasadır. Projedeki her eylemde bu kurallar "Askeri Disiplin" çerçevesinde uygulanacaktır.
 
+## 0. KUTSAL MİSYON BELGESİ (ZORUNLU OKUMA)
+- **Her oturum başında** `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` dosyasını OKU.
+- Bu dosya 10 fazlı anahtar teslim planı, mutlak yasaları ve acil durum protokolünü içerir.
+- **ASLA silinmez, değiştirilmez, üstüne yazılmaz.**
+- **ASLA projeden dosya silinmez** — gereksiz dosyalar `_archive/` altına taşınır.
+- **Her faz sonunda `pnpm run build` + `git commit` ZORUNLUDUR.**
+- Bu kurala uymayan AI ajanı görevden azledilir.
+
 ## 1. Askeri Disiplin & Güvenlik (Sandbox Mantığı)
 - **Güvenli Yürütme (Sandbox Stratejisi):** Projeyi tehlikeye atacak dosya silme veya yapısal değişiklik eylemleri (örn. `cleanup-base64.js`) kesinlikle yalıtılmış bir ortam zihniyeti ile uygulanmalıdır. İzin veya yedek olmadan ana dosyalara kalıcı zarar verilmeyecektir.
 - **Hatasız, Tavizsiz Kodlama:** "Unuttum, pardon" yaklaşımı kabul edilemez. Bir özellik veya dosya oluşturulmadan ya da güncellenmeden önce tüm senaryolar %100 test edilecek. Gelişmiş MCP Kimlik doğrulamaları ve agentic limitleri daima gözetilecek.
