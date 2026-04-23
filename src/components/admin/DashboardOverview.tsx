@@ -181,56 +181,6 @@ export default function DashboardOverview() {
         <EconomyEngineGraph />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="rounded-none border-2 border-foreground/10 bg-muted/20">
-          <CardHeader className="border-b-2 border-foreground/5">
-            <CardTitle className="text-xl font-black uppercase tracking-tight">Sistem Operasyon Merkezi</CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Aloha Master Orchestrator Tarafından Yönetiliyor
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              {[
-                { label: "NEURAL PROTOCOL v2.1", status: "AKTİF", color: "text-primary" },
-                { label: "SİSTEM SAĞLIĞI", status: "OPTİMAL", color: "text-primary" },
-                { label: "ALOHA TERMİNAL", status: "AKTİF / DİKKAT", color: "text-foreground" },
-                { label: "KARAR MOTORU", status: "ÇALIŞIYOR", color: "text-foreground" },
-                { label: "VERİ KALKANI", status: "AKTİF", color: "text-emerald-500" },
-                { label: "GÜVENLİK KATI", status: "ŞİFRELİ", color: "text-foreground" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between border-b border-foreground/5 pb-2">
-                  <span className="text-[11px] font-black tracking-wider text-muted-foreground">{item.label}</span>
-                  <div className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${item.color === 'text-primary' ? 'bg-primary' : item.color === 'text-emerald-500' ? 'bg-emerald-500' : 'bg-foreground'} animate-pulse`} />
-                    <span className={`text-xs font-black uppercase tracking-tighter ${item.color}`}>{item.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-none border-2 border-primary bg-primary p-1">
-          <div className="bg-background h-full p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-2xl font-black uppercase tracking-tighter mb-2">İSVİÇRE MERKEZLİ ANALİTİK</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Aipyram v5.0 MasterBrain altyapısı ile tüm dijital varlıklarınız 7/24 otonom olarak optimize edilmektedir.
-              </p>
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="bg-primary text-primary-foreground p-3 font-black text-xl tracking-tighter">
-                SWISS TECH
-              </div>
-              <div className="text-[10px] font-bold text-muted-foreground text-right uppercase tracking-[0.2em]">
-                DIETIKON / ZURICH<br />OPERATIONAL HUB
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
       <PerdeOrdersTable />
     </div>
   );

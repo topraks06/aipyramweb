@@ -31,7 +31,7 @@ export default function EconomyEngineGraph() {
               ECONOMY ENGINE: Wallet Burn Radar
             </CardTitle>
             <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-              Gerçek Zamanlı Kredi Tüketim Grafiği (Tenant Bazlı)
+              Gerçek Zamanlı Kredi Tüketim Grafiği (Sovereign Node Bazlı)
             </CardDescription>
           </div>
           <div className="text-right">
@@ -61,15 +61,15 @@ export default function EconomyEngineGraph() {
         
         <div className="grid grid-cols-3 gap-4 mt-6 border-t border-white/5 pt-4">
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">TRTEX Burn Rate</div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">NODE: TRTEX Burn Rate</div>
             <div className="text-sm font-mono text-blue-500 font-bold">YÜKSEK (42%)</div>
           </div>
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Perde.ai Burn Rate</div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">NODE: Perde.ai Burn Rate</div>
             <div className="text-sm font-mono text-emerald-500 font-bold">OPTİMAL (31%)</div>
           </div>
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Hometex Burn Rate</div>
+            <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">NODE: Hometex Burn Rate</div>
             <div className="text-sm font-mono text-amber-500 font-bold">DÜŞÜK (18%)</div>
           </div>
         </div>

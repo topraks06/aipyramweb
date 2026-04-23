@@ -69,6 +69,8 @@ export const metadata: Metadata = {
   },
 };
 
+import CommandCenterWidget from "@/components/admin/CommandCenterWidget";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -158,6 +160,7 @@ export default async function RootLayout({
           {children}
           {!isPerde && <ConciergeWidget />}
           {isPerde && <PerdeClientWrapper />}
+          <CommandCenterWidget />
           <Toaster />
           <GlobalClientEffects />
         </AipyramAuthProvider>
