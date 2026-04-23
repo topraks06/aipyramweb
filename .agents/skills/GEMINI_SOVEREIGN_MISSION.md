@@ -259,3 +259,30 @@ Dosya kaybolursa:
 | FAZ 10 | ⬜ Bekliyor | — | — |
 
 **Her faz bitince bu tabloyu güncelle: ⬜ → ✅**
+
+---
+
+## 🔴 CLAUDE DENETİM EMRİ (2026-04-23)
+
+> Claude Opus 4.6 tarafından yapılan kapsamlı denetim sonucunda 15 eksiklik tespit edilmiştir.
+> Gemini bu eksiklikleri gidermek için aşağıdaki dosyaları ZORUNLU OLARAK okumalıdır:
+
+### ZORUNLU OKUMA DOSYALARI:
+1. **`SOVEREIGN_AUDIT_REPORT.md`** — Acımasız denetim raporu (neler yalan, neler gerçek)
+2. **`SOVEREIGN_GOREV_EMRI.md`** — 15 maddelik checkbox'lı görev listesi
+
+### KALAN KRİTİK GÖREVLER (Claude tarafından başlatıldı, Gemini tamamlayacak):
+- [x] GÖREV 1: SearchInput placeholder → ✅ Claude tamamladı (f62df9d)
+- [ ] GÖREV 2: ShareButtons → Haber detayda inline linkler var, bileşen entegre edilmedi (PremiumArticleLayout'ta zaten LinkedIn/Twitter linkleri mevcut — kabul edilebilir)
+- [x] GÖREV 3: Vorhang Navbar routing → ✅ Claude tamamladı (f62df9d) — Kalan: CartSidebar, OrderConfirmation, TryAtHome, SellerOnboarding, SellerIngestion
+- [ ] GÖREV 4: MediaLibrary Firestore bağlantısı
+- [ ] GÖREV 5: agent.render registry fix
+- [ ] GÖREV 6-15: Diğer P1/P2 görevler
+
+### İLK ADIM:
+Gemini, oturuma başladığında şunu yap:
+1. `cat SOVEREIGN_GOREV_EMRI.md` oku
+2. İşaretlenmemiş ilk göreve başla
+3. Her görev sonrası build + git commit
+4. Checkpoint'leri işaretle
+
