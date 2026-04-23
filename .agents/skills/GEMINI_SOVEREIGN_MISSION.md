@@ -248,7 +248,7 @@ Dosya kaybolursa:
 | Faz | Durum | Git Commit | Build |
 |-----|-------|------------|-------|
 | FAZ 1 | ✅ TAMAMLANDI | 2eaa29c | Başarılı |
-| FAZ 2 | ⬜ Bekliyor | — | — |
+| FAZ 2 | ✅ TAMAMLANDI | 0c14db1 | Başarılı |
 | FAZ 3 | ⬜ Bekliyor | — | — |
 | FAZ 4 | ⬜ Bekliyor | — | — |
 | FAZ 5 | ⬜ Bekliyor | — | — |
