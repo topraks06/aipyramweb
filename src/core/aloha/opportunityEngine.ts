@@ -166,6 +166,18 @@ SADECE gerçekçi, uygulanabilir fırsatlar üret. Somut veri yoksa boş array [
       const oppArray = Array.isArray(parsed) ? parsed : (parsed.opportunities || []);
 
       for (const raw of oppArray.slice(0, 5)) {
+        // 🚨 ANAYASA: Somut veri (sayı/yüzde) yoksa fırsat üretme!
+        const signalData = signals.find(s => s.id === raw.signalId);
+        const signalText = signalData?.signal || signalData?.data?.content || "";
+        const hasNumbers = /\d/.test(signalText);
+        const hasPercent = /%|yüzde|milyon|milyar|dolar|euro|€|\$/i.test(signalText);
+        
+        if (!hasNumbers && !hasPercent) {
+          console.log(`[💎 OPPORTUNITY] SKIP (Somut veri yok): ${raw.opportunity}`);
+          if (raw.signalId) processedIds.push(raw.signalId);
+          continue;
+        }
+
         const opp: Opportunity = {
           signalId: raw.signalId || signals[0]?.id || 'unknown',
           project: raw.project || 'trtex',

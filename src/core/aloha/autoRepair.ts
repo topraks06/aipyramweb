@@ -31,7 +31,7 @@ export async function autoRepair(
   project: string,
   repairPlan: RepairAction[],
   dryRun: boolean = true,
-  maxActions: number = 20
+  maxActions: number = 5
 ): Promise<RepairResult> {
   const result: RepairResult = { total: repairPlan.length, fixed: 0, skipped: 0, errors: 0, details: [] };
   const collection = `${project}_news`;
