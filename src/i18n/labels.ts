@@ -160,6 +160,9 @@ const labels: Record<string, Record<LangCode, string>> = {
   notFound:     { tr: 'Bu haber bulunamadı.', en: 'Article not found.', de: 'Artikel nicht gefunden.', ru: 'Статья не найдена.', zh: '文章未找到。', ar: 'المقال غير موجود.', es: 'Artículo no encontrado.', fr: 'Article introuvable.' },
   backToArchive:{ tr: 'ARŞİVİNE DÖN', en: 'BACK TO ARCHIVE', de: 'ZURÜCK ZUM ARCHIV', ru: 'ВЕРНУТЬСЯ В АРХИВ', zh: '返回存档', ar: 'العودة إلى الأرشيف', es: 'VOLVER AL ARCHIVO', fr: "RETOUR AUX ARCHIVES" },
   syncing:      { tr: 'SİSTEM GÜNCELLENİYOR...', en: 'SYSTEM UPDATING...', de: 'SYSTEM WIRD AKTUALISIERT...', ru: 'ОБНОВЛЕНИЕ СИСТЕМЫ...', zh: '系统更新中...', ar: 'جاري تحديث النظام...', es: 'ACTUALIZANDO SISTEMA...', fr: 'MISE À JOUR DU SYSTÈME...' },
+
+  // ═══ ARAMA ═══
+  searchPlaceholder: { tr: 'Haber, ihale, fırsat ara...', en: 'Search news, tenders, deals...', de: 'Nachrichten, Ausschreibungen suchen...', ru: 'Поиск новостей, тендеров...', zh: '搜索新闻、招标、交易...', ar: 'البحث في الأخبار والمناقصات...', es: 'Buscar noticias, licitaciones...', fr: 'Rechercher actualités, appels...' },
 };
 
 /**

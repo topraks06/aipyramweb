@@ -4,7 +4,7 @@ import { ArrowRight, ShieldCheck, Camera, Sparkles, TrendingUp, CheckCircle, Sma
 import Link from "next/link";
 import Image from "next/image";
 
-export default function VorhangLandingPage({ products = [] }: { products?: any[] }) {
+export default function VorhangLandingPage({ products = [], basePath = '/sites/vorhang.ai' }: { products?: any[]; basePath?: string }) {
   // Use mock products if empty for development
   const displayProducts = products.length > 0 ? products : [
     { id: 1, name: "Premium Blackout Berlin", sellerName: "Weber Textil GmbH", price: 12.50 },
@@ -45,12 +45,12 @@ export default function VorhangLandingPage({ products = [] }: { products?: any[]
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6">
-              <Link href="/try-at-home" className="group bg-[#D4AF37] text-black px-10 py-5 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-3 hover:bg-white transition-all">
+              <Link href={`${basePath}/try-at-home`} className="group bg-[#D4AF37] text-black px-10 py-5 text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-3 hover:bg-white transition-all">
                 <Camera className="w-4 h-4" />
                 In Ihrem Raum ansehen
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
               </Link>
-              <Link href="/products" className="group border border-white/30 bg-black/40 backdrop-blur-sm text-white px-10 py-5 text-xs uppercase tracking-widest font-bold flex items-center justify-center hover:bg-white hover:text-black transition-all">
+              <Link href={`${basePath}/products`} className="group border border-white/30 bg-black/40 backdrop-blur-sm text-white px-10 py-5 text-xs uppercase tracking-widest font-bold flex items-center justify-center hover:bg-white hover:text-black transition-all">
                 Kollektion entdecken
               </Link>
             </div>
@@ -131,14 +131,14 @@ export default function VorhangLandingPage({ products = [] }: { products?: any[]
               <h2 className="text-5xl font-serif mb-4 tracking-tight">Trendprodukte</h2>
               <p className="text-gray-500 text-lg">Die beliebtesten B2B-Stoffe der Woche im DACH-Raum</p>
             </div>
-            <Link href="/products" className="hidden sm:flex items-center gap-3 text-xs uppercase tracking-widest font-bold hover:text-[#D4AF37] transition-colors pb-2 border-b border-black hover:border-[#D4AF37]">
+            <Link href={`${basePath}/products`} className="hidden sm:flex items-center gap-3 text-xs uppercase tracking-widest font-bold hover:text-[#D4AF37] transition-colors pb-2 border-b border-black hover:border-[#D4AF37]">
               Alle ansehen <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             {displayProducts.map((item: any, idx: number) => (
-              <Link href={`/products/${item.id}`} key={item.id} className="group cursor-pointer">
+              <Link href={`${basePath}/products/${item.id}`} key={item.id} className="group cursor-pointer">
                 <div className="relative aspect-[4/5] bg-gray-200 mb-6 overflow-hidden">
                    <img 
                      src={item.images?.[0] || `https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=600&auto=format&fit=crop&sig=${idx}`} 
@@ -217,7 +217,7 @@ export default function VorhangLandingPage({ products = [] }: { products?: any[]
                   </li>
                 ))}
               </ul>
-              <Link href="/seller/register" className="inline-flex bg-black text-white px-10 py-5 text-xs uppercase tracking-widest font-bold items-center gap-3 hover:bg-[#D4AF37] transition-all">
+              <Link href={`${basePath}/seller/register`} className="inline-flex bg-black text-white px-10 py-5 text-xs uppercase tracking-widest font-bold items-center gap-3 hover:bg-[#D4AF37] transition-all">
                 Händler werden <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

@@ -7,7 +7,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CartSidebar } from "./CartSidebar";
 import { useCartStore } from "@/store/useCartStore";
 
-export default function VorhangNavbar() {
+interface VorhangNavbarProps {
+  basePath?: string;
+}
+
+export default function VorhangNavbar({ basePath = '/sites/vorhang.ai' }: VorhangNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { openCart, items } = useCartStore();
   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -19,7 +23,7 @@ export default function VorhangNavbar() {
           
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-white font-serif text-2xl tracking-widest uppercase">
+            <Link href={basePath} className="text-white font-serif text-2xl tracking-widest uppercase">
               Vorhang
               <span className="text-[#D4AF37] text-xs align-top ml-1 font-sans">.AI</span>
             </Link>
@@ -27,16 +31,16 @@ export default function VorhangNavbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/products" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+            <Link href={`${basePath}/products`} className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
               Produkte
             </Link>
-            <Link href="/seller" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm font-medium">
+            <Link href={`${basePath}/seller`} className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm font-medium">
               Für Händler
             </Link>
-            <Link href="/about" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+            <Link href={`${basePath}/about`} className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
               Über Uns
             </Link>
-            <Link href="/contact" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
+            <Link href={`${basePath}/contact`} className="text-gray-300 hover:text-white transition-colors text-sm font-medium">
               Kontakt
             </Link>
           </div>
@@ -90,10 +94,10 @@ export default function VorhangNavbar() {
             className="md:hidden absolute top-20 left-0 w-full bg-black/95 border-b border-white/10"
           >
             <div className="px-4 pt-2 pb-6 space-y-4 flex flex-col">
-              <Link href="/products" className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Produkte</Link>
-              <Link href="/seller" className="text-[#D4AF37] text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Für Händler</Link>
-              <Link href="/about" className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Über Uns</Link>
-              <Link href="/contact" className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Kontakt</Link>
+              <Link href={`${basePath}/products`} className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Produkte</Link>
+              <Link href={`${basePath}/seller`} className="text-[#D4AF37] text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Für Händler</Link>
+              <Link href={`${basePath}/about`} className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Über Uns</Link>
+              <Link href={`${basePath}/contact`} className="text-gray-300 hover:text-white text-lg font-medium p-2" onClick={() => setIsOpen(false)}>Kontakt</Link>
               
               <div className="h-px bg-white/10 my-4" />
               
@@ -114,3 +118,4 @@ export default function VorhangNavbar() {
     </nav>
   );
 }
+
