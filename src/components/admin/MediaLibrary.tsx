@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, Image as ImageIcon, CheckCircle2, Cloud, Database } from "lucide-react";
 import { MediaAsset, MediaDetailModal } from "./MediaDetailModal";
 
@@ -72,22 +72,50 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
   const [activeNode, setActiveNode] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
+  const [assets, setAssets] = useState<MediaAsset[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Firestore verisini MediaAsset formatına map'le
-  const mappedAssets: MediaAsset[] = initialAssets.length > 0 ? initialAssets.map((asset: any) => ({
-    id: asset.key || asset.id,
-    title: asset.category === "user_render" ? "Kullanıcı Render (Perde.ai)" : (asset.title || "İsimsiz Medya"),
-    url: asset.url_2k || asset.url_1k || asset.url,
-    thumbnailUrl: asset.url_1k || asset.url_2k || asset.url,
-    node: asset.node || "perde",
-    type: asset.source === "imagen" ? "render" : asset.source === "trtex_article" ? "news" : "product",
-    resolution: asset.url_4k ? "4K" : asset.url_2k ? "2K" : "1K",
-    status: "published",
-    createdAt: asset.createdAt || new Date().toISOString(),
-    tags: asset.tags || []
-  })) : MOCK_ASSETS;
+  useEffect(() => {
+    const fetchMedia = async () => {
+      if (initialAssets && initialAssets.length > 0) {
+         setAssets(mapAssets(initialAssets));
+         setLoading(false);
+         return;
+      }
+      try {
+        const res = await fetch('/api/admin/media');
+        const json = await res.json();
+        if (json.success && json.data) {
+          setAssets(mapAssets(json.data));
+        } else {
+          setAssets([]);
+        }
+      } catch (err) {
+        console.error("Media fetch error", err);
+        setAssets([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMedia();
+  }, [initialAssets]);
 
-  const filtered = mappedAssets.filter(a => {
+  const mapAssets = (rawAssets: any[]): MediaAsset[] => {
+    return rawAssets.map((asset: any) => ({
+      id: asset.key || asset.id,
+      title: asset.category === "user_render" ? "Kullanıcı Render (Perde.ai)" : (asset.title || "İsimsiz Medya"),
+      url: asset.url_2k || asset.url_1k || asset.url,
+      thumbnailUrl: asset.url_1k || asset.url_2k || asset.url,
+      node: asset.node || "perde",
+      type: asset.source === "imagen" ? "render" : asset.source === "trtex_article" ? "news" : "product",
+      resolution: asset.url_4k ? "4K" : asset.url_2k ? "2K" : "1K",
+      status: "published",
+      createdAt: asset.createdAt || new Date().toISOString(),
+      tags: asset.tags || []
+    }));
+  };
+
+  const filtered = assets.filter(a => {
     if (activeNode !== "all" && a.node !== activeNode) return false;
     if (search && !a.title.toLowerCase().includes(search.toLowerCase()) && !a.tags.join(" ").includes(search.toLowerCase())) return false;
     return true;

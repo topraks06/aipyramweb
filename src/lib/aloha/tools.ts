@@ -175,13 +175,32 @@ async function nodeVorhang(): Promise<ToolResult> {
 
 /** Escrow Ödeme Linki Üret */
 async function commerceEscrow(amount: number = 5000, vendorName: string = "Vorhang Vendor"): Promise<ToolResult> {
-  // Demo amaçlı %10 komisyon kesintisi
   const commission = amount * 0.10;
-  return { 
-    success: true, 
-    message: `Stripe Escrow bağlantısı oluşturuldu. Sipariş tutarı: $${amount}. Sovereign Komisyonu: $${commission} (%10). \nLink: https://checkout.stripe.com/pay/cs_test_mock_${Date.now()}`, 
-    widgetType: 'success'
-  };
+  try {
+    const { createCommissionCheckout } = await import('@/services/stripeService');
+    const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+    
+    const checkout = await createCommissionCheckout({
+      dealId: `aloha_escrow_${Date.now()}`,
+      supplierEmail: 'b2b-escrow@aipyram.com',
+      commissionAmountUSD: commission,
+      description: `${vendorName} için $${amount} tutarındaki B2B İşlem Komisyonu (Escrow)`,
+      successUrl: `${host}/admin?escrow=success`,
+      cancelUrl: `${host}/admin?escrow=cancelled`
+    });
+
+    if (checkout) {
+      return { 
+        success: true, 
+        message: `Stripe Escrow bağlantısı oluşturuldu. Sipariş tutarı: $${amount}. Sovereign Komisyonu: $${commission} (%10).\nÖdeme Linki: ${checkout.url}`, 
+        widgetType: 'success'
+      };
+    }
+    
+    return { success: false, message: 'Stripe bağlantısı kurulamadı.', widgetType: 'error' };
+  } catch (error: any) {
+    return { success: false, message: `Stripe Escrow Hatası: ${error.message}`, widgetType: 'error' };
+  }
 }
 
 /** İçerik istatistikleri — sovereign-config'den koleksiyon + feature flag */
