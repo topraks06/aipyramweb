@@ -83,10 +83,6 @@ export default async function middleware(req: NextRequest) {
       'hometex': 'hometex.ai',
       'perde': 'perde.ai',
       'vorhang': 'vorhang.ai',
-      'didimemlak': 'didimemlak.ai',
-      'fethiye': 'fethiye.ai',
-      'heimtex': 'heimtex.ai',
-      'immobiliens': 'immobiliens.ai',
     };
     tenantId = domainMap[sub] || `${sub}.com`;
     console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → tenant: ${tenantId}`);

@@ -2,15 +2,15 @@
   "name": "aipyram-web",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start --port ${PORT:-3000}",
-    "lint": "next lint",
-    "worker": "tsx cloud_worker/daemon.ts",
-    "aloha:worker": "tsx daemon/aloha-worker.ts",
-    "nexus:start": "tsx src/core/swarm/localNexusWorker.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -49,8 +49,6 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
-    "@upstash/ratelimit": "^2.0.8",
-    "@upstash/redis": "^1.37.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.14.0",
     "cheerio": "^1.2.0",

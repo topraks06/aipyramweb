@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@aipyram/types": ["./packages/shared-types/index.ts"],
+      "@aipyram/firebase": ["./packages/shared-firebase/index.ts"],
+      "@aipyram/config": ["./packages/shared-config/index.ts"],
+      "@aipyram/aloha-sdk": ["./packages/aloha-sdk/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
