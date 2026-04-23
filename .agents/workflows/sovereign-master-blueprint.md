@@ -26,5 +26,15 @@ Sistemdeki tüm ajanlar tek bir beyne bağlıdır ve sürekli bir **RLHF (Takviy
 *   **Wallet Burn Radar:** Admin Dashboard'unda Perde, Hometex ve TRTEX tenant'larının saatlik/günlük kredi yakım hızlarını izleyen otonom bir borsa/finans ekranı (`EconomyEngineGraph.tsx`).
 *   **Tam Entegrasyon:** Gerçek Stripe altyapısı ile kullanıcıların satın aldığı Aloha Kredilerinin, sistemin her `invokeAgent` tetiklemesinde kuruşu kuruşuna harcanması ve kayıt altına alınması.
 
+## 👁️ 4. SOVEREIGN COMMAND CENTER (God Mode UI)
+*Sistemin arayüzü bir Dashboard değil, doğrudan veriye müdahale eden bir "Execution Layer"dır.*
+
+*   **Global Widget (Her Yerde Geçerli):** Admin (Sovereign), platformun hangi sayfasında gezerse gezsin (TRTEX haber okurken, Perde'de dolaşırken) ekranın sağ alt köşesindeki Mavi Terminal butonuna tıklayarak doğrudan Command Center'a erişir.
+*   **3-Modlu Zeka:** Basit bir sohbet botu ("Copilot") reddedilmiştir. Command Center 3 mod ile çalışır:
+    *   **CHAT:** Hızlı sistem sorguları.
+    *   **ANALYSIS:** Çoklu dosya yükleme, okuma ve özet çıkarma.
+    *   **ACTION:** Swarm orkestratörünü doğrudan UI üzerinden ateşleyen kırmızı "Sistem Emri" modu.
+*   **Dumb Client İhlali Yok:** Arayüz (`CommandCenterWidget.tsx`) asla mock (sahte) veri barındırmaz. İstekler daima sunucudaki `/api/aloha/command` endpoint'ine gider ve Gemini API ile Swarm üzerinden gerçek sonuçlar döner.
+
 ---
-**BU BİR ANAYASADIR VE SİSTEM ŞU AN BU TEMEL ÜZERİNDE ÇALIŞMAKTADIR.** AIPyram projelerinde eklenecek her yeni modül, öncelikle bu "3 Core Layer" anayasasına uymak zorundadır. Aksi takdirde Sovereign Gateway, işlemi reddeder.
+**BU BİR ANAYASADIR VE SİSTEM ŞU AN BU TEMEL ÜZERİNDE ÇALIŞMAKTADIR.** AIPyram projelerinde eklenecek her yeni modül, öncelikle bu "4 Core Layer" anayasasına uymak zorundadır. Aksi takdirde Sovereign Gateway, işlemi reddeder.

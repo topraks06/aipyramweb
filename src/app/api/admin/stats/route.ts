@@ -7,10 +7,10 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Firebase Admin not initialized' }, { status: 500 });
     }
 
-    // 1. Total Domains / Tenants (Hardcoded based on config for now, or just return 4)
-    const totalDomains = 4;
-    const activeAgents = 33; // Sovereign Swarm
-    const totalSectors = 3; // Textile, Curtain, E-commerce
+    // 1. Total Domains / Tenants
+    const totalDomains = 0; // Gerçek veritabanı eklenecek
+    const activeAgents = 0; // Gerçek Sovereign Swarm verisi eklenecek
+    const totalSectors = 0; // Gerçek veri eklenecek
 
     // 2. Fetch User Stats (Mocking or aggregating for now)
     const perdeMembersSnap = await adminDb.collection('perde_members').count().get();
@@ -43,7 +43,7 @@ export async function GET() {
       }
     }
     
-    const automationRules = 15; // Example count of active rules
+    const automationRules = 0; // Gerçek veri eklenecek
 
     return NextResponse.json({
       success: true,

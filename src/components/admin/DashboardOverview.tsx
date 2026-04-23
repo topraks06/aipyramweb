@@ -49,31 +49,31 @@ export default function DashboardOverview() {
       if (result.success && result.data) {
         setStats(result.data);
       } else {
-        // Fallback data if API fails or is empty
+        // DUMB CLIENT: Asla mock kullanma. Veri yoksa sıfırla.
         setStats({
-          totalDomains: 4,
-          totalAgents: 33,
-          activeAgents: 33,
+          totalDomains: 0,
+          totalAgents: 0,
+          activeAgents: 0,
           pendingTasks: 0,
           completedTasks: 0,
           failedTasks: 0,
-          totalSectors: 3,
-          automationRules: 15,
+          totalSectors: 0,
+          automationRules: 0,
           totalCreditsSpent: 0,
         });
       }
     } catch (error) {
       console.error("İstatistikler yüklenirken hata:", error);
-      // Fallback
+      // Fallback 0
       setStats({
-          totalDomains: 4,
-          totalAgents: 33,
-          activeAgents: 33,
+          totalDomains: 0,
+          totalAgents: 0,
+          activeAgents: 0,
           pendingTasks: 0,
           completedTasks: 0,
           failedTasks: 0,
-          totalSectors: 3,
-          automationRules: 15,
+          totalSectors: 0,
+          automationRules: 0,
           totalCreditsSpent: 0,
       });
     } finally {

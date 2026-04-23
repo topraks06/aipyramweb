@@ -8,18 +8,19 @@ export default function EconomyEngineGraph() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Gerçek bir sistemde bu veriler `/api/admin/economy` üzerinden çekilir.
-    // Şimdilik demo/mock verisi:
-    const mockData = [
-      { time: '08:00', perde: 1.2, hometex: 0.5, trtex: 2.1 },
-      { time: '10:00', perde: 1.8, hometex: 0.8, trtex: 3.5 },
-      { time: '12:00', perde: 2.5, hometex: 1.2, trtex: 4.8 },
-      { time: '14:00', perde: 3.1, hometex: 2.0, trtex: 5.2 },
-      { time: '16:00', perde: 4.0, hometex: 2.5, trtex: 7.1 },
-      { time: '18:00', perde: 5.5, hometex: 3.8, trtex: 8.9 },
-      { time: '20:00', perde: 6.2, hometex: 4.1, trtex: 10.2 },
-    ];
-    setData(mockData);
+    const fetchEconomyData = async () => {
+      try {
+        const res = await fetch('/api/admin/economy/history');
+        const json = await res.json();
+        if (json.success && json.data) {
+          setData(json.data);
+        }
+      } catch (err) {
+        console.error("Economy verisi çekilemedi", err);
+      }
+    };
+    
+    fetchEconomyData();
   }, []);
 
   return (

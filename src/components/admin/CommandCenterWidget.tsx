@@ -64,37 +64,57 @@ export default function CommandCenterWidget() {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const executeCommand = (e: React.FormEvent) => {
+  const executeCommand = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() && files.length === 0) return;
 
     const attachments = files.map(f => f.name);
+    const userText = input;
 
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: userText,
       attachments: attachments.length > 0 ? attachments : undefined,
       mode
     }]);
 
     setInput('');
     setFiles([]);
+    
+    // Yükleniyor durumu ekleyebiliriz (bunu UI'da zaten isTyping state'i ile yapmıştık)
+    // setIsTyping(true); // TODO: Eklenebilir
 
-    // MOCK RESPONSE
-    setTimeout(() => {
-      let responseContent = '';
-      if (mode === 'chat') responseContent = "Sorgu analiz edildi. Veriler onaylandı.";
-      if (mode === 'analysis') responseContent = "Belgeler ayrıştırıldı. Entity Graph güncellendi.";
-      if (mode === 'action') responseContent = "CRITICAL ACTION INITIATED. Swarm orkestratörü devreye girdi.";
+    try {
+      const res = await fetch('/api/aloha/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: userText })
+      });
+
+      const data = await res.json();
+
+      let finalContent = data.alohaResponse || "Anlaşılamadı.";
+
+      // Eğer widget verisi varsa detay ekle
+      if (data.type === 'widget' && data.data) {
+        finalContent += `\n\n[VERİ ONAYLANDI: ${JSON.stringify(data.data, null, 2)}]`;
+      }
 
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: responseContent,
+        content: finalContent,
         mode
       }]);
-    }, 1000);
+    } catch (err: any) {
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `SİSTEM HATASI: ${err.message}`,
+        mode
+      }]);
+    }
   };
 
   return (
