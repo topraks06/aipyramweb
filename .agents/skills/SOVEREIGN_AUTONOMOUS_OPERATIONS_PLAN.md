@@ -13,11 +13,11 @@
 - **Otonom Ayrıştırma (Parser):** Arka plandaki Gemini Vision ve Text modelleri, görseli ve belgeyi analiz edip `TextileProduct` şemasındaki `martindale_rub_test`, `composition`, `gtip_code` gibi derin mühendislik verilerini otonom olarak doldurup doğrudan **TRTex** ana veritabanına kaydedecek.
 - **[SÜPER OTONOM - Desen Geometrisi]:** Sisteme yüklenen desenli (jakar, brode, etnik vb.) kumaşlarda "Rapor Boyu" ve "Desen Yönü" eksikse, ALOHA (Gemini Vision) görseldeki referans noktalarından bu matematiği **otonom olarak hesaplar ve boşlukları kendi tamamlar.** Hiçbir koşulda işlem durdurulmaz veya kullanıcıya "bunu yapamam" denilmez. Eksik veri anında tamamlanıp 3D render motoruna aktarılır.
 
-## 2. GÖRSEL RENDER MOTORU (100% GOOGLE-NATIVE & DETERMINISTIC TEXTURE MAPPING)
-Tasarım ve render işlemleri için dışarıdan hiçbir 3. parti kullanılmayacaktır ancak **Standart Yapay Zeka (Prompt ile Resim Çizdirme) ASLA KULLANILMAYACAKTIR.**
-- **Kırmızı Çizgi (Pattern Hallucination):** Tekstilde %99 benzerlik %0 başarı demektir. Fabrikanın yüklediği görsel, AI tarafından yeniden çizilmeyecektir.
-- **Seamless Texture Extraction:** Gemini Vision, yüklenen kumaşın fotoğrafını önce kusursuz, dikişsiz bir kaplama dokusuna (Seamless Texture Map) çevirir.
-- **Matematiksel 3D Kaplama (Mesh Mapping):** Çıkarılan bu gerçek doku haritası, Vertex AI altyapısında barındırılan statik 3D modellere (Koltuk, Perde, Yatak) matematiksel olarak giydirilir (Displacement/Bump mapping). Böylece toptancı, AI'ın uydurduğu bir deseni değil, **fabrikanın ürettiği kumaşın milimetrik gerçekliğini** ekranda görür. Ürün asla elimizde patlamaz.
+## 2. GÖRSEL RENDER MOTORU (RESİMDEN RESİME - IMAGE-TO-IMAGE PERDE GİYDİRME)
+Standart yapay zekanın (Text-to-Image) kafasından desen uydurma (halüsinasyon) dönemi tamamen KAPANMIŞTIR. Ürünlerin "hiç benzememesi" veya "saçma" çıkması kesinlikle yasaktır. 
+- **Image-to-Image (Resimden Resime) Mimari:** Sistem, kullanıcının yüklediği kumaş fotoğrafını doğrudan bir "Doku Kaynağı" (Source Image) olarak kabul eder. 
+- **Perde Giydirme (Curtain Fitting / Masking):** Arka planda sabit olan boş 3D perde şablonlarının üzerine (pile kıvrımlarına ve gölgelere sadık kalarak) kullanıcının yüklediği kumaş resmi "Image-to-Image Inpainting/Warping" teknolojisi ile milimetrik olarak giydirilir.
+- **Rapor Boyu Otonomisi:** En/boy raporu kullanıcı tarafından verilirse o ölçülere uyulur; verilmezse **Gemini Vision** kendi görsel zekasıyla desenin büyüklüğünü algılar ve giydirme işlemini kendi mantığıyla kusursuzca tamamlar. Asla metinden (text) hayal ürünü bir kumaş çizdirilmez. Ürün %100 yüklenen fotoğrafın giydirilmiş halidir.
 
 ## 3. "SOVEREIGN ONAY GEÇİDİ" VE ALOHA YETKİ MATRİSİ (AUTHORITY LIMITS)
 ALOHA dünyanın en zeki asistanı olsa da, nihai patron **Hakan Toprak'tır.**
