@@ -51,6 +51,7 @@ coverage/
 # Temporary folders
 tmp/
 temp/
+.sandbox_tmp/
 
 # Optional npm cache directory
 .npm

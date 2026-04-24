@@ -266,12 +266,12 @@ Dosya kaybolursa:
 | FAZ 2 | ✅ TAMAMLANDI | 0c14db1 | Başarılı |
 | FAZ 3 | ✅ TAMAMLANDI | 4598731 | Başarılı |
 | FAZ 4 | ✅ TAMAMLANDI | e169552 | Başarılı |
-| FAZ 5 | ⬜ Bekliyor | — | — |
-| FAZ 6 | ⬜ Bekliyor | — | — |
-| FAZ 7 | ⬜ Bekliyor | — | — |
-| FAZ 8 | ⬜ Bekliyor | — | — |
-| FAZ 9 | ⬜ Bekliyor | — | — |
-| FAZ 10 | ⬜ Bekliyor | — | — |
+| FAZ 5 | ✅ TAMAMLANDI | 045db29 | Başarılı |
+| FAZ 6 | ✅ TAMAMLANDI | e169552 | Başarılı |
+| FAZ 7 | ✅ TAMAMLANDI | e169552 | Başarılı |
+| FAZ 8 | ✅ TAMAMLANDI | e169552 | Başarılı |
+| FAZ 9 | ⏸️ İPTAL | Sadece Local Test Yapılacak | — |
+| FAZ 10 | ✅ TAMAMLANDI | Seed verileri eklendi | — |
 
 **Her faz bitince bu tabloyu güncelle: ⬜ → ✅**
 

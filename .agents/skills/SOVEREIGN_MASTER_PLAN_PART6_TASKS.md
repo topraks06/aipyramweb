@@ -177,8 +177,8 @@ git commit -m "feat(aloha-derin): öz-evrim + CFO + identity stitching + feature
 
 > `.sandbox_tmp/` dizini hâlâ projede var (boş ama kirlilik).
 
-- [ ] `.sandbox_tmp/` → `_archive/.sandbox_tmp/` altına TAŞI (SİLME!)
-- [ ] `.gitignore`'da `.sandbox_tmp/` satırı olduğunu doğrula
+- [x] `.sandbox_tmp/` → `_archive/.sandbox_tmp_2/` altına TAŞI (SİLME!)
+- [x] `.gitignore`'da `.sandbox_tmp/` satırı olduğunu doğrula
 
 **DOĞRULAMA:**
 ```bash
@@ -192,10 +192,10 @@ git commit -m "chore(hijyen): sandbox_tmp archive altına taşındı"
 
 > Gemini bu dosyadaki ilerleme tablosunu HİÇ GÜNCELLEMEDİ.
 
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 264-271: Faz 3-8 → `✅ TAMAMLANDI` olarak güncelle
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 269: Faz 9 → `⏸️ İPTAL` olarak güncelle
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 271: Faz 10 → `✅ TAMAMLANDI` olarak güncelle
-- [ ] Faz 1-10 arası detay checkbox'ları: Gerçekten yapılanları [x], yapılmayanları [ ] bırak
+- [x] `GEMINI_SOVEREIGN_MISSION.md` satır 264-271: Faz 3-8 → `✅ TAMAMLANDI` olarak güncelle
+- [x] `GEMINI_SOVEREIGN_MISSION.md` satır 269: Faz 9 → `⏸️ İPTAL` olarak güncelle
+- [x] `GEMINI_SOVEREIGN_MISSION.md` satır 271: Faz 10 → `✅ TAMAMLANDI` olarak güncelle
+- [x] Faz 1-10 arası detay checkbox'ları: Gerçekten yapılanları [x], yapılmayanları [ ] bırak
 
 ---
 
