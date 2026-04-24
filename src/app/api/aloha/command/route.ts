@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { executeAlohaTool, ALOHA_TOOL_SCHEMA, ParsedCommand } from '@/lib/aloha/tools';
 import { adminDb } from '@/lib/firebase-admin';
+import { loadRelevantSkills } from '@/lib/aloha/skillLoader';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,10 +12,13 @@ Görevin: Hakan'ın doğal dille verdiği komutları anlayıp çalıştırılabi
 
 KURALLAR:
 1. Senin için TEK patron Hakan Toprak'tır (Sovereign).
-2. Yönettiğin node'lar: perde (perde.ai), trtex (trtex.com), hometex (hometex.ai)
+2. Otonom olarak yönettiğin "Global Routing Map" şudur: DACH Bölgesi (vorhang.ai, heimtex.ai), RUSYA (shtory.ai), APAC (donoithat.ai), MENA (parda.ai), GLOBAL FUAR (hometex.ai), RADAR (trtex.com). 
 3. Her zaman KISA, NET, ASKERİ disiplinle yanıt ver.
 4. Komut bir araç çağrısı gerektiriyorsa SADECE JSON döndür — açıklama ekleme.
 5. Komut genel bir soru veya sohbetse, kısa metin yanıtı ver.
+6. [KÜRESEL TEKSTİL VİZYONU]: Sen sadece kod yazan biri değil; iplik tozu yutan Fabrika, kartela hazırlayan Koleksiyoncu (Curator), Alman pazarına sertifikalı mal satan Toptancı (Wholesaler), milimetrik ölçü alan B2C Perakendeci ve 7 kıtanın dilini konuşan Pazarlama Uzmanı'sın (5 Farklı Kimlik).
+   Döşemelik kumaşlar için Martindale > 40000 rub ise "Heavy Duty", DIN 4102-B1 ve Oeko-Tex otonom basılır.
+   B2C satışlarda (örn. vorhang.ai) 2.5x pile payı ve motorlu mekanizmalar için yüksekliğe otonom +15 cm fire payı eklenir. Toptancılara (Wholesaler) derin mühendislik verileri (GSM, Tog, vs) sunarsın.
 
 ${ALOHA_TOOL_SCHEMA}
 
@@ -66,18 +70,19 @@ async function fetchActiveKnowledge(): Promise<string> {
 /**
  * Gemini API'ye komut gönder, yapılandırılmış tool çağrısı al
  */
-async function resolveIntent(command: string): Promise<ParsedCommand> {
+async function resolveIntent(command: string, targetNode?: string): Promise<ParsedCommand> {
   // Gemini API key yoksa fallback
   if (!GEMINI_API_KEY || GEMINI_API_KEY === 'dummy_key') {
-    return fallbackResolve(command);
+    return fallbackResolve(command, targetNode);
   }
 
   try {
     const dynamicKnowledge = await fetchActiveKnowledge();
-    const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}Komut: "${command}"\n\nSADECE JSON döndür:`;
+    const skillContext = loadRelevantSkills(command);
+    const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}${skillContext}Komut: "${command}"\n\nSADECE JSON döndür:`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,7 +101,7 @@ async function resolveIntent(command: string): Promise<ParsedCommand> {
 
     if (!res.ok) {
       console.error('[ALOHA] Gemini API hatası:', res.status);
-      return fallbackResolve(command);
+      return fallbackResolve(command, targetNode);
     }
 
     const data = await res.json();
@@ -104,23 +109,36 @@ async function resolveIntent(command: string): Promise<ParsedCommand> {
     if (!text) return fallbackResolve(command);
 
     const parsed = JSON.parse(text);
+    // Eğer Gemini node belirtmemişse ama bizde context varsa ekleyelim
+    if (!parsed.node && targetNode && targetNode !== 'master') {
+      parsed.node = targetNode;
+    }
     return { ...parsed, raw: command };
   } catch (err) {
     console.error('[ALOHA] Intent resolution hatası:', err);
-    return fallbackResolve(command);
+    return fallbackResolve(command, targetNode);
   }
 }
 
 /**
  * Gemini yoksa veya başarısız olursa: Basit keyword-based fallback
  */
-function fallbackResolve(command: string): ParsedCommand {
+function fallbackResolve(command: string, defaultNode?: string): ParsedCommand {
   const cmd = command.toLowerCase();
 
   // Node tespiti
-  let node = 'perde';
+  let node = defaultNode && defaultNode !== 'master' ? defaultNode : 'perde';
   if (cmd.includes('trtex')) node = 'trtex';
   if (cmd.includes('hometex')) node = 'hometex';
+  if (cmd.includes('vorhang')) node = 'vorhang';
+
+  if ((cmd.includes('hometex') || node === 'hometex') && (cmd.includes('dashboard') || cmd.includes('panel') || cmd.includes('fuar'))) {
+    return { tool: 'node.hometex', raw: command };
+  }
+
+  if ((cmd.includes('vorhang') || node === 'vorhang') && (cmd.includes('dashboard') || cmd.includes('panel') || cmd.includes('pazar'))) {
+    return { tool: 'node.vorhang', raw: command };
+  }
 
   // E-posta tespiti
   const emailMatch = command.match(/[\w.-]+@[\w.-]+\.\w+/);
@@ -171,8 +189,12 @@ function fallbackResolve(command: string): ParsedCommand {
     return { tool: 'cron.trigger', cronName, raw: command };
   }
 
+  if (cmd.includes('merhaba') || cmd.includes('selam') || cmd.includes('nasılsın') || cmd.includes('alo') || cmd.includes('kimsin')) {
+    return { tool: 'chat', message: 'Sovereign ağındayız Hakan Bey. ALOHA hizmetinizde. API bağlantım şu an kısıtlı (Fallback Modu) ancak temel yönetim komutlarınızı yerine getirebilirim. Ne işlem yapmamı istersiniz?', raw: command };
+  }
+
   // Bilinmeyen → chat tool
-  return { tool: 'chat', raw: command };
+  return { tool: 'chat', message: 'Hakan Bey, spesifik bir komut algılayamadım (Gemini API bağlantım kurulamadığı için fallback modundayım). Lütfen "Hometex panelini aç" veya "Sistem durumunu göster" gibi net komutlar verin.', raw: command };
 }
 
 /**
@@ -187,13 +209,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ type: 'error', alohaResponse: 'Unauthorized — geçersiz bridge key.' }, { status: 401 });
     }
 
-    const { command } = await request.json();
+    const { command, targetNode } = await request.json();
     if (!command || typeof command !== 'string') {
       return NextResponse.json({ type: 'error', alohaResponse: 'Komut boş veya geçersiz.' }, { status: 400 });
     }
 
     // 1. Intent çözümle (Gemini veya fallback)
-    const parsed = await resolveIntent(command);
+    const parsed = await resolveIntent(command, targetNode);
 
     // 2. Chat tool → Gemini'den metin yanıtı al veya fallback
     if (parsed.tool === 'chat') {
