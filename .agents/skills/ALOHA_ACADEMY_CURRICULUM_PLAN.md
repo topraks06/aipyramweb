@@ -50,6 +50,17 @@ Bu nedenle `.agents/skills/academy/` adında yepyeni bir "Bilişsel Kütüphane"
 - Işık yansımaları, kumaş dokusunun 3D objelere (Mesh) "Seamless Texture" olarak giydirilmesi (Pattern Hallucination önlemi).
 - Mimari render standartları ve sanal katalog/fuar stant oluşturma matematiksel kuralları.
 
+### MODÜL 7: KALİTE KONTROL, TESTLER VE SÜRDÜRÜLEBİLİRLİK (YENİ EKLENDİ)
+**Dosya:** `7_QUALITY_AND_SUSTAINABILITY.md`
+- Laboratuvar Testleri: Pilling (tüylenme), Renk Haslığı (ışık/yıkama/sürtünme), Shrinkage (çekmezlik/sanfor), Seam Slippage (dikiş kayması).
+- Küresel Sertifikasyonlar: GRS (Global Recycled Standard), GOTS (Organik), REACH (Kimyasal uygunluk).
+- Karbon Ayak İzi ve Su Tasarrufu: Avrupa pazarına girişin zorunlu "Yeşil" kuralları.
+
+### MODÜL 8: PAKETLEME, HACİM VE SAHA KURULUMU (YENİ EKLENDİ)
+**Dosya:** `8_PACKAGING_AND_INSTALLATION.md`
+- Hacim Mühendisliği: Yastık/Yorgan gibi ürünlerin navlun (lojistik) maliyetini düşürmek için Vakumlama (Vacuum packing) matematiği. Top kumaşlarda masura (rulo) kalibrasyonu.
+- B2C Saha Operasyonu: Tüketici evinde lazer rölöve (ölçü alma) mantığı, motorlu sistemlerin elektrik/montaj altyapısı ve kurulum katsayıları.
+
 ---
 **OPERASYON EMRİ BEKLENİYOR:** 
 Hakan Bey, bu plan sizin sonsuz vizyonunuzu kapsıyor mu? Onaylarsanız, **Modül 1'den (Hammadde ve İplik Bilimi)** başlayıp en ince mühendislik detaylarıyla ALOHA'ya öğretmeye (Skill dosyasını yazmaya) başlıyorum.
