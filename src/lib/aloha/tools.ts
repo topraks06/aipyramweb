@@ -3,6 +3,7 @@ import { getNode, getAllSovereignNodeIds, nodeHasFeature, type SovereignNodeFeat
 import { invokeAgent } from '@/lib/aloha/registry';
 import { executeGlobalPublish } from '@/lib/aloha/workflows/GlobalPublishWorkflow';
 import { executeMatchmaker } from '@/lib/aloha/workflows/MatchmakerWorkflow';
+import { executeVorhangListing } from '@/lib/aloha/workflows/VorhangRetailWorkflow';
 
 /**
  * ALOHA Sovereign Tool Registry
@@ -443,6 +444,28 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       return { success: false, message: `Matchmaker hatası: ${result.error}`, widgetType: 'error' };
     }
 
+    // --- SOVEREIGN VORHANG RETAIL (B2C Pazaryeri) ---
+    case 'sovereign.vorhang_listing': {
+      const result = await executeVorhangListing({
+        sellerId: cmd.sellerId || 'demo_vendor_001',
+        sellerName: cmd.sellerName || 'Perde.ai Demo Vendor',
+        sourceProductId: cmd.sourceProductId || `prod_${Date.now()}`,
+        productNameTR: cmd.productNameTR,
+        basePriceTRY: cmd.basePriceTRY,
+        imageUrl: cmd.imageUrl || 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af',
+        stockQuantity: cmd.stockQuantity || 100
+      });
+      if (result.success) {
+        return {
+          success: true,
+          message: `Ürün Vorhang.ai (DACH) pazaryerinde başarıyla listelendi!\nAlmanca İsim: ${result.localizedName}\nAvrupa Satış Fiyatı: ${result.retailPrice}\nSatıcı Kazancı: ${result.vendorPayout}`,
+          data: result,
+          widgetType: 'success',
+        };
+      }
+      return { success: false, message: `Vorhang listeleme hatası: ${result.error}`, widgetType: 'error' };
+    }
+
     default:
       return { success: false, message: `Bilinmeyen araç: ${cmd.tool}`, widgetType: 'error' };
   }
@@ -525,4 +548,7 @@ Kullanılabilir araçlar ve JSON formatları:
 
 21. sovereign.matchmaker — Üreticinin hammaddesine (iplik, kumaş) dünyadan otonom alıcı/ihale bulur
     { "tool": "sovereign.matchmaker", "productType": "yarn", "material": "20 denye PES iplik", "targetRegions": ["DACH", "RUSSIA"] }
+
+22. sovereign.vorhang_listing — Perde.ai satıcısının ürününü Almanca'ya çevirip, Euro fiyatıyla Vorhang B2C pazarında listeler
+    { "tool": "sovereign.vorhang_listing", "productNameTR": "Özel Dikim Keten Tül Perde", "basePriceTRY": 1500, "stockQuantity": 50 }
 `;
