@@ -5,6 +5,7 @@ import { executeGlobalPublish } from '@/lib/aloha/workflows/GlobalPublishWorkflo
 import { executeMatchmaker } from '@/lib/aloha/workflows/MatchmakerWorkflow';
 import { executeVorhangListing } from '@/lib/aloha/workflows/VorhangRetailWorkflow';
 import { executeHeimtexB2BListing } from '@/lib/aloha/workflows/HeimtexB2BWorkflow';
+import { determineGTIP, createSwatchShipment } from '@/lib/aloha/workflows/LogisticsWorkflow';
 
 /**
  * ALOHA Sovereign Tool Registry
@@ -519,22 +520,32 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
 
     // --- LOJİSTİK VE GÜMRÜK (GTIP & KARGO) ---
     case 'logistics.gtip': {
-      // Otonom GTIP kodu belirleme
-      const mockGtip = cmd.material.toLowerCase().includes('pamuk') ? '5208.11.90.00.00' : '5407.52.00.00.00';
-      return {
-        success: true,
-        message: `GTIP Gümrük Kodu Belirlendi: ${mockGtip} (${cmd.material} için Avrupa standartlarına uygun gümrük beyanı oluşturuldu)`,
-        widgetType: 'success'
-      };
+      const result = await determineGTIP({ materialDescription: cmd.material });
+      if (result.success) {
+        return {
+          success: true,
+          message: `GTIP Gümrük Kodu Belirlendi: ${result.gtipCode}\nGerekçe: ${result.reasoning}\nVergi Durumu: ${result.taxBracket}`,
+          widgetType: 'success'
+        };
+      }
+      return { success: false, message: `GTIP hatası: ${result.error}`, widgetType: 'error' };
     }
 
     case 'logistics.swatch': {
-      // Numune Kargo Barkodu
-      return {
-        success: true,
-        message: `Numune (Swatch) talebi onaylandı. DHL Express AWB Kodu oluşturuldu: DHL-${Date.now().toString().slice(-8)}\nAlıcı: ${cmd.buyerName}\nAdres: ${cmd.address}`,
-        widgetType: 'success'
-      };
+      const result = await createSwatchShipment({
+        buyerName: cmd.buyerName,
+        address: cmd.address,
+        productId: cmd.productId || 'sample_001',
+        fabricName: cmd.fabricName || 'Unknown Fabric'
+      });
+      if (result.success) {
+        return {
+          success: true,
+          message: `Numune (Swatch) kargo konşimentosu oluşturuldu!\nKargo: ${result.carrier}\nTakip No: ${result.trackingNumber}\nTeslimat Süresi: ${result.eta}`,
+          widgetType: 'success'
+        };
+      }
+      return { success: false, message: `Kargo hatası: ${result.error}`, widgetType: 'error' };
     }
 
     // --- PERAKENDE ÖLÇÜ MOTORU ---
