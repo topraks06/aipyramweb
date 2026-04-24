@@ -86,7 +86,7 @@ export function buildFullRepairChain(project: string): ChainStep[] {
     {
       id: 'repair',
       tool: 'auto_repair_project',
-      args: { project, dryRun: false, maxActions: 30 },
+      args: { project, dryRun: false, maxActions: 5 },
       description: `${project} otonom onarım (audit sonuçlarına göre)`,
       dependsOn: 'audit',
       retryCount: 0,

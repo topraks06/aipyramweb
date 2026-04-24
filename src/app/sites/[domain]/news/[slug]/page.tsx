@@ -60,6 +60,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
         },
         twitter: {
           card: 'summary_large_image',
+          site: '@trtex_com',
           title: `${title} — ${brandName}`,
           description: summary.substring(0, 160),
           images: imageUrl ? [imageUrl] : undefined

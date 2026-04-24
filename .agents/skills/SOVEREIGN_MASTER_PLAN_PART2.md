@@ -8,7 +8,7 @@
 > **HEDEF:** Google'da ilk sayfaya çıkmak — organik trafik makinesi
 
 ### 5.1 Structured Data (JSON-LD)
-- [ ] `news/[slug]/page.tsx` → JSON-LD `NewsArticle` schema ekle:
+- [x] `news/[slug]/page.tsx` → JSON-LD `NewsArticle` schema ekle:
   ```json
   {
     "@context": "https://schema.org",
@@ -20,28 +20,28 @@
     "publisher": { "@type": "Organization", "name": "TRTEX" }
   }
   ```
-- [ ] `canonical` tag → `<link rel="canonical" href="https://trtex.com/{locale}/news/{slug}" />`
-- [ ] `hreflang` tagları → 8 dil için (tr, en, de, fr, es, ru, ar, zh)
+- [x] `canonical` tag → `<link rel="canonical" href="https://trtex.com/{locale}/news/{slug}" />`
+- [x] `hreflang` tagları → 8 dil için (tr, en, de, fr, es, ru, ar, zh)
 
 ### 5.2 Open Graph + Twitter Card
-- [ ] `news/[slug]/page.tsx` → `og:image`, `og:title`, `og:description` meta tagları
-- [ ] `twitter:card = summary_large_image`
-- [ ] `twitter:site = @trtex_com`
+- [x] `news/[slug]/page.tsx` → `og:image`, `og:title`, `og:description` meta tagları
+- [x] `twitter:card = summary_large_image`
+- [x] `twitter:site = @trtex_com`
 
 ### 5.3 İlgili Haberler Bölümü
-- [ ] Haber detay sayfasına "İlgili Haberler" bölümü ekle (3 haber)
+- [x] Haber detay sayfasına "İlgili Haberler" bölümü ekle (3 haber)
   - Aynı kategoriden veya aynı etiketlerden Firestore sorgusu
   - `trtex_news` koleksiyonundan `where('category', '==', currentCategory).limit(3)`
 
 ### 5.4 Sitemap Güçlendirme
-- [ ] `sitemap.ts` → 8 dilde URL kontrolü
+- [x] `sitemap.ts` → 8 dilde URL kontrolü
   - Her haber × 8 dil = URL listesi
   - `lastmod` alanı doğru çekilmeli (Firestore `updatedAt`)
 
 ### 5.5 TRTEX Pipeline Güvenliği
-- [ ] `opportunityEngine.ts` → Somut veri kontrolü (boş string/null check)
-- [ ] `deepAudit.ts` → Auto-repair döngüsü (max 5/cycle limiti doğrula)
-- [ ] `missing-image-scanner.ts` → Görselsiz haberleri tespit + `trtex_image_queue` koleksiyonuna ekle
+- [x] `opportunityEngine.ts` → Somut veri kontrolü (boş string/null check)
+- [x] `deepAudit.ts` → Auto-repair döngüsü (max 5/cycle limiti doğrula)
+- [x] `missing-image-scanner.ts` → Görselsiz haberleri tespit + `trtex_image_queue` koleksiyonuna ekle
 
 ### FAZ 5 DOĞRULAMA:
 ```bash

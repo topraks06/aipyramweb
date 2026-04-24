@@ -81,6 +81,16 @@ export async function scanAndGenerateImages(
         continue; // Başka bir formattaki görsel zaten üretilmiş diyebiliriz.
       }
 
+      // Queue'ya ekle
+      try {
+        await adminDb.collection('trtex_image_queue').doc(doc.id).set({
+          articleId: doc.id,
+          project: collection,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        }, { merge: true });
+      } catch(e) {}
+
       needsImage.push({ id: doc.id, data });
     }
 

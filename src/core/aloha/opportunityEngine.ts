@@ -172,7 +172,7 @@ SADECE gerçekçi, uygulanabilir fırsatlar üret. Somut veri yoksa boş array [
         const hasNumbers = /\d/.test(signalText);
         const hasPercent = /%|yüzde|milyon|milyar|dolar|euro|€|\$/i.test(signalText);
         
-        if (!hasNumbers && !hasPercent) {
+        if (!signalText || signalText.trim() === "" || (!hasNumbers && !hasPercent)) {
           console.log(`[💎 OPPORTUNITY] SKIP (Somut veri yok): ${raw.opportunity}`);
           if (raw.signalId) processedIds.push(raw.signalId);
           continue;

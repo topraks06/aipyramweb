@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 const data = doc.data();
                 if (!data.slug) continue;
                 
-                const publishedAt = data.publishedAt || data.createdAt || new Date().toISOString();
+                const publishedAt = data.updatedAt || data.publishedAt || data.createdAt || new Date().toISOString();
                 const lastModDate = new Date(publishedAt);
 
                 const alternatesMap: Record<string, string> = {
