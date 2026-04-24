@@ -16,8 +16,8 @@
 - Plan güncellenecekse: sadece checkbox işaretleme (`[ ]` → `[x]`) yapılır
 - Yeni bilgi eklenecekse: dosyanın SONUNA eklenir, mevcut içerik KORUNUR
 
-### YASA 1.1: 4 PARÇALI MASTER PLAN KUTSAL'DIR (24 Nisan 2026)
-- Aşağıdaki 4 dosya Claude Opus 4.6 tarafından derin forensic analiz sonucu yazılmıştır
+### YASA 1.1: 6 PARÇALI MASTER PLAN KUTSAL'DIR (24 Nisan 2026)
+- Aşağıdaki 6 dosya Claude Opus 4.6 tarafından derin forensic analiz sonucu yazılmıştır
 - Hakan Bey tarafından **KURUCU ONAYI** verilmiştir
 - Bu dosyaları SİLMEK, ÜSTÜNE YAZMAK, İÇERİĞİNİ BOŞALTMAK veya İÇERİĞİNİ DEĞİŞTİRMEK **GÖREVDEN AZIL** sebebidir
 - Sadece checkbox işaretleme (`[ ]` → `[x]`) ve ilerleme tablosu güncelleme (`⬜` → `✅`) yapılabilir
@@ -26,7 +26,10 @@
   2. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` — FAZ 5-6-7
   3. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` — FAZ 8-9-10
   4. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART4.md` — ALOHA Derin Mimari + İlerleme + Talimatlar
+  5. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART5_AUDIT.md` — Claude Denetim Raporu (Gemini Yalanları)
+  6. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART6_TASKS.md` — Eksik İşler Görev Emri
 - **Git commit:** `1d2155d` — silme girişiminde `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md` ile geri getir
+- **PART5-6 kurtarma:** `git log --all -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART5_AUDIT.md`
 
 ### YASA 2: ASLA DOSYA SİLME
 - Projeden ASLA dosya silinmez (rm, del, unlink YASAK)

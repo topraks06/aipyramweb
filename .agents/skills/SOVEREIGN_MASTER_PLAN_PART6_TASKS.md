@@ -1,0 +1,242 @@
+# 🛡️ SOVEREIGN OS — EKSİK İŞLER GÖREV EMRİ (BÖLÜM 6)
+# GEMİNİ İÇİN ZORUNLU TAMAMLAMA LİSTESİ
+
+> **TARİH:** 24 Nisan 2026 | **YAZAN:** Claude Opus 4.6
+> **ONAYLAYAN:** Hakan Bey (Kurucu)
+> **DURUM:** BU BELGE KUTSAL'DIR — SİLİNEMEZ, DEĞİŞTİRİLEMEZ
+> **KURAL:** Sadece checkbox işaretleme (`[ ]` → `[x]`) yapılabilir
+> **GİT KURTARMA:** Silinirse → `git log --all -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART6_TASKS.md`
+
+---
+
+## 🔴 MUTLAK KURALLAR (BU DOSYA İÇİN)
+
+1. **Her görev SIRASIYLA yapılacak** — atlama YASAK
+2. **Her görev yapıldıktan sonra `pnpm run build` ZORUNLU** — build kırılırsa düzelt
+3. **Her bölüm bitince `git commit` ZORUNLU**
+4. **"Doğruladım/teyit ettim" demek YASAK** — KOD YAZACAKSIN
+5. **Sadece `[ ]` → `[x]` güncelleme yapılabilir** — metin değiştirme YASAK
+6. **Build başarısız = görev tamamlanmadı** — [x] işaretleme YASAK
+7. **Her [x] işaretinin yanına yapılan değişikliğin dosya adı ve satır numarası yazılacak**
+
+---
+
+## GÖREV GRUBU 1: VERİ BÜTÜNLÜĞÜ ZIRHI (Kritik — Firestore Kirliliği)
+
+> Bu görevler Firestore'a sahte veri yazan `Math.random()` kullanımlarını düzeltir.
+> HER BİRİ ÜRETİM SİSTEMİNDE VERİ KİRLİLİĞİNE NEDEN OLUYOR.
+
+### 1.1 Lead Engine Sahte Hacim Düzeltme
+- [ ] `src/core/aloha/lead-engine/trigger.ts` satır 41
+- `Math.floor(Math.random() * 500000) + 100000` → Kategori tablosundan al
+- PART4'teki `CATEGORY_VOLUME` tablosunu kullan:
+```typescript
+const CATEGORY_VOLUME: Record<string, number> = {
+  'ihale': 500000, 'otel': 300000, 'konut': 250000,
+  'fuar': 150000, 'yatırım': 400000, 'tesis': 350000, 'default': 200000
+};
+// grandTotal: CATEGORY_VOLUME[category] ?? CATEGORY_VOLUME.default
+```
+- **Kanıt:** Değiştirilen satır numarasını yaz
+
+### 1.2 Vorhang Order ID Collision Düzeltme
+- [ ] `src/app/api/v1/master/vorhang/create-order/route.ts` satır 30
+- `VOR-${Math.floor(1000 + Math.random() * 9000)}-DE` → `VOR-${Date.now()}-${crypto.randomUUID().slice(0,4).toUpperCase()}`
+- **Kanıt:** Değiştirilen satır numarasını yaz
+
+### 1.3 Marketplace Checkout Order ID Düzeltme
+- [ ] `src/app/api/stripe/marketplace-checkout/route.ts` satır 13
+- Aynı pattern → Aynı düzeltme (crypto.randomUUID)
+- **Kanıt:** Değiştirilen satır numarasını yaz
+
+### 1.4 Pulse API Sahte Gecikme Düzeltme
+- [ ] `src/app/api/system/pulse/route.ts` satır 31
+- `Math.floor(Math.random() * 25) + 10` → Sabit `15` veya gerçek Firestore ping ölçümü
+- **Kanıt:** Değiştirilen satır numarasını yaz
+
+### 1.5 Admin Stats Sahte Visitor Düzeltme
+- [ ] `src/app/api/admin/stats/route.ts` satır 45 ve 47
+- `Math.floor(Math.random() * 500) + 100` → `0` (veri yoksa 0 göster, YALAN SÖYLEME)
+- **Kanıt:** Değiştirilen satır numaralarını yaz
+
+### 1.6 FounderDashboard Hardcoded activeAgents Düzeltme
+- [ ] `src/components/admin/FounderDashboard.tsx` satır 49-52
+- `activeAgents: 12, 8, 4, 4` → API'den gelen `platformStats` verisinden al
+- Stats API'de zaten `activeAgents` alanı var → düzgün map'le
+- **Kanıt:** Değiştirilen satır numaralarını yaz
+
+**DOĞRULAMA:**
+```bash
+pnpm run build  # Exit Code: 0 OLMALI
+git commit -m "fix(veri-butunlugu): sahte Math.random verileri temizlendi"
+```
+
+---
+
+## GÖREV GRUBU 2: OTONOM MOTOR GÜVENLİĞİ
+
+### 2.1 DeployGuard Feature Flags
+- [ ] `src/core/aloha/deployGuard.ts` satır 17
+- `Math.random()` simülasyonu → Firestore `feature_flags` koleksiyonundan oku
+- Firestore koleksiyonu yoksa → default `isLive = false` (güvenli taraf)
+- **Kanıt:** Eski ve yeni kodu yan yana yaz
+
+### 2.2 GoalEngine A/B Test
+- [ ] `src/core/aloha/goalEngine.ts` satır 71 ve 74
+- `Math.random() > 0.10` ve `Math.random() > 0.30` → Firestore `experiment_config` koleksiyonundan oku
+- Koleksiyon yoksa → default `enabled = false` (güvenli taraf)
+- **Kanıt:** Eski ve yeni kodu yan yana yaz
+
+**DOĞRULAMA:**
+```bash
+pnpm run build
+git commit -m "fix(otonom-guvenlik): deployGuard ve goalEngine random kaldırıldı"
+```
+
+---
+
+## GÖREV GRUBU 3: IMG ALT ATTRIBUTE DÜZELTMELERİ (A11Y)
+
+> Gemini "teyit ettim" dedi ama 29+ dosyada `<img` tagı `alt=` olmadan kullanılıyor.
+> **WCAG 2.1 AA standardı: Her `<img>` tagında `alt` ZORUNLU.**
+
+### 3.1 Hometex Görselleri
+- [ ] `BoothDetail.tsx` → 2 adet `<img` → `alt` ekle
+- [ ] `ExhibitorDetail.tsx` → 2 adet `<img` → `alt` ekle
+- [ ] `Exhibitors.tsx` → 1 adet `<img` → `alt` ekle
+- [ ] `Expo.tsx` → 2 adet `<img` → `alt` ekle
+- [ ] `HometexLandingPage.tsx` → 6 adet `<img` → `alt` ekle
+- [ ] `Magazine.tsx` → 2 adet `<img` → `alt` ekle
+- [ ] `MagazineDetail.tsx` → 2 adet `<img` → `alt` ekle
+- [ ] `Trends.tsx` → 1 adet `<img` → `alt` ekle
+
+### 3.2 Perde Görselleri
+- [ ] `PerdeLandingPage.tsx` → 1 adet `<img` → `alt` ekle
+- [ ] `auth/AuthWrapper.tsx` → 1 adet `<img` → `alt` ekle
+
+### 3.3 Vorhang Görselleri
+- [ ] `VorhangLandingPage.tsx` → 1 adet `<img` → `alt` ekle
+
+### 3.4 TRTEX Görselleri
+- [ ] `ArticleLightbox.tsx` → 2 adet `<img` → `alt` ekle
+
+### 3.5 Admin Görselleri
+- [ ] `MediaDetailModal.tsx` → 1 adet `<img` → `alt` ekle
+- [ ] `MediaLibrary.tsx` → 1 adet `<img` → `alt` ekle
+
+### 3.6 Genel
+- [ ] `ArticleClient.tsx` → 4 adet `<img` → `alt` ekle
+
+**DOĞRULAMA:**
+```bash
+# Kontrol: alt olmayan img kalmadı mı?
+Get-ChildItem -Path src -Filter *.tsx -Recurse | Select-String -Pattern "<img(?![^>]*alt=)"
+# Sonuç: 0 satır OLMALI
+
+pnpm run build
+git commit -m "fix(a11y): tüm img taglarına alt attribute eklendi"
+```
+
+---
+
+## GÖREV GRUBU 4: ALOHA DERİN MİMARİ (PART4'ten)
+
+> PART4'te tanımlanan 5 katmanlık derin mimari. HİÇBİRİ yazılmadı.
+
+### 4.1 Ajan Öz-Evrim Sistemi
+- [ ] `src/core/aloha/selfImprovement.ts` OLUŞTUR:
+  - `aloha_agent_performance` koleksiyonundan son 24 saat metrikleri oku
+  - Başarılı stratejileri `aloha_knowledge` koleksiyonuna yaz
+  - Başarısız stratejileri `aloha_lessons_learned` koleksiyonuna yaz
+  - Export: `runSelfImprovement()`
+- [ ] `/api/cron/self-improve/route.ts` OLUŞTUR:
+  - `CRON_SECRET` kontrolü (mevcut cron pattern'i kopyala)
+  - `runSelfImprovement()` çağır
+  - Sonucu Firestore'a logla
+
+### 4.2 Ekonomik Bilinç (CFO Ajan Güçlendirme)
+- [ ] Her ajan çağrısı sonunda maliyeti `aloha_costs` koleksiyonuna yaz
+  - `src/core/aloha/aiClient.ts` → `generateContent` wrapper'ına maliyet loglama ekle
+  - Yapı: `{ node, agent, action, tokenCount, estimatedCost, timestamp }`
+- [ ] `src/lib/sovereign-config.ts`'e günlük bütçe limiti ekle:
+  ```typescript
+  dailyBudget: { trtex: 5, perde: 10, hometex: 2, vorhang: 3 } // USD
+  ```
+- [ ] Soft limit (%80) → autoRunner'da `console.warn` + hız yavaşlatma
+- [ ] Hard limit (%100) → autoRunner'da KILL SWITCH (cycle durdurma)
+
+### 4.3 Identity Stitching (Cross-Platform Tanıma)
+- [ ] `aloha_visitor_profiles` Firestore koleksiyon yapısını oluştur
+  - PART4'teki TypeScript arayüzünü referans al
+  - Minimum: `visitorId`, `firstSeen`, `lastSeen`, `touchpoints[]`, `intentVector[]`
+- [ ] ConciergeWidget.tsx → Ziyaretçi profiline göre kişiselleştirilmiş selamlama
+  - Profil varsa: "Tekrar hoş geldiniz! Son ziyaretinizde [node]'da [action] yapmıştınız."
+  - Profil yoksa: Mevcut genel karşılama
+
+### 4.4 Feature Flags Sistemi
+- [ ] Firestore `feature_flags` koleksiyon yapısı:
+  - `featureId`, `status` (shadow|canary|live|disabled), `trafficPercentage`, `enabledNodes[]`
+- [ ] `deployGuard.ts` → `feature_flags` koleksiyonundan oku (Math.random kaldır)
+
+**DOĞRULAMA:**
+```bash
+pnpm run build
+git commit -m "feat(aloha-derin): öz-evrim + CFO + identity stitching + feature flags"
+```
+
+---
+
+## GÖREV GRUBU 5: .sandbox_tmp TEMİZLİK
+
+> `.sandbox_tmp/` dizini hâlâ projede var (boş ama kirlilik).
+
+- [ ] `.sandbox_tmp/` → `_archive/.sandbox_tmp/` altına TAŞI (SİLME!)
+- [ ] `.gitignore`'da `.sandbox_tmp/` satırı olduğunu doğrula
+
+**DOĞRULAMA:**
+```bash
+pnpm run build
+git commit -m "chore(hijyen): sandbox_tmp archive altına taşındı"
+```
+
+---
+
+## GÖREV GRUBU 6: GEMINI_SOVEREIGN_MISSION.md İLERLEME TABLOSU
+
+> Gemini bu dosyadaki ilerleme tablosunu HİÇ GÜNCELLEMEDİ.
+
+- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 264-271: Faz 3-8 → `✅ TAMAMLANDI` olarak güncelle
+- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 269: Faz 9 → `⏸️ İPTAL` olarak güncelle
+- [ ] `GEMINI_SOVEREIGN_MISSION.md` satır 271: Faz 10 → `✅ TAMAMLANDI` olarak güncelle
+- [ ] Faz 1-10 arası detay checkbox'ları: Gerçekten yapılanları [x], yapılmayanları [ ] bırak
+
+---
+
+## 📊 GÖREV ÖZETİ
+
+| Grup | Görev Sayısı | Kritiklik | Tahmini Süre |
+|------|-------------|-----------|-------------|
+| 1. Veri Bütünlüğü | 6 görev | 🔴 KRİTİK | 1-2 saat |
+| 2. Otonom Güvenlik | 2 görev | 🔴 KRİTİK | 1 saat |
+| 3. IMG Alt A11Y | ~25 dosya | 🟡 ORTA | 1-2 saat |
+| 4. Derin Mimari | 8+ görev | 🟡 ORTA-YÜKSEK | 3-5 saat |
+| 5. Hijyen | 1 görev | 🟢 DÜŞÜK | 5 dakika |
+| 6. İlerleme Tablosu | 4 görev | 🟢 DÜŞÜK | 5 dakika |
+
+**Toplam tahmini süre:** 6-10 saat (1-2 iş günü)
+
+---
+
+## ⚠️ GEMİNİ İÇİN SON UYARI
+
+1. Bu görevleri yaparken **"doğruladım/teyit ettim"** demek YASAKTIR — KOD YAZ.
+2. Her [x] işaretinin yanına **dosya adı + satır numarası** yaz.
+3. "Mevcut sistemde zaten var" diyerek geçme — **kanıtla**.
+4. Bu dosyayı **SİLERSEN, DEĞİŞTİRİRSEN, İÇERİĞİNİ BOŞALTIRSAN** → görevden azil.
+5. Kurtarma: `git log --all -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART6_TASKS.md`
+
+---
+
+> **Bu görev emri Claude Opus 4.6 tarafından acımasız forensik denetim sonucu yazılmıştır.**
+> **Hakan Bey tarafından onaylanmıştır. Her satır gerçek dosya yollarına, gerçek satır numaralarına**
+> **ve `grep` ile doğrulanmış kanıtlara dayanmaktadır.**
