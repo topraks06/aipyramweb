@@ -88,47 +88,47 @@ Aşağıdakiler KASITLI çeşitlilik mekanizmalarıdır — dokunulmayacak:
 > **HEDEF:** Para üreten ilk Sovereign App — eksiksiz ERP
 
 ### 3.1 Auth Katmanı (Zaten useSovereignAuth var — doğrula)
-- [ ] `B2B.tsx` → `useSovereignAuth('perde')` hook'u import et, `isLicensed` kontrolü ekle
-- [ ] `Catalog.tsx` → Aynı auth entegrasyonu
-- [ ] `MyProjects.tsx` → Auth + render geçmişi: `perde_renders` koleksiyonundan `onSnapshot`
-- [ ] Kullanıcı lisanssızsa → "Lisansınız aktif değil. Kurumsal Üyelik için /pricing sayfasına gidin" mesajı
+- [x] `B2B.tsx` → `useSovereignAuth('perde')` hook'u import et, `isLicensed` kontrolü ekle
+- [x] `Catalog.tsx` → Aynı auth entegrasyonu
+- [x] `MyProjects.tsx` → Auth + render geçmişi: `perde_renders` koleksiyonundan `onSnapshot`
+- [x] Kullanıcı lisanssızsa → "Lisansınız aktif değil. Kurumsal Üyelik için /pricing sayfasına gidin" mesajı
 
 ### 3.2 ERP Veri Katmanı (Firestore Bağlantıları)
-- [ ] `B2B.tsx` → `perde_orders` + `perde_customers` koleksiyonlarına `onSnapshot` bağla
+- [x] `B2B.tsx` → `perde_orders` + `perde_customers` koleksiyonlarına `onSnapshot` bağla
   - Sipariş listesi, durum güncellemeleri, müşteri CRM verileri gerçek Firestore'dan
-- [ ] `Catalog.tsx` → `perde_products` koleksiyonu bağlantısı
+- [x] `Catalog.tsx` → `perde_products` koleksiyonu bağlantısı
   - Ürün ekleme/düzenleme/silme CRUD operasyonları
   - Empty state: "Henüz ürün eklenmemiş. İlk ürününüzü ekleyin."
-- [ ] `Accounting.tsx` → `perde_orders` aggregate (gelir/gider hesaplama)
+- [x] `Accounting.tsx` → `perde_orders` aggregate (gelir/gider hesaplama)
   - `grandTotal`, `status`, `createdAt` alanlarından raporlama
-- [ ] `Inventory.tsx` → `perde_products` stok durumu (zaten `onSnapshot` var — doğrula)
-- [ ] `OrderSlideOver.tsx` → Gerçek sipariş oluşturma:
+- [x] `Inventory.tsx` → `perde_products` stok durumu (zaten `onSnapshot` var — doğrula)
+- [x] `OrderSlideOver.tsx` → Gerçek sipariş oluşturma:
   - `addDoc(collection(db, 'perde_orders'), {...})` 
   - Room verileri JSON.stringify yerine array olarak kaydet
 
 ### 3.3 Ödeme Entegrasyonu
-- [ ] `Pricing.tsx` → "Şimdi Al" butonları → `/api/stripe/checkout` (type: 'plan')
+- [x] `Pricing.tsx` → "Şimdi Al" butonları → `/api/stripe/checkout` (type: 'plan')
   - Stripe test key ile 3 plan (Keşfet ücretsiz, Pro $49, Enterprise $199)
   - Başarılı ödeme → Firestore `perde_members/{uid}.license = 'active'` güncelle
-- [ ] `/api/stripe/webhook/route.ts` → `checkout.session.completed` event'inde lisans aktivasyonu
-- [ ] Ödeme başarılı sonrası → `/b2b` sayfasına yönlendirme
+- [x] `/api/stripe/webhook/route.ts` → `checkout.session.completed` event'inde lisans aktivasyonu
+- [x] Ödeme başarılı sonrası → `/b2b` sayfasına yönlendirme
 
 ### 3.4 Chat Hafıza Kalıcılığı
-- [ ] `chat-memory.ts` → `chat_sessions` Firestore koleksiyonu
+- [x] `chat-memory.ts` → `chat_sessions` Firestore koleksiyonu
   - Session ID: `{userId}_{SovereignNodeId}_{timestamp}`
   - Her mesaj Firestore'a yazılacak
   - Kullanıcı tekrar geldiğinde son 20 mesaj yüklenecek
-- [ ] `PerdeAIAssistant.tsx` → chat-memory.ts entegrasyonu
+- [x] `PerdeAIAssistant.tsx` → chat-memory.ts entegrasyonu
 
 ### 3.5 Render Pipeline Doğrulama
-- [ ] `RoomVisualizer.tsx` → `/api/render` gerçek Imagen çağrısı doğrula
+- [x] `RoomVisualizer.tsx` → `/api/render` gerçek Imagen çağrısı doğrula
   - Başarısızlık durumunda kullanıcıya "Render kotanız doldu" mesajı
   - Her render → `perde_renders` koleksiyonuna kaydet
   - Wallet kredi kontrolü (invokeAgent → WalletService)
 
 ### 3.6 DesignEngine → ERP Köprüsü (Zaten yapıldı — doğrula)
 - [x] `DesignEngine.tsx` → `handleSaveToERP` async → `/api/perde/erp` POST
-- [ ] `/api/perde/erp/route.ts` → `perde_orders` koleksiyonuna draft sipariş kaydetme doğrula
+- [x] `/api/perde/erp/route.ts` → `perde_orders` koleksiyonuna draft sipariş kaydetme doğrula
 
 ### FAZ 3 DOĞRULAMA:
 ```bash

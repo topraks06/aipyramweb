@@ -8,7 +8,7 @@ import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestor
 import { db } from '@/lib/firebase-client';
 
 export default function MyProjects() {
-    const { user, loading } = useSovereignAuth('perde');
+    const { user, loading, isLicensed } = useSovereignAuth('perde');
     const [selectedProject, setSelectedProject] = useState<any | null>(null);
     const [projects, setProjects] = useState<any[]>([]);
 
@@ -55,6 +55,25 @@ export default function MyProjects() {
                 <Link href="/sites/perde/login">
                     <button className="px-8 py-3 bg-zinc-900 text-white text-[11px] uppercase tracking-widest font-semibold hover:bg-zinc-800 transition-colors">
                         Giriş Yap
+                    </button>
+                </Link>
+            </div>
+        );
+    }
+
+    if (user && !isLicensed) {
+        return (
+            <div className="flex flex-col items-center justify-center bg-white border border-[#111]/10 py-20 px-6 text-center shadow-sm">
+                <div className="w-16 h-16 bg-[#F9F9F6] rounded-full flex items-center justify-center mb-6 text-red-500">
+                    <Sparkles className="w-8 h-8" />
+                </div>
+                <h1 className="font-serif text-2xl text-zinc-900 mb-2">Lisansınız Aktif Değil</h1>
+                <p className="text-zinc-500 max-w-sm font-light text-sm mb-8">
+                    Sistemi kullanabilmek için aktif bir kurumsal lisansa ihtiyacınız var.
+                </p>
+                <Link href="/sites/perde/pricing">
+                    <button className="px-8 py-3 bg-emerald-600 text-white text-[11px] uppercase tracking-widest font-semibold hover:bg-emerald-700 transition-colors">
+                        Kurumsal Üyelik Paketleri
                     </button>
                 </Link>
             </div>

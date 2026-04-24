@@ -113,14 +113,48 @@ export default function PerdeAIAssistant() {
   const [isInteractive, setIsInteractive] = useState(false);
   const actionRef = useRef({ type: '', startX: 0, startY: 0, initialB: bounds });
 
+  const [sessionId, setSessionId] = useState<string>('');
   // Messages State
-  const [messages, setMessages] = useState<any[]>([
-    {
-      id: 'welcome',
-      role: 'agent',
-      content: DICT[locale]?.welcome || DICT['tr'].welcome
-    }
-  ]);
+  const [messages, setMessages] = useState<any[]>([]);
+
+  useEffect(() => {
+     let currentSessionId = '';
+     if (user?.uid && SovereignNodeId) {
+         currentSessionId = `${user.uid}_${SovereignNodeId}`;
+     } else if (typeof window !== 'undefined' && SovereignNodeId) {
+         currentSessionId = localStorage.getItem(`anon_chat_${SovereignNodeId}`) || `anon_${SovereignNodeId}_${Date.now()}`;
+         localStorage.setItem(`anon_chat_${SovereignNodeId}`, currentSessionId);
+     }
+     if (currentSessionId) {
+         setSessionId(currentSessionId);
+         fetch(`/api/chat/history?sessionId=${currentSessionId}`)
+           .then(res => res.json())
+           .then(data => {
+               if (data.messages && data.messages.length > 0) {
+                   const formatted = data.messages.map((m: any) => ({
+                       id: m.id || Math.random().toString(),
+                       role: m.role === 'assistant' ? 'agent' : 'user',
+                       content: m.text
+                   }));
+                   setMessages(formatted);
+               } else {
+                   setMessages([{
+                      id: 'welcome',
+                      role: 'agent',
+                      content: DICT[locale]?.welcome || DICT['tr'].welcome
+                   }]);
+               }
+           }).catch(err => {
+               console.error(err);
+               setMessages([{
+                  id: 'welcome',
+                  role: 'agent',
+                  content: DICT[locale]?.welcome || DICT['tr'].welcome
+               }]);
+           });
+     }
+  }, [user, SovereignNodeId]);
+  
   const [inputMsg, setInputMsg] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentSector, setCurrentSector] = useState('perde');
@@ -463,7 +497,7 @@ export default function PerdeAIAssistant() {
     }
 
     try {
-      const sessionId = `perde_${Date.now()}`;
+      const activeSessionId = sessionId || `perde_${Date.now()}`;
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -473,7 +507,7 @@ export default function PerdeAIAssistant() {
             role: m.role === 'agent' ? 'assistant' : 'user',
             text: m.content
           })),
-          sessionId,
+          sessionId: activeSessionId,
           node: SovereignNodeId,
           authorId: user?.uid || 'anonymous'
         })

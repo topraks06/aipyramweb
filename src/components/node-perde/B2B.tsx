@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, Loader2, Hammer, Truck, Bot, Sparkles, Compass, Plus, FileText, CheckCircle } from 'lucide-react';
 import { collection, query, where, getDocs, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
-import { usePerdeAuth } from '@/hooks/usePerdeAuth';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { getNode } from '@/lib/sovereign-config';
 import OrderSlideOver from './OrderSlideOver';
 import { Accounting } from './Accounting';
@@ -33,9 +33,10 @@ const DEFAULT_CONFIG = {
 };
 
 export default function B2B() {
-  const { user, loading: authLoading, SovereignNodeId } = usePerdeAuth();
+  const { user, loading: authLoading, SovereignNodeId, isLicensed } = useSovereignAuth('perde');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'accounting' | 'inventory'>('dashboard');
   const [dbProjects, setDbProjects] = useState<any[]>([]);
+  const [dbCustomers, setDbCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeOrder, setActiveOrder] = useState<any | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
@@ -64,9 +65,15 @@ export default function B2B() {
       collection(db, 'b2b_opportunities'),
       orderBy('createdAt', 'desc')
     );
+    const q3 = query(
+      collection(db, config.customerCollection || 'customers'),
+      where('SovereignNodeId', '==', SovereignNodeId),
+      orderBy('createdAt', 'desc')
+    );
 
     let projects: any[] = [];
     let opportunities: any[] = [];
+    let customers: any[] = [];
 
     const mergeData = () => {
       // Sadece 5 global fırsatı göster, tabloyu şişirmesin
@@ -89,7 +96,15 @@ export default function B2B() {
       mergeData();
     });
 
-    return () => { unsub1(); unsub2(); };
+    const unsub3 = onSnapshot(q3, (snapshot) => {
+      customers = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setDbCustomers(customers);
+    }, (err) => {
+      // Index missing for customers is possible, fail silently
+      console.warn("Müşteri CRM verisi çekilemedi:", err);
+    });
+
+    return () => { unsub1(); unsub2(); unsub3(); };
   }, [user]);
 
   useEffect(() => {
@@ -113,6 +128,18 @@ export default function B2B() {
         <h2 className="text-white text-xl mb-4 uppercase tracking-widest font-bold">Oturum Açınız</h2>
         <a href="/sites/perde/login" className="bg-white text-black px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest">
           Sisteme Giriş Yap
+        </a>
+      </div>
+    </div>
+  );
+
+  if (user && !isLicensed) return (
+    <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50">
+      <div className="text-center">
+        <h2 className="text-white text-xl mb-4 uppercase tracking-widest font-bold">Lisansınız Aktif Değil</h2>
+        <p className="text-zinc-400 mb-6 max-w-sm mx-auto">Sistemi kullanabilmek için aktif bir kurumsal lisansa ihtiyacınız var.</p>
+        <a href="/sites/perde/pricing" className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-colors">
+          Kurumsal Üyelik Paketleri
         </a>
       </div>
     </div>

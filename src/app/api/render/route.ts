@@ -140,7 +140,24 @@ export async function POST(req: NextRequest) {
                     });
                     
                     // Sovereign Log
-                        await logSovereignAction({ node: SovereignNodeId, action: 'render', payload: { roomType: analysis.roomType }, result: { success: true } as any, duration: 0, cost: 0 });
+                    await logSovereignAction({ node: SovereignNodeId, action: 'render', payload: { roomType: analysis.roomType }, result: { success: true } as any, duration: 0, cost: 0 });
+
+                    // Save to node's render collection
+                    if (uid) {
+                        const config = getNode(SovereignNodeId);
+                        if (config.renderCollection) {
+                            await adminDb.collection(config.renderCollection).add({
+                                authorId: uid,
+                                SovereignNodeId,
+                                urls: [multiRes.url_1k, multiRes.url_2k].filter(Boolean),
+                                prompt: renderPrompt,
+                                roomType: analysis.roomType,
+                                style: analysis.suggestedStyles[0] || 'modern',
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                    }
+
                 } catch (libErr) {
                     console.error("Library save failed (ignoring for response):", libErr);
                 }

@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, UploadCloud, Search, Tag, Box, DollarSign, X } from 'lucide-react';
 import { collection, addDoc, getDocs, Timestamp, query, where, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
-import { usePerdeAuth } from '@/hooks/usePerdeAuth';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
+import { getNode } from '@/lib/sovereign-config';
 
 interface Product {
   id: string;
@@ -18,7 +19,7 @@ interface Product {
 }
 
 export default function Catalog() {
-  const { user, loading, SovereignNodeId } = usePerdeAuth();
+  const { user, loading, SovereignNodeId, isLicensed } = useSovereignAuth('perde');
   
   const [products, setProducts] = useState<Product[]>([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -85,6 +86,18 @@ export default function Catalog() {
         <h2 className="text-white text-xl mb-4 uppercase tracking-widest font-bold">Oturum Açınız</h2>
         <a href="/sites/perde/login" className="bg-white text-black px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest">
           Sisteme Giriş Yap
+        </a>
+      </div>
+    </div>
+  );
+
+  if (user && !isLicensed) return (
+    <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50">
+      <div className="text-center">
+        <h2 className="text-white text-xl mb-4 uppercase tracking-widest font-bold">Lisansınız Aktif Değil</h2>
+        <p className="text-zinc-400 mb-6 max-w-sm mx-auto">Sistemi kullanabilmek için aktif bir kurumsal lisansa ihtiyacınız var.</p>
+        <a href="/sites/perde/pricing" className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-colors">
+          Kurumsal Üyelik Paketleri
         </a>
       </div>
     </div>
