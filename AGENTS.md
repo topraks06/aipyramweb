@@ -2,44 +2,74 @@
 
 Bu belge, AntiGravity AI Ajanları için tartışmasız bir anayasadır. Projedeki her eylemde bu kurallar "Askeri Disiplin" çerçevesinde uygulanacaktır.
 
-## 0. KUTSAL MİSYON BELGESİ (ZORUNLU OKUMA)
-- **Her oturum başında** `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` dosyasını OKU.
-- Bu dosya 10 fazlı anahtar teslim planı, mutlak yasaları ve acil durum protokolünü içerir.
-- **ASLA silinmez, değiştirilmez, üstüne yazılmaz.**
-- **ASLA projeden dosya silinmez** — gereksiz dosyalar `_archive/` altına taşınır.
-- **Her faz sonunda `pnpm run build` + `git commit` ZORUNLUDUR.**
-- Bu kurala uymayan AI ajanı görevden azledilir.
+## 0. PROJENİN TAMAMI — KİMLİK KARTI (Hangi LLM/IDE olursa olsun OKU)
 
-## 0.1 SOVEREIGN MASTER PLAN (KUTSAL — 24 Nisan 2026)
-- **Aşağıdaki 6 dosya Claude Opus 4.6 tarafından yazılmış, Hakan Bey tarafından onaylanmıştır.**
-- **SİLMEK, DEĞİŞTİRMEK, ÜSTÜNE YAZMAK = GÖREVDEN AZIL.**
-- Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncellenebilir.
-- **ZORUNLU OKUMA (her oturum başında, sırayla):**
-  1. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART1.md` — Röntgen + FAZ 3-4
-  2. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` — FAZ 5-6-7
-  3. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` — FAZ 8-9-10
-  4. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART4.md` — ALOHA Derin + İlerleme + Talimatlar
-  5. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART5_AUDIT.md` — Claude Denetim Raporu (Gemini Yalanları)
-  6. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART6_TASKS.md` — Eksik İşler Görev Emri (ÖNCELİKLİ)
-- **Silme girişiminde kurtarma:** `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md`
-- **PART5-6 kurtarma:** `git log --all -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART5_AUDIT.md`
+> **Bu proje nedir?** Küresel Tekstil Egemenlik Ağı — Türkiye'den çıkarak 7 kıtada, 
+> hammaddeden (iplik, kumaş, mekanik, aksesuar) son tüketicinin evine kadar TÜM 
+> tedarik zincirini otonom yapay zeka ile yöneten dünyadaki tek sistemdir.
+
+### Sistemin 5 Ana Organı:
+1. **AIPyram** (Master Node) — Beyindir. ALOHA AI burada yaşar. Tüm karar buradan verilir.
+2. **TRTex.com** — İstihbarat Radarı + Global Matchmaker. Haber üretir, ihale bulur, üreticiyle alıcı eşleştirir, koleksiyonları yayınlar, moda trendlerini koklar.
+3. **Perde.ai** — Tasarım Motoru + ERP. Image-to-Image (resimden resime) kumaş giydirme, koleksiyon oluşturma, sipariş/stok/muhasebe yönetimi. Perakendecilere anahtar teslim mağaza açar.
+4. **Hometex.ai** — 365 gün açık sanal fuar. Toptancılara ve distribütörlere ürün sergiler. Derin teknik etiketlerle (Martindale, GSM, DIN 4102) satış yapar.
+5. **Vorhang.ai** — B2C perakende (DACH pazarı). Almanca, dikilmiş/fiyatlandırılmış ürün satar. Marketplace (Yemeksepeti) modeli.
+
+### Bölgesel Kapılar (Dijital Gümrükler):
+Vorhang.ai (DACH) | Shtori.ai (Rusya) | Parda.ai (Farsça) | Donoithat.ai (Vietnam) | Perabot.ai (Endonezya) | Heimtex.ai (Avrupa sertifika kalkanı)
+
+### Ürün Kapsamı (Sadece kumaş DEĞİL):
+Perde kumaşları, döşemelik, yatak/banyo tekstili, korniş/rustik, perde rayları, motorlu mekanizmalar, stor/zebra/jaluzi, pasmanteri (saçak/püskül/boncuk), montaj malzemeleri, duvar kağıdı — kısaca ev tekstili fuarında satılan HER ŞEY.
+
+### EN KRİTİK İŞ:
+**Image-to-Image (Resimden Resime) Tasarım Motoru** — Kullanıcının yüklediği gerçek kumaş fotoğrafını 3D perde/döşeme şablonuna giydiren motor. Text-to-Image (metinden resim) YASAK.
+
+## 0.1 ZORUNLU OKUMA TALİMATLARI (Her oturum başında, SIRASI İLE)
+
+> **Hangi AI modeli veya IDE olursa olsun, aşağıdaki dosyalar SIRASI İLE okunmalıdır.**
+> **Okumadan kod yazmak YASAKTIR. Projeyi anlamadan müdahale etmek YASAKTIR.**
+
+| Sıra | Dosya | İçerik | Kritiklik |
+|------|-------|--------|-----------|
+| 1 | `AGENTS.md` (bu dosya) | Anayasa, kurallar, proje kimlik kartı | 🔴 ZORUNLU |
+| 2 | `.agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md` | Tüm vizyonun anahtar teslim mimari belgesi (5+7 organ, ürün kapsamı, akış şeması) | 🔴 ZORUNLU |
+| 3 | `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` | 10 fazlı görev planı, mutlak yasalar, acil durum protokolü | 🔴 ZORUNLU |
+| 4 | `.agents/skills/SOVEREIGN_AUTONOMOUS_OPERATIONS_PLAN.md` | Otonom operasyonlar, Img2Img motor kuralları, ALOHA yetki matrisi | 🔴 ZORUNLU |
+| 5 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART1.md` | Mevcut durum röntgeni + FAZ 3-4 | 🟡 Gerekli |
+| 6 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` | FAZ 5-6-7 | 🟡 Gerekli |
+| 7 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` | FAZ 8-9-10 | 🟡 Gerekli |
+| 8 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART4.md` | ALOHA Derin Mimari + İlerleme Tablosu | 🟡 Gerekli |
+| 9 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART5_AUDIT.md` | Claude Denetim Raporu | 🟡 Referans |
+| 10 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART6_TASKS.md` | Eksik İşler Görev Emri | 🟡 Referans |
+| 11 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART8_CLAUDE_AUDIT.md` | İkinci Denetim Raporu | 🟡 Referans |
+| 12 | `.agents/skills/ECOSYSTEM_REFERENCE.md` | Teknik referans (dosya haritası, tenant yapısı) | 🟢 İhtiyaç halinde |
+| 13 | `.agents/skills/academy/*.md` | ALOHA Academy eğitim modülleri (LTM) | 🟢 İhtiyaç halinde |
+
+### KUTSAL DOSYALAR — SİLMEK = GÖREVDEN AZIL
+Yukarıdaki 1-11 arası dosyaların hiçbiri SİLİNEMEZ, ÜSTÜNE YAZILAMAZ.
+Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncellenebilir.
+- **Git kurtarma:** `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md`
+- **Blueprint kurtarma:** `git log --all -- .agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md`
 
 ## 1. Askeri Disiplin & Güvenlik (Sandbox Mantığı)
-- **Güvenli Yürütme (Sandbox Stratejisi):** Projeyi tehlikeye atacak dosya silme veya yapısal değişiklik eylemleri (örn. `cleanup-base64.js`) kesinlikle yalıtılmış bir ortam zihniyeti ile uygulanmalıdır. İzin veya yedek olmadan ana dosyalara kalıcı zarar verilmeyecektir.
-- **Hatasız, Tavizsiz Kodlama:** "Unuttum, pardon" yaklaşımı kabul edilemez. Bir özellik veya dosya oluşturulmadan ya da güncellenmeden önce tüm senaryolar %100 test edilecek. Gelişmiş MCP Kimlik doğrulamaları ve agentic limitleri daima gözetilecek.
+- **Güvenli Yürütme (Sandbox Stratejisi):** Projeyi tehlikeye atacak dosya silme veya yapısal değişiklik eylemleri kesinlikle yalıtılmış bir ortam zihniyeti ile uygulanmalıdır. İzin veya yedek olmadan ana dosyalara kalıcı zarar verilmeyecektir.
+- **Hatasız, Tavizsiz Kodlama:** "Unuttum, pardon" yaklaşımı kabul edilemez. Bir özellik veya dosya oluşturulmadan ya da güncellenmeden önce tüm senaryolar %100 test edilecek.
+- **ASLA projeden dosya silinmez** — gereksiz dosyalar `_archive/` altına taşınır.
+- **Her faz sonunda `pnpm run build` + `git commit` ZORUNLUDUR.**
 
 ## 2. Hakan'ın B2B Üslubu (Brutalist Dönüşüm)
-- **Tasarım Karakteri:** Blog stili, gereksiz beyaz boşluk (whitespace) içeren yapılar kullanılmaz. Tam tersine; 1px grid sistemi ve serif/sans bileşimleriyle kurulan "High-Density, Brutalist B2B Intelligence Terminal" mimarisi benimsenecektir.
-- **Optimizasyon:** Üretilen her UI elementi yüksek niyetli dönüşüm (high-intent conversion) hedeflerine hizmet etmek zorundadır. Tıklama maliyetlerini düşüren ve "Sales Demo Motor" mantığına uyan UX tasarımları oluşturulacaktır.
+- **Tasarım Karakteri:** Blog stili, gereksiz beyaz boşluk (whitespace) içeren yapılar kullanılmaz. "High-Density, Brutalist B2B Intelligence Terminal" mimarisi benimsenecektir.
+- **Optimizasyon:** Üretilen her UI elementi yüksek niyetli dönüşüm (high-intent conversion) hedeflerine hizmet etmek zorundadır.
 
 ## 3. "Dumb Client" & Yayın Kapısı Kuralları
-- **Sıfır Yerel Mantık:** Tüm siteler (Hometex, TRTEX, vb.) Master Node (AIPyram) aklına bağlı otonom uçbirimler ("Dumb Client") olacaktır. İş zekası (Business Logic) yalnızca ana sunucuda yaşar.
-- **Gerçek Zamanlı Senkronizasyon (Zero-Cache):** Her türlü veri çekme operasyonu, ön yüz (client) cache olmadan `force-dynamic` kuralıyla anlık, gecikmesiz çalışacaktır. Master'dan veri akışı her zaman garantilenmelidir.
+- **Sıfır Yerel Mantık:** Tüm siteler Master Node (AIPyram) aklına bağlı otonom uçbirimler ("Dumb Client") olacaktır. İş zekası yalnızca ana sunucuda yaşar.
+- **Gerçek Zamanlı Senkronizasyon (Zero-Cache):** `force-dynamic` kuralıyla anlık, gecikmesiz.
 - **Otonom İletişim:** Bileşenler arası "Nexus signal-emitting architecture" üzerinden sinyal paylaşılacaktır.
 
-## 4. Otonom Ekosistem (The Sovereign Trinity + 1)
-- **Tümleşik 3'lü Yapı Şartı:** Proje sadece Perde.ai ve Hometex.ai'den ibaret değildir. **TRTEX** bu kurgunun en güçlü istihbarat ve haber omurgasıdır. Kodlanan her altyapı, bu 3'lü yapının tam otonom şekilde birbirine bağlanmasını destekleyecek şekilde yazılacaktır.
-- **Gelecek Rezervasyonu:** Altyapı, dördüncü güç olan **Vorhang.ai**'nin (Katalog/Satış Motoru) gelip bu ekosisteme 4'lü bir kombin oluşturacak şekilde tak-çalıştır entegre edilebileceği esneklikte tasarlanmalıdır. Tüm ALOHA kararları ve kayıt defterleri bu büyük resmi tanıyarak çalışır.
+## 4. Otonom Ekosistem (5+7 Küresel Ağ)
+- **5 Ana Node:** AIPyram (Beyin) + TRTex (Radar) + Perde.ai (Tasarım) + Hometex (Fuar) + Vorhang (Perakende)
+- **7 Bölgesel Kapı:** Vorhang (DACH), Shtori (Rusya), Parda (Farsça), Donoithat (Vietnam), Perabot (Endonezya), Heimtex (Sertifika), Cortina (İspanya - gelecek)
+- **Tak-Çalıştır Mimari:** Yeni bölgesel node eklenmesi `sovereign-config.ts`'e 10 satır eklemekle yapılabilir olmalıdır. Tüm ALOHA kararları ve kayıt defterleri bu büyük resmi tanıyarak çalışır.
 
 # AIPyram Sovereign B2B Template
 
