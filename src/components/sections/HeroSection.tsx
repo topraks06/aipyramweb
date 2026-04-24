@@ -1,42 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Search, BrainCircuit, Globe2, Activity } from "lucide-react";
+import { Globe2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import MasterConcierge from "@/components/aloha/MasterConcierge";
 
 export default function HeroSection() {
   const t = useTranslations("Hero");
-  const [alohaQuery, setAlohaQuery] = useState("");
-  const [alohaResponse, setAlohaResponse] = useState<string | null>(null);
-
-  const handleAlohaSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!alohaQuery.trim()) return;
-    
-    setAlohaResponse("Sistem şu an 60+ ajan ile kovan zihninde değerlendiriyor...");
-    
-    try {
-      const res = await fetch("/api/aloha", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: alohaQuery })
-      });
-      
-      const data = await res.json();
-      if (data.response) {
-         setAlohaResponse(data.response);
-      } else {
-         setAlohaResponse("Tamamlandı: İstek Master Brain'e iletildi.");
-      }
-    } catch (error) {
-      setAlohaResponse("Bağlantı koptu. Cross-Nexus ağı ulaşılamıyor.");
-    }
-  };
 
   return (
     <section className="relative flex flex-col items-center justify-center min-h-[85vh] bg-white text-neutral-900 overflow-hidden pt-20">
-      {/* Absolute clean layout. No messy gradients. Just pure white corporate feel. */}
       
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
         
@@ -55,11 +26,6 @@ export default function HeroSection() {
         <p className="mt-6 text-xl text-neutral-500 max-w-2xl text-center font-normal">
           {t("description")}
         </p>
-
-        {/* Master Concierge: Visual Intelligence Split-Screen */}
-        <div className="w-full mt-12 mb-12">
-          <MasterConcierge />
-        </div>
 
       </div>
     </section>
