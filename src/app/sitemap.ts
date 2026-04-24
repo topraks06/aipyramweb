@@ -79,7 +79,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 if (!data.slug) continue;
                 
                 const publishedAt = data.updatedAt || data.publishedAt || data.createdAt || new Date().toISOString();
-                const lastModDate = new Date(publishedAt);
+                let lastModDate: Date;
+                if (publishedAt && typeof publishedAt.toDate === 'function') {
+                    lastModDate = publishedAt.toDate();
+                } else {
+                    lastModDate = new Date(publishedAt);
+                }
+                if (isNaN(lastModDate.getTime())) {
+                    lastModDate = new Date();
+                }
 
                 const alternatesMap: Record<string, string> = {
                     "x-default": `${TRTEX_URL}/news/${data.slug}?lang=tr`

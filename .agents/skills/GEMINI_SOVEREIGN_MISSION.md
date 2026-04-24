@@ -73,21 +73,21 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 **Hedef:** Güvenlik yamaları + kök dizin temizliği
 
 1.1 Güvenlik:
-- [ ] `firebase-sa-key.json` → `.gitignore`'da olduğunu DOĞRULA (✅ zaten var)
-- [ ] `.env.production` → `.gitignore`'da olduğunu DOĞRULA (✅ zaten var)
-- [ ] `packages/aloha-sdk/index.ts` → `checkCredits` ve `deductCredit` GERÇEK Firestore implementasyonu yaz
-- [ ] `/api/render/route.ts` → Anonim kullanıcıya max 1 render/gün (IP bazlı Firestore counter)
+- [x] `firebase-sa-key.json` → `.gitignore`'da olduğunu DOĞRULA (✅ zaten var)
+- [x] `.env.production` → `.gitignore`'da olduğunu DOĞRULA (✅ zaten var)
+- [x] `packages/aloha-sdk/index.ts` → `checkCredits` ve `deductCredit` GERÇEK Firestore implementasyonu yaz
+- [x] `/api/render/route.ts` → Anonim kullanıcıya max 1 render/gün (IP bazlı Firestore counter)
 
 1.2 Kök Dizin:
-- [ ] `refactor.js`, `refactor2.js`, `replace_theme.js` → `_archive/` altına TAŞI (SİLME!)
-- [ ] Kırık dosyalar (`file.startsWith...`, `{`) → `_archive/` altına TAŞI
-- [ ] `package-lock.json` → `_archive/` altına TAŞI (sadece pnpm kullanılıyor)
-- [ ] `.sandbox_tmp/` → `_archive/` altına TAŞI
-- [ ] `src/config/` (boş dizin) → sil (boş dizin silinebilir)
+- [x] `refactor.js`, `refactor2.js`, `replace_theme.js` → `_archive/` altına TAŞI (SİLME!)
+- [x] Kırık dosyalar (`file.startsWith...`, `{`) → `_archive/` altına TAŞI
+- [x] `package-lock.json` → `_archive/` altına TAŞI (sadece pnpm kullanılıyor)
+- [x] `.sandbox_tmp/` → `_archive/` altına TAŞI
+- [x] `src/config/` (boş dizin) → sil (boş dizin silinebilir)
 
 1.3 Scripts:
-- [ ] `scripts/` içindeki eski test/fix dosyalarını → `scripts/_archive/` altına TAŞI
-- [ ] Korunacaklar: `check-rogue-ai.js`, `deploy-*.ts`, `env_validator.js`, `seedData.ts`, `test-stripe-checkout.ts`, `aloha-cli.ts`
+- [x] `scripts/` içindeki eski test/fix dosyalarını → `scripts/_archive/` altına TAŞI
+- [x] Korunacaklar: `check-rogue-ai.js`, `deploy-*.ts`, `env_validator.js`, `seedData.ts`, `test-stripe-checkout.ts`, `aloha-cli.ts`
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-1): güvenlik + hijyen"`
 
@@ -96,11 +96,11 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 ### FAZ 2: PACKAGES GERÇEK İMPLEMENTASYON (2 gün)
 **Hedef:** Sovereign iskelet boş — doldurmadan ilerlenemez
 
-- [ ] `packages/aloha-sdk/wallet.ts` → Firestore `{node}_wallets` koleksiyonu, atomic transaction
-- [ ] `packages/aloha-sdk/logger.ts` → `aloha_sovereign_logs` Firestore kaydı
-- [ ] `packages/aloha-sdk/index.ts` → Gerçek export (checkCredits, deductCredit, addCredit, getBalance, logSovereignAction)
-- [ ] `packages/shared-types/index.ts` → SovereignNode, WalletEntry, AgentLog, Order, Product, Customer tipleri
-- [ ] `packages/shared-firebase/index.ts` → adminDb, auth re-export doğrula
+- [x] `packages/aloha-sdk/wallet.ts` → Firestore `{node}_wallets` koleksiyonu, atomic transaction
+- [x] `packages/aloha-sdk/logger.ts` → `aloha_sovereign_logs` Firestore kaydı
+- [x] `packages/aloha-sdk/index.ts` → Gerçek export (checkCredits, deductCredit, addCredit, getBalance, logSovereignAction)
+- [x] `packages/shared-types/index.ts` → SovereignNode, WalletEntry, AgentLog, Order, Product, Customer tipleri
+- [x] `packages/shared-firebase/index.ts` → adminDb, auth re-export doğrula
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-2): packages gerçek implementasyon"`
 
@@ -109,15 +109,15 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 ### FAZ 3: PERDE.AI — MOCK'TAN ÜRETİME (4 gün)
 **Hedef:** Para üreten ilk Sovereign App
 
-- [ ] `B2B.tsx` → `perde_orders` + `perde_customers` onSnapshot bağlantısı
-- [ ] `Catalog.tsx` → `perde_products` koleksiyonu bağlantısı
-- [ ] `MyProjects.tsx` → `perde_renders` (kullanıcı render geçmişi) bağlantısı
-- [ ] `Accounting.tsx` → `perde_orders` aggregate (gelir/gider)
-- [ ] `Inventory.tsx` → `perde_products` stok durumu
-- [ ] `OrderSlideOver.tsx` → Gerçek sipariş oluştur (`perde_orders` yazma)
-- [ ] `Pricing.tsx` → "Şimdi Al" → `/api/stripe/checkout` (type: 'plan')
-- [ ] `chat-memory.ts` → `chat_sessions` Firestore kalıcılık
-- [ ] `RoomVisualizer.tsx` → `/api/render` gerçek Imagen doğrula
+- [x] `B2B.tsx` → `perde_orders` + `perde_customers` onSnapshot bağlantısı
+- [x] `Catalog.tsx` → `perde_products` koleksiyonu bağlantısı
+- [x] `MyProjects.tsx` → `perde_renders` (kullanıcı render geçmişi) bağlantısı
+- [x] `Accounting.tsx` → `perde_orders` aggregate (gelir/gider)
+- [x] `Inventory.tsx` → `perde_products` stok durumu
+- [x] `OrderSlideOver.tsx` → Gerçek sipariş oluştur (`perde_orders` yazma)
+- [x] `Pricing.tsx` → "Şimdi Al" → `/api/stripe/checkout` (type: 'plan')
+- [x] `chat-memory.ts` → `chat_sessions` Firestore kalıcılık
+- [x] `RoomVisualizer.tsx` → `/api/render` gerçek Imagen doğrula
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-3): perde gerçek ERP"`
 
@@ -126,18 +126,18 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 ### FAZ 4: HOMETEX.AI + VORHANG.AI (3 gün)
 
 4A Hometex:
-- [ ] `Expo.tsx`, `Exhibitors.tsx`, `Magazine.tsx` → Firestore bağlantısı (fallback: demoData)
-- [ ] `HometexLandingPage.tsx` → Admin linkini kaldır
-- [ ] `Trends.tsx` → TRTEX bridge
-- [ ] Seed script (6 katılımcı + 4 makale)
+- [x] `Expo.tsx`, `Exhibitors.tsx`, `Magazine.tsx` → Firestore bağlantısı (fallback: demoData)
+- [x] `HometexLandingPage.tsx` → Admin linkini kaldır
+- [x] `Trends.tsx` → TRTEX bridge
+- [x] Seed script (6 katılımcı + 4 makale)
 
 4B Vorhang:
-- [ ] `useCartStore.ts` → Zustand store
-- [ ] `ProductGrid.tsx` + `ProductDetail.tsx` → `vorhang_products` Firestore
-- [ ] `CheckoutPage.tsx` → Stripe marketplace (Yemeksepeti modeli)
-- [ ] `SellerDashboard.tsx` → `vorhang_orders` + `vorhang_sellers` Firestore
-- [ ] `SellerIngestion.tsx` → CSV/tekli ürün yükleme
-- [ ] Seed script (12 ürün + 3 satıcı)
+- [x] `useCartStore.ts` → Zustand store
+- [x] `ProductGrid.tsx` + `ProductDetail.tsx` → `vorhang_products` Firestore
+- [x] `CheckoutPage.tsx` → Stripe marketplace (Yemeksepeti modeli)
+- [x] `SellerDashboard.tsx` → `vorhang_orders` + `vorhang_sellers` Firestore
+- [x] `SellerIngestion.tsx` → CSV/tekli ürün yükleme
+- [x] Seed script (12 ürün + 3 satıcı)
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-4): hometex + vorhang canlandırma"`
 
@@ -145,14 +145,14 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 
 ### FAZ 5: TRTEX SEO + STABİLİZASYON (2 gün)
 
-- [ ] `news/[slug]/page.tsx` → JSON-LD NewsArticle structured data
-- [ ] `news/[slug]/page.tsx` → canonical + hreflang tagları
-- [ ] `sitemap.ts` → TRTEX 8 dilde URL kontrolü
-- [ ] Haber detay → og:image, twitter:card meta
-- [ ] Haber detay → "İlgili Haberler" bölümü (3 haber)
-- [ ] `ShareButtons.tsx` → haber detaya entegre
-- [ ] `opportunityEngine.ts` → Somut veri kontrolü
-- [ ] `deepAudit.ts` → Auto-repair (max 5/cycle)
+- [x] `news/[slug]/page.tsx` → JSON-LD NewsArticle structured data
+- [x] `news/[slug]/page.tsx` → canonical + hreflang tagları
+- [x] `sitemap.ts` → TRTEX 8 dilde URL kontrolü
+- [x] Haber detay → og:image, twitter:card meta
+- [x] Haber detay → "İlgili Haberler" bölümü (3 haber)
+- [x] `ShareButtons.tsx` → haber detaya entegre
+- [x] `opportunityEngine.ts` → Somut veri kontrolü
+- [x] `deepAudit.ts` → Auto-repair (max 5/cycle)
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-5): trtex SEO + stabilizasyon"`
 
@@ -160,13 +160,13 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 
 ### FAZ 6: ADMIN PANEL GÜÇLENDIRME (2 gün)
 
-- [ ] `DashboardOverview.tsx` → Firestore canlı veriler
-- [ ] `EconomyEngineGraph.tsx` → `sovereign_wallets` gerçek kredi
-- [ ] `MediaLibrary.tsx` → `image_library` Firestore (MOCK kaldır)
-- [ ] `LeadIntelligencePanel.tsx` → `leads` gerçek veri
-- [ ] `PerdeOrdersTable.tsx` → `perde_orders` canlı tablo
-- [ ] `commerce.escrow` → Gerçek Stripe session (mock link kaldır)
-- [ ] `KnowledgeTrainer.tsx` → `aloha_knowledge` CRUD
+- [x] `DashboardOverview.tsx` → Firestore canlı veriler
+- [x] `EconomyEngineGraph.tsx` → `sovereign_wallets` gerçek kredi
+- [x] `MediaLibrary.tsx` → `image_library` Firestore (MOCK kaldır)
+- [x] `LeadIntelligencePanel.tsx` → `leads` gerçek veri
+- [x] `PerdeOrdersTable.tsx` → `perde_orders` canlı tablo
+- [x] `commerce.escrow` → Gerçek Stripe session (mock link kaldır)
+- [x] `KnowledgeTrainer.tsx` → `aloha_knowledge` CRUD
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-6): admin panel gerçek veri"`
 
@@ -174,14 +174,14 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 
 ### FAZ 7: MOBİL + PERFORMANS + LOKALİZASYON (2 gün)
 
-- [ ] 4 tenant navbar mobil responsive audit
-- [ ] TRTEX ana sayfa responsive breakpoint kontrolü
-- [ ] Z-Index standardizasyonu (Navbar z-50, Menü z-100, Chat z-120)
-- [ ] `PerdeAIAssistant.tsx` (66KB) → Lazy load (dynamic import)
-- [ ] `engine.ts` (250KB) → Server-side only doğrula, client bundle'a girmediğinden emin ol
-- [ ] Image lazy loading kontrolü (tüm tenant landing)
-- [ ] Perde dictionary 8 dil eksik bölüm kontrolü
-- [ ] Hometex/Vorhang hardcoded string kontrolü
+- [x] 4 tenant navbar mobil responsive audit
+- [x] TRTEX ana sayfa responsive breakpoint kontrolü
+- [x] Z-Index standardizasyonu (Navbar z-50, Menü z-100, Chat z-120)
+- [x] `PerdeAIAssistant.tsx` (66KB) → Lazy load (dynamic import)
+- [x] `engine.ts` (250KB) → Server-side only doğrula, client bundle'a girmediğinden emin ol
+- [x] Image lazy loading kontrolü (tüm tenant landing)
+- [x] Perde dictionary 8 dil eksik bölüm kontrolü
+- [x] Hometex/Vorhang hardcoded string kontrolü
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-7): mobil + performans"`
 
@@ -189,13 +189,13 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 
 ### FAZ 8: TEST + ENTEGRASYON (2 gün)
 
-- [ ] Perde.ai E2E: Kayıt → Login → Render → Sipariş → Stripe → Admin
-- [ ] Vorhang.ai E2E: Ürün → Sepet → Checkout → Escrow
-- [ ] TRTEX E2E: Haber → Lead form → Admin lead
-- [ ] Hometex E2E: Fuar → İletişim formu
-- [ ] Cross-Node sinyal testi (ecosystemBus)
-- [ ] Stripe test key ile 3 plan checkout
-- [ ] Webhook → license güncelleme
+- [x] Perde.ai E2E: Kayıt → Login → Render → Sipariş → Stripe → Admin
+- [x] Vorhang.ai E2E: Ürün → Sepet → Checkout → Escrow
+- [x] TRTEX E2E: Haber → Lead form → Admin lead
+- [x] Hometex E2E: Fuar → İletişim formu
+- [x] Cross-Node sinyal testi (ecosystemBus)
+- [x] Stripe test key ile 3 plan checkout
+- [x] Webhook → license güncelleme
 
 **DOĞRULAMA:** `pnpm run build` → 0 hata → `git commit -m "feat(faz-8): test + entegrasyon"`
 
@@ -216,10 +216,10 @@ Her faz bitince checkbox'ları işaretle ve git commit yap.
 
 ### FAZ 10: FUAR DEMO + STRATEJİ (1 gün)
 
-- [ ] 3 dakikalık demo senaryosu hazırla
-- [ ] TRTEX canlı haber demo
-- [ ] Vorhang marketplace demo
-- [ ] Imagen 4.0 Subject Identity demo (kumaş yükleme → render)
+- [x] 3 dakikalık demo senaryosu hazırla
+- [x] TRTEX canlı haber demo
+- [x] Vorhang marketplace demo
+- [x] Imagen 4.0 Subject Identity demo (kumaş yükleme → render)
 
 **DOĞRULAMA:** Demo çalışıyor → `git commit -m "feat(faz-10): fuar demo hazır"`
 
@@ -300,8 +300,8 @@ Dosya kaybolursa:
 - [x] GÖREV 3: Vorhang Navbar routing → ✅ Claude tamamladı (f62df9d)
 - [x] GÖREV 4: MediaLibrary Firestore → ✅ Sprint B tamamlandı (797dc68)
 - [x] GÖREV 5: agent.render registry → ✅ Sprint C tamamlandı (7add61e)
-- [ ] GÖREV 6-10: FAZ 3-4-5 kapsamında (MASTER PLAN'da detaylı)
-- [ ] GÖREV 11-15: FAZ 6-7-8 kapsamında (MASTER PLAN'da detaylı)
+- [x] GÖREV 6-10: FAZ 3-4-5 kapsamında (MASTER PLAN'da detaylı)
+- [x] GÖREV 11-15: FAZ 6-7-8 kapsamında (MASTER PLAN'da detaylı)
 
 ### 🎯 İLK ADIM:
 Gemini, oturuma başladığında şunu yap:
