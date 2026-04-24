@@ -23,6 +23,7 @@
  */
 
 import { GoogleGenAI } from '@google/genai';
+import { adminDb } from '@/lib/firebase-admin';
 
 // ═══════════════════════════════════════
 //  KONFİGÜRASYON
@@ -98,6 +99,19 @@ function recordTokenUsage(caller: string, prompt: string, responseText: string):
   _usageLog.push({ caller: caller || 'unknown', tokens, timestamp: Date.now() });
   // Log sadece son 100 entry tut (bellek koruması)
   if (_usageLog.length > 100) _usageLog.splice(0, _usageLog.length - 100);
+
+  // CFO Ajan Güçlendirme: Maliyetleri Firestore'a asenkron yaz
+  if (adminDb) {
+    const estimatedCost = (tokens / 1000) * 0.00003; // Yaklaşık maliyet (gemini-2.5-flash)
+    adminDb.collection('aloha_costs').add({
+      node: caller.includes('trtex') ? 'trtex' : caller.includes('perde') ? 'perde' : caller.includes('hometex') ? 'hometex' : caller.includes('vorhang') ? 'vorhang' : 'global',
+      agent: caller,
+      action: 'generateContent',
+      tokenCount: tokens,
+      estimatedCost,
+      timestamp: new Date()
+    }).catch(e => console.error('[AI_CLIENT] CFO Log hatası:', e));
+  }
 }
 
 function checkBudget(caller?: string): { allowed: boolean; reason?: string } {

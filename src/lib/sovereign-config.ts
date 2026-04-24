@@ -264,3 +264,8 @@ export function nodeHasFeature(SovereignNodeId: string, feature: keyof Sovereign
   const node = getNode(SovereignNodeId);
   return node.features[feature] || false;
 }
+
+// ═══════════════════════════════════════════════════
+// GLOBAL BUDGET CONFIG (CFO Ajan için)
+// ═══════════════════════════════════════════════════
+export const dailyBudget = { trtex: 5, perde: 10, hometex: 2, vorhang: 3 }; // USD

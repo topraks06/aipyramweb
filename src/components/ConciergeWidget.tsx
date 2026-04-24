@@ -452,21 +452,33 @@ export default function ConciergeWidget() {
     // Welcome message on first open — locale-aware and NODE-AWARE
     useEffect(() => {
         if (isOpen && messages.length === 0) {
-            let welcomeTexts;
+            let welcomeTexts: any;
+            
+            // CROSS-NODE IDENTITY STITCHING
+            let visitorContext = "";
+            try {
+               const profileStr = localStorage.getItem('aloha_visitor_profiles');
+               if (profileStr) {
+                  const profiles = JSON.parse(profileStr);
+                  if (profiles.trtex && profiles.trtex.lastVisit) {
+                     visitorContext = "TRTEX B2B ağındaki toptan kumaş talepleriniz için burada modelleme yapabiliriz.";
+                  }
+               }
+            } catch(e) {}
             
             if (isPerde) {
                // Perde.ai Welcome
                welcomeTexts = {
-                   de: { text: "Willkommen im Perde.ai B2B Studio! Ich bin Ihr intelligenter Assistent. Wie kann ich Ihnen bei Ihren Textilprojekten helfen?", links: [] },
-                   en: { text: "Welcome to Perde.ai B2B Studio! I'm your smart visualizer assistant. How can I help you frame your projects today?", links: [] },
-                   tr: { text: "Perde.ai Sanal Stüdyo'ya hoş geldiniz! AI destekli kumaş analizleriniz ve B2B siparişleriniz için buradayım. Odalara perde uygulamak için fotoğraf yükleyebilirsiniz.", links: [] }
+                   de: { text: visitorContext ? `Willkommen zurück! ${visitorContext}` : "Willkommen im Perde.ai B2B Studio! Ich bin Ihr intelligenter Assistent. Wie kann ich Ihnen bei Ihren Textilprojekten helfen?", links: [] },
+                   en: { text: visitorContext ? `Welcome back! ${visitorContext} How can I help you frame your projects today?` : "Welcome to Perde.ai B2B Studio! I'm your smart visualizer assistant. How can I help you frame your projects today?", links: [] },
+                   tr: { text: visitorContext ? `Hoş geldiniz! ${visitorContext} Ayrıca odalara perde uygulamak için fotoğraf yükleyebilirsiniz.` : "Perde.ai Sanal Stüdyo'ya hoş geldiniz! AI destekli kumaş analizleriniz ve B2B siparişleriniz için buradayım. Odalara perde uygulamak için fotoğraf yükleyebilirsiniz.", links: [] }
                };
             } else {
                // AIPyram Global Welcome
                welcomeTexts = {
-                   de: { text: "Willkommen! Ich bin der AIPyram Concierge. Ich kann Ihnen Informationen über unser Portfolio, unsere Projekte und Investitionsmöglichkeiten geben.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ökosystem →", href: "/ecosystem" }] },
-                   en: { text: "Welcome! I'm the AIPyram Concierge. I can provide information about our portfolio, projects, and investment opportunities.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ecosystem →", href: "/ecosystem" }] },
-                   tr: { text: "Merhaba! Ben AIPyram Concierge. Size portföyümüz, projelerimiz ve yatırım fırsatlarımız hakkında bilgi verebilirim.", links: [{ label: "Portföy →", href: "/domains" }, { label: "Ekosistem →", href: "/ecosystem" }] },
+                   de: { text: visitorContext ? `Willkommen! ${visitorContext}` : "Willkommen! Ich bin der AIPyram Concierge. Ich kann Ihnen Informationen über unser Portfolio, unsere Projekte und Investitionsmöglichkeiten geben.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ökosystem →", href: "/ecosystem" }] },
+                   en: { text: visitorContext ? `Welcome! ${visitorContext}` : "Welcome! I'm the AIPyram Concierge. I can provide information about our portfolio, projects, and investment opportunities.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ecosystem →", href: "/ecosystem" }] },
+                   tr: { text: visitorContext ? `Merhaba! Sizi tanıyorum, ${visitorContext} Size özel asistanınız olarak nasıl yardımcı olabilirim?` : "Merhaba! Ben AIPyram Concierge. Size portföyümüz, projelerimiz ve yatırım fırsatlarımız hakkında bilgi verebilirim.", links: [{ label: "Portföy →", href: "/domains" }, { label: "Ekosistem →", href: "/ecosystem" }] },
                };
             }
 

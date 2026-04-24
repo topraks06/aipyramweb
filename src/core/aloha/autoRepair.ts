@@ -323,7 +323,7 @@ JSON döndür:
           }
           
           // Görsel önce/sonra boşluk
-          content = content.replace(/(<img[^>]*>)/g, '<br/><br/>$1<br/><br/>');
+          content = content.replace(/(<img alt="AIPyram Görsel"[^>]*>)/g, '<br/><br/>$1<br/><br/>');
           content = content.replace(/(<br\s*\/?>){3,}/g, '<br/><br/>');
           
           await docRef.update({

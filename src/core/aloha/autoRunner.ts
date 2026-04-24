@@ -133,6 +133,40 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
     console.warn(`[ALOHA] ⚠️ Cost Guard okunamadı, devam ediliyor:`, costErr.message);
   }
 
+  // ═══════════════════════════════════════
+  // CFO AJAN (Bütçe Koruması - USD Bazlı)
+  // ═══════════════════════════════════════
+  try {
+    const { dailyBudget } = await import('@/lib/sovereign-config');
+    const limitUsd = dailyBudget[projectName as keyof typeof dailyBudget] || 2;
+    
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const costsSnap = await adminDb.collection('aloha_costs')
+      .where('node', '==', projectName)
+      .where('timestamp', '>=', todayStart)
+      .get();
+
+    let totalSpentUsd = 0;
+    costsSnap.forEach(doc => { totalSpentUsd += (doc.data().estimatedCost || 0); });
+
+    if (totalSpentUsd >= limitUsd) {
+      console.error(`[CFO AJAN] 🛑 HARD LIMIT AŞILDI: ${projectName} için günlük bütçe (${limitUsd} USD) doldu. Harcanan: ${totalSpentUsd.toFixed(3)} USD. KILL SWITCH AKTİF.`);
+      result.actionsPerformed.push(`BLOCKED:cfo_hard_limit`);
+      result.errors.push(`CFO Budget Exceeded: ${totalSpentUsd.toFixed(3)} / ${limitUsd} USD`);
+      result.duration = Date.now() - startTime;
+      return result;
+    } else if (totalSpentUsd >= limitUsd * 0.8) {
+      console.warn(`[CFO AJAN] ⚠️ SOFT LIMIT UYARISI: ${projectName} bütçesinin %80'ini aştı. (${totalSpentUsd.toFixed(3)} / ${limitUsd} USD). Döngü yavaşlatılıyor...`);
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Hız yavaşlatma (5 saniye ceza)
+    } else {
+      console.log(`[CFO AJAN] 💵 Bütçe Durumu: ${totalSpentUsd.toFixed(3)} / ${limitUsd} USD harcandı. Güvenli.`);
+    }
+  } catch (cfoErr: any) {
+    console.warn(`[CFO AJAN] ⚠️ CFO denetimi başarısız:`, cfoErr.message);
+  }
+
   try {
     // ═══════════════════════════════════════
     // TRTEX MASTER OVERRIDE
