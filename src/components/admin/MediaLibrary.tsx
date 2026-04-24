@@ -4,69 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Filter, Image as ImageIcon, CheckCircle2, Cloud, Database } from "lucide-react";
 import { MediaAsset, MediaDetailModal } from "./MediaDetailModal";
 
-// Mock Data
-const MOCK_ASSETS: MediaAsset[] = [
-  {
-    id: "img_001",
-    title: "Otel Odası Perde Render (V2)",
-    url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80",
-    thumbnailUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&q=60",
-    node: "perde",
-    type: "render",
-    resolution: "4K",
-    status: "published",
-    createdAt: "2026-04-22T08:00:00Z",
-    tags: ["otel", "blackout", "modern", "v2"]
-  },
-  {
-    id: "img_002",
-    title: "TRTEX İplik Pazarı Kapak",
-    url: "https://images.unsplash.com/photo-1605280263929-1c42c624165b?w=1200&q=80",
-    thumbnailUrl: "https://images.unsplash.com/photo-1605280263929-1c42c624165b?w=400&q=60",
-    node: "trtex",
-    type: "news",
-    resolution: "2K",
-    status: "published",
-    createdAt: "2026-04-21T14:30:00Z",
-    tags: ["iplik", "pazar", "ekonomi"]
-  },
-  {
-    id: "img_003",
-    title: "Hometex Sanal Fuar Standı",
-    url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
-    thumbnailUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=60",
-    node: "hometex",
-    type: "fair",
-    resolution: "4K",
-    status: "draft",
-    createdAt: "2026-04-20T10:15:00Z",
-    tags: ["fuar", "stand", "b2b"]
-  },
-  {
-    id: "img_004",
-    title: "Lüks İtalyan Kadife",
-    url: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=1200&q=80",
-    thumbnailUrl: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=400&q=60",
-    node: "vorhang",
-    type: "product",
-    resolution: "4K",
-    status: "published",
-    createdAt: "2026-04-22T09:45:00Z",
-    tags: ["kadife", "lacivert", "premium"]
-  },
-  {
-    id: "img_005",
-    title: "Minimalist Ofis Stor Perde",
-    url: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80",
-    thumbnailUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=60",
-    node: "perde",
-    type: "render",
-    resolution: "2K",
-    status: "archived",
-    createdAt: "2026-04-18T16:20:00Z",
-    tags: ["ofis", "stor", "minimal"]
-  }
-];
+// Mock Data removed
 
 export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) {
   const [activeNode, setActiveNode] = useState<string>("all");
@@ -164,10 +102,18 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
         ))}
       </div>
 
-      {/* Grid */}
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filtered.map(asset => (
+        {loading ? (
+          <div className="flex items-center justify-center h-full text-slate-500 font-mono text-sm">
+            Medya yükleniyor...
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-slate-500 font-mono text-sm">
+            Henüz medya bulunmuyor.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {filtered.map(asset => (
             <div 
               key={asset.id}
               onClick={() => setSelectedAsset(asset)}
@@ -199,7 +145,8 @@ export function MediaLibrary({ initialAssets = [] }: { initialAssets?: any[] }) 
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
 
       <MediaDetailModal 
