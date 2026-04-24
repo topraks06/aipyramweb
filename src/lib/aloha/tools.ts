@@ -2,6 +2,7 @@ import { adminDb } from '@/lib/firebase-admin';
 import { getNode, getAllSovereignNodeIds, nodeHasFeature, type SovereignNodeFeatures } from '@/lib/sovereign-config';
 import { invokeAgent } from '@/lib/aloha/registry';
 import { executeGlobalPublish } from '@/lib/aloha/workflows/GlobalPublishWorkflow';
+import { executeMatchmaker } from '@/lib/aloha/workflows/MatchmakerWorkflow';
 
 /**
  * ALOHA Sovereign Tool Registry
@@ -424,6 +425,24 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       return { success: false, message: `Yayın başarısız: ${result.error}`, widgetType: 'error' };
     }
 
+    // --- SOVEREIGN GLOBAL MATCHMAKER ---
+    case 'sovereign.matchmaker': {
+      const result = await executeMatchmaker({
+        productType: cmd.productType || 'fabric',
+        material: cmd.material,
+        targetRegions: cmd.targetRegions,
+      });
+      if (result.success) {
+        return {
+          success: true,
+          message: `Matchmaker çalıştı!\n${result.matchesFound} potansiyel alıcı bulundu.\n${result.topMatches?.map((m: any) => `- ${m.buyerName} (${m.region}): ${m.reason}`).join('\n')}`,
+          data: result,
+          widgetType: 'success',
+        };
+      }
+      return { success: false, message: `Matchmaker hatası: ${result.error}`, widgetType: 'error' };
+    }
+
     default:
       return { success: false, message: `Bilinmeyen araç: ${cmd.tool}`, widgetType: 'error' };
   }
@@ -503,4 +522,7 @@ Kullanılabilir araçlar ve JSON formatları:
 
 20. sovereign.publish — Ürünü 3 platforma otonom yayınla (TRTex haber + Hometex vitrin + Vorhang mağaza)
     { "tool": "sovereign.publish", "technicalSpecs": "kumaş teknik bilgisi", "fabricCostPerMeter": 6, "gsm": 580, "widthCm": 320, "composition": "%95 PES %5 Viskon" }
+
+21. sovereign.matchmaker — Üreticinin hammaddesine (iplik, kumaş) dünyadan otonom alıcı/ihale bulur
+    { "tool": "sovereign.matchmaker", "productType": "yarn", "material": "20 denye PES iplik", "targetRegions": ["DACH", "RUSSIA"] }
 `;
