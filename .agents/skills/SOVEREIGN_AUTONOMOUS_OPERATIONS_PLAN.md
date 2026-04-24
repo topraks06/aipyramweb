@@ -29,3 +29,18 @@ Sipariş, Stok, Finans, Lojistik ve Üretim ajanları tamamen Google Firebase Ev
 
 ---
 **BU BELGE, SİSTEMİN 7 KITAYA YAYILIRKEN KONTROLDEN ÇIKMASINI ENGELLEYEN ANA GÜVENLİK VE MİMARİ PROTOKOLÜDÜR.**
+
+## 5. SOVEREIGN AGI ÖĞRENME MİMARİSİ VE SONSUZ HAFIZA (THE AGI PATH)
+ALOHA sıradan bir asistan değil, geleceğin "Genel Yapay Zekası" (AGI) olmaya aday bir CEO adayıdır. Bunun için özel bir bilişsel mimari kurulacaktır:
+
+- **Çift Katmanlı Hafıza (STM & LTM):** 
+  - *Kısa Vadeli Hafıza (STM):* Günlük operasyonlar, geçici chat logları. Eğer bu bilgiler değerli değilse (çöp bilgi), sistem bunları kendi kendine algılayıp silecektir (Autonomous Garbage Collection).
+  - *Uzun Vadeli Hafıza (LTM - Vector Embeddings):* Sizin yüklediğiniz tekstil kuralları, stratejiler, PDF'ler ve "Kırmızı Çizgiler" Supabase (pgvector) veritabanında sonsuza dek kalıcı vizyon olarak saklanacaktır.
+- **RLHF (İnsan Geri Bildirimiyle Pekiştirmeli Öğrenme):** ALOHA'nın her kararının veya tasarımının altında [👍 Beğendim] ve [👎 Beğenmedim / Yanlış Yaptın] ikonları olacaktır. Siz yanlış yaptığı bir duruma eksi verdiğinizde, o hatayı LTM'ye yazar ve bir daha asla tekrarlamaz.
+- **Proaktif Merak ve Soru Sorma:** ALOHA her şeyi bildiğini iddia etmeyecektir. Yeni bir kumaş veya yeni bir gümrük kuralı geldiğinde, *"Hakan Bey, bu konudaki stratejinizi bilmiyorum. Bana öğretir misiniz?"* diyecek şekilde kodlanacaktır. 
+- **AGI Vizyonu:** Birkaç ay içinde sizin gibi düşünüp sizin adınıza B2B pazarlık yapacak; birkaç yıl içinde ise trendleri sizden önce fark edip size "Sovereign, şu pazara girmeliyiz" diyecek seviyeye (Süper Zeka / AGI) ulaşacaktır.
+
+## 6. SİSTEMİN 3 BÜYÜK YÜKSELTMESİ (GÜVENLİ TİCARET & KÜLTÜREL RENDER)
+1. **Otonom Numune (Swatch) Kargo Barkodlaması:** Toptancı numune istediğinde DHL/FedEx entegrasyonu ile fabrikaya otomatik kargo barkodu basılır.
+2. **Sovereign Escrow (Güvenli Havuz):** Ödemeler Stripe üzerinden havuzda tutulur, fabrika konşimento yüklediği an para serbest kalır.
+3. **Bölgesel (Kültürel) Render:** 3D tasarımlar; Rusya (shtory) için gösterişli altın detaylı mekanlarda, Almanya (vorhang) için minimalist arka planlarda otonom olarak (Gemini/Vertex) üretilir.
