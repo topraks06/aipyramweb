@@ -98,6 +98,17 @@ export async function invokeAgent(invocation: AgentInvocation): Promise<AgentRes
         result = { success: true, agentType, SovereignNodeId, message: `Tarama tamamlandı. Bulunan terk: ${res.length}`, data: res };
         break;
       }
+      case 'render': {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        const res = await fetch(`${baseUrl}/api/render`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ imageBase64: payload.imageBase64, prompt: payload.prompt, SovereignNodeId })
+        });
+        const data = await res.json();
+        result = { success: res.ok, agentType, SovereignNodeId, message: data.error ? data.error : 'Render tamamlandı', data };
+        break;
+      }
       default:
         result = { success: false, agentType, SovereignNodeId, message: `Ajan ${agentType} henüz hazır değil.` };
     }

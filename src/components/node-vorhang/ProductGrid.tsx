@@ -7,21 +7,13 @@ import { Filter, ChevronDown, Check } from "lucide-react";
 const CATEGORIES = ["Alle", "Vorhänge", "Stoffe", "Rollos", "Zubehör"];
 const COLORS = ["Beige", "Grau", "Blau", "Weiß", "Schwarz", "Grün"];
 
-// Mock Data
-const MOCK_PRODUCTS = [
-  { id: "1", title: "Premium Leinen Vorhang", seller: "Hometex Elite", price: 249.99, imageUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80", isVerified: true, category: "Vorhänge", color: "Beige" },
-  { id: "2", title: "Blackout Samt", seller: "Kaya Tekstil", price: 189.50, imageUrl: "https://images.unsplash.com/photo-1543169720-6d306b9b3e1a?w=600&q=80", isVerified: true, category: "Vorhänge", color: "Blau" },
-  { id: "3", title: "Tüll Transparent", seller: "Gencer Weavers", price: 120.00, imageUrl: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80", isVerified: false, category: "Vorhänge", color: "Weiß" },
-  { id: "4", title: "Zebra Rollo", seller: "SmartShade", price: 89.99, imageUrl: "https://images.unsplash.com/photo-1588636730303-39fba087a313?w=600&q=80", isVerified: true, category: "Rollos", color: "Grau" },
-  { id: "5", title: "Outdoor Stoff (Meterware)", seller: "SunTextiles", price: 45.00, imageUrl: "https://images.unsplash.com/photo-1584839846270-22e8964e5c54?w=600&q=80", isVerified: true, category: "Stoffe", color: "Grün" },
-  { id: "6", title: "Vorhangstange (Gold)", seller: "MetalCraft", price: 115.00, imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80", isVerified: true, category: "Zubehör", color: "Gold" },
-];
+// Mock data removed
 
 export function ProductGrid({ products = [] }: { products?: any[] }) {
   const [activeCategory, setActiveCategory] = useState("Alle");
   const [activeColor, setActiveColor] = useState<string | null>(null);
 
-  const displayProducts = products.length > 0 ? products : MOCK_PRODUCTS;
+  const displayProducts = products;
 
   const filteredProducts = displayProducts.filter(p => {
     if (activeCategory !== "Alle" && p.category !== activeCategory) return false;
