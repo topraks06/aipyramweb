@@ -107,11 +107,11 @@ hammaddeden son tüketicinin evine asılana/montajlanana kadar olan yolculuğunu
 | Node | Bölge | Dil | Para Birimi | Durum |
 |------|-------|-----|-------------|-------|
 | vorhang.ai | DACH (Almanya/Avusturya/İsviçre) | Almanca | EUR | 🟡 İskelet var |
-| shtori.ai | Rusya / BDT | Rusça | RUB | ⬜ Planlandı |
-| parda.ai | Farsça/Urduca ülkeleri | Farsça/Urduca | IRR/PKR | ⬜ Planlandı |
-| donoithat.ai | Vietnam | Vietnamca | VND | ⬜ Planlandı |
-| perabot.ai | Endonezya | Bahasa | IDR | ⬜ Planlandı |
-| heimtex.ai | Avrupa Sertifika Kalkanı | Almanca/İngilizce | — | ⬜ Planlandı |
+| shtori.ai | Rusya / BDT | Rusça | RUB | ✅ Tak-Çalıştır |
+| parda.ai | Farsça/Urduca ülkeleri | Farsça/Urduca | IRR/PKR | ✅ Tak-Çalıştır |
+| donoithat.ai | Vietnam | Vietnamca | VND | ✅ Tak-Çalıştır |
+| perabot.ai | Endonezya | Bahasa | IDR | ✅ Tak-Çalıştır |
+| heimtex.ai | Avrupa Sertifika Kalkanı | Almanca/İngilizce | — | ✅ Tak-Çalıştır |
 | cortina.ai* | İspanya/Latin Amerika | İspanyolca | EUR/USD | ⬜ Gelecek |
 
 *heimtex.ai özel bir node'dur: Ürün Avrupa'ya girmeden sertifika kontrolü yapar. Oeko-Tex, DIN 4102-B1, REACH belgesi yoksa satışı otonom durdurur ve GTIP kodlarını hazırlar.*
@@ -232,8 +232,8 @@ Aşağıdaki araçlar ALOHA chat'ten tetiklenebilmelidir:
 | 2 | TRTex Global Matchmaker | 🔴 KRİTİK | ✅ Tamamlandı |
 | 3 | Perakendeci Onboarding (Anahtar Teslim Mağaza) | 🔴 KRİTİK | ✅ Tamamlandı |
 | 4 | Heimtex Sertifika Kalkanı | 🟡 ORTA | ✅ Tamamlandı |
-| 5 | Hometex Fuar Vitrini Güçlendirme | 🟡 ORTA | 1 hafta |
-| 6 | Bölgesel Kapılar (Shtori, Parda, Donoithat) | 🟡 ORTA | Her biri 3-5 gün |
+| 5 | Hometex Fuar Vitrini Güçlendirme | 🟡 ORTA | ✅ Tamamlandı |
+| 6 | Bölgesel Kapılar (Shtori, Parda, Donoithat vb.) | 🟡 ORTA | ✅ Tamamlandı |
 | 7 | Kargo/Numune Entegrasyonu (DHL/FedEx) | 🟡 ORTA | 1 hafta |
 | 8 | ALOHA Academy (Eğitim Modülleri 3-8) | 🟢 EN SON | 1 hafta |
 

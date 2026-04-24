@@ -11,7 +11,7 @@
 // TYPES
 // ═══════════════════════════════════════════════════
 
-export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang';
+export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'shtori' | 'parda' | 'donoithat' | 'perabot' | 'heimtex';
 export type UserRole = 'admin' | 'editor' | 'member' | 'viewer';
 
 export interface SovereignNodeFeatures {
@@ -214,6 +214,116 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     ],
     roles: ['admin', 'member'],
   },
+
+  // ─── SHTORI.AI (Rusya / BDT) ──────────────────────
+  shtori: {
+    id: 'shtori',
+    domain: 'shtori.ai',
+    name: 'Shtori AI Россия',
+    shortName: 'SHTORI',
+    memberCollection: 'shtori_members',
+    newsCollection: 'shtori_news',
+    projectCollection: 'shtori_orders',
+    walletCollection: 'shtori_wallets',
+    theme: 'dark',
+    locale: 'ru',
+    features: {
+      b2b: true, catalog: true, news: false, autonomous: false,
+      visualizer: false, expo: false, magazine: false, salesEngine: true,
+      whatsapp: true, documents: true, fabricAnalysis: false, retention: true,
+    },
+    publicNavLinks: [{ name: 'Каталог', href: '/catalog', gated: false }],
+    privateNavLinks: [{ name: 'Заказы', href: '/orders', gated: true }],
+    roles: ['admin', 'member'],
+  },
+
+  // ─── PARDA.AI (Farsça / Urduca) ───────────────────
+  parda: {
+    id: 'parda',
+    domain: 'parda.ai',
+    name: 'Parda AI ایران',
+    shortName: 'PARDA',
+    memberCollection: 'parda_members',
+    newsCollection: 'parda_news',
+    projectCollection: 'parda_orders',
+    walletCollection: 'parda_wallets',
+    theme: 'light',
+    locale: 'fa',
+    features: {
+      b2b: true, catalog: true, news: false, autonomous: false,
+      visualizer: false, expo: false, magazine: false, salesEngine: true,
+      whatsapp: true, documents: true, fabricAnalysis: false, retention: true,
+    },
+    publicNavLinks: [{ name: 'کاتالوگ', href: '/catalog', gated: false }],
+    privateNavLinks: [{ name: 'سفارشات', href: '/orders', gated: true }],
+    roles: ['admin', 'member'],
+  },
+
+  // ─── DONOITHAT.AI (Vietnam) ───────────────────────
+  donoithat: {
+    id: 'donoithat',
+    domain: 'donoithat.ai',
+    name: 'Đồ Nội Thất AI',
+    shortName: 'DONOITHAT',
+    memberCollection: 'donoithat_members',
+    newsCollection: 'donoithat_news',
+    projectCollection: 'donoithat_orders',
+    walletCollection: 'donoithat_wallets',
+    theme: 'light',
+    locale: 'vi',
+    features: {
+      b2b: true, catalog: true, news: false, autonomous: false,
+      visualizer: false, expo: false, magazine: false, salesEngine: true,
+      whatsapp: true, documents: true, fabricAnalysis: false, retention: true,
+    },
+    publicNavLinks: [{ name: 'Danh mục', href: '/catalog', gated: false }],
+    privateNavLinks: [{ name: 'Đơn hàng', href: '/orders', gated: true }],
+    roles: ['admin', 'member'],
+  },
+
+  // ─── PERABOT.AI (Endonezya) ───────────────────────
+  perabot: {
+    id: 'perabot',
+    domain: 'perabot.ai',
+    name: 'Perabot AI Indonesia',
+    shortName: 'PERABOT',
+    memberCollection: 'perabot_members',
+    newsCollection: 'perabot_news',
+    projectCollection: 'perabot_orders',
+    walletCollection: 'perabot_wallets',
+    theme: 'light',
+    locale: 'id',
+    features: {
+      b2b: true, catalog: true, news: false, autonomous: false,
+      visualizer: false, expo: false, magazine: false, salesEngine: true,
+      whatsapp: true, documents: true, fabricAnalysis: false, retention: true,
+    },
+    publicNavLinks: [{ name: 'Katalog', href: '/catalog', gated: false }],
+    privateNavLinks: [{ name: 'Pesanan', href: '/orders', gated: true }],
+    roles: ['admin', 'member'],
+  },
+
+  // ─── HEIMTEX.AI (Avrupa Sertifika Kalkanı) ────────
+  heimtex: {
+    id: 'heimtex',
+    domain: 'heimtex.ai',
+    name: 'Heimtex Certification Shield',
+    shortName: 'HEIMTEX',
+    memberCollection: 'heimtex_members',
+    newsCollection: 'heimtex_news',
+    projectCollection: 'heimtex_certifications',
+    walletCollection: 'heimtex_wallets',
+    theme: 'dark',
+    locale: 'en',
+    features: {
+      b2b: true, catalog: false, news: false, autonomous: true,
+      visualizer: false, expo: false, magazine: false, salesEngine: false,
+      whatsapp: true, documents: true, fabricAnalysis: true, retention: false,
+    },
+    publicNavLinks: [{ name: 'Verify Cert', href: '/verify', gated: false }],
+    privateNavLinks: [{ name: 'Laboratory', href: '/lab', gated: true }],
+    roles: ['admin', 'member'],
+  },
 };
 
 // ═══════════════════════════════════════════════════
@@ -268,4 +378,4 @@ export function nodeHasFeature(SovereignNodeId: string, feature: keyof Sovereign
 // ═══════════════════════════════════════════════════
 // GLOBAL BUDGET CONFIG (CFO Ajan için)
 // ═══════════════════════════════════════════════════
-export const dailyBudget = { trtex: 5, perde: 10, hometex: 2, vorhang: 3 }; // USD
+export const dailyBudget = { trtex: 5, perde: 10, hometex: 2, vorhang: 3, shtori: 2, parda: 2, donoithat: 2, perabot: 2, heimtex: 3 }; // USD
