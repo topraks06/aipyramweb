@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Bot, User, FileSearch, Zap, Terminal } from 'lucide-react';
+import { Send, Paperclip, Bot, User, FileSearch, Zap, Terminal, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import DashboardOverview from '@/components/admin/DashboardOverview';
 import EconomyEngineGraph from '@/components/admin/EconomyEngineGraph';
 import DlqManager from '@/components/admin/DlqManager';
@@ -29,6 +29,70 @@ export default function MasterKokpit() {
   const [files, setFiles] = useState<File[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const isListeningRef = useRef(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'tr-TR';
+
+      recognitionRef.current.onresult = (event: any) => {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        if (finalTranscript) {
+          setInput(prev => prev + (prev ? ' ' : '') + finalTranscript);
+        }
+      };
+
+      recognitionRef.current.onend = () => {
+        if (isListeningRef.current) {
+          try { recognitionRef.current.start(); } catch (e) {}
+        } else {
+          setIsListening(false);
+        }
+      };
+      
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        if (event.error === 'not-allowed') {
+          isListeningRef.current = false;
+          setIsListening(false);
+        }
+      };
+    }
+  }, []);
+
+  const toggleListen = () => {
+    if (isListening) {
+      isListeningRef.current = false;
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      isListeningRef.current = true;
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+  const speakText = (text: string) => {
+    if (isMuted || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'tr-TR';
+    utterance.rate = 1.0;
+    utterance.pitch = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -47,7 +111,7 @@ export default function MasterKokpit() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
-      setFiles(prev => [...prev, ...selectedFiles].slice(0, 3));
+      setFiles(prev => [...prev, ...selectedFiles].slice(0, 20)); // Limit 20
     }
   };
 
@@ -76,10 +140,15 @@ export default function MasterKokpit() {
     setIsTyping(true);
 
     try {
+      let targetNode = 'master';
+      if (typeof window !== 'undefined') {
+        targetNode = localStorage.getItem('aloha_target_node') || 'master';
+      }
+
       const res = await fetch('/api/aloha/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: userText })
+        body: JSON.stringify({ command: userText, targetNode })
       });
 
       const data = await res.json();
@@ -87,6 +156,11 @@ export default function MasterKokpit() {
 
       let finalContent = data.alohaResponse || "Anlaşılamadı.";
       let widgetType = data.widgetType || undefined;
+
+      // Speak response if it's a chat text
+      if (!widgetType || widgetType === 'success' || widgetType === 'error') {
+        speakText(finalContent);
+      }
 
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
@@ -208,6 +282,17 @@ export default function MasterKokpit() {
               </button>
             </div>
             
+            {/* Ses Kontrolleri */}
+            <div className="flex gap-2 border-l border-slate-200 pl-2 ml-2">
+              <button 
+                onClick={() => setIsMuted(!isMuted)}
+                title={isMuted ? "Hoparlör Kapalı" : "Hoparlör Açık"}
+                className={`p-1.5 rounded-md transition-colors ${isMuted ? 'text-red-500 bg-red-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'}`}
+              >
+                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              </button>
+            </div>
+            
             {/* Hızlı Emir Çipleri (Prompt Starters) */}
             <div className="flex gap-2">
               <button 
@@ -233,13 +318,34 @@ export default function MasterKokpit() {
 
           {/* Dosya Önizleme */}
           {files.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-2 px-2">
-              {files.map((file, index) => (
-                <div key={index} className="flex items-center gap-2 px-2 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs font-medium text-slate-600">
-                  <span>{file.name}</span>
-                  <button type="button" onClick={() => removeFile(index)} className="text-slate-400 hover:text-red-500">×</button>
-                </div>
-              ))}
+            <div className="flex flex-wrap gap-3 mb-3 px-2">
+              {files.map((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                return (
+                  <div key={index} className="relative group flex items-center gap-2 p-1.5 pr-3 bg-slate-50 border border-slate-200 rounded-lg shadow-sm hover:border-indigo-300 transition-colors">
+                    {isImage ? (
+                      <div className="w-10 h-10 rounded-md overflow-hidden bg-slate-200 shrink-0">
+                        <img src={URL.createObjectURL(file)} alt="preview" className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-md bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0">
+                        <FileSearch size={20} />
+                      </div>
+                    )}
+                    <div className="flex flex-col overflow-hidden max-w-[120px]">
+                      <span className="text-xs font-semibold text-slate-700 truncate">{file.name}</span>
+                      <span className="text-[10px] text-slate-400">{(file.size / 1024).toFixed(1)} KB</span>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => removeFile(index)} 
+                      className="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -248,12 +354,20 @@ export default function MasterKokpit() {
               <Paperclip size={18} />
               <input type="file" multiple className="hidden" onChange={handleFileChange} />
             </label>
+            <button 
+              type="button"
+              onClick={toggleListen}
+              className={`absolute left-10 p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-400 hover:text-indigo-600'}`}
+              title="Sesli Komut"
+            >
+              {isListening ? <Mic size={18} /> : <MicOff size={18} />}
+            </button>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Sisteme bir talimat verin veya veri isteyin... (Örn: Sistem durumunu göster)"
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-4 pl-12 pr-14 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-sans"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-4 pl-20 pr-14 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-sans"
             />
             <button 
               type="submit" 

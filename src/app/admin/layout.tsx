@@ -32,6 +32,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => clearInterval(interval);
   }, [user, isAdmin]);
 
+  const [targetNode, setTargetNode] = useState('master');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('aloha_target_node');
+      if (saved) setTargetNode(saved);
+    }
+  }, []);
+
+  const handleNodeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setTargetNode(val);
+    if (typeof window !== 'undefined') localStorage.setItem('aloha_target_node', val);
+  };
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
@@ -127,7 +142,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Ağ Seçici (Sovereign Node Switcher) */}
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hedef Ağ:</span>
-            <select className="bg-white border border-slate-200 text-sm font-medium text-slate-700 py-1 px-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm cursor-pointer">
+            <select 
+              value={targetNode}
+              onChange={handleNodeChange}
+              className="bg-white border border-slate-200 text-sm font-medium text-slate-700 py-1 px-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm cursor-pointer"
+            >
               <option value="master">GLOBAL MERKEZ</option>
               <option value="perde">PERDE DÜĞÜMÜ</option>
               <option value="trtex">TRTEX DÜĞÜMÜ</option>
