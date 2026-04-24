@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
@@ -85,12 +85,23 @@ export default function DesignEngine() {
     }
   };
 
-  const handleSaveToERP = (idea: ProductIdea) => {
+  const handleSaveToERP = async (idea: ProductIdea) => {
     // FÄ°ÅE DÃ–NÃœÅTÃœR (ERP ENTEGRASYONU)
     if (typeof window !== 'undefined') {
        window.dispatchEvent(new CustomEvent('order_draft_created', { detail: { idea } }));
     }
-    alert("ERP Sistemine FiÅŸ Olarak BaÅŸarÄ±yla AktarÄ±ldÄ±!");
+    try {
+      const res = await fetch('/api/perde/erp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(idea)
+      });
+      if (res.ok) {
+        alert("ERP Sistemine Başarıyla Aktarıldı!");
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
