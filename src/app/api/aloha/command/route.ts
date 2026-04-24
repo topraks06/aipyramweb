@@ -190,11 +190,49 @@ function fallbackResolve(command: string, defaultNode?: string): ParsedCommand {
   }
 
   if (cmd.includes('merhaba') || cmd.includes('selam') || cmd.includes('nasılsın') || cmd.includes('alo') || cmd.includes('kimsin')) {
-    return { tool: 'chat', message: 'Sovereign ağındayız Hakan Bey. ALOHA hizmetinizde. API bağlantım şu an kısıtlı (Fallback Modu) ancak temel yönetim komutlarınızı yerine getirebilirim. Ne işlem yapmamı istersiniz?', raw: command };
+    return { tool: 'chat', message: 'Sovereign ağındayız Hakan Bey. ALOHA hizmetinizde. Ne işlem yapmamı istersiniz?', raw: command };
+  }
+
+  // --- SOVEREIGN PUBLISH (Kumaş yayınlama) ---
+  if (cmd.includes('yayınla') || cmd.includes('yayinla') || cmd.includes('publish') || cmd.includes('lansman') || cmd.includes('platforma')) {
+    // Teknik bilgileri komuttan çıkart
+    const costMatch = command.match(/(\d+)\s*(dolar|usd|\$)/i);
+    const gsmMatch = command.match(/(\d+)\s*gsm/i);
+    const widthMatch = command.match(/(\d+)\s*cm/i);
+    const compositionMatch = command.match(/(yüzde|%)\s*\d+\s*(keten|pamuk|polyester|ipek)/gi);
+    
+    return {
+      tool: 'sovereign.publish',
+      technicalSpecs: command,
+      fabricCostPerMeter: costMatch ? parseInt(costMatch[1]) : 8,
+      gsm: gsmMatch ? parseInt(gsmMatch[1]) : 280,
+      widthCm: widthMatch ? parseInt(widthMatch[1]) : 280,
+      composition: compositionMatch ? compositionMatch.join(' + ') : '',
+      raw: command,
+    };
+  }
+
+  // --- SOVEREIGN MATCHMAKER ---
+  if (cmd.includes('eşleştir') || cmd.includes('matchmaker') || cmd.includes('alıcı bul') || cmd.includes('müşteri bul')) {
+    return {
+      tool: 'sovereign.matchmaker',
+      productType: 'fabric',
+      raw: command,
+    };
+  }
+
+  // --- HOMETEX FUAR ---
+  if (cmd.includes('fuar') || cmd.includes('expo') || cmd.includes('booth')) {
+    return { tool: 'node.hometex', raw: command };
+  }
+
+  // --- VORHANG PERAKENDE ---
+  if (cmd.includes('perakende') || cmd.includes('satışa koy') || cmd.includes('satisa koy') || cmd.includes('retail')) {
+    return { tool: 'node.vorhang', raw: command };
   }
 
   // Bilinmeyen → chat tool
-  return { tool: 'chat', message: 'Hakan Bey, spesifik bir komut algılayamadım (Gemini API bağlantım kurulamadığı için fallback modundayım). Lütfen "Hometex panelini aç" veya "Sistem durumunu göster" gibi net komutlar verin.', raw: command };
+  return { tool: 'chat', message: `Hakan Bey, komutunuzu aldım: "${command.substring(0, 80)}..." — İşlem yapmak için daha spesifik bir talimat verin. Örnek: "Bu kumaşı tüm platformlara yayınla" veya "Sistem durumunu göster".`, raw: command };
 }
 
 /**

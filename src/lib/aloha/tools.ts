@@ -327,7 +327,45 @@ export interface ParsedCommand {
   authorId?: string;
   amount?: number;
   vendorName?: string;
+  // Sovereign Publish
+  technicalSpecs?: string;
+  specs?: string;
+  fabricCostPerMeter?: number;
+  cost?: number;
+  gsm?: number;
+  widthCm?: number;
+  composition?: string;
+  collectionName?: string;
+  patternType?: string;
+  imageUrl?: string;
+  // Sovereign Tools
+  productType?: string;
+  material?: string;
+  targetRegions?: string[];
+  sellerId?: string;
+  sellerName?: string;
+  sourceProductId?: string;
+  productNameTR?: string;
+  basePriceTRY?: number;
+  stockQuantity?: number;
+  manufacturerId?: string;
+  manufacturerName?: string;
+  productName?: string;
+  rawDescription?: string;
+  wholesalePriceUSD?: number;
+  minOrderQuantity?: number;
+  fabricType?: string;
+  companyName?: string;
+  storeName?: string;
+  fabric?: string;
+  mechanic?: string;
+  accessory?: string;
+  buyerName?: string;
+  address?: string;
+  productId?: string;
+  fabricName?: string;
   raw: string;
+  [key: string]: any;
 }
 
 export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> {
