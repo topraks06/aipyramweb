@@ -7,13 +7,14 @@ import { motion } from 'motion/react';
 import { ArrowLeft, MapPin, Globe, Mail, Phone, Download, Sparkles, Languages, ChevronRight, Calculator, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import HometexFooter from './HometexFooter';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
 // Mock modal
 const ProductUploadModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">Materyal Yükleme Sınırlandırıldı</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
 const B2BRequestModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">B2B Talebi Gönderildi</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
 
 export default function ExhibitorDetail({ exhibitor, products = [] }: { exhibitor: any, products?: any[] }) {
-  const role = 'consumer'; // Mock
+  const { role } = useSovereignAuth('hometex');
   
   const [activeTab, setActiveTab] = useState<'showroom' | 'about' | 'contact'>('showroom');
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);

@@ -63,7 +63,7 @@ export function SocialMediaWidget({ brandName, handle }: SocialMediaWidgetProps)
             <div className="flex items-center gap-3">
               {platform.status === 'claimed' ? (
                 <>
-                  <span className="text-[10px] text-gray-500 flex items-center gap-1"><KeyRound size={10} /> ***{Math.floor(Math.random() * 900) + 100}</span>
+                  <span className="text-[10px] text-gray-500 flex items-center gap-1"><KeyRound size={10} /> ***{idx + 1}A9</span>
                   <span className="text-[10px] text-emerald-400 flex items-center gap-1 bg-emerald-400/10 px-1.5 py-0.5 rounded"><CheckCircle2 size={10} /> ALINDI</span>
                 </>
               ) : (

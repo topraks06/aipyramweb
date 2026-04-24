@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import HometexNavbar from './HometexNavbar';
 import HometexFooter from './HometexFooter';
+import { HOMETEX_HALLS } from '@/lib/hometex-demoData';
 
 export default function HometexLandingPage({ articles = [], exhibitors = [] }: { articles?: any[], exhibitors?: any[] }) {
 
@@ -275,14 +276,7 @@ export default function HometexLandingPage({ articles = [], exhibitors = [] }: {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24">
-            {[
-              { name: "Döşemelik & Mobilya", count: "142 Katılımcı", image: "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=2800&auto=format&fit=crop" },
-              { name: "Perdelik & Tül", count: "89 Katılımcı", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2800&auto=format&fit=crop" },
-              { name: "Yatak & Banyo Tekstili", count: "115 Katılımcı", image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=2800&auto=format&fit=crop" },
-              { name: "Halı & Zemin Kaplama", count: "64 Katılımcı", image: "https://images.unsplash.com/photo-1600166898405-da9535204843?q=80&w=2800&auto=format&fit=crop" },
-              { name: "Duvar Kağıdı & Dekor", count: "48 Katılımcı", image: "https://images.unsplash.com/photo-1616137466211-f939a420be84?q=80&w=2800&auto=format&fit=crop" },
-              { name: "Akıllı Perde Sistemleri", count: "92 Katılımcı", image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2800&auto=format&fit=crop" }
-            ].map((hall, i) => (
+            {HOMETEX_HALLS.map((hall, i) => (
               <motion.div 
                 key={i} 
                 initial={{ opacity: 0, y: 40 }}

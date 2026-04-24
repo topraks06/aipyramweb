@@ -16,12 +16,30 @@ export function GodsEyeWidget() {
   ]);
 
   useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch('/api/admin/data?collection=ai_agents');
+        const data = await res.json();
+        if (data.data && Array.isArray(data.data)) {
+           setAgents(prev => prev.map((agent, index) => {
+              const dbAgent = data.data[index] || {};
+              return {
+                 ...agent,
+                 status: dbAgent.is_active === false ? 'conflict' : 'active'
+              };
+           }));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchStatus();
+
     const interval = setInterval(() => {
       setAgents(prev => prev.map(agent => ({
         ...agent,
         x: Math.max(10, Math.min(90, agent.x + (Math.random() * 10 - 5))),
-        y: Math.max(10, Math.min(90, agent.y + (Math.random() * 10 - 5))),
-        status: Math.random() > 0.95 ? 'conflict' : Math.random() > 0.6 ? 'working' : 'active'
+        y: Math.max(10, Math.min(90, agent.y + (Math.random() * 10 - 5)))
       })));
     }, 3000);
     return () => clearInterval(interval);

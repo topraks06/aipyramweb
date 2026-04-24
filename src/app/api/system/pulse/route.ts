@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import os from 'os';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function GET() {
   try {
@@ -30,11 +31,23 @@ export async function GET() {
     const netLatency = Math.floor(Math.random() * 25) + 10;
 
     // 4. Financial Pulse (CHF, EUR from TCMB or fallback)
-    // In a real prod environment we would cache TCMB responses. We'll use semi-static data with slight random fluctuation for visual "pulse" if no API.
-    // For now we simulate an active TR market pulse for POY.
-    const eurUsd = (1.08 + (Math.random() * 0.02)).toFixed(3);
-    const chfTry = (36.50 + (Math.random() * 0.40)).toFixed(2);
-    const poyTexture = (42.0 + (Math.random() * 1.5)).toFixed(1);
+    let eurUsd = "1.080";
+    let chfTry = "36.50";
+    let poyTexture = "42.0";
+
+    try {
+       const terminalDoc = await adminDb.collection('trtex_terminal').doc('current').get();
+       if (terminalDoc.exists) {
+           const data = terminalDoc.data();
+           if (data?.market) {
+               eurUsd = data.market.eurUsd?.toFixed(3) || eurUsd;
+               chfTry = data.market.chfTry?.toFixed(2) || chfTry;
+               poyTexture = data.market.poyTexture?.toFixed(1) || poyTexture;
+           }
+       }
+    } catch (e) {
+       console.error("Firestore market pulse error", e);
+    }
 
     return NextResponse.json({
        cpu: cpuUsage,

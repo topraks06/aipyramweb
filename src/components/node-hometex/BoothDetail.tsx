@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, MapPin, Download, Play, CheckCircle2, X, Send, UploadCloud } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
 type ModalType = 'quote' | 'sample' | 'upload' | null;
 
 export default function BoothDetail() {
   const params = useParams();
   const id = params?.boothId as string || 'default';
-  const role = 'consumer'; // mock
+  const { role } = useSovereignAuth('hometex');
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 

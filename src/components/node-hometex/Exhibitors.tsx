@@ -5,10 +5,10 @@ import { motion } from 'motion/react';
 import { ArrowRight, MapPin, Download, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
 import HometexFooter from './HometexFooter';
+import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
 export default function Exhibitors({ exhibitors = [] }: { exhibitors?: any[] }) {
-  // Mock role for UI parity
-  const role = 'consumer'; 
+  const { role } = useSovereignAuth('hometex');
   const [isSimulating, setIsSimulating] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedExhibitorId, setSelectedExhibitorId] = useState<string>('');

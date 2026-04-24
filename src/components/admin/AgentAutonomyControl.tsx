@@ -48,7 +48,7 @@ export default function AgentAutonomyControl() {
                 );
                 const currentTasks = dbAgent
                     ? dbTasks.filter((t: any) => t.agent_id === dbAgent.id).length
-                    : Math.floor(Math.random() * config.maxParallelTasks);
+                    : 0;
 
                 return {
                     ...config,
@@ -66,7 +66,7 @@ export default function AgentAutonomyControl() {
             // Fallback
             setAgents(AGENT_AUTHORITY_MAP.map(config => ({
                 ...config,
-                currentTasks: Math.floor(Math.random() * config.maxParallelTasks),
+                currentTasks: 0,
                 isOverLimit: false,
                 isActive: true,
             })));
