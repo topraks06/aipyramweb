@@ -10,6 +10,17 @@ Bu belge, AntiGravity AI Ajanları için tartışmasız bir anayasadır. Projede
 - **Her faz sonunda `pnpm run build` + `git commit` ZORUNLUDUR.**
 - Bu kurala uymayan AI ajanı görevden azledilir.
 
+## 0.1 SOVEREIGN MASTER PLAN (KUTSAL — 24 Nisan 2026)
+- **Aşağıdaki 4 dosya Claude Opus 4.6 tarafından yazılmış, Hakan Bey tarafından onaylanmıştır.**
+- **SİLMEK, DEĞİŞTİRMEK, ÜSTÜNE YAZMAK = GÖREVDEN AZIL.**
+- Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncellenebilir.
+- **ZORUNLU OKUMA (her oturum başında, sırayla):**
+  1. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART1.md` — Röntgen + FAZ 3-4
+  2. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` — FAZ 5-6-7
+  3. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` — FAZ 8-9-10
+  4. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART4.md` — ALOHA Derin + İlerleme + Talimatlar
+- **Silme girişiminde kurtarma:** `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md`
+
 ## 1. Askeri Disiplin & Güvenlik (Sandbox Mantığı)
 - **Güvenli Yürütme (Sandbox Stratejisi):** Projeyi tehlikeye atacak dosya silme veya yapısal değişiklik eylemleri (örn. `cleanup-base64.js`) kesinlikle yalıtılmış bir ortam zihniyeti ile uygulanmalıdır. İzin veya yedek olmadan ana dosyalara kalıcı zarar verilmeyecektir.
 - **Hatasız, Tavizsiz Kodlama:** "Unuttum, pardon" yaklaşımı kabul edilemez. Bir özellik veya dosya oluşturulmadan ya da güncellenmeden önce tüm senaryolar %100 test edilecek. Gelişmiş MCP Kimlik doğrulamaları ve agentic limitleri daima gözetilecek.

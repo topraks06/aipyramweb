@@ -16,6 +16,18 @@
 - Plan güncellenecekse: sadece checkbox işaretleme (`[ ]` → `[x]`) yapılır
 - Yeni bilgi eklenecekse: dosyanın SONUNA eklenir, mevcut içerik KORUNUR
 
+### YASA 1.1: 4 PARÇALI MASTER PLAN KUTSAL'DIR (24 Nisan 2026)
+- Aşağıdaki 4 dosya Claude Opus 4.6 tarafından derin forensic analiz sonucu yazılmıştır
+- Hakan Bey tarafından **KURUCU ONAYI** verilmiştir
+- Bu dosyaları SİLMEK, ÜSTÜNE YAZMAK, İÇERİĞİNİ BOŞALTMAK veya İÇERİĞİNİ DEĞİŞTİRMEK **GÖREVDEN AZIL** sebebidir
+- Sadece checkbox işaretleme (`[ ]` → `[x]`) ve ilerleme tablosu güncelleme (`⬜` → `✅`) yapılabilir
+- **KUTSAL DOSYALAR:**
+  1. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART1.md` — Mevcut Durum Röntgeni + FAZ 3-4
+  2. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` — FAZ 5-6-7
+  3. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` — FAZ 8-9-10
+  4. `.agents/skills/SOVEREIGN_MASTER_PLAN_PART4.md` — ALOHA Derin Mimari + İlerleme + Talimatlar
+- **Git commit:** `1d2155d` — silme girişiminde `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md` ile geri getir
+
 ### YASA 2: ASLA DOSYA SİLME
 - Projeden ASLA dosya silinmez (rm, del, unlink YASAK)
 - Gereksiz dosya varsa → `_archive/` klasörüne TAŞI
@@ -262,27 +274,39 @@ Dosya kaybolursa:
 
 ---
 
-## 🔴 CLAUDE DENETİM EMRİ (2026-04-23)
+## 🔴 CLAUDE DENETİM EMRİ (2026-04-24 — GÜNCEL)
 
-> Claude Opus 4.6 tarafından yapılan kapsamlı denetim sonucunda 15 eksiklik tespit edilmiştir.
-> Gemini bu eksiklikleri gidermek için aşağıdaki dosyaları ZORUNLU OLARAK okumalıdır:
+> Claude Opus 4.6 tarafından yapılan kapsamlı denetim sonucunda 4 parçalı anahtar teslim master plan oluşturulmuştur.
+> Bu plan projenin tüm geleceğini belirler. FAZ 3'ten itibaren sırayla uygulanacaktır.
 
-### ZORUNLU OKUMA DOSYALARI:
-1. **`SOVEREIGN_AUDIT_REPORT.md`** — Acımasız denetim raporu (neler yalan, neler gerçek)
-2. **`SOVEREIGN_GOREV_EMRI.md`** — 15 maddelik checkbox'lı görev listesi
+### 🔒 ZORUNLU OKUMA DOSYALARI (OTURUM BAŞINDA — ATLAMA YASAK):
+1. **`SOVEREIGN_MASTER_PLAN_PART1.md`** — Mevcut durum röntgeni (7 katman eksiklik) + FAZ 3-4 görevleri
+2. **`SOVEREIGN_MASTER_PLAN_PART2.md`** — FAZ 5-6-7 görevleri (SEO, Admin, Mobil)
+3. **`SOVEREIGN_MASTER_PLAN_PART3.md`** — FAZ 8-9-10 görevleri (Test, Deploy, Fuar)
+4. **`SOVEREIGN_MASTER_PLAN_PART4.md`** — ALOHA derin mimari + İlerleme tablosu + Gemini talimatları
+5. **`SOVEREIGN_AUDIT_REPORT.md`** — Acımasız denetim raporu
+6. **`SOVEREIGN_GOREV_EMRI.md`** — Ek görev listesi
 
-### KALAN KRİTİK GÖREVLER (Claude tarafından başlatıldı, Gemini tamamlayacak):
+### ⛔ BU DOSYALARI SİLERSEN:
+- Görevden azledilirsin
+- Hakan Bey tarafından onaylanmış kutsal belgelerdir
+- Kurtarma komutu: `git checkout 1d2155d -- .agents/skills/SOVEREIGN_MASTER_PLAN_PART*.md`
+
+### KALAN KRİTİK GÖREVLER (Claude başlattı, Gemini tamamlayacak):
 - [x] GÖREV 1: SearchInput placeholder → ✅ Claude tamamladı (f62df9d)
-- [ ] GÖREV 2: ShareButtons → Haber detayda inline linkler var, bileşen entegre edilmedi (PremiumArticleLayout'ta zaten LinkedIn/Twitter linkleri mevcut — kabul edilebilir)
-- [x] GÖREV 3: Vorhang Navbar routing → ✅ Claude tamamladı (f62df9d) — Kalan: CartSidebar, OrderConfirmation, TryAtHome, SellerOnboarding, SellerIngestion
-- [ ] GÖREV 4: MediaLibrary Firestore bağlantısı
-- [ ] GÖREV 5: agent.render registry fix
-- [ ] GÖREV 6-15: Diğer P1/P2 görevler
+- [x] GÖREV 3: Vorhang Navbar routing → ✅ Claude tamamladı (f62df9d)
+- [x] GÖREV 4: MediaLibrary Firestore → ✅ Sprint B tamamlandı (797dc68)
+- [x] GÖREV 5: agent.render registry → ✅ Sprint C tamamlandı (7add61e)
+- [ ] GÖREV 6-10: FAZ 3-4-5 kapsamında (MASTER PLAN'da detaylı)
+- [ ] GÖREV 11-15: FAZ 6-7-8 kapsamında (MASTER PLAN'da detaylı)
 
-### İLK ADIM:
+### 🎯 İLK ADIM:
 Gemini, oturuma başladığında şunu yap:
-1. `cat SOVEREIGN_GOREV_EMRI.md` oku
-2. İşaretlenmemiş ilk göreve başla
-3. Her görev sonrası build + git commit
-4. Checkpoint'leri işaretle
+1. `SOVEREIGN_MASTER_PLAN_PART1.md` → OKU
+2. `SOVEREIGN_MASTER_PLAN_PART2.md` → OKU
+3. `SOVEREIGN_MASTER_PLAN_PART3.md` → OKU
+4. `SOVEREIGN_MASTER_PLAN_PART4.md` → OKU (ilerleme tablosuna bak)
+5. İlerleme tablosunda ⬜ olan İLK faza başla
+6. Her görev sonrası: `pnpm run build` + `git commit` + skill dosyası güncelle
+7. PART4'teki ilerleme tablosunu güncelle: ⬜ → ✅
 
