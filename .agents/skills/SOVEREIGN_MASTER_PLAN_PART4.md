@@ -107,9 +107,9 @@ const CATEGORY_VOLUME: Record<string, number> = {
 | FAZ 5 | TRTEX SEO + Stabil | 2-3 gün | ✅ | (build+commit bekleniyor) | ✅ |
 | FAZ 6 | Admin Panel Full | 3-4 gün | ✅ | — | — |
 | FAZ 7 | Mobil + Performans | 2-3 gün | ✅ | — | — |
-| FAZ 8 | E2E Test + Güvenlik | 3-4 gün | ⬜ | — | — |
-| FAZ 9 | Production Deploy | 1-2 gün | ⬜ | — | — |
-| FAZ 10 | Fuar Demo | 1 gün | ⬜ | — | — |
+| FAZ 8 | E2E Test + Güvenlik | 3-4 gün | ✅ | — | — |
+| FAZ 9 | Production Deploy | İPTAL | ⏸️ | Sadece Local Test Yapılacak | — |
+| FAZ 10 | Fuar Demo Hazırlığı | 1 gün | ✅ | Seed verileri eklendi | — |
 
 **Toplam:** ~22-30 gün (~4-6 hafta gerçekçi tempo)  
 **Deadline:** 19 Mayıs 2026

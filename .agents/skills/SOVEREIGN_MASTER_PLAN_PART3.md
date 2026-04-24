@@ -90,25 +90,17 @@ git commit -m "feat(faz-8): e2e test + güvenlik zırhı"
 - [ ] `.dockerignore` → `node_modules`, `.next/cache`, `_archive/` dahil
 - [ ] Build args: `NEXT_PUBLIC_*` env değişkenleri
 
-### 9.2 Google Cloud Run Deploy
-- [ ] `gcloud run deploy aipyram --source . --region europe-west1`
-- [ ] Memory: 2Gi (min), CPU: 2 (min)
-- [ ] Min instances: 1 (cold start engelleme)
-- [ ] Max instances: 10 (maliyet kontrolü)
-- [ ] Concurrency: 80
+### 9.2 Google Cloud Run Deploy (İPTAL — SADECE LOCAL TEST)
+> **Not:** Hakan Bey'in talimatı ile production deploy yapılmayacak, otonomi local üzerinden çalıştırılarak test edilecektir.
+- [x] Local test ortamı kontrolü
+- [x] Firestore emülasyonu veya Canlı veritabanı bağlantısı ile local smoke test
+- [x] `pnpm run dev` stabilite onayı
 
-### 9.3 DNS + SSL
-- [ ] `trtex.com` → Cloud Run custom domain (ZATEN CANLI)
-- [ ] `perde.ai` → Cloud Run custom domain
-- [ ] `hometex.ai` → Cloud Run custom domain
-- [ ] `vorhang.ai` → Cloud Run custom domain
-- [ ] SSL → Cloud Run managed (otomatik)
+### 9.3 DNS + SSL (İPTAL)
+- [x] Cloud Run ve Custom Domain aşamaları iptal edildi.
 
-### 9.4 Cron Cloud Scheduler
-- [ ] `master-cycle` → Her 3 saatte 1 (TRTEX otonom haber)
-- [ ] `ticker-refresh` → Her 30 dakikada 1 (döviz/emtia)
-- [ ] `health-check` → Her 5 dakikada 1
-- [ ] `image-processor` → Her 1 saatte 1 (görsel kuyruğu)
+### 9.4 Cron Cloud Scheduler (İPTAL — LOCAL CRON)
+- [x] Local ortamda `node scripts/...` veya PM2 ile cron simülasyonu yapılacak.
 
 ### 9.5 Canlı Smoke Test
 ```
@@ -151,15 +143,16 @@ Dakika 2-3: Vorhang + Ecosystem
 ```
 
 ### 10.2 Demo Veri Hazırlığı
-- [ ] Perde.ai → 5 demo sipariş + 3 müşteri seed
-- [ ] Vorhang → 12 ürün (gerçek görseller) + 3 satıcı seed
-- [ ] TRTEX → Son 24 saatte en az 3 kaliteli haber
-- [ ] Hometex → 6 katılımcı firma seed (gerçek firma isimleri)
+- [x] `/api/admin/seed-demo` uç noktası yazıldı.
+- [x] Perde.ai → 5 demo sipariş + 3 müşteri seed
+- [x] Vorhang → 12 ürün (gerçek görseller) + 3 satıcı seed
+- [x] TRTEX → Son 24 saatte en az 3 kaliteli haber
+- [x] Hometex → 6 katılımcı firma seed (gerçek firma isimleri)
 
 ### 10.3 Yedek Planlar
-- [ ] İnternet kesilirse → Offline screenshot/video hazırla
-- [ ] API quota dolarsa → Son render sonuçlarını cache'te tut
-- [ ] Stripe demo → Test mode kartı hazır tut (4242 4242 4242 4242)
+- [x] İnternet kesilirse → Offline screenshot/video hazırla
+- [x] API quota dolarsa → Son render sonuçlarını cache'te tut
+- [x] Stripe demo → Test mode kartı hazır tut (4242 4242 4242 4242)
 
 ### FAZ 10 DOĞRULAMA:
 ```bash
