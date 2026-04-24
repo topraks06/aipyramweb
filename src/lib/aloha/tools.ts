@@ -4,6 +4,7 @@ import { invokeAgent } from '@/lib/aloha/registry';
 import { executeGlobalPublish } from '@/lib/aloha/workflows/GlobalPublishWorkflow';
 import { executeMatchmaker } from '@/lib/aloha/workflows/MatchmakerWorkflow';
 import { executeVorhangListing } from '@/lib/aloha/workflows/VorhangRetailWorkflow';
+import { executeHeimtexB2BListing } from '@/lib/aloha/workflows/HeimtexB2BWorkflow';
 
 /**
  * ALOHA Sovereign Tool Registry
@@ -466,6 +467,27 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       return { success: false, message: `Vorhang listeleme hatası: ${result.error}`, widgetType: 'error' };
     }
 
+    // --- SOVEREIGN HOMETEX B2B (Sanal Fuar & Sertifika Kalkanı) ---
+    case 'sovereign.heimtex_certification': {
+      const result = await executeHeimtexB2BListing({
+        manufacturerId: cmd.manufacturerId || 'mfg_demo_100',
+        manufacturerName: cmd.manufacturerName || 'Bursa Tex Factory',
+        productName: cmd.productName,
+        rawDescription: cmd.rawDescription,
+        wholesalePriceUSD: cmd.wholesalePriceUSD,
+        minOrderQuantity: cmd.minOrderQuantity || 1000
+      });
+      if (result.success) {
+        return {
+          success: true,
+          message: `Ürün Hometex.ai Sanal Fuarı'nda B2B standartlarında yayına alındı!\n\nÇıkarılan Teknik Etiketler:\n- Martindale: ${result.extractedSpecs?.martindale}\n- FR (Yanmazlık): ${result.extractedSpecs?.fireRetardant}\n- Ağırlık: ${result.extractedSpecs?.gsm}\n\nToptan Fiyat: ${result.b2bPricing}`,
+          data: result,
+          widgetType: 'success',
+        };
+      }
+      return { success: false, message: `Hometex B2B listeleme hatası: ${result.error}`, widgetType: 'error' };
+    }
+
     default:
       return { success: false, message: `Bilinmeyen araç: ${cmd.tool}`, widgetType: 'error' };
   }
@@ -551,4 +573,7 @@ Kullanılabilir araçlar ve JSON formatları:
 
 22. sovereign.vorhang_listing — Perde.ai satıcısının ürününü Almanca'ya çevirip, Euro fiyatıyla Vorhang B2C pazarında listeler
     { "tool": "sovereign.vorhang_listing", "productNameTR": "Özel Dikim Keten Tül Perde", "basePriceTRY": 1500, "stockQuantity": 50 }
+
+23. sovereign.heimtex_certification — Üreticinin girdiği süslü metinden B2B teknik etiketleri (Martindale, GSM, FR) çıkarıp Hometex fuarında sergiler
+    { "tool": "sovereign.heimtex_certification", "productName": "Otel Tipi Kumaş", "rawDescription": "Yanmaz otel perdesi 500 gram", "wholesalePriceUSD": 4.5, "minOrderQuantity": 1000 }
 `;
