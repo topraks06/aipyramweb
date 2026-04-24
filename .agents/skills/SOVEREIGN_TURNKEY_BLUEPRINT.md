@@ -81,7 +81,7 @@ hammaddeden son tüketicinin evine asılana/montajlanana kadar olan yolculuğunu
 2. **Motor ve Mekanik Fire Hesabı:** Motorlu sistemlerde +15cm yükseklik, 2.5x pile payı otonom
 3. **Koleksiyon Oluşturma:** TRTex'ten gelen hammadde verisini alıp tasarım kombinasyonları üretir
 4. **B2B ERP:** Sipariş, stok, muhasebe, CRM — küçük/orta ölçekli firmalar için
-5. **Anahtar Teslim Sanal Mağaza:** Türk perakendeciler Perde.ai'ye üye olur, hazır mağaza alır
+5. **Perakendeci Ekosistemi:** Perakendeciler buraya üye olur, AI kredisi satın alarak tasarım yapar, kendi ERP'lerini tutar ve sistem üzerinden toptan ürün siparişi verebilir. (Perakendeciye sanal mağaza SADECE Vorhang ve diğer bölgesel kapılarda açılır).
 6. **Klonlanabilir Motor:** Tasarım motoru API maliyeti yüksekse tüm node'lara klonlanabilir
 
 #### 🟠 Hometex.ai (365 Gün Açık Sanal Fuar)
@@ -127,7 +127,7 @@ hammaddeden son tüketicinin evine asılana/montajlanana kadar olan yolculuğunu
 - **GİRDİ:** Kullanıcının yüklediği gerçek kumaş/ürün fotoğrafı (Source Image)
 - **İŞLEM:** Bu fotoğrafı hazır 3D şablonların (perde, koltuk, yatak, pencere) üzerine matematiksel olarak giydirme
 - **ÇIKTI:** Gerçek kumaşın o odada/pencerede nasıl görüneceğinin fotorealistik render'ı
-- **YASAK:** Metinden resim üretme (Text-to-Image). Yapay zekanın kendi hayal ettiği kumaş çizimi YASAK.
+- **YASAK ve İSTİSNA:** Metinden resim üretme (Text-to-Image) gerçek kumaş veya mekan yüklendiğinde KESİNLİKLE YASAKTIR. Ancak elde sadece hammadde (iplik, pamuk) bilgisi varsa veya sosyal medya/konsept tasarımı yapılacaksa serbesttir. Yapay zekaya kör sınırlar konmaz.
 
 ### 3.2 Teknik Yaklaşım Seçenekleri (Araştırılacak)
 1. **Google Imagen Edit/Inpaint API** — Mevcut bir fotoğraftaki belirli alanı (perde bölgesi) başka bir dokuyla değiştirme

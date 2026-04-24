@@ -11,7 +11,7 @@ Bu belge, AntiGravity AI Ajanları için tartışmasız bir anayasadır. Projede
 ### Sistemin 5 Ana Organı:
 1. **AIPyram** (Master Node) — Beyindir. ALOHA AI burada yaşar. Tüm karar buradan verilir.
 2. **TRTex.com** — İstihbarat Radarı + Global Matchmaker. Haber üretir, ihale bulur, üreticiyle alıcı eşleştirir, koleksiyonları yayınlar, moda trendlerini koklar.
-3. **Perde.ai** — Tasarım Motoru + ERP. Image-to-Image (resimden resime) kumaş giydirme, koleksiyon oluşturma, sipariş/stok/muhasebe yönetimi. Perakendecilere anahtar teslim mağaza açar.
+3. **Perde.ai** — Tasarım Motoru + ERP. Image-to-Image (resimden resime) kumaş giydirme, koleksiyon oluşturma, sipariş/stok/muhasebe yönetimi. Perakendeciler buraya üye olur, AI kredisi satın alarak tasarım yapar, kendi ERP'lerini tutar ve sistemden toptan ürün satın alabilirler (Mağaza açma özelliği Perde.ai'de YOKTUR).
 4. **Hometex.ai** — 365 gün açık sanal fuar. Toptancılara ve distribütörlere ürün sergiler. Derin teknik etiketlerle (Martindale, GSM, DIN 4102) satış yapar.
 5. **Vorhang.ai** — B2C perakende (DACH pazarı). Almanca, dikilmiş/fiyatlandırılmış ürün satar. Marketplace (Yemeksepeti) modeli.
 
@@ -22,7 +22,8 @@ Vorhang.ai (DACH) | Shtori.ai (Rusya) | Parda.ai (Farsça) | Donoithat.ai (Vietn
 Perde kumaşları, döşemelik, yatak/banyo tekstili, korniş/rustik, perde rayları, motorlu mekanizmalar, stor/zebra/jaluzi, pasmanteri (saçak/püskül/boncuk), montaj malzemeleri, duvar kağıdı — kısaca ev tekstili fuarında satılan HER ŞEY.
 
 ### EN KRİTİK İŞ:
-**Image-to-Image (Resimden Resime) Tasarım Motoru** — Kullanıcının yüklediği gerçek kumaş fotoğrafını 3D perde/döşeme şablonuna giydiren motor. Text-to-Image (metinden resim) YASAK.
+**Image-to-Image (Resimden Resime) Tasarım Motoru** — Kullanıcının yüklediği gerçek kumaş fotoğrafını 3D perde/döşeme şablonuna giydiren motor. 
+*KURAL ESNEMESİ:* Text-to-Image (metinden resim) kullanımı, BİR ÜRÜN VEYA MEKAN FOTOĞRAFI YÜKLENDİĞİNDE YASAKTIR. Ancak elde sadece hammadde (iplik, pamuk vb.) bilgisi varsa veya sosyal medya/konsept tasarımları yapılacaksa Text-to-Image KULLANILABİLİR. Yapay zekaya asla kör sınırlar konmaz.
 
 ## 0.1 ZORUNLU OKUMA TALİMATLARI (Her oturum başında, SIRASI İLE)
 
