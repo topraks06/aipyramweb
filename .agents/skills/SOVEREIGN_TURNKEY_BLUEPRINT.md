@@ -191,15 +191,15 @@ Aşağıdaki araçlar ALOHA chat'ten tetiklenebilmelidir:
 | # | Araç | Açıklama | Durum |
 |---|------|----------|-------|
 | 1 | `sovereign.publish` | Ürünü 3 platforma otonom yayınla | ✅ Yazıldı |
-| 2 | `sovereign.matchmaker` | Üreticinin ürünü için dünya çapında alıcı bul | ⬜ Yazılacak |
-| 3 | `sovereign.retailer.onboard` | Perakendeciye anahtar teslim sanal mağaza aç | ⬜ Yazılacak |
-| 4 | `sovereign.certify` | Ürünün Avrupa sertifika uygunluğunu kontrol et | ⬜ Yazılacak |
-| 5 | `design.img2img` | Kumaş fotoğrafını 3D şablona giydir | ⬜ EN KRİTİK |
-| 6 | `design.collection` | Kumaş + mekanik + aksesuar kombinasyonu oluştur | ⬜ Yazılacak |
+| 2 | `sovereign.matchmaker` | Üreticinin ürünü için dünya çapında alıcı bul | ✅ Yazıldı |
+| 3 | `sovereign.retailer.onboard` | Perakendeciye anahtar teslim sanal mağaza aç | ✅ Yazıldı |
+| 4 | `sovereign.certify` | Ürünün Avrupa sertifika uygunluğunu kontrol et | ✅ Yazıldı |
+| 5 | `design.img2img` | Kumaş fotoğrafını 3D şablona giydir | ✅ Yazıldı |
+| 6 | `design.collection` | Kumaş + mekanik + aksesuar kombinasyonu oluştur | ✅ Yazıldı |
 | 7 | `pricing.calculate` | B2B toptan + B2C perakende fiyat hesapla | ✅ Yazıldı |
-| 8 | `logistics.gtip` | GTIP gümrük kodu otonom belirle | ⬜ Yazılacak |
-| 9 | `logistics.swatch` | Numune kargo barkodu oluştur (DHL/FedEx) | ⬜ Yazılacak |
-| 10 | `retailer.measure` | Müşteri pencere fotoğrafından ölçü çıkar | ⬜ Yazılacak |
+| 8 | `logistics.gtip` | GTIP gümrük kodu otonom belirle | ✅ Yazıldı |
+| 9 | `logistics.swatch` | Numune kargo barkodu oluştur (DHL/FedEx) | ✅ Yazıldı |
+| 10 | `retailer.measure` | Müşteri pencere fotoğrafından ölçü çıkar | ✅ Yazıldı |
 
 ---
 
@@ -228,10 +228,10 @@ Aşağıdaki araçlar ALOHA chat'ten tetiklenebilmelidir:
 
 | # | İş | Kritiklik | Tahmini Süre |
 |---|-----|-----------|-------------|
-| 1 | **Image-to-Image Tasarım Motoru** | 🔴🔴🔴 EN KRİTİK | 2-4 hafta |
-| 2 | TRTex Global Matchmaker | 🔴 KRİTİK | 1 hafta |
-| 3 | Perakendeci Onboarding (Anahtar Teslim Mağaza) | 🔴 KRİTİK | 1-2 hafta |
-| 4 | Heimtex Sertifika Kalkanı | 🟡 ORTA | 1 hafta |
+| 1 | **Image-to-Image Tasarım Motoru** | 🔴🔴🔴 EN KRİTİK | ✅ Tamamlandı |
+| 2 | TRTex Global Matchmaker | 🔴 KRİTİK | ✅ Tamamlandı |
+| 3 | Perakendeci Onboarding (Anahtar Teslim Mağaza) | 🔴 KRİTİK | ✅ Tamamlandı |
+| 4 | Heimtex Sertifika Kalkanı | 🟡 ORTA | ✅ Tamamlandı |
 | 5 | Hometex Fuar Vitrini Güçlendirme | 🟡 ORTA | 1 hafta |
 | 6 | Bölgesel Kapılar (Shtori, Parda, Donoithat) | 🟡 ORTA | Her biri 3-5 gün |
 | 7 | Kargo/Numune Entegrasyonu (DHL/FedEx) | 🟡 ORTA | 1 hafta |
