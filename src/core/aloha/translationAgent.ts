@@ -2,9 +2,6 @@ import { Schema, Type } from "@google/genai";
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 
-const apiKey = process.env.GEMINI_API_KEY;
-const ai = alohaAI.getClient();
-
 export interface TranslationInput {
   title: string;
   summary: string;
@@ -77,6 +74,7 @@ export async function executeTranslationAgent(baseContent: TranslationInput, sou
   } as TranslatedContent;
 
   try {
+    const ai = alohaAI.getClient();
     console.log(`[🌍 TRANSLATOR] Çeviri başlatıldı (${TARGET_LANGUAGES.join(', ')})...`);
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",

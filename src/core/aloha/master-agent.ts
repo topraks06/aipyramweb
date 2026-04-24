@@ -12,8 +12,6 @@ if (!apiKey) {
   console.warn("⚠️ API Key eksik. Master Agent otonomisi kapalı.");
 }
 
-const ai = alohaAI.getClient();
-
 /**
  * Mimarinin Kalbi: Tek Dosya Yönetimi
  * Tüm Ajanları (News, Translate, Image, Market) tek bir beyne (Master) hapsettik.
@@ -198,6 +196,7 @@ export async function executeMasterAgent(projectName: string, state: MasterSyste
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
+      const ai = alohaAI.getClient();
       console.log(`[🧠 MASTER] Deneme ${attempt}/${MAX_RETRIES}...`);
       
       const response = await ai.models.generateContent({
@@ -207,8 +206,7 @@ export async function executeMasterAgent(projectName: string, state: MasterSyste
           systemInstruction: `${await getMasterPrompt(projectName)}\nBağlam: ${JSON.stringify(triggerContext)}\n\n⚠️ DISIPLİN PROTOKOLÜ: 1. Önce Sorgula: Asla hafızandaki isimlere (Başkan, Tarih vb.) güvenme. Her zaman GÜNCEL VERİLERİ KULLAN (Google Search Grounding AKTİF). 2. Hakan Filtresi: Hayali ve abartı ifadeleri SİL. Saf, kanıtlı ve sektörel B2B dili kullan. 3. Kaynak Mührü: Her hamleni doğrula.`,
           responseMimeType: "application/json",
           responseSchema: responseSchema,
-          temperature: 0.7,
-          tools: [{ googleSearch: {} }]
+          temperature: 0.7
         }
       });
 

@@ -202,6 +202,14 @@
       "fields": [
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "aloha_costs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "node", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
