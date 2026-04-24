@@ -12,10 +12,11 @@
 - **Chat Arayüzü ile Tanımlama:** Üye sadece "Bu 20 denye polyester kumaş, yanmazlık belgesi de ekte, sürtünmesi 45 bin" diyecek.
 - **Otonom Ayrıştırma (Parser):** Arka plandaki Gemini Vision ve Text modelleri, görseli ve belgeyi analiz edip `TextileProduct` şemasındaki `martindale_rub_test`, `composition`, `gtip_code` gibi derin mühendislik verilerini otonom olarak doldurup doğrudan **TRTex** ana veritabanına kaydedecek.
 
-## 2. GÖRSEL RENDER MOTORU (100% GOOGLE-NATIVE INFRASTRUCTURE)
-Tasarım ve render işlemleri için dışarıdan hiçbir 3. parti (Midjourney, Unreal vb.) kullanılmayacaktır.
-- **Vertex AI & Imagen 4.0:** Trend skoru yükselen ürünlerin 16:9 sinematik vitrin renderları ve kartela tasarımları doğrudan Google'ın Vertex AI Image ve Gemini 3.1 Image Preview modelleriyle oluşturulacaktır.
-- **Ortak Motor Mimarisi:** Perde.ai'nin kalbindeki tasarım motoru, TRTex'e de entegre edilecektir. Böylece bir iplik üreticisi sisteme sadece "ip resmi" yüklediğinde, sistem o ipten dokunmuş bitmiş bir perdeyi anında renderlayıp üreticiye gösterecektir.
+## 2. GÖRSEL RENDER MOTORU (100% GOOGLE-NATIVE & DETERMINISTIC TEXTURE MAPPING)
+Tasarım ve render işlemleri için dışarıdan hiçbir 3. parti kullanılmayacaktır ancak **Standart Yapay Zeka (Prompt ile Resim Çizdirme) ASLA KULLANILMAYACAKTIR.**
+- **Kırmızı Çizgi (Pattern Hallucination):** Tekstilde %99 benzerlik %0 başarı demektir. Fabrikanın yüklediği görsel, AI tarafından yeniden çizilmeyecektir.
+- **Seamless Texture Extraction:** Gemini Vision, yüklenen kumaşın fotoğrafını önce kusursuz, dikişsiz bir kaplama dokusuna (Seamless Texture Map) çevirir.
+- **Matematiksel 3D Kaplama (Mesh Mapping):** Çıkarılan bu gerçek doku haritası, Vertex AI altyapısında barındırılan statik 3D modellere (Koltuk, Perde, Yatak) matematiksel olarak giydirilir (Displacement/Bump mapping). Böylece toptancı, AI'ın uydurduğu bir deseni değil, **fabrikanın ürettiği kumaşın milimetrik gerçekliğini** ekranda görür. Ürün asla elimizde patlamaz.
 
 ## 3. "SOVEREIGN ONAY GEÇİDİ" VE ALOHA YETKİ MATRİSİ (AUTHORITY LIMITS)
 ALOHA dünyanın en zeki asistanı olsa da, nihai patron **Hakan Toprak'tır.**
