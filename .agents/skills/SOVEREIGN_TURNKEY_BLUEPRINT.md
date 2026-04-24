@@ -235,7 +235,7 @@ Aşağıdaki araçlar ALOHA chat'ten tetiklenebilmelidir:
 | 5 | Hometex Fuar Vitrini Güçlendirme | 🟡 ORTA | ✅ Tamamlandı |
 | 6 | Bölgesel Kapılar (Shtori, Parda, Donoithat vb.) | 🟡 ORTA | ✅ Tamamlandı |
 | 7 | Kargo/Numune Entegrasyonu (DHL/FedEx) | 🟡 ORTA | ✅ Tamamlandı |
-| 8 | ALOHA Academy (Eğitim Modülleri 3-8) | 🟢 EN SON | 1 hafta |
+| 8 | ALOHA Academy (Eğitim Modülleri 1-8) | 🟢 EN SON | ✅ Tamamlandı |
 
 ---
 
