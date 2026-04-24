@@ -1,6 +1,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { getNode, getAllSovereignNodeIds, nodeHasFeature, type SovereignNodeFeatures } from '@/lib/sovereign-config';
 import { invokeAgent } from '@/lib/aloha/registry';
+import { executeGlobalPublish } from '@/lib/aloha/workflows/GlobalPublishWorkflow';
 
 /**
  * ALOHA Sovereign Tool Registry
@@ -399,6 +400,30 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       return { success: res.success, message: res.message, data: res.data, widgetType: res.success ? 'success' : 'error' };
     }
 
+    // --- SOVEREIGN GLOBAL PUBLISH ---
+    case 'sovereign.publish': {
+      const result = await executeGlobalPublish({
+        technicalSpecs: cmd.technicalSpecs || cmd.specs || '',
+        fabricCostPerMeter: cmd.cost || cmd.fabricCostPerMeter || 6,
+        gsm: cmd.gsm,
+        widthCm: cmd.widthCm,
+        composition: cmd.composition,
+        imageBase64: cmd.imageBase64,
+        imageUrl: cmd.imageUrl,
+        collectionName: cmd.collectionName,
+        patternType: cmd.patternType,
+      });
+      if (result.success) {
+        return {
+          success: true,
+          message: `Üürün 3 platforma otonom yayınlandı!\n• TRTex Haber ID: ${result.trtexNewsId}\n• Hometex Ürün ID: ${result.hometexProductId}\n• Vorhang Ürün ID: ${result.vorhangProductId}\n\nB2B Toptan: $${result.pricing?.b2b?.wholesalePrice}/m\nB2C Perakende: €${result.pricing?.b2c?.retailPricePerMeter}/m`,
+          data: result,
+          widgetType: 'success',
+        };
+      }
+      return { success: false, message: `Yayın başarısız: ${result.error}`, widgetType: 'error' };
+    }
+
     default:
       return { success: false, message: `Bilinmeyen araç: ${cmd.tool}`, widgetType: 'error' };
   }
@@ -475,4 +500,7 @@ Kullanılabilir araçlar ve JSON formatları:
 
 19. agent.create_quote — Fiyat Teklifi / Satış Siparişi verilerini anla ve onay (Preview) için arayüze gönder. (Otonom satışı BAŞLATIR ancak insan onayı bekler)
     { "tool": "agent.create_quote", "node": "perde|hometex", "authorId": "user_uid", "customerName": "Ahmet Yılmaz", "grandTotal": 15000, "discount": 500, "notes": "Montajı zor", "phone": "+905..." }
+
+20. sovereign.publish — Ürünü 3 platforma otonom yayınla (TRTex haber + Hometex vitrin + Vorhang mağaza)
+    { "tool": "sovereign.publish", "technicalSpecs": "kumaş teknik bilgisi", "fabricCostPerMeter": 6, "gsm": 580, "widthCm": 320, "composition": "%95 PES %5 Viskon" }
 `;
