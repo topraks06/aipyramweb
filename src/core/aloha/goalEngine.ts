@@ -1,4 +1,5 @@
 import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
+import { adminDb } from '@/lib/firebase-admin';
 import { AgentBudget, AgentOutput } from "../agents/types";
 
 export type GoalPriority = "revenue" | "growth" | "experiment";
@@ -66,14 +67,31 @@ export class GoalEngine {
     let consecutiveIdenticalErrors = 0;
     let lastErrorType = "";
     
-    // Execution Mode (70% Execute, 20% Optimize, 10% Build - simge tespiti)
+    // Execution Mode (A/B Test / Experiment Config via Firestore)
     let dynamicLoopAllowed = true;
-    if (goal.priority === "experiment" && Math.random() > 0.10) {
-      console.warn("[EXECUTION MODE GUARD] Bütçe %10 Build için ayrılmıştır, pas geçiliyor.");
-      dynamicLoopAllowed = false;
-    } else if (goal.priority === "growth" && Math.random() > 0.30) {
-      console.warn("[EXECUTION MODE GUARD] Bütçe %20 Optimize için ayrılmıştır, pas geçiliyor.");
-      dynamicLoopAllowed = false;
+    try {
+      const expDoc = await adminDb.collection('experiment_config').doc(goal.node_id).get();
+      if (expDoc.exists) {
+        const config = expDoc.data();
+        if (goal.priority === "experiment" && !config?.experimentEnabled) {
+          console.warn(`[EXECUTION MODE GUARD] Experiment config kapalı. Bütçe ayrılmadı. [${goal.node_id}]`);
+          dynamicLoopAllowed = false;
+        } else if (goal.priority === "growth" && !config?.growthEnabled) {
+          console.warn(`[EXECUTION MODE GUARD] Growth config kapalı. Bütçe ayrılmadı. [${goal.node_id}]`);
+          dynamicLoopAllowed = false;
+        }
+      } else {
+         // Koleksiyon yoksa güvenli taraf -> izin verme (false)
+         if (goal.priority === "experiment" || goal.priority === "growth") {
+             console.warn(`[EXECUTION MODE GUARD] Config bulunamadı. Güvenli taraf: Devre dışı. [${goal.node_id}]`);
+             dynamicLoopAllowed = false;
+         }
+      }
+    } catch(e) {
+       console.error(`[EXECUTION MODE GUARD] Firestore hatası. Güvenli taraf: Devre dışı.`, e);
+       if (goal.priority === "experiment" || goal.priority === "growth") {
+           dynamicLoopAllowed = false;
+       }
     }
     
     if (!dynamicLoopAllowed) {

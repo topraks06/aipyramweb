@@ -1,3 +1,5 @@
+import { adminDb } from '@/lib/firebase-admin';
+
 /**
  * PRODUCTION GUARD (Shadow Deploy & Traffic Test)
  * Sandbox testini başarıyla geçen otonom eylemlerin direkt %100 trafiğe çıkmasını engeller.
@@ -11,21 +13,36 @@ export class DeployGuard {
       return true; // Sandbox ortamlarında her zaman izinli
     }
 
-    // Gerçek prodüksiyonda burada Redis veya In-Memory bir hash tablosundan 
-    // özelliğin trafikteki durumunu (%10 vs %100) çeker.
-    const isShadowPhase = true; // Simülasyonda her yeni live kayıt önce Shadow'a düşer
-    const simulationTrafficRoll = Math.random(); // 0 ile 1 arası
-    
-    if (isShadowPhase) {
-      if (simulationTrafficRoll <= 0.10) {
-        console.log(`[🛡️ DEPLOY GUARD] ${featureId} özelliği Shadow Traffic (%10) sınırından geçti!`);
-        return true;
-      } else {
-        console.warn(`[🛡️ DEPLOY GUARD] ${featureId} özelliği henüz Full Deploy değil. Shadow Traffic reddedildi (Roll > 0.10).`);
-        return false; // İstek trafiği eski sisteme yönlendirmeli
+    try {
+      const docRef = adminDb.collection('feature_flags').doc(featureId);
+      const snap = await docRef.get();
+      
+      if (!snap.exists) {
+        // Feature flag yoksa güvenli taraf (false) dön
+        console.warn(`[🛡️ DEPLOY GUARD] ${featureId} özelliği feature_flags tablosunda bulunamadı. Erişim reddedildi.`);
+        return false;
       }
+      
+      const data = snap.data();
+      const status = data?.status || 'disabled'; // shadow, canary, live, disabled
+      
+      if (status === 'live') return true;
+      if (status === 'disabled') return false;
+      
+      // Shadow veya Canary için traffic percentage kontrolü
+      const trafficPercentage = data?.trafficPercentage || 0; // 0-100 arası
+      const simulationTrafficRoll = Math.random() * 100;
+      
+      if (simulationTrafficRoll <= trafficPercentage) {
+         console.log(`[🛡️ DEPLOY GUARD] ${featureId} (${status}) özelliği trafik sınırından geçti! (Hedef: %${trafficPercentage})`);
+         return true;
+      } else {
+         console.warn(`[🛡️ DEPLOY GUARD] ${featureId} (${status}) henüz Full Deploy değil. Trafik reddedildi.`);
+         return false;
+      }
+    } catch (e: any) {
+      console.error(`[🛡️ DEPLOY GUARD] Firestore hatası: ${e.message}`);
+      return false; // Hata durumunda fail-safe: kapalı
     }
-
-    return true;
   }
 }

@@ -27,7 +27,7 @@
 > HER BİRİ ÜRETİM SİSTEMİNDE VERİ KİRLİLİĞİNE NEDEN OLUYOR.
 
 ### 1.1 Lead Engine Sahte Hacim Düzeltme
-- [ ] `src/core/aloha/lead-engine/trigger.ts` satır 41
+- [x] `src/core/aloha/lead-engine/trigger.ts` satır 41 (Değiştirilen satırlar: 33-43)
 - `Math.floor(Math.random() * 500000) + 100000` → Kategori tablosundan al
 - PART4'teki `CATEGORY_VOLUME` tablosunu kullan:
 ```typescript
@@ -40,27 +40,27 @@ const CATEGORY_VOLUME: Record<string, number> = {
 - **Kanıt:** Değiştirilen satır numarasını yaz
 
 ### 1.2 Vorhang Order ID Collision Düzeltme
-- [ ] `src/app/api/v1/master/vorhang/create-order/route.ts` satır 30
+- [x] `src/app/api/v1/master/vorhang/create-order/route.ts` satır 30 (Değiştirilen satır: 30)
 - `VOR-${Math.floor(1000 + Math.random() * 9000)}-DE` → `VOR-${Date.now()}-${crypto.randomUUID().slice(0,4).toUpperCase()}`
 - **Kanıt:** Değiştirilen satır numarasını yaz
 
 ### 1.3 Marketplace Checkout Order ID Düzeltme
-- [ ] `src/app/api/stripe/marketplace-checkout/route.ts` satır 13
+- [x] `src/app/api/stripe/marketplace-checkout/route.ts` satır 13 (Değiştirilen satır: 13)
 - Aynı pattern → Aynı düzeltme (crypto.randomUUID)
 - **Kanıt:** Değiştirilen satır numarasını yaz
 
 ### 1.4 Pulse API Sahte Gecikme Düzeltme
-- [ ] `src/app/api/system/pulse/route.ts` satır 31
+- [x] `src/app/api/system/pulse/route.ts` satır 31 (Değiştirilen satırlar: 29-32)
 - `Math.floor(Math.random() * 25) + 10` → Sabit `15` veya gerçek Firestore ping ölçümü
 - **Kanıt:** Değiştirilen satır numarasını yaz
 
 ### 1.5 Admin Stats Sahte Visitor Düzeltme
-- [ ] `src/app/api/admin/stats/route.ts` satır 45 ve 47
+- [x] `src/app/api/admin/stats/route.ts` satır 45 ve 47 (Değiştirilen satırlar: 44-48)
 - `Math.floor(Math.random() * 500) + 100` → `0` (veri yoksa 0 göster, YALAN SÖYLEME)
 - **Kanıt:** Değiştirilen satır numaralarını yaz
 
 ### 1.6 FounderDashboard Hardcoded activeAgents Düzeltme
-- [ ] `src/components/admin/FounderDashboard.tsx` satır 49-52
+- [x] `src/components/admin/FounderDashboard.tsx` satır 49-52 (Değiştirilen satırlar: 49-52)
 - `activeAgents: 12, 8, 4, 4` → API'den gelen `platformStats` verisinden al
 - Stats API'de zaten `activeAgents` alanı var → düzgün map'le
 - **Kanıt:** Değiştirilen satır numaralarını yaz
