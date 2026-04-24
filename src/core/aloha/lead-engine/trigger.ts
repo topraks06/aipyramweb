@@ -33,12 +33,17 @@ export async function triggerLeadEngineFromNews(title: string, content: string, 
         // --- TENDER ROUTING (Otonom İhale Dağıtımı) ---
         // TRTEX'ten gelen istihbarat, tüm ekosistem için global "Fırsat" olarak açılır
         try {
+          const CATEGORY_VOLUME: Record<string, number> = {
+            'ihale': 500000, 'otel': 300000, 'konut': 250000,
+            'fuar': 150000, 'yatırım': 400000, 'tesis': 350000, 'default': 200000
+          };
+          const estimatedVolume = CATEGORY_VOLUME[category.toLowerCase()] ?? CATEGORY_VOLUME.default;
+
           await adminDb.collection('b2b_opportunities').add({
             title: `[TRTEX Fırsat] ${title}`,
-
             customerName: 'AIPyram Sovereign',
             items: [`İstihbarat: ${category}`],
-            grandTotal: Math.floor(Math.random() * 500000) + 100000, // Tahmini hacim
+            grandTotal: estimatedVolume, // Deterministik tahmini hacim
             status: 'opportunity',
             createdAt: new Date(),
             source: 'trtex_news_trigger'

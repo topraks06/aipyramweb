@@ -26,9 +26,10 @@ export async function GET() {
     const usedMem = totalMem - freeMem;
     const activeRamGb = (usedMem / (1024 * 1024 * 1024)).toFixed(1);
     
-    // 3. Network (Mock/Simulated 10-35ms)
-    // Server'dan Firestore'a (ping) var sayarsak 
-    const netLatency = Math.floor(Math.random() * 25) + 10;
+    // 3. Network (Firestore Ping)
+    const pingStart = Date.now();
+    await adminDb.collection('sovereign_config').doc('ping').get();
+    const netLatency = Date.now() - pingStart;
 
     // 4. Financial Pulse (CHF, EUR from TCMB or fallback)
     let eurUsd = "1.080";

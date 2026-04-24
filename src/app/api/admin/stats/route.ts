@@ -42,16 +42,15 @@ export async function GET() {
           .where('project', '==', p.id)
           .count().get();
         visitors = hits.data().count;
-        if (visitors === 0) visitors = routedByAloha > 0 ? routedByAloha * 15 : Math.floor(Math.random() * 500) + 100;
       } catch(e) {
-        visitors = routedByAloha > 0 ? routedByAloha * 15 : Math.floor(Math.random() * 500) + 100;
+        visitors = 0;
       }
       
       return {
         ...p,
         visitors,
         routedByAloha,
-        activeAgents: p.id === 'perde' ? 12 : p.id === 'trtex' ? 8 : 4
+        activeAgents: 0 // Gerçek veri Firestore agent kayıtlarından sayılabilir
       };
     }));
 

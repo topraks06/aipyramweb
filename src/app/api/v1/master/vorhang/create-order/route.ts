@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const EUR_TRY_RATE = 36.45; // TODO: TRTEX Intelligence'dan çekilecek
     const totalTry = totalEur * EUR_TRY_RATE;
 
-    const orderId = `VOR-${Math.floor(1000 + Math.random() * 9000)}-DE`;
+    const orderId = `VOR-${Date.now()}-${crypto.randomUUID().slice(0,4).toUpperCase()}-DE`;
     const timestamp = new Date();
 
     // 2. Vorhang Sistemine Kayıt (Müşteri için)

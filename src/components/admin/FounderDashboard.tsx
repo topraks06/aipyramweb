@@ -46,10 +46,10 @@ export default function FounderDashboard() {
     total: 0, today: 0, topIntent: '-', avgResponseMs: 0, failSafeTriggered: 0
   });
   const [platforms, setPlatforms] = useState<PlatformStat[]>([
-    { name: 'perde.ai', url: 'https://perde.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 12, color: 'text-emerald-500' },
-    { name: 'trtex.com', url: 'https://trtex.com', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 8, color: 'text-amber-500' },
-    { name: 'hometex.ai', url: 'https://hometex.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 4, color: 'text-blue-500' },
-    { name: 'vorhang.ai', url: 'https://vorhang.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 4, color: 'text-violet-500' },
+    { name: 'perde.ai', url: 'https://perde.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 0, color: 'text-emerald-500' },
+    { name: 'trtex.com', url: 'https://trtex.com', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 0, color: 'text-amber-500' },
+    { name: 'hometex.ai', url: 'https://hometex.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 0, color: 'text-blue-500' },
+    { name: 'vorhang.ai', url: 'https://vorhang.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 0, color: 'text-violet-500' },
   ]);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 

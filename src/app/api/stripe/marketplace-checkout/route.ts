@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const config = getNode(SovereignNodeId);
     
     const session = await createMarketplaceCheckout({
-      orderId: orderId || `VOR-${Math.floor(1000 + Math.random() * 9000)}-DE`,
+      orderId: orderId || `VOR-${Date.now()}-${crypto.randomUUID().slice(0,4).toUpperCase()}-DE`,
       lineItems: items,
       successUrl: `https://${config.domain}/checkout/success?order_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `https://${config.domain}/checkout?payment=cancelled`,
