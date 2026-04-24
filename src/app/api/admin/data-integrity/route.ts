@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
+import { verifyAdminAccess } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const isAdmin = await verifyAdminAccess();
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
   try {
     if (!adminDb) {
       return NextResponse.json({ success: false, error: 'Firebase Admin is not initialized.' }, { status: 500 });

@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     const project = req.headers.get("x-project");
 
     if (!apiKey || !VALID_API_KEYS.includes(apiKey)) {
+      console.warn(`[API Gateway Security] Unauthorized access attempt with key: ${apiKey?.substring(0, 5)}...`);
       return NextResponse.json({ error: "Unauthorized. Invalid or missing x-api-key." }, { status: 401 });
     }
 

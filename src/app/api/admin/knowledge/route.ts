@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
+import { verifyAdminAccess } from '@/lib/admin-auth';
 
 export async function POST(req: Request) {
+  const isAdmin = await verifyAdminAccess();
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   try {
     const body = await req.json();
     const { topic, content, source = "manual_admin", metadata = {} } = body;
@@ -40,6 +43,8 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  const isAdmin = await verifyAdminAccess();
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   try {
     if (!adminDb) {
       return NextResponse.json({ success: false, error: "Firebase Admin is not initialized." }, { status: 500 });
@@ -65,6 +70,8 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  const isAdmin = await verifyAdminAccess();
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   try {
     const body = await req.json();
     const { id, topic, content, metadata } = body;
@@ -91,6 +98,8 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const isAdmin = await verifyAdminAccess();
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');

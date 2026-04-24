@@ -60,18 +60,18 @@
 ```
 
 ### 8.6 Stripe Entegrasyon Testi
-- [ ] Test key ile 3 plan checkout (Keşfet, Pro, Enterprise)
-- [ ] Webhook → lisans güncelleme
-- [ ] Vorhang marketplace checkout → Escrow ödeme
-- [ ] Stripe dashboard'da ödeme görünüyor mu?
+- [x] Test key ile 3 plan checkout (Keşfet, Pro, Enterprise)
+- [x] Webhook → lisans güncelleme
+- [x] Vorhang marketplace checkout → Escrow ödeme
+- [x] Stripe dashboard'da ödeme görünüyor mu?
 
 ### 8.7 Güvenlik Zırhı
-- [ ] `/api/render/route.ts` → Anonim kullanıcıya max 1 render/gün (IP bazlı)
+- [x] `/api/render/route.ts` → Anonim kullanıcıya max 1 render/gün (IP bazlı)
   - Firestore `render_rate_limits/{ip}` counter
-- [ ] Tüm admin API'leri → Firebase Admin auth token doğrulaması
-- [ ] CRON endpoint'leri → `CRON_SECRET` header kontrolü
-- [ ] `/api/brain/v1/trigger` → `x-api-key` doğrulaması güçlendirme
-- [ ] Rate limiting → Upstash Redis (middleware'de zaten var — doğrula)
+- [x] Tüm admin API'leri → Firebase Admin auth token doğrulaması
+- [x] CRON endpoint'leri → `CRON_SECRET` header kontrolü
+- [x] `/api/brain/v1/trigger` → `x-api-key` doğrulaması güçlendirme
+- [x] Rate limiting → Upstash Redis (middleware'de zaten var — doğrula)
 
 ### FAZ 8 DOĞRULAMA:
 ```bash
