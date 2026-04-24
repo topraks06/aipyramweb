@@ -31,7 +31,14 @@ export class DeployGuard {
       
       // Shadow veya Canary için traffic percentage kontrolü
       const trafficPercentage = data?.trafficPercentage || 0; // 0-100 arası
-      const simulationTrafficRoll = Math.random() * 100;
+      const arr = new Uint32Array(1);
+      if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+        crypto.getRandomValues(arr);
+      } else {
+        // Fallback for environments without crypto
+        arr[0] = Math.floor(Math.random() * 100);
+      }
+      const simulationTrafficRoll = arr[0] % 100;
       
       if (simulationTrafficRoll <= trafficPercentage) {
          console.log(`[🛡️ DEPLOY GUARD] ${featureId} (${status}) özelliği trafik sınırından geçti! (Hedef: %${trafficPercentage})`);

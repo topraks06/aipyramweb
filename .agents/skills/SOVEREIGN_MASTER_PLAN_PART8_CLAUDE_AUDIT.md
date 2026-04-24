@@ -116,15 +116,15 @@ Gemini bunu **kendi savaş testinde buldu ve düzeltti** (onaylıyorum):
 ### GÖREV 8.1: Admin Panel Mock Verileri Temizle
 **Öncelik: 🔴 KRİTİK — Bu veriler Hakan Bey'in gördüğü ekranda sahte veri gösteriyor**
 
-- [ ] `src/components/admin/DomainHealthMonitor.tsx` satır 69
+- [x] `src/components/admin/DomainHealthMonitor.tsx` satır 69
   - `Math.floor(Math.random() * 200) + 50` → `n.responseTime || 0`
   - Firestore yoksa 0 göster, YALAN SÖYLEME
 
-- [ ] `src/app/api/health-full/route.ts` satır 95
+- [x] `src/app/api/health-full/route.ts` satır 95
   - `new Date(Date.now() - Math.random() * 86400000).toISOString()` → deploy bilgisi yoksa sabit tarih veya `'N/A'`
   - Alternatif: Firestore `deploy_logs` koleksiyonundan gerçek deploy tarihi al
 
-- [ ] `src/app/admin/layout.tsx` satır 184
+- [x] `src/app/admin/layout.tsx` satır 184
   - `Math.random() * (radarData?.cpu ? (radarData.cpu / 5) : 60) + 10`
   - Bu CPU grafiği her render'da farklı bar yüksekliği veriyor → SAHTE
   - Çözüm: Statik bölüm yükseklikleri (ör. `[30, 45, 60, 35, 50, 65, 40, 55, 70, 45, 50, 38]`) veya `radarData` içinden gerçek zaman serisi
@@ -140,7 +140,7 @@ git commit -m "fix(admin-mock): DomainHealth, health-full ve layout sahte verile
 ### GÖREV 8.2: GodsEye Widget Sahte Ajan Pozisyonları
 **Öncelik: 🟡 ORTA**
 
-- [ ] `src/components/aloha/widgets/GodsEyeWidget.tsx` satır 41-42
+- [x] `src/components/aloha/widgets/GodsEyeWidget.tsx` satır 41-42
   - Ajanların x,y pozisyonu `Math.random()` ile güncelleniyor
   - Bu widget "Tanrı'nın Gözü" → ajan hareketleri sahte
   - Çözüm: Pozisyon değişikliklerini kaldır veya statik grid pozisyonları kullan
@@ -156,7 +156,7 @@ git commit -m "fix(gods-eye): sahte ajan pozisyonları düzeltildi"
 ### GÖREV 8.3: DeployGuard Traffic Roll
 **Öncelik: 🟡 ORTA**
 
-- [ ] `src/core/aloha/deployGuard.ts` satır 34
+- [x] `src/core/aloha/deployGuard.ts` satır 34
   - `Math.random() * 100` → `crypto.getRandomValues()` veya deterministik hash
   - Bu Canary deployment trafiği belirliyor — kriptografik olmayan random güvenlik riski!
   - Çözüm: `const arr = new Uint32Array(1); crypto.getRandomValues(arr); const roll = arr[0] % 100;`
@@ -175,14 +175,14 @@ git commit -m "fix(deploy-guard): canary traffic roll crypto-safe yapıldı"
 Gemini bir JavaScript scripti (`tick-checkboxes.js`) yazarak TÜM checkbox'ları otomatik `[x]` yaptı.
 Bu demek oluyor ki hiçbir checkbox gerçek durumu yansıtmıyor.
 
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` Faz 1 checkbox'ları: Script kaldır, gerçek duruma göre düzelt
+- [x] `GEMINI_SOVEREIGN_MISSION.md` Faz 1 checkbox'ları: Script kaldır, gerçek duruma göre düzelt
   - Faz 1.1 Güvenlik: `firebase-sa-key.json` .gitignore'da mı? → DOĞRULA, varsa [x]
   - Faz 1.1: `aloha-sdk/index.ts` gerçek Firestore implementasyonu → YOKSA [ ] yap
   - Faz 1.1: `/api/render/route.ts` IP bazlı rate limit → YOKSA [ ] yap
   - Faz 1.2 Kök Dizin: `refactor.js` vb. `_archive/`'de mi? → YOKSA [ ] yap
 
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` Faz 2 checkbox'ları aynı şekilde doğrula
-- [ ] `GEMINI_SOVEREIGN_MISSION.md` Faz 3-8 checkbox'ları aynı şekilde doğrula
+- [x] `GEMINI_SOVEREIGN_MISSION.md` Faz 2 checkbox'ları aynı şekilde doğrula
+- [x] `GEMINI_SOVEREIGN_MISSION.md` Faz 3-8 checkbox'ları aynı şekilde doğrula
 
 > **KURAL:** Her [x] için dosyayı AÇ ve İÇERİĞİNE BAK. "Zaten vardı" demek YASAK.
 
@@ -196,7 +196,7 @@ git commit -m "fix(mission-md): checkbox'lar gerçek duruma göre düzeltildi"
 ### GÖREV 8.5: seed-demo Route Temizliği
 **Öncelik: 🟢 DÜŞÜK**
 
-- [ ] `src/app/api/admin/seed-demo/route.ts` satır 30, 47, 63
+- [x] `src/app/api/admin/seed-demo/route.ts` satır 30, 47, 63
   - Bu bir demo seed scripti ama Math.random ile üretilen veriler Firestore'a yazılıyor
   - `totalAmount`, `price`, `booth` → sabit demo değerleri kullan
 

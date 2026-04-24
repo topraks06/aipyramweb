@@ -27,7 +27,7 @@ export async function POST(req: Request) {
             orderNumber: `ORD-PERDE-2026${i+1}`,
             customerName: `Demo Müşteri ${i+1}`,
             status: i % 2 === 0 ? 'confirmed' : 'pending',
-            totalAmount: (Math.random() * 10000 + 5000).toFixed(2),
+            totalAmount: (i * 1234 + 5000).toFixed(2),
             createdAt: new Date().toISOString()
         });
         results.perdeOrders++;
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     for (const p of vorhangSampleProducts) {
         await vorhangRef.add({
             title: p,
-            price: Math.floor(Math.random() * 500) + 100,
+            price: (p.length * 15) + 100,
             currency: 'EUR',
             image: 'https://via.placeholder.com/800x800?text=Vorhang+Product',
             sellerId: 'demo-seller-1',
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     for (const f of hometexFirms) {
         await hometexRef.add({
             name: f,
-            booth: `Hall ${Math.floor(Math.random() * 8) + 1} - Stand ${Math.floor(Math.random() * 100)}`,
+            booth: `Hall ${(f.length % 8) + 1} - Stand ${f.length * 3}`,
             category: 'Ev Tekstili',
             logo: 'https://via.placeholder.com/400x400?text=Company+Logo',
             status: 'approved',

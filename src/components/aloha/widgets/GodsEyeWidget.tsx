@@ -36,11 +36,7 @@ export function GodsEyeWidget() {
     fetchStatus();
 
     const interval = setInterval(() => {
-      setAgents(prev => prev.map(agent => ({
-        ...agent,
-        x: Math.max(10, Math.min(90, agent.x + (Math.random() * 10 - 5))),
-        y: Math.max(10, Math.min(90, agent.y + (Math.random() * 10 - 5)))
-      })));
+      // Deterministik animasyon eklenebilir. Math.random() kaldırıldı.
     }, 3000);
     return () => clearInterval(interval);
   }, []);

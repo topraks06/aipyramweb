@@ -66,7 +66,7 @@ export default function DomainHealthMonitor() {
                     label: n.domain.toUpperCase(),
                     role: n.role,
                     status: n.status,
-                    responseTime: Math.floor(Math.random() * 200) + 50, // mock response time if not in API
+                    responseTime: n.responseTime || 0,
                     lastChecked: new Date(),
                     uptime: n.uptime,
                     ssl: n.ssl,

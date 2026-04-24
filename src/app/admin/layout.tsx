@@ -180,8 +180,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <span className={`text-xs font-bold ${radarData?.cpu > 300 ? 'text-amber-600' : 'text-emerald-600'}`}>{radarData?.cpu > 300 ? 'Yoğun' : 'Normal'}</span>
                 </div>
                 <div className="flex gap-1 h-10 items-end">
-                  {[...Array(12)].map((_, i) => {
-                    const h = Math.random() * (radarData?.cpu ? (radarData.cpu / 5) : 60) + 10;
+                  {[30, 45, 60, 35, 50, 65, 40, 55, 70, 45, 50, 38].map((val, i) => {
+                    const h = val;
                     return (
                       <div key={i} className="flex-1 bg-slate-200 rounded-t-sm overflow-hidden flex items-end">
                         <div className={`w-full ${radarData?.cpu > 300 ? 'bg-amber-400' : 'bg-emerald-400'} transition-all duration-1000`} style={{ height: `${Math.min(100, h)}%` }} />

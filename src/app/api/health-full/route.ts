@@ -92,7 +92,7 @@ export async function GET() {
         status: 'online',
         uptime: '99.9%',
         ssl: 'Valid',
-        last_deploy: new Date(Date.now() - Math.random() * 86400000).toISOString(),
+        last_deploy: 'N/A',
         error_count
       };
     }));
