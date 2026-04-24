@@ -148,7 +148,7 @@ export async function POST() {
     // 1. TRTEX HABERİ (Fiyat YOK — sadece trend analizi)
     // ═══════════════════════════════════════════════════
     const trtexRef = await adminDb.collection('trtex_news').add({
-      title: 'Avrupa'nın Yeni Gözdesi: "Nordic Botanical" — Doğal Liflerde Botanik Desen Devrimi',
+      title: `Avrupa'nın Yeni Gözdesi: "Nordic Botanical" — Doğal Liflerde Botanik Desen Devrimi`,
       summary: '2026-2027 sezonunda Avrupa ev tekstili pazarında "Biophilic Design" akımının yükselişiyle birlikte, doğal keten bazlı botanik desenli kumaşlar rekor talep görüyor. İskandinav minimalizmi ile Akdeniz botanik motiflerini harmanlayan bu yeni trend, DACH pazarında tüketici talebini %340 artırdı.',
       content: TRTEX_FULL_ARTICLE,
       category: 'trend-analysis',
