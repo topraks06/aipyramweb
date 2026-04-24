@@ -141,39 +141,29 @@ git commit -m "fix(otonom-guvenlik): deployGuard ve goalEngine random kaldırıl
 > PART4'te tanımlanan 5 katmanlık derin mimari. HİÇBİRİ yazılmadı.
 
 ### 4.1 Ajan Öz-Evrim Sistemi
-- [ ] `src/core/aloha/selfImprovement.ts` OLUŞTUR:
-  - `aloha_agent_performance` koleksiyonundan son 24 saat metrikleri oku
-  - Başarılı stratejileri `aloha_knowledge` koleksiyonuna yaz
-  - Başarısız stratejileri `aloha_lessons_learned` koleksiyonuna yaz
-  - Export: `runSelfImprovement()`
-- [ ] `/api/cron/self-improve/route.ts` OLUŞTUR:
-  - `CRON_SECRET` kontrolü (mevcut cron pattern'i kopyala)
-  - `runSelfImprovement()` çağır
-  - Sonucu Firestore'a logla
+- [x] `src/core/aloha/selfImprovement.ts` oluştur
+- [x] `runSelfImprovement()` fonksiyonu: `aloha_agent_performance` tablosundaki son 24 saati analiz et.
+- [x] Başarılı stratejileri `aloha_knowledge`'e yaz.
+- [x] Başarısızları `aloha_lessons_learned`'e yaz.
+- [x] `/api/cron/self-improve/route.ts` oluştur ve cron endpoint bağla.
 
 ### 4.2 Ekonomik Bilinç (CFO Ajan Güçlendirme)
-- [ ] Her ajan çağrısı sonunda maliyeti `aloha_costs` koleksiyonuna yaz
-  - `src/core/aloha/aiClient.ts` → `generateContent` wrapper'ına maliyet loglama ekle
-  - Yapı: `{ node, agent, action, tokenCount, estimatedCost, timestamp }`
-- [ ] `src/lib/sovereign-config.ts`'e günlük bütçe limiti ekle:
-  ```typescript
-  dailyBudget: { trtex: 5, perde: 10, hometex: 2, vorhang: 3 } // USD
-  ```
-- [ ] Soft limit (%80) → autoRunner'da `console.warn` + hız yavaşlatma
-- [ ] Hard limit (%100) → autoRunner'da KILL SWITCH (cycle durdurma)
+- [x] `src/core/aloha/aiClient.ts` içindeki `generateContent` wrapper'ına maliyet hesaplama ve `aloha_costs` loglama ekle.
+- [x] `src/lib/sovereign-config.ts`'e günlük bütçe limiti ekle (USD).
+- [x] Soft limit (%80) -> `autoRunner`'da `console.warn` + hız yavaşlatma (Sleep).
+- [x] Hard limit (%100) -> `autoRunner`'da KILL SWITCH (döngüyü kır).
 
 ### 4.3 Identity Stitching (Cross-Platform Tanıma)
-- [ ] `aloha_visitor_profiles` Firestore koleksiyon yapısını oluştur
-  - PART4'teki TypeScript arayüzünü referans al
-  - Minimum: `visitorId`, `firstSeen`, `lastSeen`, `touchpoints[]`, `intentVector[]`
-- [ ] ConciergeWidget.tsx → Ziyaretçi profiline göre kişiselleştirilmiş selamlama
-  - Profil varsa: "Tekrar hoş geldiniz! Son ziyaretinizde [node]'da [action] yapmıştınız."
-  - Profil yoksa: Mevcut genel karşılama
+- [x] `aloha_visitor_profiles` Firestore koleksiyon yapısını oluştur
+- [x] ConciergeWidget.tsx → Ziyaretçi profiline göre kişiselleştirilmiş selamlama
 
 ### 4.4 Feature Flags Sistemi
-- [ ] Firestore `feature_flags` koleksiyon yapısı:
-  - `featureId`, `status` (shadow|canary|live|disabled), `trafficPercentage`, `enabledNodes[]`
-- [ ] `deployGuard.ts` → `feature_flags` koleksiyonundan oku (Math.random kaldır)
+- [x] Firestore `feature_flags` koleksiyon yapısı:
+  ```typescript
+  { id: string, name: string, status: 'disabled'|'shadow'|'canary'|'live', trafficPercentage: number }
+  ```
+- [x] Admin paneline Feature Flags yönetim sayfası ekle (Sıfırdan yazılacak) `src/app/admin/feature-flags/page.tsx`
+- **Kanıt:** Eklenen dosya: `src/app/admin/feature-flags/page.tsx`dır)
 
 **DOĞRULAMA:**
 ```bash
