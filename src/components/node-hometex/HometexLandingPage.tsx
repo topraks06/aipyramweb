@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import HometexNavbar from './HometexNavbar';
 import HometexFooter from './HometexFooter';
-import { HOMETEX_HALLS } from '@/lib/hometex-demoData';
 
-export default function HometexLandingPage({ articles = [], exhibitors = [] }: { articles?: any[], exhibitors?: any[] }) {
+export default function HometexLandingPage({ articles = [], exhibitors = [], halls = [] }: { articles?: any[], exhibitors?: any[], halls?: any[] }) {
 
   const featuredArticle = articles.find(a => a.isFeatured) || articles[0];
   const sidebarArticles = articles.filter(a => a.id !== featuredArticle?.id).slice(0, 3);
@@ -276,7 +275,7 @@ export default function HometexLandingPage({ articles = [], exhibitors = [] }: {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-24">
-            {HOMETEX_HALLS.map((hall, i) => (
+            {halls.map((hall, i) => (
               <motion.div 
                 key={i} 
                 initial={{ opacity: 0, y: 40 }}

@@ -220,24 +220,29 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   if (projectName === 'hometex') {
     let articles: any[] = [];
     let exhibitors: any[] = [];
+    let halls: any[] = [];
     try {
       const articlesSnap = await adminDb.collection('hometex_articles').orderBy('publishedAt', 'desc').limit(4).get();
       const exhibitorsSnap = await adminDb.collection('hometex_exhibitors').limit(6).get();
+      const hallsSnap = await adminDb.collection('hometex_halls').limit(8).get();
       articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      halls = hallsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       
-      if (articles.length === 0 || exhibitors.length === 0) {
+      if (articles.length === 0 || exhibitors.length === 0 || halls.length === 0) {
         const demoData = await import('@/lib/hometex-demoData');
         if (articles.length === 0) articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
         if (exhibitors.length === 0) exhibitors = demoData.HOMETEX_EXHIBITORS;
+        if (halls.length === 0) halls = demoData.HOMETEX_HALLS;
       }
     } catch (e) {
       console.warn('[HOMETEX] Firestore fetch error:', e);
       const demoData = await import('@/lib/hometex-demoData');
       articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
       exhibitors = demoData.HOMETEX_EXHIBITORS;
+      halls = demoData.HOMETEX_HALLS;
     }
-    return <HometexLandingPage articles={articles} exhibitors={exhibitors} />;
+    return <HometexLandingPage articles={articles} exhibitors={exhibitors} halls={halls} />;
   }
   if (projectName === 'vorhang') {
     let products: any[] = [];

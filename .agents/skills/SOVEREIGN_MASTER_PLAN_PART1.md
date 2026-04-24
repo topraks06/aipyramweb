@@ -144,52 +144,52 @@ git commit -m "feat(faz-3): perde.ai mock-to-production ERP"
 ### 4A: HOMETEX.AI (Sanal Fuar + Dergi)
 
 #### 4A.1 Veri Katmanı
-- [ ] `HometexLandingPage.tsx` → Hardcoded 6 hall objesi → `hometex_exhibitors` Firestore koleksiyonu
+- [x] `HometexLandingPage.tsx` → Hardcoded 6 hall objesi → `hometex_exhibitors` Firestore koleksiyonu
   - Fallback: `hometex-demoData.ts` mevcut verileri seed olarak kullan
   - `/admin` linkini KESİNLİKLE kaldır (son kullanıcıya admin gösterilmez)
-- [ ] `Expo.tsx` → `hometex_halls` Firestore koleksiyonu (salon bilgileri)
-- [ ] `Exhibitors.tsx` → `hometex_exhibitors` Firestore, auth hook entegrasyonu
-- [ ] `ExhibitorDetail.tsx` → `useSovereignAuth('hometex')` (zaten yapıldı — doğrula)
-- [ ] `BoothDetail.tsx` → Aynı auth doğrulama
-- [ ] `Magazine.tsx` → `hometex_articles` Firestore koleksiyonu
-- [ ] `MagazineDetail.tsx` → Tekil makale çekme
-- [ ] `Trends.tsx` → TRTEX bridge (`trtex-bridge.ts` üzerinden haber çekme)
+- [x] `Expo.tsx` → `hometex_halls` Firestore koleksiyonu (salon bilgileri)
+- [x] `Exhibitors.tsx` → `hometex_exhibitors` Firestore, auth hook entegrasyonu
+- [x] `ExhibitorDetail.tsx` → `useSovereignAuth('hometex')` (zaten yapıldı — doğrula)
+- [x] `BoothDetail.tsx` → Aynı auth doğrulama
+- [x] `Magazine.tsx` → `hometex_articles` Firestore koleksiyonu
+- [x] `MagazineDetail.tsx` → Tekil makale çekme
+- [x] `Trends.tsx` → TRTEX bridge (`trtex-bridge.ts` üzerinden haber çekme)
 
 #### 4A.2 Seed Script
-- [ ] `scripts/seedHometex.ts` oluştur:
+- [x] `scripts/seedHometex.ts` oluştur:
   - 6 katılımcı firma (exhibitors)
   - 4 dergi makalesi (magazine)
   - 8 salon tanımı (halls)
   - `hometex-demoData.ts` verileri seed kaynağı olarak kullanılabilir
 
 #### 4A.3 Navbar Düzeltme
-- [ ] Hometex → Kendi hardcoded header'ını kaldır → Merkezi `HometexNavbar` bileşenine geçiş
+- [x] Hometex → Kendi hardcoded header'ını kaldır → Merkezi `HometexNavbar` bileşenine geçiş
 
 ### 4B: VORHANG.AI (B2C E-Ticaret Marketplace)
 
 #### 4B.1 Sepet Altyapısı
-- [ ] `useCartStore.ts` → Zustand store (mevcut ise doğrula, yoksa oluştur)
+- [x] `useCartStore.ts` → Zustand store (mevcut ise doğrula, yoksa oluştur)
   - addItem, removeItem, updateQuantity, clearCart, getTotal
   - localStorage persistence (hydrate on mount)
 
 #### 4B.2 Ürün Sistemi
-- [ ] `ProductGrid.tsx` → `vorhang_products` Firestore koleksiyonu
+- [x] `ProductGrid.tsx` → `vorhang_products` Firestore koleksiyonu
   - Empty state: "Henüz ürün eklenmemiş" (zaten var — doğrula)
-- [ ] `ProductDetail.tsx` → Tekil ürün detay + sepete ekle
-- [ ] Seed script: `scripts/seedVorhang.ts` → 12 ürün + 3 satıcı
+- [x] `ProductDetail.tsx` → Tekil ürün detay + sepete ekle
+- [x] Seed script: `scripts/seedVorhang.ts` → 12 ürün + 3 satıcı
 
 #### 4B.3 Checkout + Escrow
-- [ ] `CheckoutPage.tsx` → Stripe marketplace checkout
+- [x] `CheckoutPage.tsx` → Stripe marketplace checkout
   - Yemeksepeti modeli: Ödeme AIPyram havuz hesabına düşer
   - `/api/stripe/marketplace-checkout/route.ts` → Gerçek Stripe session
-- [ ] `OrderConfirmation.tsx` → Sipariş onay sayfası (basePath fix zaten yapıldı)
+- [x] `OrderConfirmation.tsx` → Sipariş onay sayfası (basePath fix zaten yapıldı)
 
 #### 4B.4 Satıcı Paneli
-- [ ] `SellerDashboard.tsx` → `vorhang_orders` + `vorhang_sellers` Firestore
+- [x] `SellerDashboard.tsx` → `vorhang_orders` + `vorhang_sellers` Firestore
   - Satıcının siparişlerini görmesi
   - Sipariş durumu güncelleme (hazırlanıyor → kargoda → teslim)
-- [ ] `SellerOnboarding.tsx` → Firestore kaydı (zaten yapıldı — doğrula)
-- [ ] `SellerIngestion.tsx` → Firestore kaydı (zaten yapıldı — doğrula)
+- [x] `SellerOnboarding.tsx` → Firestore kaydı (zaten yapıldı — doğrula)
+- [x] `SellerIngestion.tsx` → Firestore kaydı (zaten yapıldı — doğrula)
 
 ### FAZ 4 DOĞRULAMA:
 ```bash

@@ -5,16 +5,15 @@ import { motion } from 'motion/react';
 import { ArrowRight, Filter, Search } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { HOMETEX_HALLS } from '@/lib/hometex-demoData';
 import HometexFooter from './HometexFooter';
 
-export default function Expo({ exhibitors = [] }: { exhibitors?: any[] }) {
+export default function Expo({ exhibitors = [], halls = [] }: { exhibitors?: any[], halls?: any[] }) {
   const [activeFilter, setActiveFilter] = useState('Tümü');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filters = ['Tümü', 'Döşemelik', 'Perdelik', 'Yatak & Banyo', 'Akıllı', 'Sürdürülebilir'];
 
-  const allHalls = HOMETEX_HALLS;
+  const allHalls = halls;
 
   const filteredHalls = allHalls.filter(hall => {
     const matchesFilter = activeFilter === 'Tümü' || 
