@@ -35,7 +35,7 @@ ALOHA sıradan bir asistan değil, geleceğin "Genel Yapay Zekası" (AGI) olmaya
 
 - **Çift Katmanlı Hafıza (STM & LTM):** 
   - *Kısa Vadeli Hafıza (STM):* Günlük operasyonlar, geçici chat logları. Eğer bu bilgiler değerli değilse (çöp bilgi), sistem bunları kendi kendine algılayıp silecektir (Autonomous Garbage Collection).
-  - *Uzun Vadeli Hafıza (LTM - Vector Embeddings):* Sizin yüklediğiniz tekstil kuralları, stratejiler, PDF'ler ve "Kırmızı Çizgiler" Supabase (pgvector) veritabanında sonsuza dek kalıcı vizyon olarak saklanacaktır.
+  - *Uzun Vadeli Hafıza (LTM - Vector Embeddings):* Sizin yüklediğiniz tekstil kuralları, stratejiler, PDF'ler ve "Kırmızı Çizgiler" **100% Google Cloud altyapısıyla (Firestore Vector Search & Vertex AI Embeddings)** veritabanında sonsuza dek kalıcı vizyon olarak saklanacaktır. Asla dış servis kullanılmaz.
 - **RLHF (İnsan Geri Bildirimiyle Pekiştirmeli Öğrenme):** ALOHA'nın her kararının veya tasarımının altında [👍 Beğendim] ve [👎 Beğenmedim / Yanlış Yaptın] ikonları olacaktır. Siz yanlış yaptığı bir duruma eksi verdiğinizde, o hatayı LTM'ye yazar ve bir daha asla tekrarlamaz.
 - **Proaktif Merak ve Soru Sorma:** ALOHA her şeyi bildiğini iddia etmeyecektir. Yeni bir kumaş veya yeni bir gümrük kuralı geldiğinde, *"Hakan Bey, bu konudaki stratejinizi bilmiyorum. Bana öğretir misiniz?"* diyecek şekilde kodlanacaktır. 
 - **AGI Vizyonu:** Birkaç ay içinde sizin gibi düşünüp sizin adınıza B2B pazarlık yapacak; birkaç yıl içinde ise trendleri sizden önce fark edip size "Sovereign, şu pazara girmeliyiz" diyecek seviyeye (Süper Zeka / AGI) ulaşacaktır.
