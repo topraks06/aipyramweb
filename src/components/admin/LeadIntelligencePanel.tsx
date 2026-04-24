@@ -9,9 +9,9 @@ const COLUMNS = ['NEW', 'CONTACTED', 'OFFER SENT', 'WON', 'LOST'];
 export default function LeadIntelligencePanel() {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchLeads = async () => {
+  const fetchLeads = async () => {
       try {
         const res = await fetch('/api/leads');
         const data = await res.json();
@@ -31,8 +31,28 @@ export default function LeadIntelligencePanel() {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchLeads();
   }, []);
+
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    setUpdatingId(id);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus })
+      });
+      if (res.ok) {
+        fetchLeads();
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-red-500 bg-red-500/10 border-red-500/30';
@@ -44,6 +64,10 @@ export default function LeadIntelligencePanel() {
     return leads.filter(l => l.status === status).sort((a, b) => b.context_score - a.context_score);
   };
 
+  const totalLeads = leads.length;
+  const wonLeads = leads.filter(l => l.status === 'WON').length;
+  const conversionRate = totalLeads > 0 ? Math.round((wonLeads / totalLeads) * 100) : 0;
+
   return (
     <div className="w-full bg-slate-50 text-slate-800 font-sans p-4 rounded-xl border border-slate-200 shadow-inner">
       <div className="w-full mx-auto">
@@ -53,8 +77,11 @@ export default function LeadIntelligencePanel() {
             <h1 className="text-2xl font-black tracking-tighter uppercase">Deal Pipeline</h1>
           </div>
           <div className="flex items-center gap-4 text-[10px] font-mono tracking-widest text-slate-500">
+            <div className="px-4 py-2 bg-slate-100 text-slate-700 border border-slate-200 uppercase rounded-md">
+              CONVERSION: %{conversionRate}
+            </div>
             <div className="px-4 py-2 bg-red-600/10 text-red-500 border border-red-500/20 uppercase rounded-md">
-              {leads.length} ACTİVE DEALS
+              {leads.filter(l=>!['WON','LOST'].includes(l.status)).length} ACTİVE DEALS
             </div>
           </div>
         </header>
@@ -125,12 +152,27 @@ export default function LeadIntelligencePanel() {
                         </div>
                       )}
                       
-                      {/* Contacted Action */}
-                      {lead.status !== 'NEW' && (
-                        <button className="mt-4 w-full bg-slate-100 text-slate-600 font-mono uppercase tracking-wider text-[10px] py-2 hover:bg-white hover:text-black transition-colors border border-slate-200">
-                          Update Status
-                        </button>
-                      )}
+                      {/* Action Panel */}
+                      <div className="mt-4 pt-4 border-t border-dashed border-slate-200">
+                        {updatingId === lead.id ? (
+                          <div className="text-center text-[10px] uppercase font-mono text-slate-500 py-2">Updating...</div>
+                        ) : (
+                          <div className="flex flex-wrap gap-2">
+                            {COLUMNS.map(c => {
+                              if (c === lead.status) return null;
+                              return (
+                                <button
+                                  key={c}
+                                  onClick={() => handleUpdateStatus(lead.id, c)}
+                                  className="flex-1 bg-slate-50 hover:bg-slate-100 text-[9px] font-mono uppercase py-1.5 border border-slate-200 text-slate-600 transition"
+                                >
+                                  → {c}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                   

@@ -33,12 +33,7 @@ interface AlohaRouting {
   failSafeTriggered: number;
 }
 
-const PLATFORMS: PlatformStat[] = [
-  { name: 'perde.ai', url: 'https://perde.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 12, color: 'text-emerald-500' },
-  { name: 'trtex.com', url: 'https://trtex.com', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 8, color: 'text-amber-500' },
-  { name: 'hometex.ai', url: 'https://hometex.ai', status: 'building', visitors: 0, routedByAloha: 0, activeAgents: 4, color: 'text-blue-500' },
-  { name: 'didimemlak.ai', url: 'https://didimemlak.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 8, color: 'text-violet-500' },
-];
+// Platforms listesi state üzerinden alınacak.
 
 const STATUS_BADGE: Record<string, string> = {
   live: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
@@ -50,6 +45,12 @@ export default function FounderDashboard() {
   const [aloha, setAloha] = useState<AlohaRouting>({
     total: 0, today: 0, topIntent: '-', avgResponseMs: 0, failSafeTriggered: 0
   });
+  const [platforms, setPlatforms] = useState<PlatformStat[]>([
+    { name: 'perde.ai', url: 'https://perde.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 12, color: 'text-emerald-500' },
+    { name: 'trtex.com', url: 'https://trtex.com', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 8, color: 'text-amber-500' },
+    { name: 'hometex.ai', url: 'https://hometex.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 4, color: 'text-blue-500' },
+    { name: 'vorhang.ai', url: 'https://vorhang.ai', status: 'live', visitors: 0, routedByAloha: 0, activeAgents: 4, color: 'text-violet-500' },
+  ]);
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   // Attempt to load real stats from API
@@ -69,6 +70,12 @@ export default function FounderDashboard() {
             today: today.length > 0 ? today.length : prev.today,
           }));
         }
+
+        const statsRes = await fetch("/api/admin/stats");
+        const statsData = await statsRes.json();
+        if (statsData.success && statsData.data?.platformStats) {
+           setPlatforms(statsData.data.platformStats);
+        }
       } catch { /* fallback to defaults */ }
       setLastRefresh(new Date());
     };
@@ -77,9 +84,9 @@ export default function FounderDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const totalVisitors = PLATFORMS.reduce((s, p) => s + p.visitors, 0);
-  const totalRouted = PLATFORMS.reduce((s, p) => s + p.routedByAloha, 0);
-  const totalAgents = PLATFORMS.reduce((s, p) => s + p.activeAgents, 0);
+  const totalVisitors = platforms.reduce((s, p) => s + p.visitors, 0);
+  const totalRouted = platforms.reduce((s, p) => s + p.routedByAloha, 0);
+  const totalAgents = platforms.reduce((s, p) => s + p.activeAgents, 0);
 
   return (
     <div className="space-y-3 animate-fade-in">
@@ -129,7 +136,7 @@ export default function FounderDashboard() {
 
       {/* ── Platform Detay Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {PLATFORMS.map((p) => (
+        {platforms.map((p) => (
           <Card key={p.name} className="rounded-none border-2 border-foreground/10 hover:border-primary/50 transition-all group">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -187,10 +194,10 @@ export default function FounderDashboard() {
             {[
               { label: 'Kullanıcı Girişi', icon: Users, count: totalVisitors, color: 'text-foreground' },
               { label: 'Aloha Analiz', icon: Brain, count: totalRouted, color: 'text-primary' },
-              { label: 'Perde.ai', icon: Globe, count: 0, color: 'text-emerald-500' },
-              { label: 'TRTex.com', icon: BarChart3, count: 0, color: 'text-amber-500' },
-              { label: 'Hometex.ai', icon: Globe, count: 0, color: 'text-blue-500' },
-              { label: 'DidimEmlak', icon: Globe, count: 0, color: 'text-violet-500' },
+              { label: 'Perde.ai', icon: Globe, count: platforms.find(p=>p.id==='perde')?.routedByAloha || 0, color: 'text-emerald-500' },
+              { label: 'TRTex.com', icon: BarChart3, count: platforms.find(p=>p.id==='trtex')?.routedByAloha || 0, color: 'text-amber-500' },
+              { label: 'Hometex.ai', icon: Globe, count: platforms.find(p=>p.id==='hometex')?.routedByAloha || 0, color: 'text-blue-500' },
+              { label: 'Vorhang.ai', icon: Globe, count: platforms.find(p=>p.id==='vorhang')?.routedByAloha || 0, color: 'text-violet-500' },
             ].map((node, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="text-center">

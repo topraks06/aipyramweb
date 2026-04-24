@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,21 @@ const STATUS_CONFIG: Record<string, { icon: any; color: string; bg: string; labe
 export default function DataIntegrityShield() {
     const [sources] = useState<TrustedSource[]>(TRUSTED_SOURCES);
     const [shieldActive, setShieldActive] = useState(DATA_INTEGRITY_RULES.blockUnlisted);
+    const [stats, setStats] = useState<any>(null);
+
+    const fetchStats = async () => {
+        try {
+            const res = await fetch('/api/admin/data-integrity');
+            const data = await res.json();
+            if (data.success) {
+                setStats(data.data);
+            }
+        } catch (e) {}
+    };
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
 
     const verifiedCount = sources.filter(s => s.status === "verified").length;
     const avgTrustScore = Math.round(sources.reduce((sum, s) => sum + s.trustScore, 0) / sources.length);
@@ -112,6 +127,39 @@ export default function DataIntegrityShield() {
                     </Card>
                 ))}
             </div>
+
+            {/* Live Scan Results */}
+            {stats && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <Card className="border-red-500/20 bg-red-500/5">
+                        <CardContent className="p-4 flex items-center justify-between">
+                            <div>
+                                <span className="text-[10px] font-black uppercase text-muted-foreground">Kayıp / Orphan Referans</span>
+                                <div className="text-2xl font-black text-red-500">{stats.orphans}</div>
+                            </div>
+                            <ShieldAlert className="h-6 w-6 text-red-500/50" />
+                        </CardContent>
+                    </Card>
+                    <Card className="border-amber-500/20 bg-amber-500/5">
+                        <CardContent className="p-4 flex items-center justify-between">
+                            <div>
+                                <span className="text-[10px] font-black uppercase text-muted-foreground">Eksik Required Fields</span>
+                                <div className="text-2xl font-black text-amber-500">{stats.missingFields}</div>
+                            </div>
+                            <ShieldAlert className="h-6 w-6 text-amber-500/50" />
+                        </CardContent>
+                    </Card>
+                    <Card className="border-blue-500/20 bg-blue-500/5">
+                        <CardContent className="p-4 flex items-center justify-between">
+                            <div>
+                                <span className="text-[10px] font-black uppercase text-muted-foreground">Duplike Slug (Çakışma)</span>
+                                <div className="text-2xl font-black text-blue-500">{stats.duplicates}</div>
+                            </div>
+                            <Database className="h-6 w-6 text-blue-500/50" />
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
 
             {/* Blocking Rule */}
             <Card className={`rounded-none border-2 ${shieldActive ? "border-emerald-500/30 bg-emerald-500/5" : "border-red-500/30 bg-red-500/5"} transition-colors duration-500`}>

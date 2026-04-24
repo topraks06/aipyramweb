@@ -108,6 +108,29 @@ export default function ProposalPanel() {
     }
   };
 
+  const handleBulkAction = async (action: "approve" | "reject", mode: "dry-run" | "execute" = "dry-run") => {
+    if (!confirm(`Tüm bekleyen ${proposals.length} teklifi ${action === 'approve' ? 'onaylamak' : 'reddetmek'} istediğinize emin misiniz?`)) return;
+    
+    setActionLoading("bulk");
+    try {
+      // In a real scenario, you'd have a bulk endpoint. Here we map over existing items.
+      const promises = proposals.map(p => 
+        fetch("/api/aloha/proposals", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: p.id, action, mode }),
+        })
+      );
+      await Promise.all(promises);
+      toast.success(`Toplu işlem (${action}) tamamlandı.`);
+      loadProposals();
+    } catch (err) {
+      toast.error("Toplu işlem sırasında hata oluştu.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   return (
     <Card className="rounded-none border-2 border-foreground/10">
       <CardHeader className="border-b-2 border-foreground/5 flex flex-row items-center justify-between">
@@ -120,15 +143,39 @@ export default function ProposalPanel() {
             Aloha&apos;nın tespit ettiği sorunlar — Onayınızı bekliyor
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-none h-9 w-9"
-          onClick={loadProposals}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
+        <div className="flex items-center gap-2">
+          {proposals.length > 0 && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-none h-8 px-2 text-[10px] uppercase font-black border-red-500/50 text-red-500 hover:bg-red-500/10"
+                onClick={() => handleBulkAction("reject")}
+                disabled={actionLoading !== null}
+              >
+                Toplu Red
+              </Button>
+              <Button
+                size="sm"
+                className="rounded-none h-8 px-2 text-[10px] uppercase font-black bg-emerald-600 hover:bg-emerald-700 text-white"
+                onClick={() => handleBulkAction("approve", "dry-run")}
+                disabled={actionLoading !== null}
+              >
+                <FlaskConical className="w-3 h-3 mr-1" />
+                Toplu Dry-Run
+              </Button>
+            </>
+          )}
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-none h-9 w-9 ml-2"
+            onClick={loadProposals}
+            disabled={isLoading || actionLoading !== null}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-0">
         <ScrollArea className="h-[400px]">

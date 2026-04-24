@@ -51,52 +51,52 @@ git commit -m "feat(faz-5): trtex SEO + pipeline stabilizasyon"
 
 ---
 
-## FAZ 6: ADMİN PANEL FULL GÜÇLENDİRME (3-4 gün)
+## 🟢 FAZ 6: Admin Panel Full Control & Veri Akışı (Sovereign Kokpit)
 
-> **HEDEF:** MasterKokpit = Dünyanın en kapsamlı B2B yönetim terminali
+> **HEDEF:** Kurucu/Admin panelindeki tüm mock/placeholder verilerin (Sovereign DB) gerçek endpoint'lere bağlanması ve sistemin %100 canlı verilerle otonom kokpit haline gelmesi.
 
 ### 6.1 FounderDashboard Gerçek Veri
-- [ ] `FounderDashboard.tsx` → `PLATFORMS` hardcoded dizisini kaldır
+- [x] `FounderDashboard.tsx` → `PLATFORMS` hardcoded dizisini kaldır
   - `/api/admin/stats` endpoint'inden gerçek platform verileri çek
-  - `didimemlak.ai` → Sovereign Config'de tanımsız, config'e ekle VEYA listeden kaldır
+  - `didimemlak.ai` → Sovereign Config'de tanımsız, config'e ekle VEYA listeden kaldır (listeden kaldırmak daha iyi, Sovereign = Perde, TRTEX, Hometex, Vorhang).
   - `visitors`, `routedByAloha`, `activeAgents` → Firestore `aloha_agent_logs` koleksiyonundan aggregate
   - Son 24 saatlik log sayımı = aktif yönlendirme
 
 ### 6.2 KnowledgeTrainer Güçlendirme
-- [ ] `KnowledgeTrainer.tsx` → `aloha_knowledge` Firestore CRUD
+- [x] `KnowledgeTrainer.tsx` → `aloha_knowledge` Firestore CRUD
   - Yeni bilgi ekleme formu
   - Mevcut bilgileri listeleme/düzenleme/silme
   - Kategorilere ayırma (sektörel, teknik, müşteri)
 
 ### 6.3 LeadIntelligencePanel Gerçek Veri
-- [ ] `LeadIntelligencePanel.tsx` → `leads` koleksiyonundan gerçek veri çekme
+- [x] `LeadIntelligencePanel.tsx` → `leads` koleksiyonundan gerçek veri çekme
   - Lead durumu (yeni, iletişime geçildi, anlaşma, kayıp)
   - Lead kaynağı (TRTEX haber, Perde.ai form, Vorhang sipariş)
   - Dönüşüm oranı hesaplama
 
 ### 6.4 PerdeOrdersTable Genişletme
-- [ ] `PerdeOrdersTable.tsx` → `perde_orders` canlı tablo
+- [x] `PerdeOrdersTable.tsx` → `perde_orders` canlı tablo
   - Sipariş durumu değiştirme (draft → confirmed → shipped → delivered)
   - Tarih filtreleme
   - Toplam gelir hesaplama
 
 ### 6.5 CommercialPanel Doğrulama
-- [ ] `CommercialPanel.tsx` → Escrow verilerinin gerçek Stripe session'dan gelmesi
+- [x] `CommercialPanel.tsx` → Escrow verilerinin gerçek Stripe session'dan gelmesi
   - Mock link kontrolü → gerçek Stripe dashboard linki
 
 ### 6.6 DomainHealthMonitor
-- [ ] `DomainHealthMonitor.tsx` → `/api/health-full` endpoint'inden 4 node sağlık durumu
+- [x] `DomainHealthMonitor.tsx` → `/api/health-full` endpoint'inden 4 node sağlık durumu
   - SSL durumu, uptime, son deploy zamanı
   - Hata sayısı (son 24 saat)
 
 ### 6.7 DataIntegrityShield
-- [ ] `DataIntegrityShield.tsx` → Firestore koleksiyonlarının bütünlük kontrolü
+- [x] `DataIntegrityShield.tsx` → Firestore koleksiyonlarının bütünlük kontrolü
   - Orphan dokümanlar (referans kırılmış)
   - Eksik alanlar (required field boş)
   - Duplikat slug kontrolü
 
 ### 6.8 ProposalPanel İyileştirme
-- [ ] `ProposalPanel.tsx` → ALOHA otonom tekliflerinin onay/red akışı
+- [x] `ProposalPanel.tsx` → ALOHA otonom tekliflerinin onay/red akışı
   - Teklif detayları genişletme
   - Toplu onay/red
 

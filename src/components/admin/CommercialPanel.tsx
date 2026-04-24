@@ -182,38 +182,14 @@ export default function CommercialPanel() {
             <Card className="corporate-card bg-primary/5 border-primary/20">
                 <CardContent className="p-4 flex items-center justify-between">
                     <div>
-                        <h3 className="text-sm font-bold text-primary">Ticari Sicil Paneli (Buy Lead Tokens)</h3>
-                        <p className="text-xs text-muted-foreground mt-1">Stripe Checkout Otonom Fatura Tahsilat Testi</p>
+                        <h3 className="text-sm font-bold text-primary">Stripe Escrow Dashboard</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Gerçek B2B Tahsilat ve Cüzdan Yönetimi</p>
                     </div>
                     <Button 
                         size="sm" 
-                        disabled={checkoutLoading}
-                        onClick={async () => {
-                            setCheckoutLoading(true);
-                            try {
-                                const res = await fetch("/api/stripe/checkout", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        supplierId: "DEV_TEST_SUPPLIER_001",
-                                        node_id: "aipyram-core",
-                                        packageId: "starter"
-                                    })
-                                });
-                                const data = await res.json();
-                                if (data.url) {
-                                    window.location.href = data.url;
-                                } else {
-                                    toast.error("Stripe Session Hatası: " + data.error);
-                                }
-                            } catch (err) {
-                                toast.error("Bağlantı Hatası");
-                            } finally {
-                                setCheckoutLoading(false);
-                            }
-                        }}
+                        onClick={() => window.open('https://dashboard.stripe.com/', '_blank')}
                     >
-                        {checkoutLoading ? "Yönlendiriliyor..." : "$49.00 (10 Tokens) Satın Al"}
+                        Stripe Paneline Git <ExternalLink className="w-3 h-3 ml-2" />
                     </Button>
                 </CardContent>
             </Card>

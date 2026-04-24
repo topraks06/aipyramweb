@@ -63,3 +63,53 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, topic, content, metadata } = body;
+
+    if (!id || !topic || !content) {
+      return NextResponse.json({ success: false, error: "ID, topic, and content are required." }, { status: 400 });
+    }
+
+    if (!adminDb) return NextResponse.json({ success: false, error: "Firebase Admin is not initialized." }, { status: 500 });
+
+    const docRef = adminDb.collection('aloha_knowledge').doc(id);
+    await docRef.update({
+      topic,
+      content,
+      ...(metadata ? { metadata } : {}),
+      updatedAt: new Date().toISOString()
+    });
+
+    return NextResponse.json({ success: true, message: "Knowledge updated." });
+  } catch (error: any) {
+    console.error("[Aloha Knowledge API] Error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "ID is required." }, { status: 400 });
+    }
+
+    if (!adminDb) return NextResponse.json({ success: false, error: "Firebase Admin is not initialized." }, { status: 500 });
+
+    const docRef = adminDb.collection('aloha_knowledge').doc(id);
+    await docRef.update({
+      active: false,
+      updatedAt: new Date().toISOString()
+    });
+
+    return NextResponse.json({ success: true, message: "Knowledge deactivated." });
+  } catch (error: any) {
+    console.error("[Aloha Knowledge API] Error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}

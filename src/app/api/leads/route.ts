@@ -57,3 +57,27 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, status } = body;
+
+    if (!id || !status) {
+      return NextResponse.json({ error: 'ID and status are required' }, { status: 400 });
+    }
+
+    if (!adminDb) {
+      return NextResponse.json({ error: 'Firebase Admin is not initialized' }, { status: 500 });
+    }
+
+    await adminDb.collection('trtex_leads').doc(id).update({
+      status,
+      updatedAt: new Date().toISOString()
+    });
+
+    return NextResponse.json({ success: true, message: 'Lead status updated successfully' });
+  } catch (error: any) {
+    console.error('[LEADS PUT API] Error:', error.message);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
