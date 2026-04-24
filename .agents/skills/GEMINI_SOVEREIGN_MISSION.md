@@ -264,8 +264,8 @@ Dosya kaybolursa:
 |-----|-------|------------|-------|
 | FAZ 1 | ✅ TAMAMLANDI | 2eaa29c | Başarılı |
 | FAZ 2 | ✅ TAMAMLANDI | 0c14db1 | Başarılı |
-| FAZ 3 | ⬜ Bekliyor | — | — |
-| FAZ 4 | ⬜ Bekliyor | — | — |
+| FAZ 3 | ✅ TAMAMLANDI | 4598731 | Başarılı |
+| FAZ 4 | ✅ TAMAMLANDI | e169552 | Başarılı |
 | FAZ 5 | ⬜ Bekliyor | — | — |
 | FAZ 6 | ⬜ Bekliyor | — | — |
 | FAZ 7 | ⬜ Bekliyor | — | — |
