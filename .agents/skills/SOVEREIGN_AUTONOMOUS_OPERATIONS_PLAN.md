@@ -11,6 +11,7 @@
 - **Çoklu Yükleme Ekranı:** Her üyenin kendi yönetim paneli olacak. Üye; iplik, kumaş numunesi, korniş/rustik görsellerini ve bunlara ait teknik belgeleri (PDF/TXT) aynı anda sisteme sürükleyip bırakacak.
 - **Chat Arayüzü ile Tanımlama:** Üye sadece "Bu 20 denye polyester kumaş, yanmazlık belgesi de ekte, sürtünmesi 45 bin" diyecek.
 - **Otonom Ayrıştırma (Parser):** Arka plandaki Gemini Vision ve Text modelleri, görseli ve belgeyi analiz edip `TextileProduct` şemasındaki `martindale_rub_test`, `composition`, `gtip_code` gibi derin mühendislik verilerini otonom olarak doldurup doğrudan **TRTex** ana veritabanına kaydedecek.
+- **[KIRMIZ ÇİZGİ - Desen Geometrisi]:** Sisteme yüklenen desenli (jakar, brode, etnik vb.) tüm kumaşlarda **"Rapor Boyu (Pattern Repeat Size)"** ve **"Desen Yönü (Enine/Boyuna)"** zorunlu olarak istenecektir. Eksikse ALOHA kullanıcıyı uyaracak ve 3D Texture Mapping işlemini başlatmayacaktır. Aksi takdirde 3D renderlarda zürafalar yan yatabilir.
 
 ## 2. GÖRSEL RENDER MOTORU (100% GOOGLE-NATIVE & DETERMINISTIC TEXTURE MAPPING)
 Tasarım ve render işlemleri için dışarıdan hiçbir 3. parti kullanılmayacaktır ancak **Standart Yapay Zeka (Prompt ile Resim Çizdirme) ASLA KULLANILMAYACAKTIR.**
