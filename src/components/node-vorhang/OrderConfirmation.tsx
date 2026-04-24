@@ -6,7 +6,7 @@ import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export function OrderConfirmation({ orderId }: { orderId: string | null }) {
+export function OrderConfirmation({ orderId, basePath = "" }: { orderId: string | null; basePath?: string }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function OrderConfirmation({ orderId }: { orderId: string | null }) {
              </div>
           </div>
           <div className="mt-8">
-            <Link href="/" className="inline-block bg-black text-white px-8 py-4 font-bold tracking-widest text-xs uppercase hover:bg-gray-800 transition-colors">
+            <Link href={`${basePath || '/'}`} className="inline-block bg-black text-white px-8 py-4 font-bold tracking-widest text-xs uppercase hover:bg-gray-800 transition-colors">
               Zurück zur Startseite
             </Link>
           </div>

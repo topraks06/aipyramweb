@@ -5,8 +5,10 @@ import { useState } from "react";
 import Link from "next/link";
 import VorhangNavbar from "./VorhangNavbar";
 import VorhangFooter from "./VorhangFooter";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase-client";
 
-export default function SellerIngestion() {
+export default function SellerIngestion({ basePath = "" }: { basePath?: string }) {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
@@ -37,14 +39,22 @@ export default function SellerIngestion() {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
     setStatus("uploading");
     
-    // Mock upload process
-    setTimeout(() => {
+    try {
+      await addDoc(collection(db, "vorhang_products"), {
+        filename: file.name,
+        size: file.size,
+        timestamp: new Date().toISOString(),
+        status: "processing"
+      });
       setStatus("success");
-    }, 3000);
+    } catch (error) {
+      console.error("Error uploading catalog:", error);
+      setStatus("error");
+    }
   };
 
   return (
@@ -53,7 +63,7 @@ export default function SellerIngestion() {
       
       <main className="flex-1 pt-32 pb-24 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
-          <Link href="/seller" className="text-sm text-gray-500 hover:text-black mb-4 inline-block transition-colors">
+          <Link href={`${basePath}/seller`} className="text-sm text-gray-500 hover:text-black mb-4 inline-block transition-colors">
             &larr; Zurück zum Dashboard
           </Link>
           <h1 className="text-4xl font-serif mb-2 text-black">Produktkatalog Hochladen</h1>

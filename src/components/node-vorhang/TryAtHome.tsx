@@ -6,23 +6,39 @@ import { Camera, Upload, Sparkles, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import VorhangFooter from "./VorhangFooter";
 
-export default function TryAtHome() {
+export default function TryAtHome({ basePath = "" }: { basePath?: string }) {
   const [step, setStep] = useState<1|2|3>(1);
   const [isRendering, setIsRendering] = useState(false);
 
-  const handleSimulateUpload = () => {
+  const [resultImage, setResultImage] = useState<string | null>(null);
+
+  const handleSimulateUpload = async () => {
     setStep(2);
-    // Simulate render delay
     setIsRendering(true);
-    setTimeout(() => {
-       setIsRendering(false);
-       setStep(3);
-    }, 3000);
+    try {
+      const res = await fetch("/api/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "vorhang style render" })
+      });
+      const data = await res.json();
+      if (data.success && data.imageUrl) {
+        setResultImage(data.imageUrl);
+      } else {
+        setResultImage("https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80");
+      }
+    } catch (e) {
+      console.error(e);
+      setResultImage("https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80");
+    } finally {
+      setIsRendering(false);
+      setStep(3);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <VorhangNavbar />
+      <VorhangNavbar basePath={basePath} />
       
       <main className="pt-24 pb-12 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
@@ -83,9 +99,13 @@ export default function TryAtHome() {
            {step === 3 && (
              <div className="w-full">
                <div className="relative aspect-video bg-gray-200 mb-8 rounded overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 font-mono text-sm">
-                     [Watermarked Mock Render Result]
-                  </div>
+                  {resultImage ? (
+                    <img src={resultImage} alt="Render Result" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-500 font-mono text-sm">
+                       [Rendered Image Will Appear Here]
+                    </div>
+                  )}
                   {/* Demo Watermark */}
                   <div className="absolute inset-0 pointer-events-none opacity-20 flex flex-wrap content-evenly justify-evenly -rotate-12">
                      {Array.from({length: 20}).map((_, i) => (
@@ -97,7 +117,7 @@ export default function TryAtHome() {
                   <button onClick={() => setStep(1)} className="border border-black px-6 py-3 rounded-sm font-medium hover:bg-gray-100 transition-colors">
                     Neues Foto
                   </button>
-                  <Link href="/products/mock-id" className="bg-[#D4AF37] text-white px-6 py-3 rounded-sm font-medium hover:bg-black transition-colors">
+                  <Link href={`${basePath}/products`} className="bg-[#D4AF37] text-white px-6 py-3 rounded-sm font-medium hover:bg-black transition-colors">
                     Stoff kaufen
                   </Link>
                </div>

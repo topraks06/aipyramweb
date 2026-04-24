@@ -4,7 +4,7 @@ import { X, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 
-export function CartSidebar() {
+export function CartSidebar({ basePath = "" }: { basePath?: string }) {
   const { items, isOpen, closeCart, removeItem, getTotal } = useCartStore();
   const total = getTotal();
 
@@ -72,7 +72,7 @@ export function CartSidebar() {
               <span className="font-bold text-lg">€{total.toFixed(2)}</span>
             </div>
             <Link 
-              href="/checkout"
+              href={`${basePath}/checkout`}
               onClick={closeCart}
               className="w-full bg-black text-white py-4 font-bold tracking-widest text-xs flex justify-center items-center gap-2 hover:bg-yellow-600 transition-colors"
             >

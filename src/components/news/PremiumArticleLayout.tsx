@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
+import ShareButtons from '@/components/trtex/ShareButtons';
 export default function PremiumArticleLayout({
   article, lang, exactDomain, basePath, brandName, targetLang,
   part1, part2, heroImage, midImage, detailImage,
@@ -445,20 +446,16 @@ export default function PremiumArticleLayout({
           </div>
         )}
 
-        {/* ═══ SHARE + NAV (Pill Butonlar) ═══ */}
-        <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E5E7EB', paddingTop: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-           <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', marginRight: '0.5rem', alignSelf: 'center' }}>PAYLAŞ:</span>
-              <a href={`https://www.linkedin.com/shareArticle?mini=true&url=https://${brandName.toLowerCase()}.com/news/${article.slug || article.id}&title=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" className="nav-pill">
-                LinkedIn
-              </a>
-              <a href={`https://twitter.com/intent/tweet?url=https://${brandName.toLowerCase()}.com/news/${article.slug || article.id}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" className="nav-pill">
-                X / Twitter
-              </a>
-           </div>
-           
+        {/* ═══ SHARE + NAV (ShareButtons Bileşeni) ═══ */}
+        <ShareButtons 
+          title={title} 
+          url={`https://${brandName.toLowerCase()}.com/news/${article.slug || article.id}`} 
+          lang={lang} 
+        />
+        
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2rem' }}>
            <a href={`${basePath}/news?lang=${lang}`} className="nav-pill" style={{ background: '#111', color: '#FFF' }}>
-             Tüm Arşiv →
+             {lang === 'tr' ? 'Tüm Arşiv →' : 'All Archive →'}
            </a>
         </div>
 

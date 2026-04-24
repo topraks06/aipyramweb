@@ -5,22 +5,31 @@ import VorhangFooter from "./VorhangFooter";
 import { ArrowRight, ShieldCheck, CheckCircle2, Building, Banknote, MapPin } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase-client";
 
-export default function SellerOnboarding() {
+export default function SellerOnboarding({ basePath = "" }: { basePath?: string }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
     } else {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
+      try {
+        await addDoc(collection(db, "vorhang_sellers"), {
+          timestamp: new Date().toISOString(),
+          status: "pending",
+        });
         setSuccess(true);
-      }, 2000);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -37,7 +46,7 @@ export default function SellerOnboarding() {
               Unser Team wird Ihre Daten prüfen und sich in Kürze bei Ihnen melden.
             </p>
             <Link 
-              href="/seller"
+              href={`${basePath}/seller`}
               className="inline-flex bg-black text-white px-8 py-4 font-bold text-xs tracking-widest hover:bg-[#D4AF37] transition-all"
             >
               ZUM DASHBOARD
