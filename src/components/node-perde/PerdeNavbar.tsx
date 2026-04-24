@@ -157,6 +157,8 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
             <button 
               onClick={() => setMobileMenuOpen(true)}
               className="lg:hidden flex items-center justify-center p-2 text-zinc-900 border border-zinc-200 rounded-sm bg-white hover:bg-zinc-100"
+              aria-label="Open Mobile Menu"
+              aria-expanded={mobileMenuOpen}
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -171,7 +173,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 z-50 lg:hidden backdrop-blur-sm"
+              className="fixed inset-0 bg-black/60 z-[100] lg:hidden backdrop-blur-sm"
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.div 
@@ -179,13 +181,14 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-[280px] bg-white shadow-2xl z-50 lg:hidden flex flex-col"
+              className="fixed top-0 right-0 h-full w-[280px] bg-white shadow-2xl z-[100] lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center p-6 border-b border-zinc-100">
                 <span className="font-serif text-xl tracking-tight text-zinc-900">PERDE.AI</span>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-2 bg-zinc-100 text-zinc-600 hover:text-black rounded-full transition-colors"
+                  aria-label="Close Mobile Menu"
                 >
                   <X className="w-4 h-4" />
                 </button>

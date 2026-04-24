@@ -106,7 +106,7 @@ const CATEGORY_VOLUME: Record<string, number> = {
 | FAZ 4 | Hometex + Vorhang | 3-4 gün | ✅ | (build+commit bekleniyor) | ✅ |
 | FAZ 5 | TRTEX SEO + Stabil | 2-3 gün | ✅ | (build+commit bekleniyor) | ✅ |
 | FAZ 6 | Admin Panel Full | 3-4 gün | ✅ | — | — |
-| FAZ 7 | Mobil + Performans | 2-3 gün | ⬜ | — | — |
+| FAZ 7 | Mobil + Performans | 2-3 gün | ✅ | — | — |
 | FAZ 8 | E2E Test + Güvenlik | 3-4 gün | ⬜ | — | — |
 | FAZ 9 | Production Deploy | 1-2 gün | ⬜ | — | — |
 | FAZ 10 | Fuar Demo | 1 gün | ⬜ | — | — |

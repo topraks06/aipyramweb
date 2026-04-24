@@ -105,7 +105,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
       <style dangerouslySetInnerHTML={{ __html: `
         .trtex-menu-group:hover .trtex-dropdown { display: block !important; }
         .trtex-dropdown a:hover { background: ${dropHover} !important; color: #fff !important; }
-        .trtex-lang-drop { display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: ${dropBg}; border: 1px solid ${dropBorder}; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 20001; }
+        .trtex-lang-drop { display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: ${dropBg}; border: 1px solid ${dropBorder}; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 100; }
         .trtex-lang-trigger:hover .trtex-lang-drop, .trtex-lang-drop:hover { display: block !important; }
         .trtex-lang-drop a:hover { background: ${dropHover} !important; }
       `}} />
@@ -145,7 +145,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                   </a>
 
                   {/* DESKTOP DROPDOWN */}
-                  <div className="trtex-dropdown hidden absolute left-0 top-full shadow-xl z-[60] pt-2" style={{ background: dropBg, border: `1px solid ${dropBorder}` }}>
+                  <div className="trtex-dropdown hidden absolute left-0 top-full shadow-xl z-[100] pt-2" style={{ background: dropBg, border: `1px solid ${dropBorder}` }}>
                     {item.subs.map((sub, idx) => (
                       <a
                         key={idx}
@@ -211,6 +211,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 flex flex-col justify-center items-center gap-1 cursor-pointer bg-transparent border-0"
               aria-label="Menu"
+              aria-expanded={mobileMenuOpen}
             >
               <span className={`block w-6 h-[2px] transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} style={{ background: textColor }} />
               <span className={`block w-6 h-[2px] transition-opacity ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`} style={{ background: textColor }} />

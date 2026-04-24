@@ -113,10 +113,10 @@ git commit -m "feat(faz-6): admin panel full güçlendirme"
 > **HEDEF:** Her cihazda kusursuz, 8 dilde akıcı deneyim
 
 ### 7.1 Responsive Audit (4 Tenant)
-- [ ] Perde.ai navbar → Hamburger menü mobilde düzgün açılıyor mu?
-- [ ] TRTEX navbar → Mobil breakpoint kontrol (768px, 1024px, 1280px)
-- [ ] Hometex navbar → Merkezi navbar'a geçildi mi? (Faz 4'te yapılacak)
-- [ ] Vorhang navbar → Mobil sepet ikonu + menü
+- [x] Perde.ai navbar → Hamburger menü mobilde düzgün açılıyor mu?
+- [x] TRTEX navbar → Mobil breakpoint kontrol (768px, 1024px, 1280px)
+- [x] Hometex navbar → Merkezi navbar'a geçildi mi? (Faz 4'te yapılacak)
+- [x] Vorhang navbar → Mobil sepet ikonu + menü
 
 ### 7.2 Z-Index Standardizasyonu
 ```
@@ -126,29 +126,29 @@ Chat Widget:    z-120
 Modal/Overlay:  z-130
 Toast:          z-140
 ```
-- [ ] Tüm bileşenlerde bu hiyerarşi kontrol edilecek
+- [x] Tüm bileşenlerde bu hiyerarşi kontrol edilecek
 
 ### 7.3 Performans Optimizasyonu
-- [ ] `PerdeAIAssistant.tsx` (66KB) → `dynamic(() => import(...), { ssr: false })` lazy load
-- [ ] `engine.ts` (250KB) → Server-side only doğrula, client bundle'a girmediğinden emin ol
+- [x] `PerdeAIAssistant.tsx` (66KB) → `dynamic(() => import(...), { ssr: false })` lazy load
+- [x] `engine.ts` (250KB) → Server-side only doğrula, client bundle'a girmediğinden emin ol
   - `typeof window === 'undefined'` guard'ı kontrol et
-- [ ] Tüm tenant landing page'lerde `<Image>` bileşeni ile lazy loading
-- [ ] `next/font` ile font yükleme optimizasyonu doğrula
+- [x] Tüm tenant landing page'lerde `<Image>` bileşeni ile lazy loading
+- [x] `next/font` ile font yükleme optimizasyonu doğrula
 
 ### 7.4 Lokalizasyon Audit
-- [ ] Perde.ai dictionary → 8 dil eksik bölüm kontrolü
+- [x] Perde.ai dictionary → 8 dil eksik bölüm kontrolü
   - `perde-dictionary.ts` → Tüm key'ler 8 dilde var mı?
   - Eksik varsa → Türkçe fallback ekle
-- [ ] Hometex hardcoded string kontrolü
+- [x] Hometex hardcoded string kontrolü
   - Almanca sayfalar: `Expo.tsx`, `Magazine.tsx` → i18n kontrolü
-- [ ] Vorhang hardcoded string kontrolü
+- [x] Vorhang hardcoded string kontrolü
   - Almanca → `VorhangNavbar.tsx`, `VorhangFooter.tsx` → i18n kontrolü
-- [ ] TRTEX → Haber içeriği zaten 8 dilde üretiliyor (otonom) — UI metinleri kontrol
+- [x] TRTEX → Haber içeriği zaten 8 dilde üretiliyor (otonom) — UI metinleri kontrol
 
 ### 7.5 Accessibility (a11y) Temel Kontroller
-- [ ] Tüm `<img>` taglarında `alt` attribute
-- [ ] Tüm `<button>` taglarında `aria-label` (ikon-only butonlarda)
-- [ ] Renk kontrastı: Muted text renkleri WCAG AA standardına uygun mu?
+- [x] Tüm `<img>` taglarında `alt` attribute
+- [x] Tüm `<button>` taglarında `aria-label` (ikon-only butonlarda)
+- [x] Renk kontrastı: Muted text renkleri WCAG AA standardına uygun mu?
 
 ### FAZ 7 DOĞRULAMA:
 ```bash

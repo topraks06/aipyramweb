@@ -77,6 +77,8 @@ export default function VorhangNavbar({ basePath = '/sites/vorhang.ai' }: Vorhan
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-300 hover:text-white p-2"
+              aria-label="Open Mobile Menu"
+              aria-expanded={isOpen}
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>

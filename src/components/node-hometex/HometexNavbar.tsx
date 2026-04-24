@@ -369,6 +369,8 @@ export default function HometexNavbar({ theme = 'dark' }: HometexNavbarProps) {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-white z-[120] relative"
+                aria-label="Open Mobile Menu"
+                aria-expanded={isMobileMenuOpen}
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6 stroke-[1.5]" /> : <Menu className="w-6 h-6 stroke-[1.5]" />}
               </button>

@@ -1,5 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
+if (typeof window !== 'undefined') {
+  throw new Error("ALOHA ENGINE MISTAKE: This file must ONLY be imported on the server side.");
+}
 import { adminDb } from '@/lib/firebase-admin';
 import { executeMasterAgent, MasterSystemState } from '@/core/aloha/master-agent';
 import { publishToTRTEX, publishToProject, PROJECT_FIREBASE_MAP } from '@/core/aloha/publishers/universal-publisher';
