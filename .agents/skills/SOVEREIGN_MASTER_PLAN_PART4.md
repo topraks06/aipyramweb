@@ -102,7 +102,7 @@ const CATEGORY_VOLUME: Record<string, number> = {
 |-----|--------|-------------|-------|------------|-------|
 | FAZ 1 | Güvenlik + Hijyen | 1 gün | ✅ | 2eaa29c | ✅ |
 | FAZ 2 | Packages İskelet | 2 gün | ✅ | 0c14db1 | ✅ |
-| FAZ 3 | Perde.ai Mock→Prod | 4-5 gün | ⬜ | — | — |
+| FAZ 3 | Perde.ai Mock→Prod | 4-5 gün | ✅ | 4598731 | ✅ |
 | FAZ 4 | Hometex + Vorhang | 3-4 gün | ⬜ | — | — |
 | FAZ 5 | TRTEX SEO + Stabil | 2-3 gün | ⬜ | — | — |
 | FAZ 6 | Admin Panel Full | 3-4 gün | ⬜ | — | — |

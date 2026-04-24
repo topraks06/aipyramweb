@@ -4,7 +4,16 @@
 
 ---
 
-## TAMAMLANAN İŞLER (19 Nisan 2026)
+## TAMAMLANAN İŞLER
+
+### 3. Perde.ai Faz 3 (Mock'tan Üretime) — 24 Nisan 2026
+| # | Dosya | Değişiklik | Durum |
+|---|-------|-----------|-------|
+| 1 | `B2B.tsx`, `Catalog.tsx`, vb. | `onSnapshot` ile canlı Firestore entegrasyonu (Sıfır mock) | ✅ |
+| 2 | `OrderSlideOver.tsx` | Gerçek sipariş (addDoc) oluşturma ve room verisi JSON yerine map olarak kaydedildi | ✅ |
+| 3 | `/api/chat/history/route.ts` | **YENİ** — ALOHA Master Chat Memory kalıcılığı (Oturum yönetimi) | ✅ |
+| 4 | `/api/render/route.ts` | Imagen 3.0 başarılı renderların `perde_renders` koleksiyonuna yazılması | ✅ |
+| 5 | `Pricing.tsx` & webhook | Stripe checkout ve başarılı ödeme ile lisans aktivasyonu eklendi | ✅ |
 
 ### 1. Perde.ai Auth — Mock → Gerçek Firebase Auth
 
