@@ -28,17 +28,26 @@ export default function BoothDetail() {
       {
         name: "Milano Kadifesi 2026",
         image: "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80",
-        tags: ["Kadife", "Lüks", "Ağır Gramaj"]
+        tags: ["Kadife", "Lüks", "Ağır Gramaj"],
+        specs: { martindale: "45,000 Rubs", gsm: "650 g/m²", fire: "DIN 4102 B1" },
+        price: "12.50 USD / mt",
+        moq: "500 Metre"
       },
       {
         name: "Doğa Dostu İpek Karışımı",
         image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80",
-        tags: ["İpek", "Sürdürülebilir", "Hafif"]
+        tags: ["İpek", "Sürdürülebilir", "Hafif"],
+        specs: { martindale: "15,000 Rubs", gsm: "180 g/m²", fire: "Standart" },
+        price: "18.00 USD / mt",
+        moq: "100 Metre"
       },
       {
         name: "Akıllı Tam Karartma",
         image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80",
-        tags: ["Karartma", "Akıllı İplik", "Otel"]
+        tags: ["Karartma", "Akıllı İplik", "Otel"],
+        specs: { martindale: "60,000 Rubs", gsm: "800 g/m²", fire: "M1 / B1 Sertifikalı" },
+        price: "9.50 USD / mt",
+        moq: "1000 Metre"
       }
     ]
   };
@@ -151,6 +160,14 @@ export default function BoothDetail() {
               
               {/* Dynamic Role Actions */}
               <div className="flex gap-3">
+                {role !== 'consumer' && (
+                  <button 
+                    onClick={() => setActiveModal('quote')}
+                    className="px-6 py-3 text-[10px] uppercase tracking-[0.3em] font-bold border border-white bg-white text-black hover:bg-zinc-200 transition-colors flex items-center gap-2"
+                  >
+                    B2B Toptan Teklif İste
+                  </button>
+                )}
                 {role === 'consumer' && (
                   <button 
                     onClick={handlePerdeAiClick}
@@ -201,7 +218,28 @@ export default function BoothDetail() {
                   </div>
                 </div>
               </div>
-              <h3 className="text-2xl font-serif font-medium mb-2 uppercase tracking-tight">{collection.name}</h3>
+              <h3 className="text-2xl font-serif font-medium mb-2 uppercase tracking-tight mt-4">{collection.name}</h3>
+              
+              {/* Teknik Özellikler B2B */}
+              <div className="grid grid-cols-2 gap-2 mb-4 bg-white/5 p-3 border border-white/5">
+                <div className="flex flex-col">
+                  <span className="text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Aşınma Testi</span>
+                  <span className="text-xs text-[#8B7355] font-mono">{collection.specs.martindale}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Ağırlık</span>
+                  <span className="text-xs text-white font-mono">{collection.specs.gsm}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Yanmazlık (FR)</span>
+                  <span className="text-xs text-white font-mono">{collection.specs.fire}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[8px] text-zinc-500 uppercase tracking-widest font-bold">Toptan / MOQ</span>
+                  <span className="text-xs text-[#8B7355] font-mono">{collection.price}</span>
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-2">
                 {collection.tags.map((tag, j) => (
                   <span key={j} className="px-2 py-1 border border-white/20 text-zinc-400 text-[9px] uppercase tracking-widest font-bold">
