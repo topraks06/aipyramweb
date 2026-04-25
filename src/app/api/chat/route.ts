@@ -10,22 +10,7 @@ import { getNode } from "@/lib/sovereign-config";
    + Rate Limiting + Prompt Injection Protection
    ═══════════════════════════════════════════════════════ */
 
-/* ─── Rate Limiter (Upstash Redis) ─── */
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
-
-let ratelimit: Ratelimit | null = null;
-try {
-    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-        ratelimit = new Ratelimit({
-            redis: Redis.fromEnv(),
-            limiter: Ratelimit.slidingWindow(10, "60 s"),
-            analytics: true,
-        });
-    }
-} catch (e) {
-    console.warn("Upstash Redis is not configured, rate limiting is disabled for chat.");
-}
+/* ─── Rate Limiter (handled by middleware) ─── */
 
 /* ─── Prompt Injection Protection ─── */
 const BLOCKED_PATTERNS = [
@@ -100,18 +85,8 @@ const PERDE_SYSTEM_PROMPT = `Sen PERDE.AI'ın (AIPyram B2B ERP ağı) Master Con
 
 export async function POST(req: NextRequest) {
     try {
-        // Rate limiting
+        // Rate limiting (handled by middleware)
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
-
-        if (ratelimit) {
-            const { success } = await ratelimit.limit(`chat_${ip}`);
-            if (!success) {
-                return NextResponse.json(
-                    { error: "Sistem meşgul, lütfen biraz bekleyip tekrar deneyin." },
-                    { status: 429, headers: { "Retry-After": "60" } }
-                );
-            }
-        }
 
         // Check Content-Type for file upload
         const contentType = req.headers.get("content-type") || "";

@@ -4,26 +4,12 @@ import { analyzeFabric } from "@/lib/agents/FabricRecognitionAgent";
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { generateMultiResolution, addImage } from "@/lib/image-library";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+/* ─── Rate Limiter (handled by middleware and firestore) ─── */
 import { adminDb, admin } from "@/lib/firebase-admin";
 import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
 import { getNode } from "@/lib/sovereign-config";
 
 const ai = alohaAI.getClient();
-
-let ratelimit: Ratelimit | null = null;
-try {
-    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-        ratelimit = new Ratelimit({
-            redis: Redis.fromEnv(),
-            limiter: Ratelimit.slidingWindow(1, "10 s"),
-            analytics: true,
-        });
-    }
-} catch (e) {
-    console.warn("Upstash Redis is not configured, rate limiting is disabled for render.");
-}
 
 export async function POST(req: NextRequest) {
     try {
@@ -34,13 +20,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Görsel gereklidir" }, { status: 400 });
         }
 
+        // IP based rate-limit is handled by Firestore and Middleware
         const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
-        if (ratelimit) {
-            const { success } = await ratelimit.limit(`render_${ip}`);
-            if (!success) {
-                return NextResponse.json({ error: "Çok fazla istek gönderdiniz. Lütfen 10 saniye bekleyiniz." }, { status: 429 });
-            }
-        }
 
         // Authentication & Wallet Check (If session exists)
         const sessionCookie = req.cookies.get('session');

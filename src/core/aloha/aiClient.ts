@@ -37,9 +37,9 @@ import { adminDb } from '@/lib/firebase-admin';
 // → YENİ: veo-3.1-lite-preview (hızlı video üretimi, sanal fuar potansiyeli)
 // → YENİ: Gemini 3.1 Flash (agentic workflows, persistent context)
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
-const IMAGE_MODEL = 'imagen-4.0-generate-001';     // Imagen 4: Subject Identity + 4K
-const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback: eski stabil model
+const DEFAULT_MODEL = 'gemini-3.1-flash';
+const IMAGE_MODEL = 'gemini-3.1-flash-image';     // Nano Banana 2
+const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback: Imagen 4
 const EMBEDDING_MODEL = 'gemini-embedding-exp-03-07';  // Multimodal embeddings
 const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
 const MAX_RETRIES = 3;
