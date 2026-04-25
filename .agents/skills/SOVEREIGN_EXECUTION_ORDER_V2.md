@@ -57,13 +57,13 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 > **ÖNCELİK:** Tasarım Motoru İLK
 
 ### Sprint 1: Auth Akışı Doğrulama
-- [ ] `src/hooks/useSovereignAuth.ts` → AÇ, OKU. `loginWithEmail`, `registerMember`, `loginWithGoogle` fonksiyonları Firebase Auth'a gerçekten bağlı mı?
-- [ ] `src/components/node-perde/auth/Login.tsx` → `loginWithEmail` çağrısı sonucu doğru yönlendirme yapıyor mu?
-- [ ] `src/components/node-perde/auth/Register.tsx` → `registerDealer` çağrısı Firestore'a kullanıcı kaydı yazıyor mu?
-- [ ] `src/app/sites/[domain]/login/page.tsx` → Doğru bileşeni render ediyor mu?
-- [ ] Tarayıcıdan `localhost:3000/sites/perde.ai/login` aç, test et.
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
+- [x] `src/hooks/useSovereignAuth.ts` → AÇ, OKU. `loginWithEmail`, `registerMember`, `loginWithGoogle` fonksiyonları Firebase Auth'a gerçekten bağlı mı?
+- [x] `src/components/node-perde/auth/Login.tsx` → `loginWithEmail` çağrısı sonucu doğru yönlendirme yapıyor mu?
+- [x] `src/components/node-perde/auth/Register.tsx` → `registerDealer` çağrısı Firestore'a kullanıcı kaydı yazıyor mu?
+- [x] `src/app/sites/[domain]/login/page.tsx` → Doğru bileşeni render ediyor mu?
+- [x] Tarayıcıdan `localhost:3000/sites/perde.ai/login` aç, test et.
+- **KANIT:** `useSovereignAuth.ts` L5, `Login.tsx` L24, `Register.tsx` L22 doğrulanmıştır. HTTP istekleri 200 dönüyor.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
 - **COMMIT:** `git commit -m "audit(sprint-1): perde auth doğrulama"`
 
 ### Sprint 2: Tasarım Motoru — Visualizer (EN KRİTİK)
