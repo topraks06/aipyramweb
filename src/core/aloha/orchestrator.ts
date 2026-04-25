@@ -180,17 +180,22 @@ async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Pro
         };
     }
 
-    const response = await aiClient.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: input.task,
-      config: {
-        systemInstruction: dynamicSystemInstruction,
-        responseMimeType: "application/json",
-        responseSchema: outputSchema,
-      }
-    });
+    // Determine complexity based on Agent Role
+    let complexity: 'routine' | 'complex' | 'vision' = 'routine';
+    if (agent.name === 'VISIONARY' || agent.name === 'REALITY' || agent.name === 'ALOHA') {
+      complexity = 'complex';
+    }
 
-    const resultText = response.text || "{}";
+    const parsedResult = await alohaAI.generateJSON(
+      input.task,
+      {
+        complexity,
+        systemInstruction: dynamicSystemInstruction,
+      },
+      `orchestrator_${agent.name.toLowerCase()}`
+    );
+
+    const resultText = JSON.stringify(parsedResult || {});
 
     return {
       agent: agent.name,

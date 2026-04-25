@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 2. Generate render using Imagen 3.0 (or 4.0 depending on availability)
-        const renderPrompt = prompt || `A highly photorealistic interior design render of a ${analysis.roomType} with ${analysis.windowType} windows, featuring ${baseFabricStyle} style curtains matching a ${analysis.colorPalette.join(", ")} color palette.${fabricInjections} Soft, natural ${analysis.lightLevel} lighting. 8k resolution, architectural photography.`;
+        const renderPrompt = prompt || `A highly photorealistic interior design render of a ${analysis.roomType} with ${analysis.windowType} windows, featuring ${baseFabricStyle} style curtains matching a ${analysis.colorPalette.join(", ")} color palette.${fabricInjections} Soft, natural ${analysis.lightLevel} lighting. 4K resolution, architectural photography.`;
 
         let renderUrlUrl = "";
         try {
