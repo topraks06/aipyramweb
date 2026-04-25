@@ -94,13 +94,13 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-4): perde katalog ve onsnapshot onarimi"`
 
 ### Sprint 5: B2B & Sipariş Akışı
-- [ ] `src/components/node-perde/B2B.tsx` (20KB) → `perde_orders` ve `perde_customers` onSnapshot bağlantısı var mı?
-- [ ] `src/components/node-perde/OrderSlideOver.tsx` (18KB) → Sipariş oluşturma Firestore'a yazıyor mu?
-- [ ] `src/app/api/perde/orders/` → API route var mı, ne yapıyor?
-- [ ] Tarayıcıdan `localhost:3000/sites/perde.ai/b2b` test et.
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-5): perde b2b sipariş doğrulama"`
+- [x] `src/components/node-perde/B2B.tsx` (20KB) → `perde_orders` ve `perde_customers` onSnapshot bağlantısı var mı?
+- [x] `src/components/node-perde/OrderSlideOver.tsx` (18KB) → Sipariş oluşturma Firestore'a yazıyor mu?
+- [x] `src/app/api/perde/orders/` → API route var mı, ne yapıyor?
+- [x] Tarayıcıdan `localhost:3000/sites/perde.ai/b2b` test et.
+- **KANIT:** `B2B.tsx` içinde `onSnapshot` listener'ları aktif. `OrderSlideOver.tsx` başarılı şekilde `addDoc` ve `updateDoc` yapıyor. `/api/perde/orders/route.ts` API route'u oluşturulmuş ve `@aipyram/firebase` üzerinden çalışıyor. Sayfa SSR kilitlenmesine karşı `force-dynamic` yapıldı.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-5): perde b2b siparis dogrulama"`
 
 ### Sprint 6: ERP (Muhasebe + Stok)
 - [ ] `src/components/node-perde/Accounting.tsx` → `perde_orders` aggregate hesabı doğru mu?
