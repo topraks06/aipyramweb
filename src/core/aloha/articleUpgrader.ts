@@ -20,8 +20,7 @@ import {
   MANDATORY_KEYWORDS
 } from './visualDNA';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 // ═══════════════════════════════════════
 // UPGRADE RESULT TYPES
 // ═══════════════════════════════════════
@@ -131,9 +130,8 @@ export async function upgradeAllArticles(project: string = 'trtex'): Promise<Upg
       // ─── 1. BAŞLIK + KALITE UPGRADE ───
       if (existingScore < 80 || title.length < 20) {
         try {
-          const fix = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Lüks tekstil dergisi editörüsün. Bu haberi upgrade et.
+          const { text } = await alohaAI.generate(
+            `Lüks tekstil dergisi editörüsün. Bu haberi upgrade et.
 
 MEVCUT BAŞLIK: ${title}
 KATEGORİ: ${category}
@@ -148,9 +146,11 @@ GÖREV:
 JSON:
 {"title":"...","intro":"...","commercial_note":"...","quality_score":85}
 SADECE JSON.`,
-          });
+            { complexity: 'routine' },
+            'articleUpgrader.qualityFix'
+          );
 
-          const text = fix?.text || '';
+          if (text) {
           const jsonMatch = text.match(/\{[\s\S]*?\}/);
           if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
@@ -163,6 +163,7 @@ SADECE JSON.`,
             updateData.quality_score = Math.max(parsed.quality_score || 75, existingScore);
             detail.afterScore = updateData.quality_score;
           }
+        }
         } catch (e) { await dlq.recordSilent(e, 'articleUpgrader.qualityFix', 'trtex'); }
       }
 
@@ -181,12 +182,11 @@ SADECE JSON.`,
       if (!hasAICeo) {
         try {
           const ceoPrompt = generateAICEOPrompt(title, content);
-          const ceoResult = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: ceoPrompt,
-          });
-
-          const ceoText = ceoResult?.text || '';
+          const { text: ceoText } = await alohaAI.generate(
+            ceoPrompt,
+            { complexity: 'routine' },
+            'articleUpgrader.ceoBlock'
+          );
           const ceoJson = ceoText.match(/\{[\s\S]*\}/);
           if (ceoJson) {
             const ceoParsed = JSON.parse(ceoJson[0]);
@@ -199,9 +199,8 @@ SADECE JSON.`,
       // ─── 3b. TRADE MATRIX ÜRETİMİ (Weaponized Commerce) ───
       if (!data.trade_matrix) {
         try {
-          const tmRes = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `GOREV: Bu haberi SATIŞ SILAHINA donustur.
+          const { text: tmText } = await alohaAI.generate(
+            `GOREV: Bu haberi SATIŞ SILAHINA donustur.
 BASLIK: ${title}
 ICERIK OZETI: ${content.substring(0, 500)}
 KATEGORI: ${category}
@@ -231,12 +230,13 @@ KURALLAR:
 - Genel ev tekstili → cross_project: "hometex"
 - Ihracat/fiyat → cross_project: "trtex"
 SADECE JSON.`,
-            config: { responseMimeType: 'application/json', temperature: 0.3 }
-          });
+            { responseMimeType: 'application/json', temperature: 0.3, complexity: 'routine' },
+            'articleUpgrader.tradeMatrix'
+          );
 
-          if (tmRes.text) {
+          if (tmText) {
             const { safeParseLLM, schemas } = require('./schemaGuard');
-            const tmResult = await safeParseLLM(schemas.tradeMatrix, tmRes.text, 'articleUpgrader.tradeMatrix', 'trtex');
+            const tmResult = await safeParseLLM(schemas.tradeMatrix, tmText, 'articleUpgrader.tradeMatrix', 'trtex');
             if (tmResult.success && tmResult.data) {
               updateData.trade_matrix = tmResult.data;
             }

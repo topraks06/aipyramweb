@@ -16,8 +16,7 @@ import { dlq } from './dlq';
  * - ... (dinamik genişleme)
  */
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 // ═══════════════════════════════════════
 // PROJE → KOLEKSİYON MAPPING
 // ═══════════════════════════════════════
@@ -170,14 +169,14 @@ export async function universalCreatePage(params: {
   };
 
   try {
-    const seoRes = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `${config.siteName} platformu için "${title_tr}" başlıklı ${template} şablonunda sayfa.
+    const { text } = await alohaAI.generate(
+      `${config.siteName} platformu için "${title_tr}" başlıklı ${template} şablonunda sayfa.
 JSON döndür: {"meta_description_tr":"max 160 karakter TR","meta_description_en":"max 160 char EN"}`,
-      config: { responseMimeType: 'application/json', temperature: 0.2 }
-    });
-    if (seoRes.text) {
-      const parsed = JSON.parse(seoRes.text);
+      { responseMimeType: 'application/json', temperature: 0.2, complexity: 'routine' },
+      'universalSiteManager.createPageSEO'
+    );
+    if (text) {
+      const parsed = JSON.parse(text);
       seoMeta.meta_description_tr = parsed.meta_description_tr || '';
       seoMeta.meta_description_en = parsed.meta_description_en || '';
     }

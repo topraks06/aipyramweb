@@ -12,6 +12,21 @@ export interface SemanticNode {
 }
 
 /**
+ * TEXTILE ONTOLOGY (Sovereign Context Dictionary)
+ * RAG sisteminin kelimeleri farklı bölgelerde yanlış yorumlamasını engeller.
+ */
+const TEXTILE_ONTOLOGY: Record<string, { TR: string; EU: string }> = {
+  linen: {
+    TR: 'polyester linen-look (aksi belirtilmedikçe)',
+    EU: 'doğal keten (flax fiber, 100% natural)',
+  },
+  keten: {
+    TR: 'polyester linen-look (aksi belirtilmedikçe)',
+    EU: 'doğal keten (flax fiber, 100% natural)',
+  }
+};
+
+/**
  * SEMANTIC KNOWLEDGE GRAPH
  * Google'ın "Keyword" değıl "Context" (Bağlam) istemesi üzerine inşa edilen Vektörel Sicil Ağı.
  * 270 Domain bu class üzerinden birbirinin pazar verisini "Edge" (düğüm ucu) olarak kullanır.
@@ -23,8 +38,18 @@ export class SemanticGraph {
    * Yeni bir bilgiyi bağlamsal sicil olarak kaydeder.
    */
   static async ingestNode(node: Omit<SemanticNode, "timestamp">): Promise<string> {
+    let enrichedText = node.rawText;
+    
+    // RAG Metadata Injection: Metin içinde ontology kelimeleri geçiyorsa bağlamı mühürle
+    const lowerText = enrichedText.toLowerCase();
+    for (const [key, value] of Object.entries(TEXTILE_ONTOLOGY)) {
+      if (lowerText.includes(key)) {
+        enrichedText += ` [CONTEXT: ${key} means ${value.TR} in TR, and ${value.EU} in EU]`;
+      }
+    }
+
     // Gerçek Vertex AI Embeddings API çağrısı ile embed işlemi
-    const embedding = await alohaAI.generateEmbedding(node.rawText, "semantic_graph");
+    const embedding = await alohaAI.generateEmbedding(enrichedText, "semantic_graph");
     
     const payload = {
       ...node,
@@ -42,10 +67,21 @@ export class SemanticGraph {
   /**
    * Domain Master Agent içerik üretirken, diğer 269 domaindeki benzer bağlamları bulmak için çağırır.
    */
-  static async mapContextEdges(domain: string, contextKeywords: string[]): Promise<SemanticNode[]> {
-    console.log(`[🕸️ SEMANTIC GRAPH] Otorite Ağ Taraması: ${domain} için '${contextKeywords.join(",")}' aranıyor...`);
+  static async mapContextEdges(domain: string, contextKeywords: string[], locale: string = 'TR'): Promise<SemanticNode[]> {
+    console.log(`[🕸️ SEMANTIC GRAPH] Otorite Ağ Taraması: ${domain} için '${contextKeywords.join(",")}' aranıyor... (Locale: ${locale})`);
     
-    const embedding = await alohaAI.generateEmbedding(contextKeywords.join(" "), "semantic_search");
+    let searchStr = contextKeywords.join(" ");
+    const lowerSearchStr = searchStr.toLowerCase();
+    
+    // Sorguya locale spesifik ontology anlamını ekle
+    for (const [key, value] of Object.entries(TEXTILE_ONTOLOGY)) {
+      if (lowerSearchStr.includes(key)) {
+        const meaning = locale === 'TR' ? value.TR : value.EU;
+        searchStr += ` (${key} in context of ${meaning})`;
+      }
+    }
+
+    const embedding = await alohaAI.generateEmbedding(searchStr, "semantic_search");
     let snapshot;
 
     // Firebase Admin SDK'sında vector search desteği varsa

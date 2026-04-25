@@ -2,8 +2,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 
 const apiKey = process.env.GEMINI_API_KEY;
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 /**
  * 🌍 ALOHA GLOBAL YERELLEŞTİRME İŞÇİSİ (UI Localization Agent - 8 Languages)
  */
@@ -51,17 +50,18 @@ export async function executeUiLocalization(dataArray: any[], contextHint: strin
 
     try {
         console.log(`[🌍 UI-LOCALIZER] İşçi sahada: ${dataArray.length} adet arayüz objesi taranıp 8 DİLE KOPYALANIYOR...`);
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: promptContext,
-            config: {
+        const { text: responseText } = await alohaAI.generate(
+            promptContext,
+            {
                 responseMimeType: "application/json",
                 temperature: 0.1,
-            }
-        });
+                complexity: 'routine'
+            },
+            'uiLocalizationAgent.executeUiLocalization'
+        );
 
-        if (response.text) {
-            const translatedGroups = JSON.parse(response.text);
+        if (responseText) {
+            const translatedGroups = JSON.parse(responseText);
             return translatedGroups;
         }
     } catch (error: any) {

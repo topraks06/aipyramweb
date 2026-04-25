@@ -16,8 +16,7 @@ import { dlq } from './dlq';
  * Koleksiyonlar: trtex_site_config, trtex_pages, trtex_components
  */
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 // ═══════════════════════════════════════
 // TİP TANIMLARI
 // ═══════════════════════════════════════
@@ -353,15 +352,15 @@ export async function trtexCreatePage(params: {
   };
 
   try {
-    const seoRes = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `TRTEX B2B tekstil istihbarat platformu için "${title_tr}" başlıklı sayfa.
+    const { text } = await alohaAI.generate(
+      `TRTEX B2B tekstil istihbarat platformu için "${title_tr}" başlıklı sayfa.
 Şablon: ${template}. 
 JSON döndür: {"meta_description_tr":"max 160 karakter TR","meta_description_en":"max 160 char EN"}`,
-      config: { responseMimeType: 'application/json', temperature: 0.2 }
-    });
-    if (seoRes.text) {
-      const parsed = JSON.parse(seoRes.text);
+      { responseMimeType: 'application/json', temperature: 0.2, complexity: 'routine' },
+      'trtexSiteManager.createPageSEO'
+    );
+    if (text) {
+      const parsed = JSON.parse(text);
       seoMeta.meta_description_tr = parsed.meta_description_tr || '';
       seoMeta.meta_description_en = parsed.meta_description_en || '';
     }
@@ -665,12 +664,13 @@ KURALLAR:
 SADECE KOD DÖNDÜR — açıklama veya markdown YAZMA.`;
 
   try {
-    const res = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: componentPrompt,
-    });
+    const { text: resText } = await alohaAI.generate(
+      componentPrompt,
+      { complexity: 'routine' },
+      'trtexSiteManager.generateComponent'
+    );
 
-    let code = res.text || '';
+    let code = resText || '';
     code = code.replace(/```(?:tsx|ts|javascript|js)?/g, '').replace(/```/g, '').trim();
 
     if (!code || code.length < 50) {

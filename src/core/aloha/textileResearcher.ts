@@ -67,13 +67,11 @@ export async function runDeepResearch(): Promise<string> {
 
   try {
     const { alohaAI } = await import('./aiClient');
-    const ai = alohaAI.getClient();
 
     for (const topic of RESEARCH_TOPICS) {
       try {
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: `Sen bir B2B ev tekstili/perde sektörü uzmanısın. Aşağıdaki konuda GÜNCEL ve DERİN bir araştırma yap:
+        const { text: resText } = await alohaAI.generate(
+          `Sen bir B2B ev tekstili/perde sektörü uzmanısın. Aşağıdaki konuda GÜNCEL ve DERİN bir araştırma yap:
 
 "${topic.query}"
 
@@ -91,14 +89,16 @@ JSON formatında döndür:
   "quality_score": 0-100,
   "actionable_insight": "Tek cümlelik aksiyon önerisi"
 }`,
-          config: {
+          {
             tools: [{ googleSearch: {} }],
             temperature: 0.2,
             responseMimeType: 'application/json',
-          }
-        });
+            complexity: 'routine'
+          },
+          'textileResearcher.runDeepResearch'
+        );
 
-        const text = response.text || '';
+        const text = resText || '';
         const data = JSON.parse(text);
 
         // Kalite kapısı: score > 70

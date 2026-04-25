@@ -74,20 +74,20 @@ export async function executeTranslationAgent(baseContent: TranslationInput, sou
   } as TranslatedContent;
 
   try {
-    const ai = alohaAI.getClient();
     console.log(`[🌍 TRANSLATOR] Çeviri başlatıldı (${TARGET_LANGUAGES.join(', ')})...`);
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: promptContext,
-      config: {
+    const { text: responseText } = await alohaAI.generate(
+      promptContext,
+      {
         responseMimeType: "application/json",
         responseSchema: translationSchema,
         temperature: 0.1, // Düşük sıcaklık çeviri tutarlılığı içindir
-      }
-    });
+        complexity: 'routine'
+      },
+      'translationAgent.executeTranslationAgent'
+    );
 
-    if (response.text) {
-      const translations = JSON.parse(response.text);
+    if (responseText) {
+      const translations = JSON.parse(responseText);
       
       // Merge results
       for (const lang of TARGET_LANGUAGES) {
