@@ -37,10 +37,13 @@ import { adminDb } from '@/lib/firebase-admin';
 // → YENİ: veo-3.1-lite-preview (hızlı video üretimi, sanal fuar potansiyeli)
 // → YENİ: Gemini 3.1 Flash (agentic workflows, persistent context)
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+// MALİYET SAVUNMASI (CFO GUARD):
+// Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
+// en düşük maliyetli model (Flash-Lite) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
+const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash-Lite / Yüksek Hız, Düşük Maliyet)
 const DEEP_MODEL = 'gemini-2.5-pro';
-const IMAGE_MODEL = 'gemini-2.5-flash';     // Flash image does not have an explicit -image string in standard API, but 2.5-flash supports multimodal.
-const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Using stable imagen 3 instead of 4
+const IMAGE_MODEL = 'imagen-4.0-fast-generate-001';     // Default for generateImages
+const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback for generateImages
 const EMBEDDING_MODEL = 'text-embedding-004';  // Stable embedding model
 const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
 const MAX_RETRIES = 3;
@@ -114,7 +117,8 @@ function recordTokenUsage(caller: string, prompt: string | any[], responseText: 
   if (_usageLog.length > 100) _usageLog.splice(0, _usageLog.length - 100);
 
   // CFO Ajan Güçlendirme: Maliyetleri Firestore'a asenkron yaz
-  if (adminDb) {
+  // Yerel geliştirmede (Windows gRPC kilitlenmeleri sebebiyle) devre dışı bırakıldı.
+  if (adminDb && process.env.NODE_ENV !== 'development') {
     const estimatedCost = (tokens / 1000) * 0.00003; // Yaklaşık maliyet (gemini-3.1-flash)
     adminDb.collection('aloha_costs').add({
       node: caller.includes('trtex') ? 'trtex' : caller.includes('perde') ? 'perde' : caller.includes('hometex') ? 'hometex' : caller.includes('vorhang') ? 'vorhang' : 'global',
@@ -224,7 +228,7 @@ function getRouterModel(complexity?: 'routine' | 'complex' | 'vision'): string {
     case 'complex':
       return DEEP_MODEL; // gemini-3.1-pro
     case 'vision':
-      return IMAGE_MODEL; // gemini-3.1-flash-image
+      return DEFAULT_MODEL; // gemini-2.5-flash handles vision natively
     case 'routine':
     default:
       return DEFAULT_MODEL; // gemini-3.1-flash (cost saving)

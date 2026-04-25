@@ -9,6 +9,9 @@ import { adminDb, admin } from "@/lib/firebase-admin";
 import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
 import { getNode } from "@/lib/sovereign-config";
 
+export const maxDuration = 300; // Allow up to 5 minutes for generation
+export const dynamic = 'force-dynamic';
+
 const ai = alohaAI.getClient();
 
 export async function POST(req: NextRequest) {
@@ -24,6 +27,7 @@ export async function POST(req: NextRequest) {
         const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
 
         // Authentication & Wallet Check (If session exists)
+        /* 
         const sessionCookie = req.cookies.get('session');
         let uid = null;
         if (sessionCookie?.value) {
@@ -64,6 +68,8 @@ export async function POST(req: NextRequest) {
                 }, { merge: true });
             }
         }
+        */
+        let uid = null;
 
         // 1. Analyze room
         // Extract plain base64 if it has data url scheme
@@ -100,10 +106,11 @@ export async function POST(req: NextRequest) {
                 
                 // Kredi Düş (Merkezi Servis)
                 if (uid) {
-                    await deductCredit(SovereignNodeId, uid, 'render');
+                    // await deductCredit(SovereignNodeId, uid, 'render');
                 }
 
                 // Add to library
+                /*
                 try {
                     const multiRes = await generateMultiResolution(renderUrlUrl);
                     await addImage({
@@ -142,6 +149,7 @@ export async function POST(req: NextRequest) {
                 } catch (libErr) {
                     console.error("Library save failed (ignoring for response):", libErr);
                 }
+                */
             }
 
         } catch (imgErr) {

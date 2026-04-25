@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { PERDE_DICT } from './perde-dictionary';
 import Image from 'next/image';
 import { 
-  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent
+  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent, Ruler, BookOpen, ChevronDown
 } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import toast from 'react-hot-toast';
@@ -100,6 +100,31 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stagedImage, variationCount, resultImage, activeOriginalUrl]);
 
+  // ── Görsel Sıkıştırma (API Payload Boyutunu Düşürmek İçin) ──
+  const compressImage = (base64: string, maxWidth = 1200, quality = 0.8): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width;
+        let h = img.height;
+        if (w > maxWidth) {
+          h = Math.round((h * maxWidth) / w);
+          w = maxWidth;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        console.log(`[COMPRESS] ${Math.round(base64.length / 1024)}KB → ${Math.round(compressed.length / 1024)}KB (${w}x${h})`);
+        resolve(compressed);
+      };
+      img.onerror = () => resolve(base64); // fallback: return original
+      img.src = base64;
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
         toast.error("Lütfen sadece resim dosyası yükleyin (JPG/PNG).");
@@ -111,9 +136,11 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
     }
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-       const base64String = reader.result as string;
-       setStagedImage({ base64: base64String, mimeType: file.type });
+    reader.onloadend = async () => {
+       const rawBase64 = reader.result as string;
+       // Sıkıştır: 1200px max, %80 kalite → API payload'u düşür
+       const compressed = await compressImage(rawBase64, 1200, 0.8);
+       setStagedImage({ base64: compressed, mimeType: 'image/jpeg' });
        setResultImage(null);
        setVariations(null);
        setActiveOriginalUrl(null);
@@ -136,16 +163,42 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
      }
      
      try {
-       const response = await fetch('/api/render', {
+       const isProRender = canvasAttachments.length > 0;
+       const endpoint = isProRender ? '/api/perde/render-pro' : '/api/render';
+
+       // ── TÜM GÖRSELLERİ SIKIŞTIRIR (API payload boyutunu düşür) ──
+       const compressedTarget = await compressImage(targetImage, 1200, 0.8);
+
+       const productsObj: Record<string, any> = {};
+       for (const [i, a] of canvasAttachments.entries()) {
+           const role = a.label || `Ürün ${i+1}`;
+           const compressedProduct = await compressImage(a.base64, 800, 0.7);
+           productsObj[role] = { data: compressedProduct, mimeType: 'image/jpeg' };
+       }
+
+       const bodyPayload = isProRender 
+         ? {
+             spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
+             products: productsObj,
+             SovereignNodeId
+           }
+         : {
+             imageBase64: compressedTarget,
+             attachments: canvasAttachments.length > 0 
+               ? await Promise.all(canvasAttachments.map(async (a: any) => await compressImage(a.base64, 800, 0.7)))
+               : [],
+             variationCount,
+             SovereignNodeId,
+             isDemoMode
+           };
+
+       const payloadStr = JSON.stringify(bodyPayload);
+       console.log(`[RENDER] Sending ${Math.round(payloadStr.length / 1024)}KB to ${endpoint}`);
+
+       const response = await fetch(endpoint, {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-           imageBase64: targetImage,
-           attachments: canvasAttachments.map(a => a.base64),
-           variationCount,
-           SovereignNodeId,
-           isDemoMode
-         })
+         body: payloadStr
        });
 
        if (response.status === 402) {
@@ -153,8 +206,16 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
        }
 
        if (!response.ok) {
-         const err = await response.json();
-         throw new Error(err.error || 'Render başarısız');
+         // Sunucu HTML hata sayfası dönebilir — JSON parse güvenli olmalı
+         let errorMsg = `Sunucu hatası (${response.status})`;
+         try {
+           const err = await response.json();
+           errorMsg = err.error || errorMsg;
+         } catch {
+           // JSON parse edilemedi (HTML hata sayfası)
+           console.error('[RENDER] Sunucu JSON olmayan hata döndürdü, status:', response.status);
+         }
+         throw new Error(errorMsg);
        }
 
        const data = await response.json();
@@ -198,40 +259,17 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
          throw new Error('Render sonucu alınamadı');
        }
      } catch (err: any) {
-       console.error('Render error:', err);
+        console.error('Render error:', err);
+        setIsProcessing(false);
+        setStagedImage(null);
 
-       if (err.message.includes('ALOHA Kredisi')) {
-           setIsProcessing(false);
-           alert("Hata: " + err.message);
-       } else {
-           // ═══ AKILLI FALLBACK (SMART FAIL-SAFE) ═══
-           // API çökse bile B2B akışını kırmamak için demo render üretir.
-           setTimeout(() => {
-               const fallbackImage = "/assets/perde.ai/perde.ai (9).jpg"; // Premium B2B fallback
-               if (variationCount === 1) {
-                 setResultImage(fallbackImage);
-                 setActiveOriginalUrl(targetImage);
-                 const newHistory = renderHistory.slice(0, historyIndex + 1);
-                 newHistory.push({ url: fallbackImage, originalUrl: targetImage });
-                 setRenderHistory(newHistory);
-                 setHistoryIndex(newHistory.length - 1);
-                 setStagedImage(null);
-                 setVariations(null);
-               } else {
-                 setVariations([fallbackImage, "/assets/perde.ai/perde.ai (10).jpg", "/assets/perde.ai/perde.ai 204.jpg", "/assets/perde.ai/perde.ai (18).jpg"].slice(0, variationCount));
-                 setActiveOriginalUrl(targetImage);
-                 setStagedImage(null);
-               }
-               setIsProcessing(false);
-               
-               window.dispatchEvent(new CustomEvent('agent_message', {
-                 detail: { message: `⚠️ Ana tasarım motorunda anlık yoğunluk var. Kesinti yaşamaman için "B2B Demo Simülasyonunu" devreye aldım. Bu referans tasarım üzerinden teklif isteyebilir veya işlemlere devam edebilirsin.` }
-               }));
-               window.dispatchEvent(new CustomEvent('RENDER_COMPLETE', {
-                 detail: { url: fallbackImage }
-               }));
-           }, 1500);
-       }
+        // Kullanıcıya GERÇEK hata mesajını göster — sahte resim YASAK
+        const errorMsg = err.message || 'Tasarım motoru yanıt vermedi.';
+        toast.error(`❌ Render Hatası: ${errorMsg}`, { duration: 6000 });
+
+        window.dispatchEvent(new CustomEvent('agent_message', {
+          detail: { message: `❌ Tasarım motoru hata verdi: ${errorMsg}. Lütfen tekrar deneyin veya farklı bir görsel yükleyin.` }
+        }));
      }
   };
 
@@ -427,9 +465,9 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                               </div>
 
                               {canvasAttachments.length > 0 && (
-                                  <div className="flex gap-3 w-full max-w-full overflow-x-auto pb-4 custom-scrollbar snap-x touch-pan-x">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pb-4">
                                      {canvasAttachments.map((att: any) => (
-                                        <div key={att.id} className="snap-start shrink-0 w-64 flex flex-col bg-zinc-900 border border-white/10 rounded-lg overflow-hidden relative shadow-lg">
+                                        <div key={att.id} className="w-full flex flex-col bg-zinc-900 border border-white/10 rounded-lg overflow-hidden relative shadow-lg">
                                             <div className="flex bg-black/40 h-16 shrink-0 relative">
                                                 <img src={att.base64} alt="product" className="w-16 h-16 object-cover border-r border-white/10 shrink-0" />
                                                 <div className="flex-1 p-2 flex flex-col justify-center relative min-w-0">
@@ -464,16 +502,42 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                                   </div>
                               )}
 
-                              <div 
-                                  className={`w-full ${canvasAttachments.length > 0 ? 'h-20' : 'h-40'} border-2 border-dashed border-[#8B7355] rounded-xl flex flex-col items-center justify-center bg-black/40 text-center p-4 cursor-pointer hover:bg-black/60 transition-colors`}
-                                  onClick={() => {
-                                      const input = document.createElement('input');
-                                      input.type = 'file';
-                                      input.accept = 'image/*';
-                                      input.multiple = true;
-                                      input.onchange = (e: any) => {
-                                          const files = Array.from(e.target.files) as File[];
-                                          files.forEach(file => {
+                              {canvasAttachments.length < 6 && (
+                                  <div 
+                                      className={`w-full ${canvasAttachments.length > 0 ? 'h-20' : 'h-40'} border-2 border-dashed border-[#8B7355] rounded-xl flex flex-col items-center justify-center bg-black/40 text-center p-4 cursor-pointer hover:bg-black/60 transition-colors`}
+                                      onClick={() => {
+                                          const input = document.createElement('input');
+                                          input.type = 'file';
+                                          input.accept = 'image/*';
+                                          input.multiple = true;
+                                          input.onchange = (e: any) => {
+                                              const files = Array.from(e.target.files) as File[];
+                                              const availableSlots = 6 - canvasAttachments.length;
+                                              const filesToAdd = files.slice(0, Math.max(0, availableSlots));
+                                              
+                                              filesToAdd.forEach(file => {
+                                                  const reader = new FileReader();
+                                                  reader.onload = (re) => {
+                                                      window.dispatchEvent(new CustomEvent('agent_request_add_attachment', {
+                                                          detail: { file, base64: re.target?.result as string }
+                                                      }));
+                                                      if (window.innerWidth >= 768) {
+                                                          window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { attention: false } }));
+                                                      }
+                                                  };
+                                                  reader.readAsDataURL(file);
+                                              });
+                                          };
+                                          input.click();
+                                      }}
+                                      onDragOver={(e) => e.preventDefault()}
+                                      onDrop={(e) => {
+                                          e.preventDefault();
+                                          const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+                                          const availableSlots = 6 - canvasAttachments.length;
+                                          const filesToAdd = files.slice(0, Math.max(0, availableSlots));
+                                          
+                                          filesToAdd.forEach(file => {
                                               const reader = new FileReader();
                                               reader.onload = (re) => {
                                                   window.dispatchEvent(new CustomEvent('agent_request_add_attachment', {
@@ -485,31 +549,19 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                                               };
                                               reader.readAsDataURL(file);
                                           });
-                                      };
-                                      input.click();
-                                  }}
-                                  onDragOver={(e) => e.preventDefault()}
-                                  onDrop={(e) => {
-                                      e.preventDefault();
-                                      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-                                      files.forEach(file => {
-                                          const reader = new FileReader();
-                                          reader.onload = (re) => {
-                                              window.dispatchEvent(new CustomEvent('agent_request_add_attachment', {
-                                                  detail: { file, base64: re.target?.result as string }
-                                              }));
-                                              if (window.innerWidth >= 768) {
-                                                  window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { attention: false } }));
-                                              }
-                                          };
-                                          reader.readAsDataURL(file);
-                                      });
-                                  }}
-                              >
-                                  {canvasAttachments.length === 0 && <ImageIcon className="w-8 h-8 text-[#8B7355] mb-2" />}
-                                  <span className="text-white text-sm font-medium">{canvasAttachments.length > 0 ? `+ ${T.addMoreProducts || 'Daha Fazla Ürün Ekle'}` : (T.dragProductsHere || 'Tasarımda Kullanılacak Ürünlerinizi Buraya Sürükleyin')}</span>
-                                  {canvasAttachments.length === 0 && <span className="text-zinc-500 text-xs mt-1">({T.orClickToSelect || 'veya tıklayıp seçin'})</span>}
-                              </div>
+                                      }}
+                                  >
+                                      {canvasAttachments.length === 0 && <ImageIcon className="w-8 h-8 text-[#8B7355] mb-2" />}
+                                      <span className="text-white text-sm font-medium">{canvasAttachments.length > 0 ? `+ ${T.addMoreProducts || 'Daha Fazla Ürün Ekle'}` : (T.dragProductsHere || 'Tasarımda Kullanılacak Ürünlerinizi Buraya Sürükleyin')}</span>
+                                      {canvasAttachments.length === 0 && <span className="text-zinc-500 text-xs mt-1">({T.orClickToSelect || 'veya tıklayıp seçin'})</span>}
+                                  </div>
+                              )}
+                              
+                              {canvasAttachments.length >= 6 && (
+                                  <div className="w-full text-center text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
+                                      Maksimum kapasiteye (6 ürün) ulaştınız.
+                                  </div>
+                              )}
                               
                               {canvasAttachments.length > 0 ? (
                                   <>
@@ -600,24 +652,19 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                 </div>
               )}
 
-              {/* Watermark — stronger in demo mode */}
-              <div className={`absolute inset-0 pointer-events-none flex flex-wrap content-evenly justify-evenly -rotate-12 z-20 mix-blend-screen ${isDemoMode ? 'opacity-[0.15]' : 'opacity-[0.03]'}`}>
-                 {Array.from({length: 15}).map((_, i) => (
-                   <span key={i} className="text-8xl font-black text-white m-8 tracking-widest uppercase font-serif">PERDE.AI</span>
-                 ))}
+              {/* Elegant B2B Watermark */}
+              <div className="absolute bottom-6 right-6 z-20 pointer-events-none opacity-40 flex flex-col items-end">
+                  <span className="text-2xl font-black text-white tracking-[0.3em] uppercase font-serif mix-blend-overlay">PERDE.AI</span>
+                  <span className="text-[8px] font-mono text-white/70 tracking-widest uppercase">Sovereign Engine</span>
               </div>
-              {/* Demo mode CTA: Sign up to remove watermark */}
-              {isDemoMode && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-black/80 backdrop-blur-md border border-[#8B7355]/50 px-6 py-3 rounded-xl flex items-center gap-4">
-                  <span className="text-white text-sm font-medium">Üye olun, filigran kalksın — 5 render ücretsiz!</span>
-                  <a href="/sites/perde.ai/register" className="bg-[#8B7355] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#725e45] transition-colors">ÜYE OL</a>
-                </div>
-              )}
-
-              {/* B2B Teklif Al CTA */}
-              <div className="absolute bottom-8 right-8 z-30 flex flex-col items-end gap-3">
-                 <div className="flex gap-4">
-                     <button 
+              
+              {/* Admin Ecosystem Dropdown (Top Right) */}
+              <div className="absolute top-6 right-6 z-30 group">
+                 <button className="bg-black/50 backdrop-blur-md border border-white/10 text-white p-3 rounded-full hover:bg-black transition-colors flex items-center justify-center">
+                    <Tent className="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                 </button>
+                 <div className="absolute right-0 mt-2 flex-col gap-2 hidden group-hover:flex w-48">
+                    <button 
                        onClick={async () => {
                          toast.success('Vorhang.ai Pazaryerine Gönderiliyor...', { icon: '🚀' });
                          try {
@@ -636,11 +683,11 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                            toast.error('Gönderim başarısız.');
                          }
                        }}
-                       className="bg-black text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/20 flex items-center gap-2"
-                     >
-                       <ShoppingCart className="w-4 h-4" /> VORHANG'A GÖNDER
-                     </button>
-                     <button 
+                       className="bg-black/90 backdrop-blur border border-white/10 text-white px-4 py-3 rounded-lg text-xs tracking-wider flex items-center justify-between hover:bg-[#8B7355]/20 hover:border-[#8B7355]/50 transition-all w-full text-left"
+                    >
+                       <span>Vorhang'a Aktar</span> <ShoppingCart className="w-3 h-3 text-[#8B7355]" />
+                    </button>
+                    <button 
                        onClick={async () => {
                          toast.success('Hometex Sanal Fuara Işınlanıyor...', { icon: '🎪' });
                          try {
@@ -661,19 +708,34 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
                            toast.error('Işınlanma başarısız.');
                          }
                        }}
-                       className="bg-[#111] text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/20 flex items-center gap-2"
-                     >
-                       <Tent className="w-4 h-4" /> SANAL FUARDA SERGİLE
-                     </button>
-                   <button className="bg-zinc-900/80 backdrop-blur text-white px-6 py-3 rounded-lg font-medium text-xs uppercase tracking-wider hover:bg-zinc-800 transition-colors shadow-2xl border border-white/10 flex items-center gap-2">
-                      <Download className="w-4 h-4" /> İndir
-                   </button>
+                       className="bg-black/90 backdrop-blur border border-white/10 text-white px-4 py-3 rounded-lg text-xs tracking-wider flex items-center justify-between hover:bg-[#8B7355]/20 hover:border-[#8B7355]/50 transition-all w-full text-left"
+                    >
+                       <span>Hometex Fuarı</span> <Tent className="w-3 h-3 text-[#8B7355]" />
+                    </button>
                  </div>
+              </div>
+
+              {/* B2B Floating Action Bar (Bottom Center) */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center bg-zinc-950/80 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                 <button className="text-zinc-300 hover:text-white px-6 py-3 rounded-xl text-[11px] font-medium tracking-widest flex items-center gap-2 transition-colors hover:bg-white/5 uppercase">
+                    <Download className="w-4 h-4" />
+                    <span>SUNUM İNDİR</span>
+                 </button>
+                 <div className="w-px h-6 bg-white/10 mx-1"></div>
                  <button 
-                   onClick={() => setLeadModalOpen(true)}
-                   className="bg-[#8B7355] text-white px-8 py-4 w-full rounded-lg font-bold text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all shadow-[0_0_30px_rgba(139,115,85,0.4)] border border-[#8B7355]/50 flex items-center justify-center gap-2"
+                    onClick={() => setLeadModalOpen(true)}
+                    className="text-zinc-300 hover:text-white px-6 py-3 rounded-xl text-[11px] font-medium tracking-widest flex items-center gap-2 transition-colors hover:bg-white/5 uppercase"
                  >
-                    B2B TEKLİF AL
+                    <BookOpen className="w-4 h-4" />
+                    <span>NUMUNE İSTE</span>
+                 </button>
+                 <div className="w-px h-6 bg-white/10 mx-1"></div>
+                 <button 
+                    onClick={() => setLeadModalOpen(true)}
+                    className="bg-gradient-to-r from-[#8B7355] to-[#725e45] text-white px-8 py-3 rounded-xl text-[11px] font-bold tracking-[0.15em] flex items-center gap-2 hover:shadow-[0_0_20px_rgba(139,115,85,0.4)] transition-all uppercase"
+                 >
+                    <Ruler className="w-4 h-4" />
+                    <span>METRAJ & FİYAT HESAPLA</span>
                  </button>
               </div>
             </div>

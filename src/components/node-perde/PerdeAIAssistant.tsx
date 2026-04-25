@@ -464,6 +464,12 @@ export default function PerdeAIAssistant() {
     }
 
     let finalUserMsg = userMsg;
+    if (!finalUserMsg.trim() && attachments.length > 0) {
+        finalUserMsg = "Ekteki ürünleri mekana uygulayarak tasarımı başlat.";
+        // Tell RoomVisualizer to actually start the render!
+        window.dispatchEvent(new CustomEvent('start_autonomous_render'));
+    }
+    
     if (detectedSector && !lower.includes('yarın') && !lower.includes('ciro') && !lower.includes('montaj')) {
        setCurrentSector(detectedSector);
        const cap = detectedSector.charAt(0).toUpperCase() + detectedSector.slice(1);

@@ -4,6 +4,9 @@ import { saveMessage, getRecentContext } from "@/lib/chat-memory";
 import { ALOHA_TOOL_SCHEMA, executeAlohaTool, ParsedCommand } from "@/lib/aloha/tools";
 import { getNode } from "@/lib/sovereign-config";
 
+export const maxDuration = 300; // Allow up to 5 minutes for generation
+export const dynamic = 'force-dynamic';
+
 /* ═══════════════════════════════════════════════════════
    /api/chat — AIPyram Master Concierge API
    Gemini AI powered conversational endpoint
@@ -104,17 +107,17 @@ export async function POST(req: NextRequest) {
             node = formData.get("node") as string || "aipyram";
             authorId = formData.get("authorId") as string || "anonymous";
             // ... (keep file handling) ...
-            
+
             if (!file) {
                 return NextResponse.json({ error: "Dosya bulunamadı" }, { status: 400 });
             }
-            
+
             // Convert to base64
             const buffer = await file.arrayBuffer();
             const base64 = Buffer.from(buffer).toString("base64");
             const mimeType = file.type;
             const imageBase64 = `data:${mimeType};base64,${base64}`;
-            
+
             // Redirect to render API (Internal call)
             try {
                 const renderApiUrl = new URL("/api/render", req.url).toString();
@@ -124,7 +127,7 @@ export async function POST(req: NextRequest) {
                     body: JSON.stringify({ imageBase64, prompt })
                 });
                 const renderData = await renderRes.json();
-                
+
                 // Return as normal conversation response
                 if (renderData.renderUrl) {
                     return NextResponse.json({
@@ -142,7 +145,7 @@ export async function POST(req: NextRequest) {
                 console.error("Render error within chat:", err);
                 return NextResponse.json({ error: "Render hizmeti yanıt vermedi" }, { status: 500 });
             }
-            
+
         } else {
             const jsonBody = await req.json();
             message = jsonBody.message;
@@ -216,13 +219,13 @@ export async function POST(req: NextRequest) {
 
         const config = getNode(node as any);
         let finalSystemInstruction = node === 'perde' ? PERDE_SYSTEM_PROMPT : AIPYRAM_SYSTEM_PROMPT;
-        
+
         if (config.features.salesEngine) {
             finalSystemInstruction += `\n\n${ALOHA_TOOL_SCHEMA}\nEĞER YUKARIDAKİ ARAÇLARDAN BİRİ TALEBİ KARŞILIYORSA, LÜTFEN ASIL METİN YANITINIZIN SONUNA ARAÇ İÇİN BİR JSON BLOĞU (RAW FORMAT: {"tool": "..."}) EKLEYİNİZ. MÜŞTERININ GÖRMESİ İÇİN ONA BİR METİN (Örn: "Hemen hallediyorum, onaylıyor musunuz?") YAZIN VE ALTINA JSON BLOĞUNU YERLEŞTİRİN. JSON bloğunu "\`\`\`json" gibi tagler içine ALMAYIN, doğrudan bir JSON objesi yazın.`;
         }
 
         const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -270,14 +273,14 @@ export async function POST(req: NextRequest) {
                 if (jsonObj.tool) {
                     // Remove the json block from the visible text
                     finalOutput = finalOutput.replace(jsonMatch[0], "").trim();
-                    
+
                     // Fallback to currently active node/uid logic if missing
                     const cmd: ParsedCommand = { ...jsonObj, raw: jsonMatch[0] };
                     if (!cmd.node) cmd.node = node;
                     if (!cmd.authorId) cmd.authorId = authorId;
-                    
+
                     const toolRes = await executeAlohaTool(cmd);
-                    
+
                     // Modify output and use widgets if tool execution gives output
                     if (toolRes.message && !finalOutput) {
                         finalOutput = toolRes.message;

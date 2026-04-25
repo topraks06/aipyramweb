@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LayoutDashboard } from 'lucide-react';
-import Img2ImgVisualizer from '@/components/node-perde/Img2ImgVisualizer';
+import RoomVisualizer from '@/components/node-perde/RoomVisualizer';
 import B2BGatekeeper from '@/components/auth/B2BGatekeeper';
 
 export const dynamic = "force-dynamic";
@@ -46,7 +46,7 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
 
         <main className="flex-1 overflow-auto p-6 relative">
           <React.Suspense fallback={<div className="text-[10px] text-zinc-500 uppercase tracking-widest text-center mt-20">Stüdyo Yükleniyor...</div>}>
-            <Img2ImgVisualizer />
+            <RoomVisualizer />
           </React.Suspense>
         </main>
       </div>

@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Loader2, Paintbrush, ArrowRight, Save } from 'lucide-react';
-// We assume there's a global gemini service or we'll mock it for the engine till agent integration
-// import { generateProductIdeas, generateProductImage } from '@/services/gemini';
+import { Paintbrush, Loader2, ArrowRight } from 'lucide-react';
 
 interface ProductIdea {
   name: string;
@@ -43,43 +41,26 @@ export default function DesignEngine() {
          window.dispatchEvent(new CustomEvent('design_requested', { detail: { mode: engineMode } }));
       }
 
-      // TODO: Firebase/Gemini agentic entegrasyonu gelecek (aloha/agentBus.ts Ã¼zerinden)
-      // Åimdilik sistemin nasÄ±l Ã§alÄ±ÅŸtÄ±ÄŸÄ±nÄ± gÃ¶stermek adÄ±na sahte gecikme.
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // GERÇEK API BAĞLANTISI (Zero-Mock)
+      const res = await fetch('/api/perde/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fabric, style, colorPalette, engineMode, newsHeadline, fairBrand, fairConcept })
+      });
       
-      const draftImageUrl = "/placeholder-render.jpg"; // Fallback for testing
-
-      if (engineMode === 'Koleksiyon') {
-         setIdeas([{
-            name: `${fabric} Ã–zel TasarÄ±mÄ±`,
-            type: 'PERDE.AI',
-            description: `${style} konseptinde, ${colorPalette} tonlarÄ±nda.`,
-            priceEstimate: 1250,
-            imagePrompt: "Architectural render",
-            imageUrl: draftImageUrl,
-            technicalDetails: "Gizli korniÅŸ, pileli Ã¶zel dikim."
-         }]);
-      } else if (engineMode === 'Editoryal') {
-         setIdeas([{
-            name: 'TRTEX Haber KapaÄŸÄ±',
-            type: 'TRTEX',
-            description: newsHeadline,
-            priceEstimate: 0,
-            imagePrompt: "Photorealistic cover",
-            imageUrl: draftImageUrl
-         }]);
+      if (!res.ok) throw new Error('Tasarım motoru API hatası');
+      const data = await res.json();
+      
+      if (data.success && data.collection) {
+         // API'den gelen 3 farklı ürün/render varyasyonunu göster
+         setIdeas(data.collection);
       } else {
-         setIdeas([{
-            name: '3D Fuar StandÄ±',
-            type: 'HOMETEX',
-            description: `${fairBrand} - ${fairConcept}`,
-            priceEstimate: 0,
-            imagePrompt: "Luxury 3D Booth",
-            imageUrl: draftImageUrl
-         }]);
+         throw new Error('Geçersiz yanıt formatı');
       }
+
     } catch (error) {
-           console.error(error);
+           console.error("[DesignEngine] Hata:", error);
+           alert("Tasarım motoru çalışırken bir hata oluştu.");
     } finally {
       setIsGenerating(false);
     }

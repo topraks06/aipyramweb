@@ -18,8 +18,12 @@ export interface ChatSession {
 }
 
 const COLLECTION = 'chat_sessions';
+const MEMORY_SESSIONS: Record<string, ChatSession> = {};
 
 export async function getSession(sessionId: string): Promise<ChatSession | null> {
+    if (process.env.NODE_ENV === 'development') {
+        return MEMORY_SESSIONS[sessionId] || null;
+    }
     try {
         const doc = await adminDb.collection(COLLECTION).doc(sessionId).get();
         if (!doc.exists) return null;
@@ -31,10 +35,28 @@ export async function getSession(sessionId: string): Promise<ChatSession | null>
 }
 
 export async function saveMessage(sessionId: string, message: ChatMessage, userId?: string): Promise<void> {
+    const now = new Date().toISOString();
+
+    if (process.env.NODE_ENV === 'development') {
+        if (!MEMORY_SESSIONS[sessionId]) {
+            MEMORY_SESSIONS[sessionId] = {
+                sessionId,
+                userId: userId || undefined,
+                messages: [message],
+                lastContext: message.text.substring(0, 50),
+                createdAt: now,
+                updatedAt: now
+            };
+        } else {
+            MEMORY_SESSIONS[sessionId].messages = [...MEMORY_SESSIONS[sessionId].messages, message].slice(-20);
+            MEMORY_SESSIONS[sessionId].updatedAt = now;
+        }
+        return;
+    }
+
     try {
         const docRef = adminDb.collection(COLLECTION).doc(sessionId);
         const doc = await docRef.get();
-        const now = new Date().toISOString();
 
         if (!doc.exists) {
             await docRef.set({

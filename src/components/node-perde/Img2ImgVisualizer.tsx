@@ -85,136 +85,39 @@ export default function Img2ImgVisualizer({ onRenderComplete }: Img2ImgVisualize
 
   // PROFESYONEL COMPOSITING MOTORU (Sıfır Halüsinasyon)
   const executeCompositing = async () => {
-    if (!fabricBase64 || !canvasRef.current) return;
+    if (!fabricBase64) return;
     setIsProcessing(true);
 
     try {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (!ctx) throw new Error('Canvas context bulunamadı');
+      // GERÇEK API BAĞLANTISI (Zero-Mock)
+      const res = await fetch('/api/perde/render-pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          products: [{ type: 'kumaş', image: fabricBase64 }],
+          spacePrompt: selectedTemplate.name,
+          studioSettings: {
+            scale,
+            opacity,
+            shadowIntensity,
+            brightness
+          }
+        })
+      });
 
-      // 1. Şablon Resimlerini Yükle (Gerçek sistemde bunlar Cloud Storage'dan gelir)
-      // Şimdilik sistemin hata vermemesi için eğer resim yüklenemezse boş bir Canvas oluşturacağız.
-      const [baseImg, maskImg, shadowImg, highlightImg, fgImg, fabricImg] = await Promise.all([
-        loadImage(selectedTemplate.baseLayer),
-        loadImage(selectedTemplate.alphaMaskLayer),
-        loadImage(selectedTemplate.shadowLayer),
-        loadImage(selectedTemplate.highlightLayer),
-        loadImage(selectedTemplate.fgLayer),
-        loadImage(fabricBase64)
-      ]);
+      if (!res.ok) {
+        throw new Error('API Hatası');
+      }
 
-      // Çözünürlüğü referans fotoğrafa göre ayarla (Örn: 1920x1080)
-      const targetWidth = baseImg.width > 0 ? baseImg.width : 1920;
-      const targetHeight = baseImg.height > 0 ? baseImg.height : 1080;
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      // -------------------------------------------------------------
-      // ADIM A: ARKA PLANI ÇİZ (Boş Oda)
-      // -------------------------------------------------------------
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.globalAlpha = 1.0;
-      if (baseImg.width > 0) {
-        ctx.drawImage(baseImg, 0, 0, targetWidth, targetHeight);
+      const data = await res.json();
+      
+      if (data.renderUrl) {
+         setResultImage(data.renderUrl);
+         if (onRenderComplete) onRenderComplete(data.renderUrl);
+         toast.success('Profesyonel 3D Render Tamamlandı');
       } else {
-        // Fallback arka plan (Prototip için)
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, targetWidth, targetHeight);
+         throw new Error('Render URL bulunamadı');
       }
-
-      // -------------------------------------------------------------
-      // ADIM B: KUMAŞI HAZIRLA VE MASKELE (Pattern Mapping)
-      // -------------------------------------------------------------
-      const curtainCanvas = document.createElement('canvas');
-      curtainCanvas.width = targetWidth;
-      curtainCanvas.height = targetHeight;
-      const cCtx = curtainCanvas.getContext('2d');
-      if (!cCtx) throw new Error('Curtain context hatası');
-
-      // Desen için geçici canvas (Rapor Boyu)
-      const patternCanvas = document.createElement('canvas');
-      patternCanvas.width = fabricImg.width * scale;
-      patternCanvas.height = fabricImg.height * scale;
-      const pCtx = patternCanvas.getContext('2d');
-      if (pCtx) {
-        // Kumaş parlaklık ayarı (CSS Filter alternatifi)
-        pCtx.filter = `brightness(${brightness * 100}%)`;
-        pCtx.drawImage(fabricImg, 0, 0, patternCanvas.width, patternCanvas.height);
-      }
-      const pattern = cCtx.createPattern(patternCanvas, 'repeat');
-
-      // Perde Maskesini çiz (Şekil)
-      if (maskImg.width > 0) {
-        cCtx.drawImage(maskImg, 0, 0, targetWidth, targetHeight);
-      } else {
-        // Fallback Şekil (Şablonlar yüklenmemişse gösterilecek prototip maske)
-        cCtx.beginPath();
-        cCtx.moveTo(targetWidth * 0.2, 0);
-        cCtx.lineTo(targetWidth * 0.8, 0);
-        cCtx.lineTo(targetWidth * 0.8, targetHeight * 0.9);
-        cCtx.lineTo(targetWidth * 0.2, targetHeight * 0.9);
-        cCtx.fill();
-      }
-
-      // 'source-in' ile sadece maskenin olduğu yere kumaşı çiz
-      cCtx.globalCompositeOperation = 'source-in';
-      if (pattern) {
-        cCtx.fillStyle = pattern;
-        cCtx.fillRect(0, 0, targetWidth, targetHeight);
-      }
-
-      // -------------------------------------------------------------
-      // ADIM C: GÖLGE VE IŞIK EFEKTLERİ (PİLELER)
-      // -------------------------------------------------------------
-      // Pile Gölgeleri (Multiply)
-      if (shadowImg.width > 0) {
-        cCtx.globalCompositeOperation = 'multiply';
-        cCtx.globalAlpha = shadowIntensity;
-        cCtx.drawImage(shadowImg, 0, 0, targetWidth, targetHeight);
-      } else {
-        // Fallback Gölge
-        cCtx.globalCompositeOperation = 'multiply';
-        const grad = cCtx.createLinearGradient(0, 0, targetWidth, 0);
-        for(let i=0; i<20; i++) grad.addColorStop(i/20, i%2===0 ? `rgba(0,0,0,${shadowIntensity*0.5})` : 'rgba(255,255,255,0)');
-        cCtx.fillStyle = grad;
-        cCtx.fillRect(0, 0, targetWidth, targetHeight);
-      }
-
-      // Işık Parlamaları (Overlay / Screen)
-      cCtx.globalCompositeOperation = 'overlay';
-      cCtx.globalAlpha = 0.5;
-      if (highlightImg.width > 0) {
-        cCtx.drawImage(highlightImg, 0, 0, targetWidth, targetHeight);
-      } else {
-        // Fallback Işık
-        const light = cCtx.createLinearGradient(0, 0, targetWidth, 0);
-        for(let i=0; i<20; i++) light.addColorStop(i/20, i%2!==0 ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0)');
-        cCtx.fillStyle = light;
-        cCtx.fillRect(0, 0, targetWidth, targetHeight);
-      }
-
-      // -------------------------------------------------------------
-      // ADIM D: OLUŞAN PERDEYİ ANA SAHNEYE YAPIŞTIR
-      // -------------------------------------------------------------
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.globalAlpha = opacity; // Tül perde ise şeffaf olacak (0.5), kalın ise mat (1.0)
-      ctx.drawImage(curtainCanvas, 0, 0);
-
-      // -------------------------------------------------------------
-      // ADIM E: FOREGROUND (ÖN NESNELER) ÇİZİMİ
-      // -------------------------------------------------------------
-      // Koltuk, pencere mermeri gibi objeler perdenin önünde durmalıdır.
-      ctx.globalAlpha = 1.0;
-      if (fgImg.width > 0) {
-        ctx.drawImage(fgImg, 0, 0, targetWidth, targetHeight);
-      }
-
-      // Sonucu al
-      const finalDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-      setResultImage(finalDataUrl);
-      if (onRenderComplete) onRenderComplete(finalDataUrl);
-      toast.success('Profesyonel 3D Render Tamamlandı');
 
     } catch (error) {
       console.error('Compositing Hatası:', error);
