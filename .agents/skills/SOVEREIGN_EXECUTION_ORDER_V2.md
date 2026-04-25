@@ -111,12 +111,12 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-6): perde erp muhasebe stok dogrulama"`
 
 ### Sprint 7: Ödeme (Stripe)
-- [ ] `src/components/node-perde/Pricing.tsx` → "Şimdi Al" butonu `/api/stripe/checkout` tetikliyor mu?
-- [ ] `src/app/api/stripe/checkout/route.ts` → Stripe test key kullanıyor mu? Session oluşturuyor mu?
-- [ ] Webhook route var mı? Lisans güncelleme çalışıyor mu?
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-7): perde stripe doğrulama"`
+- [x] `src/components/node-perde/Pricing.tsx` → "Şimdi Al" butonu `/api/stripe/checkout` tetikliyor mu?
+- [x] `src/app/api/stripe/checkout/route.ts` → Stripe test key kullanıyor mu? Session oluşturuyor mu?
+- [x] Webhook route var mı? Lisans güncelleme çalışıyor mu?
+- **KANIT:** `Pricing.tsx` içinde `handleCheckout` aktif. `webhook/route.ts` Stripe hook'u dinliyor ve `license: 'active'` kaydı atıyor, `useSovereignAuth` bunu okuyup onaylıyor.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-7): perde stripe dogrulama"`
 
 ### Sprint 8: AI Asistan (Chat)
 - [ ] `src/components/node-perde/PerdeAIAssistant.tsx` (68KB) → Chat mesaj gönderme çalışıyor mu? Hangi API'ye istek atıyor?
