@@ -1,7 +1,7 @@
 # PERDE.AI TASARIM MOTORU v4 — İKİ SİSTEMİN BİRLEŞİM EMRİ
 # Tarih: 25 Nisan 2026
 # Onay: Hakan Bey tarafından araştırma onaylandı, uygulama bekliyor
-# Durum: ⬜ UYGULAMA BEKLİYOR
+# Durum: ✅ ADIM 1-2 TAMAMLANDI (render-pro v4 + RoomVisualizer payload) — ADIM 3 TEST BEKLİYOR
 
 ## 0. GÖREV ÖZETİ
 
@@ -209,11 +209,11 @@ KRİTİK KURALLAR:
 **Değişiklik:** Sadece `triggerAutonomousRender()` fonksiyonu (L154-274)
 
 Yapılacaklar:
-- [ ] Payload'a `variationCount` ekle
-- [ ] Payload'a `studioSettings.decorationMode` ekle (default: 'auto-decor')
-- [ ] Payload'a `aspectRatio` ekle (default: '16:9')
-- [ ] Varyasyon modunda: TEK API çağrısı yap, 2/4 kez paralel çağır (her seferinde farklı varyasyon üretilir)
-- [ ] `canvasAttachments[].label` → `products[label]` dönüşümü zaten doğru (L172-177) ✅
+- [x] Payload'a `variationCount` ekle ✅ TAMAMLANDI
+- [x] Payload'a `studioSettings.decorationMode` ekle (default: 'auto-decor') ✅ TAMAMLANDI
+- [x] Payload'a `aspectRatio` ekle (default: '16:9') ✅ TAMAMLANDI
+- [x] Tüm renderlar render-pro v4 üzerinden yönlendirildi ✅ TAMAMLANDI
+- [x] `canvasAttachments[].label` → `products[label]` dönüşümü zaten doğru (L172-177) ✅
 
 ### ADIM 3: Test ve Doğrulama
 - [ ] `aboş pencereler (3).jpg` + `desen1.jpg` + `keten tül kırık beyaz.jpeg` ile test
@@ -266,12 +266,16 @@ zaten küçük. Server tarafında EK sıkıştırma gerekmez.
 
 ## 7. DEVAM NOKTASI (Yarın İçin)
 
-Eğer kredi bitmeden uygulama yapılamazsa, yarın şu adımdan devam edilecek:
+✅ ADIM 1: `render-pro/route.ts` — TAMAMLANDI (commit: 903670b)
+✅ ADIM 2: `RoomVisualizer.tsx` payload — TAMAMLANDI (commit: 903670b)
+⬜ ADIM 3: Kartela testi — BEKLİYOR
+
+Yarın şu adımdan devam edilecek:
 
 1. Bu dosyayı oku: `.agents/skills/PERDE_DESIGN_ENGINE_V4_MERGE_PLAN.md`
-2. ADIM 1'den başla: `render-pro/route.ts` dosyasını yeniden yaz
-3. ADIM 2: `RoomVisualizer.tsx`'in `triggerAutonomousRender()` payload'ını güncelle
-4. ADIM 3: Kartela klasöründeki gerçek fotoğraflarla test et
+2. `pnpm run dev` ile lokal sunucuyu başlat
+3. Perde.ai visualizer sayfasına git
+4. Kartela klasöründeki gerçek fotoğraflarla test et
 5. Ekran görüntüsü ile ispat et
 6. Git commit at
 
