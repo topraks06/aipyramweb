@@ -49,6 +49,17 @@ const RATE_LIMIT_WINDOW_MS = 60000; // 1 dakika
 const MAX_REQUESTS_PER_MINUTE = 55; // Google API limiti 60, güvenli alan
 
 // ═══════════════════════════════════════
+//  HİBRİT MOD UYARISI (Gemini Audit Önerisi #1)
+// ═══════════════════════════════════════
+// ⚠️ UYARI: Sistemde hâlâ ~50 dosya doğrudan ai.models.generateContent() kullanıyor.
+// Bu dosyalar merkezi router'ı (getRouterModel) atlayarak eski modellere hardcoded bağlı.
+// Tam göç tamamlanana kadar "Hibrit Mod" aktiftir — bazı ajanlar yeni modelle,
+// bazıları eski modelle çalışabilir. Bu, "Zekâ Tutarsızlığı" riski taşır.
+if (typeof process !== 'undefined') {
+  console.warn('[AI_CLIENT] ⚠️ HİBRİT MOD AKTİF — ~50 dosya hâlâ doğrudan API çağrısı yapıyor. Faz 2 göçü devam ediyor.');
+}
+
+// ═══════════════════════════════════════
 //  GÜNLÜK TOKEN BÜTÇESİ (MALİYE BAKANI v2)
 // ═══════════════════════════════════════
 const DAILY_TOKEN_BUDGET = 100_000;       // Günlük max 100K token (~3.3 CHF/gün ≈ 100 CHF/ay)
@@ -103,7 +114,7 @@ function recordTokenUsage(caller: string, prompt: string, responseText: string):
 
   // CFO Ajan Güçlendirme: Maliyetleri Firestore'a asenkron yaz
   if (adminDb) {
-    const estimatedCost = (tokens / 1000) * 0.00003; // Yaklaşık maliyet (gemini-2.5-flash)
+    const estimatedCost = (tokens / 1000) * 0.00003; // Yaklaşık maliyet (gemini-3.1-flash)
     adminDb.collection('aloha_costs').add({
       node: caller.includes('trtex') ? 'trtex' : caller.includes('perde') ? 'perde' : caller.includes('hometex') ? 'hometex' : caller.includes('vorhang') ? 'vorhang' : 'global',
       agent: caller,
@@ -190,6 +201,7 @@ interface GenerateOptions {
   responseMimeType?: string;
   maxOutputTokens?: number;
   tools?: any[];
+  responseSchema?: any;  // Structured output schema (Google GenAI Schema)
   complexity?: 'routine' | 'complex' | 'vision'; // Sprint D Model Routing
 }
 
@@ -245,6 +257,7 @@ async function generateWithRetry(
       if (options.responseMimeType) config.responseMimeType = options.responseMimeType;
       if (options.maxOutputTokens) config.maxOutputTokens = options.maxOutputTokens;
       if (options.tools) config.tools = options.tools;
+      if ((options as any).responseSchema) config.responseSchema = (options as any).responseSchema;
 
       // BÜTÇE KONTROLÜ — Maliye Bakanı v2
       const budgetCheck = checkBudget(caller);

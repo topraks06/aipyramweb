@@ -1,4 +1,4 @@
-import { adminDb } from '@/lib/firebase-admin';
+﻿import { adminDb } from '@/lib/firebase-admin';
 import { dlq } from './dlq';
 
 /**
@@ -475,7 +475,74 @@ export async function recordAgentPerformance(agentId: string, success: boolean, 
         lastActive: new Date().toISOString()
       });
     }
+
+    // 🚨 PANIC BUTTON: Hata eşiği kontrolü (Gemini Audit Önerisi #3)
+    if (!success) {
+      await checkPanicThreshold(agentId);
+    }
   } catch (e) {
     // Sessizce hatayı yut (performans takibi sistemi durdurmamalı)
   }
 }
+
+// ═══════════════════════════════════════
+// 6. PANIC BUTTON — SAFE MODE (Gemini Audit #3)
+// ═══════════════════════════════════════
+
+/**
+ * Eşik Değer Kontrolü:
+ * - 10 dakika içinde 10+ hata → Ajan askıya alınır
+ * - Firestore agent_inbox'a "AJAN ASKIDA" sinyali gönderilir
+ * - Admin panelde anında görünür (onSnapshot)
+ */
+
+const _agentErrorLog: Record<string, number[]> = {};
+const PANIC_ERROR_THRESHOLD = 10;       // 10 hata
+const PANIC_WINDOW_MS = 10 * 60 * 1000; // 10 dakika
+const _suspendedAgents = new Set<string>();
+
+export function isAgentSuspended(agentId: string): boolean {
+  return _suspendedAgents.has(agentId);
+}
+
+async function checkPanicThreshold(agentId: string): Promise<void> {
+  const now = Date.now();
+  
+  // Hata zaman damgasını kaydet
+  if (!_agentErrorLog[agentId]) _agentErrorLog[agentId] = [];
+  _agentErrorLog[agentId].push(now);
+  
+  // Eski hataları temizle (pencere dışı)
+  _agentErrorLog[agentId] = _agentErrorLog[agentId].filter(t => t > now - PANIC_WINDOW_MS);
+  
+  // Eşik kontrolü
+  if (_agentErrorLog[agentId].length >= PANIC_ERROR_THRESHOLD && !_suspendedAgents.has(agentId)) {
+    _suspendedAgents.add(agentId);
+    
+    console.error(`[🚨 PANIC BUTTON] ${agentId} → ${PANIC_ERROR_THRESHOLD} hata / ${PANIC_WINDOW_MS / 60000} dk → SAFE MODE!`);
+    
+    // Agent Inbox'a bildirim gönder (admin panelde anlık görünür)
+    if (adminDb) {
+      try {
+        await adminDb.collection('agent_inbox').add({
+          agentId: 'CONTROL_TOWER',
+          type: 'error',
+          title: `🚨 SAFE MODE: ${agentId} askıya alındı`,
+          message: `${agentId} ajanı ${PANIC_WINDOW_MS / 60000} dakika içinde ${PANIC_ERROR_THRESHOLD}+ hata üretti. Otomatik olarak askıya alındı. Manuel müdahale gerekiyor.`,
+          timestamp: now,
+          status: 'unread',
+        });
+      } catch { /* fire & forget */ }
+    }
+  }
+}
+
+/**
+ * Askıya alınmış ajanı tekrar aktif et (Admin override)
+ */
+export function resumeAgent(agentId: string): void {
+  _suspendedAgents.delete(agentId);
+  if (_agentErrorLog[agentId]) _agentErrorLog[agentId] = [];
+  console.log(`[🔓 CONTROL TOWER] ${agentId} tekrar aktif edildi.`);
+}
+
