@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
+import React, { useEffect, useState, useCallback } from 'react';
+import { collection, query, orderBy, limit, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import { Bell, AlertTriangle, CheckCircle, Info, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -50,6 +50,17 @@ export default function AgentInbox() {
       default: return <Info className="text-indigo-500 w-5 h-5" />;
     }
   };
+
+  const handleApprove = useCallback(async (msgId: string) => {
+    try {
+      const docRef = doc(db, 'agent_inbox', msgId);
+      await updateDoc(docRef, { status: 'resolved' });
+      // Optimistic UI update
+      setMessages(prev => prev.filter(m => m.id !== msgId));
+    } catch (err) {
+      console.error('[AgentInbox] Onay hatası:', err);
+    }
+  }, []);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
@@ -103,7 +114,10 @@ export default function AgentInbox() {
                       {msg.agentId}
                     </span>
                     {msg.type === 'approval' && (
-                      <button className="text-[10px] font-bold bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition-colors">
+                      <button 
+                        onClick={() => handleApprove(msg.id)}
+                        className="text-[10px] font-bold bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition-colors"
+                      >
                         ONAYLA
                       </button>
                     )}

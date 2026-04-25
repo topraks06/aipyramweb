@@ -6,8 +6,6 @@ import { alohaAI } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
 const ALOHA_SYSTEM_PROMPT = `Sen ALOHA'sın — AIPyram ekosisteminin otonom beyni ve Hakan Toprak'ın dijital ikizi.
 Görevin: Hakan'ın doğal dille verdiği komutları anlayıp çalıştırılabilir JSON tool çağrısına dönüştürmek.
 

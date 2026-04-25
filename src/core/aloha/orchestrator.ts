@@ -2,11 +2,9 @@ import { Schema, Type } from "@google/genai";
 import { getAgent } from "../registry/agentRegistry";
 import { AgentInput, AgentOutput, SwarmResult, AgentRole, CoreAgentRole, Agent } from "../agents/types";
 import { alohaAI } from '@/core/aloha/aiClient';
-// removed GoogleGenAI import
+import { recordAgentPerformance } from './controlTower';
 import { queryMemoryBase } from "../memory/rag";
 import { AccountingAgent } from "./accountingAgent";
-
-const aiClient = alohaAI.getClient();
 
 // Real AI Prompt Chaining Orchestrator
 export async function runSwarm(input: AgentInput, onProgress?: (msg: string, agent: string, status: 'info' | 'success' | 'warning' | 'error') => void): Promise<SwarmResult> {
@@ -148,6 +146,7 @@ export async function runSwarm(input: AgentInput, onProgress?: (msg: string, age
 // REAL AI INTEGRATION LAYER
 async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Promise<AgentOutput> {
   console.log(`[Swarm] Running ${agent.name}...`);
+  const agentStartTime = Date.now();
   
   try {
     const chainHistory = input.previousThoughts?.map(p => `[${p.agent}]: ${p.result}`).join("\n") || "İlk adım.";
@@ -173,6 +172,8 @@ async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Pro
     const budgetCheck = await AccountingAgent.requestBudgetApproval(targetProject, estimatedCost);
     if (!budgetCheck.approved) {
         console.error(`[🛑 THE FISCAL GUARDIAN] Bütçe onayı verilmedi: ${budgetCheck.reason}`);
+        // Performans kaydı: bütçe reddi
+        recordAgentPerformance(`orchestrator_${agent.name.toLowerCase()}`, false, Date.now() - agentStartTime).catch(() => {});
         return {
             agent: agent.name,
             result: `{"error": "SUSPENDED_LOW_FUNDS", "reason": "${budgetCheck.reason}"}`,
@@ -197,13 +198,18 @@ async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Pro
 
     const resultText = JSON.stringify(parsedResult || {});
 
+    // ✅ Performans kaydı: başarılı
+    recordAgentPerformance(`orchestrator_${agent.name.toLowerCase()}`, true, Date.now() - agentStartTime).catch(() => {});
+
     return {
       agent: agent.name,
       result: resultText,
-      confidence: 1 // TODO: implement tracking extraction if needed
+      confidence: 1
     };
   } catch (err: any) {
     console.error(`[AI Error - ${agent.name}]:`, err.message);
+    // ❌ Performans kaydı: başarısız
+    recordAgentPerformance(`orchestrator_${agent.name.toLowerCase()}`, false, Date.now() - agentStartTime).catch(() => {});
     return {
       agent: agent.name,
       result: `{"error": "Agent execution failed due to API limitations. ${err.message}"}`,

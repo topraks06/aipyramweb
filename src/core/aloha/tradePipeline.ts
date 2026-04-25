@@ -19,8 +19,6 @@ import { adminDb } from '@/lib/firebase-admin';
 import { alohaAI } from './aiClient';
 import { dlq } from './dlq';
 
-const ai = alohaAI.getClient();
-
 // ═══════════════════════════════════════
 // TİPLER
 // ═══════════════════════════════════════
