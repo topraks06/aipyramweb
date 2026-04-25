@@ -55,7 +55,6 @@ export async function generateDecisions(heroArticle: TerminalArticle | null, tic
 
   try {
     console.log(`[THINK LAYER] 🧠 Causality & Decision Engine çalışıyor...`);
-    const ai = alohaAI.getClient();
     const prompt = `
     Sen dünyanın en ileri düzey B2B Tekstil ve Emtia Karar Motorusun (Causality & Decision Engine).
     Görevin verilen piyasa haberi ve canlı verilerden 'Neden-Sonuç' zinciri kurmak ve trading aksiyonu öngörmektir.
@@ -90,14 +89,13 @@ export async function generateDecisions(heroArticle: TerminalArticle | null, tic
     SADECE GEÇERLİ JSON DÖNDÜR. (Causality chain min 3 adım olmalı)
     `;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json', temperature: 0.2 },
-    });
+    const parsed = await alohaAI.generateJSON<DecisionEngineOutput>(
+      prompt,
+      { complexity: 'complex', temperature: 0.2 },
+      'intelligence_engine'
+    );
 
-    const jsonText = result.text || '{}';
-    const parsed = JSON.parse(jsonText);
+    if (!parsed) return defaultOutput;
     
     // Asenkron olarak prediction'ı kaydet (Feedback loop için)
     await recordPrediction(parsed.trade_signal, heroArticle.id);

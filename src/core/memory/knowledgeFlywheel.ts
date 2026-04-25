@@ -10,7 +10,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
  * Özellikler: Dual-Signal (Success/Fail) Listening, Vector Memory, Cross-Node Intelligence
  */
 
-const ai = alohaAI.getClient();
+
 
 const FLYWHEEL_PROMPT = `Sen 15 B2B sektörüne (Örn: Tekstil, Gayrimenkul) hakim bir "Stratejist Dehası" ve İş Zekası (BI) ajanısın.
 GÖREV:
@@ -54,30 +54,18 @@ export class KnowledgeFlywheel {
        EK DETAYLAR (Eğer başarısızsa hata sebebi): ${payload?.reason || payload?.errorMessage || "Reddedilme veya iptal"}
        `;
 
-       // 1. STRATEGIC SYNTHESIS (Gemini Zekası)
-       const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: docText,
-          config: {
-            systemInstruction: FLYWHEEL_PROMPT,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: Type.OBJECT,
-              properties: {
-                category: { type: Type.STRING },
-                insight: { type: Type.STRING },
-                isGlobal: { type: Type.BOOLEAN, description: "Tüm AIPyram domainlerinde geçerli genel ticari refleks mi?" }
-              },
-              required: ["category", "insight", "isGlobal"]
-            },
-            temperature: 0.1
-          }
-       });
+       // 1. STRATEGIC SYNTHESIS (Merkezi AI Router)
+       const parsed = await alohaAI.generateJSON<{ category: string; insight: string; isGlobal: boolean }>(
+         docText,
+         {
+           complexity: 'routine',
+           systemInstruction: FLYWHEEL_PROMPT,
+           temperature: 0.1,
+         },
+         `flywheel_${outcome.toLowerCase()}`
+       );
 
-       const raw = response.text;
-       if (!raw) return;
-
-       const parsed = JSON.parse(raw);
+       if (!parsed) return;
 
        // 2. VECTOR MEMORY (Semantic Embedding Oluşturulması)
        console.log(`[🧠 FLYWHEEL] Ders çıkarıldı: ${parsed.category}. Semantic Vector Embedding (Vertex AI) üretiliyor...`);

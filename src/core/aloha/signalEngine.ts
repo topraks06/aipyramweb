@@ -16,7 +16,7 @@ import { alohaAI } from './aiClient';
  * TÜM PROJELERİ kapsar — sadece TRTEX değil
  */
 
-const ai = alohaAI.getClient();
+
 
 // ═══════════════════════════════════════
 // TİP TANIMLARI
@@ -171,43 +171,33 @@ Her sinyal için JSON döndür:
 
 EN AZ 3, EN FAZLA 8 sinyal üret. Uydurma yapma — bilmediğin konularda "confidence" düşük verEBİLİRSİN ama uydurmak YASAK.`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: analysisPrompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.3,
-        },
-      });
+      const parsed = await alohaAI.generateJSON<any[]>(
+        analysisPrompt,
+        { complexity: 'routine', temperature: 0.3 },
+        `signal_engine_${proj}`
+      );
 
       scanned++;
 
-      if (response.text) {
-        try {
-          const parsed = JSON.parse(response.text);
-          const signalArray = Array.isArray(parsed) ? parsed : (parsed.signals || []);
+      const signalArray = Array.isArray(parsed) ? parsed : ((parsed as any)?.signals || []);
 
-          for (const raw of signalArray.slice(0, 8)) {
-            const signal: MarketSignalEvent = {
-              type: raw.type || 'market_shift',
-              source: 'gemini_grounding',
-              project: proj,
-              country: raw.country || undefined,
-              signal: raw.signal || 'bilinmeyen sinyal',
-              data: raw.data || {},
-              confidence: Math.min(1, Math.max(0, raw.confidence || 0.5)),
-              severity: raw.severity || 'medium',
-              actionable: raw.actionable !== false,
-              detectedAt: new Date().toISOString(),
-              expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 gün geçerli
-              processed: false,
-            };
+      for (const raw of signalArray.slice(0, 8)) {
+        const signal: MarketSignalEvent = {
+          type: raw.type || 'market_shift',
+          source: 'gemini_grounding',
+          project: proj,
+          country: raw.country || undefined,
+          signal: raw.signal || 'bilinmeyen sinyal',
+          data: raw.data || {},
+          confidence: Math.min(1, Math.max(0, raw.confidence || 0.5)),
+          severity: raw.severity || 'medium',
+          actionable: raw.actionable !== false,
+          detectedAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 gün geçerli
+          processed: false,
+        };
 
-            signals.push(signal);
-          }
-        } catch {
-          console.warn(`[SIGNAL] ${proj} — JSON parse hatası`);
-        }
+        signals.push(signal);
       }
     } catch (e: any) {
       console.error(`[SIGNAL] ${proj} tarama hatası: ${e.message}`);

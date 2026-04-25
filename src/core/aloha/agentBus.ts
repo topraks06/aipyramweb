@@ -53,8 +53,6 @@ type AgentHandler = (payload: Record<string, any>) => Promise<AgentResponse>;
 
 async function simulateAgentWithGemini(agentId: string, payload: Record<string, any>): Promise<AgentResponse> {
   try {
-    const ai = alohaAI.getClient();
-
     const agentPrompts: Record<string, string> = {
       research_agent: `Sen bir ARAŞTIRMA AJANISIN. Verilen konuyu analiz et, veri topla, sonuç üret.`,
       decision_agent: `Sen bir KARAR AJANISIN. Verilen veriyi analiz et, stratejik karar oluştur.`,
@@ -68,27 +66,13 @@ async function simulateAgentWithGemini(agentId: string, payload: Record<string, 
 
     const systemPrompt = agentPrompts[agentId] || `Sen ${agentId} uzman ajanısın.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `${systemPrompt}
+    const result = await alohaAI.generateJSON<AgentResponse>(
+      `${systemPrompt}\n\nGÖREV: ${JSON.stringify(payload)}\n\nJSON formatında cevap ver:\n{\n  "success": true/false,\n  "data": { ... analiz sonuçları ... },\n  "reasoning": "kısa açıklama",\n  "confidence": 0.0-1.0,\n  "suggestedNextAction": "sonraki adım önerisi"\n}`,
+      { complexity: 'routine', temperature: 0.4 },
+      `agentbus_${agentId}`
+    );
 
-GÖREV: ${JSON.stringify(payload)}
-
-JSON formatında cevap ver:
-{
-  "success": true/false,
-  "data": { ... analiz sonuçları ... },
-  "reasoning": "kısa açıklama",
-  "confidence": 0.0-1.0,
-  "suggestedNextAction": "sonraki adım önerisi"
-}`,
-      config: { responseMimeType: 'application/json', temperature: 0.4 }
-    });
-
-    if (response.text) {
-      return JSON.parse(response.text);
-    }
-    return { success: false, data: null, reasoning: 'AI response boş' };
+    return result || { success: false, data: null, reasoning: 'AI response boş' };
   } catch (e: any) {
     return { success: false, data: null, reasoning: `Ajan simülasyonu hatası: ${e.message}` };
   }

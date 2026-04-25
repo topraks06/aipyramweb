@@ -74,7 +74,6 @@ async function fetchFrankfurterScore(): Promise<{ usdTry?: TickerResult; eurTry?
 
 async function fetchGeminiScores(): Promise<Record<string, TickerResult>> {
   try {
-    const ai = alohaAI.getClient();
     const prompt = `Give me the LATEST real-time spot prices for these industrial commodities/indices. 
 Search the live web. Return ONLY a JSON object with exact numbers, no markdown tags.
 Format:
@@ -85,13 +84,12 @@ Format:
   "cotton": <number>
 }`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: { tools: [{ googleSearch: {} }], temperature: 0.1 }
-    });
+    const { text } = await alohaAI.generate(prompt, {
+      complexity: 'routine',
+      tools: [{ googleSearch: {} }],
+      temperature: 0.1,
+    }, 'ticker_engine');
 
-    const text = response.text || '{}';
     const cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     const data = JSON.parse(cleanText);
     const results: Record<string, TickerResult> = {};
