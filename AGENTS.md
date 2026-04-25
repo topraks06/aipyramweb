@@ -34,6 +34,8 @@ Perde kumaşları, döşemelik, yatak/banyo tekstili, korniş/rustik, perde rayl
 |------|-------|--------|-----------|
 | 1 | `AGENTS.md` (bu dosya) | Anayasa, kurallar, proje kimlik kartı | 🔴 ZORUNLU |
 | 2 | `.agents/skills/SOVEREIGN_EXECUTION_ORDER_V2.md` | **AKTİF GÖREV EMRİ** — 24 sprint, adım adım yürütme planı (Claude Opus yazdı, Hakan onayladı) | 🔴🔴 EN ÖNCELİKLİ |
+| 2.5 | `.agents/skills/PERDE_AI_ZERO_MOCK_EXECUTION_ORDER.md` | **PERDE.AI ANAHTAR TESLİM EMRİ** — 7 adımlı sıfır-mock geçiş planı, dosya/satır bazlı detay, test protokolü (Claude Opus yazdı) | 🔴🔴 EN ÖNCELİKLİ |
+| 2.8 | `.agents/skills/GEMINI_Q2_UPGRADE_VISION.md` | **GOOGLE/GEMINI Q2 ENTEGRASYON VİZYONU** — Deep Research, Project Mariner, Embedding-2, Flash TTS Master Prompt (Hakan Bey) | 🔴🔴 EN ÖNCELİKLİ |
 | 3 | `.agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md` | Tüm vizyonun anahtar teslim mimari belgesi (5+7 organ, ürün kapsamı, akış şeması) | 🔴 ZORUNLU |
 | 4 | `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` | 10 fazlı görev planı, mutlak yasalar, acil durum protokolü | 🔴 ZORUNLU |
 | 5 | `.agents/skills/SOVEREIGN_AUTONOMOUS_OPERATIONS_PLAN.md` | Otonom operasyonlar, Img2Img motor kuralları, ALOHA yetki matrisi | 🔴 ZORUNLU |
