@@ -1,4 +1,4 @@
-import { Schema, Type } from "@google/genai";
+﻿import { Schema, Type } from "@google/genai";
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { getProfileForProject } from "./profiles/index";
@@ -196,22 +196,24 @@ export async function executeMasterAgent(projectName: string, state: MasterSyste
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const ai = alohaAI.getClient();
       console.log(`[🧠 MASTER] Deneme ${attempt}/${MAX_RETRIES}...`);
       
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: triggerContext,
-        config: {
-          systemInstruction: `${await getMasterPrompt(projectName)}\nBağlam: ${JSON.stringify(triggerContext)}\n\n⚠️ DISIPLİN PROTOKOLÜ: 1. Önce Sorgula: Asla hafızandaki isimlere (Başkan, Tarih vb.) güvenme. Her zaman GÜNCEL VERİLERİ KULLAN (Google Search Grounding AKTİF). 2. Hakan Filtresi: Hayali ve abartı ifadeleri SİL. Saf, kanıtlı ve sektörel B2B dili kullan. 3. Kaynak Mührü: Her hamleni doğrula.`,
-          responseMimeType: "application/json",
+      const masterSystemInstruction = `${await getMasterPrompt(projectName)}\nBağlam: ${JSON.stringify(triggerContext)}\n\n⚠️ DISIPLİN PROTOKOLÜ: 1. Önce Sorgula: Asla hafızandaki isimlere (Başkan, Tarih vb.) güvenme. Her zaman GÜNCEL VERİLERİ KULLAN (Google Search Grounding AKTİF). 2. Hakan Filtresi: Hayali ve abartı ifadeleri SİL. Saf, kanıtlı ve sektörel B2B dili kullan. 3. Kaynak Mührü: Her hamleni doğrula.`;
+      
+      const { text: responseText } = await alohaAI.generate(
+        triggerContext,
+        {
+          complexity: 'complex',
+          systemInstruction: masterSystemInstruction,
+          responseMimeType: 'application/json',
           responseSchema: responseSchema,
-          temperature: 0.7
-        }
-      });
+          temperature: 0.7,
+        },
+        'master_agent'
+      );
 
-      if (response.text) {
-        const result: MasterAgentResponse = JSON.parse(response.text);
+      if (responseText) {
+        const result: MasterAgentResponse = JSON.parse(responseText);
         
         // GÖRSEL GÜVENLİK DUVARI (AI Hallucination Engelleme)
         const trTitle = result.payload?.translations?.TR?.title || "B2B Haber";

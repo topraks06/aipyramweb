@@ -15,7 +15,7 @@ import { MarketSignalEvent, getUnprocessedSignals } from './signalEngine';
  * TÜM PROJELERİ kapsar.
  */
 
-const ai = alohaAI.getClient();
+
 
 // ═══════════════════════════════════════
 // TİP TANIMLARI
@@ -152,50 +152,44 @@ JSON döndür:
 
 SADECE gerçekçi, uygulanabilir fırsatlar üret. Somut veri yoksa boş array [] döndür. Max 5 fırsat.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: analysisPrompt,
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.4,
-      },
-    });
+    const parsed = await alohaAI.generateJSON<any[]>(
+      analysisPrompt,
+      { complexity: 'routine', temperature: 0.4 },
+      'opportunity_engine'
+    );
 
-    if (response.text) {
-      const parsed = JSON.parse(response.text);
-      const oppArray = Array.isArray(parsed) ? parsed : (parsed.opportunities || []);
+    const oppArray = Array.isArray(parsed) ? parsed : ((parsed as any)?.opportunities || []);
 
-      for (const raw of oppArray.slice(0, 5)) {
-        // 🚨 ANAYASA: Somut veri (sayı/yüzde) yoksa fırsat üretme!
-        const signalData = signals.find(s => s.id === raw.signalId);
-        const signalText = signalData?.signal || signalData?.data?.content || "";
-        const hasNumbers = /\d/.test(signalText);
-        const hasPercent = /%|yüzde|milyon|milyar|dolar|euro|€|\$/i.test(signalText);
-        
-        if (!signalText || signalText.trim() === "" || (!hasNumbers && !hasPercent)) {
-          console.log(`[💎 OPPORTUNITY] SKIP (Somut veri yok): ${raw.opportunity}`);
-          if (raw.signalId) processedIds.push(raw.signalId);
-          continue;
-        }
-
-        const opp: Opportunity = {
-          signalId: raw.signalId || signals[0]?.id || 'unknown',
-          project: raw.project || 'trtex',
-          opportunity: raw.opportunity || 'bilinmeyen fırsat',
-          action: raw.action || 'create_content',
-          expectedLeads: raw.expectedLeads || 0,
-          confidence: Math.min(1, Math.max(0, raw.confidence || 0.5)),
-          priority: raw.priority || 'normal',
-          effort: raw.effort || 'moderate',
-          tools: raw.tools || [],
-          status: 'detected',
-          reasoning: raw.reasoning || '',
-          createdAt: new Date().toISOString(),
-        };
-
-        opportunities.push(opp);
+    for (const raw of oppArray.slice(0, 5)) {
+      // 🚨 ANAYASA: Somut veri (sayı/yüzde) yoksa fırsat üretme!
+      const signalData = signals.find(s => s.id === raw.signalId);
+      const signalText = signalData?.signal || signalData?.data?.content || "";
+      const hasNumbers = /\d/.test(signalText);
+      const hasPercent = /%|yüzde|milyon|milyar|dolar|euro|€|\$/i.test(signalText);
+      
+      if (!signalText || signalText.trim() === "" || (!hasNumbers && !hasPercent)) {
+        console.log(`[💎 OPPORTUNITY] SKIP (Somut veri yok): ${raw.opportunity}`);
         if (raw.signalId) processedIds.push(raw.signalId);
+        continue;
       }
+
+      const opp: Opportunity = {
+        signalId: raw.signalId || signals[0]?.id || 'unknown',
+        project: raw.project || 'trtex',
+        opportunity: raw.opportunity || 'bilinmeyen fırsat',
+        action: raw.action || 'create_content',
+        expectedLeads: raw.expectedLeads || 0,
+        confidence: Math.min(1, Math.max(0, raw.confidence || 0.5)),
+        priority: raw.priority || 'normal',
+        effort: raw.effort || 'moderate',
+        tools: raw.tools || [],
+        status: 'detected',
+        reasoning: raw.reasoning || '',
+        createdAt: new Date().toISOString(),
+      };
+
+      opportunities.push(opp);
+      if (raw.signalId) processedIds.push(raw.signalId);
     }
   } catch (e: any) {
     console.error(`[OPPORTUNITY] Analiz hatası: ${e.message}`);

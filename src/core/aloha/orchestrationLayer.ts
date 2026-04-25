@@ -41,7 +41,6 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
   };
 
   try {
-    const ai = alohaAI.getClient();
     
     // Basit bir mock veri çekme simülasyonu.
     // İleride gerçek Firestore sorguları veya TRTEX/Perde/Hometex agent çağrıları buraya eklenecek.
@@ -87,14 +86,13 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
     SADECE JSON DÖNDÜR.
     `;
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: { responseMimeType: 'application/json', temperature: 0.3 },
-    });
+    const parsed = await alohaAI.generateJSON<OrchestrationResult>(
+      prompt,
+      { complexity: 'complex', temperature: 0.3 },
+      'orchestration_layer'
+    );
 
-    const jsonText = result.text || '{}';
-    const parsed = JSON.parse(jsonText);
+    if (!parsed) return defaultResult;
 
     // Tetiklenmesi gereken sinyalleri gerçekten EventBus'a fırlat
     if (parsed.ecosystem_signals_fired && Array.isArray(parsed.ecosystem_signals_fired)) {

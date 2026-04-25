@@ -128,7 +128,7 @@ export interface StoredPlan {
 // PLANNER AGENT CORE
 // ═══════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
+
 
 /**
  * Verilen kullanıcı isteğini analiz eder ve yapılandırılmış plan üretir.
@@ -149,41 +149,27 @@ export async function generatePlan(userPrompt: string, context?: string): Promis
     }
   } catch { /* memory yüklenemezse sessiz devam */ }
   
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: [
-      {
-        role: 'user',
-        parts: [{ text: `${userPrompt}${contextStr}` }]
-      }
-    ],
-    config: {
+  const plan = await alohaAI.generateJSON<ExecutionPlan>(
+    `${userPrompt}${contextStr}`,
+    {
+      complexity: 'complex',
       systemInstruction: PLANNER_PROMPT,
       temperature: 0.2,
-      responseMimeType: 'application/json',
-    }
-  });
+    },
+    'planner_agent'
+  );
 
-  const text = response.text || '{}';
-  
-  try {
-    const plan = JSON.parse(text) as ExecutionPlan;
-    
-    // Validation
-    if (!plan.goal || !plan.plan || plan.plan.length === 0) {
-      throw new Error('Plan boş veya eksik');
-    }
-    
-    // Step numaralarını düzelt
-    plan.plan.forEach((step, i) => {
-      step.step = i + 1;
-      step.status = 'pending';
-    });
-    
-    return plan;
-  } catch (e: any) {
-    throw new Error(`Plan parse hatası: ${e.message}. Raw: ${text.substring(0, 200)}`);
+  if (!plan || !plan.goal || !plan.plan || plan.plan.length === 0) {
+    throw new Error('Plan boş veya eksik');
   }
+  
+  // Step numaralarını düzelt
+  plan.plan.forEach((step, i) => {
+    step.step = i + 1;
+    step.status = 'pending';
+  });
+  
+  return plan;
 }
 
 /**
