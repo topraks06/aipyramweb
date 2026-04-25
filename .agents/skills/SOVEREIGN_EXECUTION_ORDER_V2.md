@@ -77,21 +77,21 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-2): perde tasarim motoru dogrulama"`
 
 ### Sprint 3: Studio Sayfası
-- [ ] `src/components/node-perde/studio/` → Tüm dosyaları listele ve oku
-- [ ] `StudioLayout.tsx` → Auth guard çalışıyor mu? Giriş yapmamış kullanıcıyı login'e yönlendiriyor mu?
-- [ ] Studio sayfaları (`/sites/perde.ai/studio`) tamamlanmış mı?
-- [ ] Tarayıcıdan test et.
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-3): perde studio doğrulama"`
+- [x] `src/components/node-perde/studio/` → Tüm dosyaları listele ve oku
+- [x] `StudioLayout.tsx` → Auth guard çalışıyor mu? Giriş yapmamış kullanıcıyı login'e yönlendiriyor mu?
+- [x] Studio sayfaları (`/sites/perde.ai/studio`) tamamlanmış mı?
+- [x] Tarayıcıdan test et.
+- **KANIT:** `StudioLayout.tsx` bypass kaldırılarak Auth Guard aktif edildi. İlgili redirect `useEffect` hook'unda çalışıyor. `StudioContent.tsx` sekmeleri onaylandı.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-3): perde studio dogrulama"`
 
 ### Sprint 4: Katalog & Ürünler
-- [ ] `src/components/node-perde/Catalog.tsx` → `perde_products` Firestore koleksiyonundan veri çekiyor mu? `onSnapshot` mı `getDocs` mı?
-- [ ] Koleksiyonda veri yoksa kullanıcıya ne gösteriyor? Boş ekran mı, "ürün yok" mesajı mı?
-- [ ] Tarayıcıdan `localhost:3000/sites/perde.ai/catalog` test et.
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-4): perde katalog doğrulama"`
+- [x] `src/components/node-perde/Catalog.tsx` → `perde_products` Firestore koleksiyonundan veri çekiyor mu? `onSnapshot` mı `getDocs` mı?
+- [x] Koleksiyonda veri yoksa kullanıcıya ne gösteriyor? Boş ekran mı, "ürün yok" mesajı mı?
+- [x] Tarayıcıdan `localhost:3000/sites/perde.ai/catalog` test et.
+- **KANIT:** `Catalog.tsx` incelendi. `onSnapshot` realtime listener çalışıyor (import düzeltildi). Ürün yoksa `KATALOG BOŞ` ibaresiyle fallback UI çıkıyor. Sayfa `catalog/page.tsx` dinamik yapılarak build testinden geçirildi.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-4): perde katalog ve onsnapshot onarimi"`
 
 ### Sprint 5: B2B & Sipariş Akışı
 - [ ] `src/components/node-perde/B2B.tsx` (20KB) → `perde_orders` ve `perde_customers` onSnapshot bağlantısı var mı?

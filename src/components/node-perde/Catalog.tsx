@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, UploadCloud, Search, Tag, Box, DollarSign, X } from 'lucide-react';
-import { collection, addDoc, getDocs, Timestamp, query, where, orderBy } from 'firebase/firestore';
+import { collection, addDoc, getDocs, Timestamp, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { getNode } from '@/lib/sovereign-config';

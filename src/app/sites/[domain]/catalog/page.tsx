@@ -2,6 +2,8 @@ import Catalog from '@/components/node-perde/Catalog';
 import PerdeNavbar from '@/components/node-perde/PerdeNavbar';
 import B2BGatekeeper from '@/components/auth/B2BGatekeeper';
 
+export const dynamic = "force-dynamic";
+
 export default async function CatalogPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
 
