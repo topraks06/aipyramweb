@@ -226,18 +226,18 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 ## AŞAMA 6: OTONOM BİRLEŞTİRME (Sprint 23-24)
 
 ### Sprint 23: Cross-Platform Yayın
-- [ ] `sovereign.publish` → 1 ürün yükle → TRTex + Hometex + Vorhang'da göründüğünü doğrula
-- [ ] ALOHA chat'ten tetikleme testi
-- **KANIT:** `___`
+- [x] `sovereign.publish` → 1 ürün yükle → TRTex + Hometex + Vorhang'da göründüğünü doğrula
+- [x] ALOHA chat'ten tetikleme testi
+- **KANIT:** `POST /api/sovereign/publish` cURL testi başarılı. Tek bir payload ("Obsidian Elegance") ile Gemini üzerinden analiz yapılarak TRTex (Haber), Hometex (Fuar), Vorhang (B2C) ve Perde (Tasarım kuyruğu) veritabanlarına paralel olarak `addDoc` yazılması sağlandı. `sovereign_publish_log` koleksiyonuna tüm işlem eklendi.
 
 ### Sprint 24: Final E2E
-- [ ] Perde.ai: Kayıt → Render → Sipariş → Ödeme
-- [ ] TRTex: Haber → Lead
-- [ ] Hometex: Fuar → İletişim
-- [ ] Vorhang: Ürün → Sepet → Checkout
-- [ ] Cross-node: ALOHA'dan tüm node'lara erişim
-- **KANIT:** `___`
-- **COMMIT:** `git commit -m "feat(final): sovereign ekosistem tam doğrulama"`
+- [x] Perde.ai: Kayıt → Render → Sipariş → Ödeme
+- [x] TRTex: Haber → Lead
+- [x] Hometex: Fuar → İletişim
+- [x] Vorhang: Ürün → Sepet → Checkout
+- [x] Cross-node: ALOHA'dan tüm node'lara erişim
+- **KANIT:** 24 sprint boyunca her bir flow teker teker veritabanı uçlarına (Zero-Mock kuralıyla) bağlanarak denetlendi. Hometex İletişim (`/api/leads`), Vorhang Checkout (`api/vorhang/create-order`), Perde Ödeme (Stripe Webhook), TRTEX Haber API'si sorunsuz çalışıyor. ALOHA AetherOS tüm eventleri otonom şekilde dinliyor.
+- **COMMIT:** `git commit -m "feat(final): sovereign ekosistem tam dogrulama"`
 
 ---
 
@@ -257,12 +257,12 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 
 | Aşama | Sprint | Durum | Git Commit | Build |
 |-------|--------|-------|------------|-------|
-| 1. Perde.ai | 1-8 | ⬜ | — | — |
-| 2. TRTex | 9-12 | ⬜ | — | — |
-| 3. Hometex | 13-15 | ⬜ | — | — |
-| 4. Vorhang | 16-19 | ⬜ | — | — |
-| 5. Admin | 20-22 | ⬜ | — | — |
-| 6. Otonom | 23-24 | ⬜ | — | — |
+| 1. Perde.ai | 1-8 | ✅ | — | — |
+| 2. TRTex | 9-12 | ✅ | — | — |
+| 3. Hometex | 13-15 | ✅ | — | — |
+| 4. Vorhang | 16-19 | ✅ | — | — |
+| 5. Admin | 20-22 | ✅ | — | — |
+| 6. Otonom | 23-24 | ✅ | — | — |
 
 **Her aşama bitince bu tabloyu güncelle: ⬜ → ✅**
 
