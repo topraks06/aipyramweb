@@ -119,12 +119,12 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-7): perde stripe dogrulama"`
 
 ### Sprint 8: AI Asistan (Chat)
-- [ ] `src/components/node-perde/PerdeAIAssistant.tsx` (68KB) → Chat mesaj gönderme çalışıyor mu? Hangi API'ye istek atıyor?
-- [ ] `src/lib/chat-memory.ts` → Konuşma geçmişi Firestore'a kaydediliyor mu?
-- [ ] Dijital İkiz (tenant AI) mantığı: Kullanıcı sadece kendi verisini görebiliyor mu?
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-8): perde AI asistan doğrulama"`
+- [x] `src/components/node-perde/PerdeAIAssistant.tsx` (68KB) → Chat mesaj gönderme çalışıyor mu? Hangi API'ye istek atıyor?
+- [x] `src/lib/chat-memory.ts` → Konuşma geçmişi Firestore'a kaydediliyor mu?
+- [x] Dijital İkiz (tenant AI) mantığı: Kullanıcı sadece kendi verisini görebiliyor mu?
+- **KANIT:** `PerdeAIAssistant.tsx` API'ye `/api/chat` isteği atıyor. `chat-memory.ts` Firestore'a session kaydı atıyor ve sayfayı yenileyince `history` üzerinden geri yüklüyor. Tool çağrıları `authorId` üzerinden sadece kullanıcının verisine ulaşıyor.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-8): perde ai asistan otonom eylem dogrulama"`
 
 ---
 
