@@ -147,9 +147,8 @@ async function analyzeNewsForOpportunities(
     ).join('\n');
 
     try {
-      const result = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Sen dünya çapında bir B2B tekstil ticaret istihbarat uzmanısın.
+      const parsed = await alohaAI.generateJSON<any[]>(
+        `Sen dünya çapında bir B2B tekstil ticaret istihbarat uzmanısın.
 
 GÖREV: Her haberden TİCARİ FIRSAT çıkar. Sadece PARA GETİREN, SOMUT fırsatları bul.
 
@@ -169,14 +168,12 @@ EN AZ 5, EN FAZLA 8 fırsat çıkar. JSON array döndür:
 [{"newsIndex":1,"type":"...","targetCountries":[...],"targetBuyers":[...],"productCategories":[...],"estimatedValue":"...","urgency":"...","actionPlan":["..."]}]
 
 SADECE JSON döndür.`,
-      });
+        { complexity: 'routine' },
+        'trade_pipeline'
+      );
 
-      const text = result?.text || '';
-      const jsonMatch = text.match(/\[[\s\S]*?\]/);
-      if (jsonMatch) {
-        try {
-          const parsed = JSON.parse(jsonMatch[0]);
-          for (const item of parsed) {
+      if (parsed && Array.isArray(parsed)) {
+        for (const item of parsed) {
             const srcNews = batch[(item.newsIndex || 1) - 1];
             if (!srcNews) continue;
 
@@ -194,9 +191,6 @@ SADECE JSON döndür.`,
               score: 0,  // puanlanacak
               createdAt: new Date().toISOString(),
             });
-          }
-        } catch (parseErr) {
-          console.warn(`[TRADE PIPE] JSON parse hatası, skip`);
         }
       }
     } catch (err: any) {
@@ -240,9 +234,8 @@ function rankOpportunities(opps: TradeOpportunity[]): TradeOpportunity[] {
 
 async function generateLandingPageData(opp: TradeOpportunity): Promise<{ slug: string; keywords: string[] } | null> {
   try {
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `B2B landing page için slug ve SEO keywordleri üret.
+    const parsed = await alohaAI.generateJSON<{ slug: string; keywords: string[] }>(
+      `B2B landing page için slug ve SEO keywordleri üret.
 
 TİCARİ FIRSAT:
 - Ülkeler: ${opp.targetCountries.join(', ')}
@@ -255,13 +248,11 @@ TİCARİ FIRSAT:
 
 JSON döndür: {"slug":"turkish-curtain-wholesale-germany","keywords":["..."]}
 SADECE JSON döndür.`,
-    });
+      { complexity: 'routine' },
+      'trade_pipeline'
+    );
 
-    const text = result?.text || '';
-    const jsonMatch = text.match(/\{[\s\S]*?\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-
+    if (parsed && parsed.slug) {
       // Firestore'a landing page kaydet
       try {
         await adminDb.collection('trtex_landing_pages').add({

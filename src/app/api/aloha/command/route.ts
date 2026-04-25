@@ -90,44 +90,18 @@ async function fetchActiveKnowledge(command: string): Promise<string> {
  * Gemini API'ye komut gönder, yapılandırılmış tool çağrısı al
  */
 async function resolveIntent(command: string, targetNode?: string): Promise<ParsedCommand> {
-  // Gemini API key yoksa fallback
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'dummy_key') {
-    return fallbackResolve(command, targetNode);
-  }
-
   try {
     const dynamicKnowledge = await fetchActiveKnowledge(command);
     const skillContext = loadRelevantSkills(command);
     const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}${skillContext}Komut: "${command}"\n\nSADECE JSON döndür:`;
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            { role: 'user', parts: [{ text: finalPrompt }] }
-          ],
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 256,
-            responseMimeType: 'application/json',
-          },
-        }),
-      }
-    );
+    // Sprint D Model Routing: ALOHA Baş Orkestratör 'complex' modeli kullanır
+    const parsed = await alohaAI.generateJSON<ParsedCommand>(finalPrompt, {
+      complexity: 'complex',
+      temperature: 0.1,
+      maxOutputTokens: 256,
+    }, 'master_orchestrator');
 
-    if (!res.ok) {
-      console.error('[ALOHA] Gemini API hatası:', res.status);
-      return fallbackResolve(command, targetNode);
-    }
-
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return fallbackResolve(command);
-
-    const parsed = JSON.parse(text);
     // Eğer Gemini node belirtmemişse ama bizde context varsa ekleyelim
     if (!parsed.node && targetNode && targetNode !== 'master') {
       parsed.node = targetNode;

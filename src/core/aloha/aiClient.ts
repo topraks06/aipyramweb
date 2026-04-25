@@ -190,12 +190,29 @@ interface GenerateOptions {
   responseMimeType?: string;
   maxOutputTokens?: number;
   tools?: any[];
+  complexity?: 'routine' | 'complex' | 'vision'; // Sprint D Model Routing
 }
 
 interface AICallResult {
   text: string;
   retries: number;
   durationMs: number;
+}
+
+/**
+ * Sprint D: Model Yönlendirici (Router)
+ * Karmaşıklığa göre en uygun/ucuz modeli seçer.
+ */
+function getRouterModel(complexity?: 'routine' | 'complex' | 'vision'): string {
+  switch (complexity) {
+    case 'complex':
+      return DEEP_MODEL; // gemini-3.1-pro
+    case 'vision':
+      return IMAGE_MODEL; // gemini-3.1-flash-image
+    case 'routine':
+    default:
+      return DEFAULT_MODEL; // gemini-3.1-flash (cost saving)
+  }
 }
 
 /**
@@ -207,7 +224,8 @@ async function generateWithRetry(
   caller?: string
 ): Promise<AICallResult> {
   const startTime = Date.now();
-  const model = options.model || DEFAULT_MODEL;
+  // Model verilmişse onu kullan, verilmemişse karmaşıklığa göre seç
+  const model = options.model || getRouterModel(options.complexity);
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
