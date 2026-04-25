@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { executeAlohaTool, ALOHA_TOOL_SCHEMA, ParsedCommand } from '@/lib/aloha/tools';
 import { adminDb } from '@/lib/firebase-admin';
 import { loadRelevantSkills } from '@/lib/aloha/skillLoader';
+import { alohaAI } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,14 +46,32 @@ Komut bir araç çağrısı gerektirmiyorsa şu formatta yanıtla:
 /**
  * Sovereign DB'den aktif kural ve politikaları getir.
  */
-async function fetchActiveKnowledge(): Promise<string> {
+async function fetchActiveKnowledge(command: string): Promise<string> {
   if (!adminDb) return '';
   try {
-    const snap = await adminDb.collection('aloha_knowledge')
-      .where('active', '==', true)
-      .orderBy('createdAt', 'desc')
-      .limit(10)
-      .get();
+    let snap;
+    const embedding = await alohaAI.generateEmbedding(command, 'command_rag');
+    
+    // Try vector search if embedding succeeds and SDK supports it
+    if (embedding && typeof adminDb.collection('aloha_knowledge').findNearest === 'function') {
+      try {
+        snap = await adminDb.collection('aloha_knowledge')
+          .where('active', '==', true)
+          .findNearest('vector_embedding', embedding, { limit: 5, distanceMeasure: 'COSINE' })
+          .get();
+      } catch (e) {
+        console.warn('[ALOHA] Vector search failed, falling back to basic query', e);
+      }
+    }
+    
+    // Fallback to basic latest-first query
+    if (!snap) {
+      snap = await adminDb.collection('aloha_knowledge')
+        .where('active', '==', true)
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .get();
+    }
       
     if (snap.empty) return '';
     
@@ -77,7 +96,7 @@ async function resolveIntent(command: string, targetNode?: string): Promise<Pars
   }
 
   try {
-    const dynamicKnowledge = await fetchActiveKnowledge();
+    const dynamicKnowledge = await fetchActiveKnowledge(command);
     const skillContext = loadRelevantSkills(command);
     const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}${skillContext}Komut: "${command}"\n\nSADECE JSON döndür:`;
 

@@ -18,7 +18,7 @@ export interface ToolResult {
   success: boolean;
   message: string;
   data?: any;
-  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text' | 'quotePreview' | 'dashboard' | 'economy' | 'dlq' | 'network' | 'leads' | 'media' | 'trainer' | 'hometex' | 'vorhang' | 'escrowLink';
+  widgetType?: 'memberList' | 'metricsChart' | 'systemStatus' | 'success' | 'error' | 'text' | 'quotePreview' | 'dashboard' | 'economy' | 'dlq' | 'network' | 'leads' | 'media' | 'trainer' | 'hometex' | 'vorhang' | 'inbox' | 'escrowLink';
 }
 
 // ═══════════════════════════════════════════════════
@@ -596,6 +596,15 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       };
     }
 
+    // --- DASHBOARD WIDGETS ---
+    case 'system.inbox': {
+      return {
+        success: true,
+        message: `Agent Inbox (Sovereign Bildirim Merkezi) açılıyor. Ajanlardan gelen son sinyalleri ve DLQ uyarılarını ekranda görebilirsiniz.`,
+        widgetType: 'inbox'
+      };
+    }
+
     default:
       return { success: false, message: `Bilinmeyen araç: ${cmd.tool}`, widgetType: 'error' };
   }
@@ -639,6 +648,9 @@ Kullanılabilir araçlar ve JSON formatları:
 
 11. system.trainer — Ajan eğitim modülü (KnowledgeTrainer)
     { "tool": "system.trainer" }
+
+12. system.inbox — Agent Inbox (Gelen kutusu ve DLQ uyarıları)
+    { "tool": "system.inbox" }
 
 12. node.hometex — Hometex.ai (Dealer ağı, Üye onayı)
     { "tool": "node.hometex" }

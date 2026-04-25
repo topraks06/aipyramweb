@@ -11,6 +11,7 @@ import { MediaLibrary } from '@/components/admin/MediaLibrary';
 import KnowledgeTrainer from '@/components/admin/KnowledgeTrainer';
 import HometexDashboard from '@/components/node-hometex/HometexDashboard';
 import MarketplaceEngine from '@/components/node-vorhang/MarketplaceEngine';
+import AgentInbox from '@/components/admin/AgentInbox';
 
 type CommandMode = 'chat' | 'analysis' | 'action';
 
@@ -191,6 +192,7 @@ export default function MasterKokpit() {
     if (type === 'trainer') return <div className="mt-4"><KnowledgeTrainer /></div>;
     if (type === 'hometex') return <div className="mt-4"><HometexDashboard /></div>;
     if (type === 'vorhang') return <div className="mt-4"><MarketplaceEngine /></div>;
+    if (type === 'inbox') return <div className="mt-4 max-w-2xl"><AgentInbox /></div>;
     return null;
   };
 
@@ -312,6 +314,12 @@ export default function MasterKokpit() {
                 className="text-xs font-semibold tracking-wider text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded-md border border-indigo-200 transition-colors"
               >
                 [◱ SİSTEM]
+              </button>
+              <button 
+                onClick={(e) => executeCommand(e, 'Agent bildirimlerini göster')}
+                className="text-xs font-semibold tracking-wider text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md border border-blue-200 transition-colors flex items-center gap-1"
+              >
+                <Bot size={12} /> INBOX
               </button>
             </div>
           </div>
