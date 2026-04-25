@@ -38,6 +38,7 @@ import { adminDb } from '@/lib/firebase-admin';
 // → YENİ: Gemini 3.1 Flash (agentic workflows, persistent context)
 
 const DEFAULT_MODEL = 'gemini-3.1-flash';
+const DEEP_MODEL = 'gemini-3.1-pro';
 const IMAGE_MODEL = 'gemini-3.1-flash-image';     // Nano Banana 2
 const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback: Imagen 4
 const EMBEDDING_MODEL = 'gemini-embedding-exp-03-07';  // Multimodal embeddings
@@ -436,7 +437,7 @@ export const alohaAI = {
 
       // Yeni cache oluştur (1 saat TTL)
       const result = await client.caches.create({
-        model: 'gemini-2.5-flash',
+        model: DEFAULT_MODEL,
         config: {
           contents: [{ role: 'user', parts: [{ text: systemInstruction }] }],
           displayName,
@@ -509,6 +510,13 @@ export const alohaAI = {
 
   getImageModelFallback(): string {
     return IMAGE_MODEL_FALLBACK;
+  },
+
+  /**
+   * Derin analiz modeli (Gemini 3.1 Pro)
+   */
+  getDeepModel(): string {
+    return DEEP_MODEL;
   },
 };
 

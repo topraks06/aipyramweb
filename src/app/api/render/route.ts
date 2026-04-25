@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
         let renderUrlUrl = "";
         try {
             const res = await ai.models.generateImages({
-                model: 'imagen-3.0-generate-001',
+                model: alohaAI.getImageModel(),
                 prompt: renderPrompt,
                 config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' }
             });

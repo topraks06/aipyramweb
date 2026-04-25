@@ -13,7 +13,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 
 export interface VorhangListingPayload {
-  sellerId: string; // Perde.ai Tenant ID
+  sellerId: string; // Perde.ai Node ID
   sellerName: string;
   sourceProductId: string;
   productNameTR: string;
@@ -66,7 +66,7 @@ export async function executeVorhangListing(payload: VorhangListingPayload) {
     const ref = await adminDb.collection('vorhang_products').add(vorhangProduct);
 
     // 5. Satıcının Perde.ai ERP'sine 'Kanal Entegrasyonu' bilgisini yaz
-    await adminDb.collection(`tenants/${payload.sellerId}/integrations`).doc('vorhang').set({
+    await adminDb.collection(`nodes/${payload.sellerId}/integrations`).doc('vorhang').set({
       active: true,
       listedProductsCount: adminDb.FieldValue ? adminDb.FieldValue.increment(1) : 1,
       lastSync: new Date().toISOString()

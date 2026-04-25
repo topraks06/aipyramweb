@@ -55,8 +55,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
     if (typeof window === 'undefined') return;
     const url = new URL(window.location.href);
     url.searchParams.set('lang', e.target.value);
-    window.history.pushState({}, '', url.toString());
-    window.location.reload();
+    window.location.href = url.toString();
   };
 
   const curLang = langKey.toLowerCase();

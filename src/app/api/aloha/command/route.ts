@@ -82,7 +82,7 @@ async function resolveIntent(command: string, targetNode?: string): Promise<Pars
     const finalPrompt = `${ALOHA_SYSTEM_PROMPT}\n\n${dynamicKnowledge}${skillContext}Komut: "${command}"\n\nSADECE JSON döndür:`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
