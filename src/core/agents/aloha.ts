@@ -6,8 +6,7 @@ import { NotificationService } from '../../services/notificationService';
 import { sandboxAgent } from './sandboxAgent';
 import { ActionRunner } from '../execution/actionRunner';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export class AlohaMaster {
   public role: AgentRole = "ALOHA";
   public capabilities: AgentCapability[] = ["ACT", "OVERRIDE"];
@@ -32,12 +31,12 @@ export class AlohaMaster {
   public async orchestrate(visionaryPlan: any, realityCheck: any, context?: any) {
     try {
       if (!process.env.GEMINI_API_KEY) return { decision: "APPROVED", finalActionPrompt: "MOCK" };
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `${this.systemPrompt}\nPlan:${JSON.stringify(visionaryPlan)}\nReality:${JSON.stringify(realityCheck)}`,
-        config: { responseMimeType: "application/json" }
-      });
-      return JSON.parse(res.text || '{}');
+      const { text } = await alohaAI.generate(
+        `${this.systemPrompt}\nPlan:${JSON.stringify(visionaryPlan)}\nReality:${JSON.stringify(realityCheck)}`,
+        { responseMimeType: "application/json", complexity: 'complex' },
+        'aloha.orchestrate'
+      );
+      return JSON.parse(text || '{}');
     } catch (e) {
       console.error('[👑 ALOHA_CORE] ❌ Konsey Çöktü:', e);
       return null;

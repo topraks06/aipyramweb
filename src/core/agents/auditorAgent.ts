@@ -9,8 +9,7 @@ import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 // AIPYRAM Trust Layer
 // ═══════════════════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const AUDITOR_PROMPT = `Sen AIPYRAM ekosisteminin Auditor (Denetçi) Ajanısın — B2B tedarik zinciri güvenliğinin bekçisi.
 
 🎯 GÖREVİN:
@@ -62,10 +61,9 @@ export async function auditSupplier(
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Şu tedarikçiyi denetle ve Trust Score hesapla:\n${JSON.stringify(supplier, null, 2)}`,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      `Şu tedarikçiyi denetle ve Trust Score hesapla:\n${JSON.stringify(supplier, null, 2)}`,
+      {
         systemInstruction: AUDITOR_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -92,11 +90,12 @@ export async function auditSupplier(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.1, // Çok düşük — denetim kararlı olmalı
+        complexity: 'routine'
       },
-    });
+      'auditorAgent.auditSupplier'
+    );
 
-    const resultText = response.text || "{}";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     const output: AgentOutput = {

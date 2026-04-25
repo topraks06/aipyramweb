@@ -3,8 +3,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { CodeRunnerAgent } from "./codeRunnerAgent";
 import * as fs from "fs";
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 /**
  * TEST ANALYZER AGENT — Hata Oku → Düzelt → Tekrar (V10 IDE Loop)
  * Build veya runtime hatası alındığında Gemini'ye gönderir.
@@ -130,14 +129,14 @@ Eğer küçük bir düzeltme yeterliyse şu JSON'u döndür:
 Eğer dosya tamamen bozuksa şu JSON'u döndür:
 {"type": "full_replace", "code": "tüm düzeltilmiş dosya içeriği"}`;
 
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: { responseMimeType: "application/json" }
-      });
+      const { text } = await alohaAI.generate(
+        prompt,
+        { responseMimeType: "application/json", complexity: 'routine' },
+        'testAnalyzerAgent.requestFix'
+      );
 
-      const text = res.text || "{}";
-      return JSON.parse(text);
+      const parsedText = text || "{}";
+      return JSON.parse(parsedText);
     } catch (e: any) {
       console.error(`[🔬 TEST_ANALYZER] Gemini fix isteği başarısız:`, e.message);
       return null;

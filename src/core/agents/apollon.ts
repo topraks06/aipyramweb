@@ -2,8 +2,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { EventBus } from '../events/eventBus';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export class ApollonOverseer {
   private isInitialized = false;
 
@@ -54,13 +53,13 @@ export class ApollonOverseer {
          return;
       }
 
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt
-        // MimeType eklenmiyor, Gemini bazen hata veriyor, text regex ile çıkarılacak.
-      });
+      const { text: resText } = await alohaAI.generate(
+        prompt,
+        { complexity: 'routine' },
+        'apollon.auditIdea'
+      );
 
-      let jsonStr = res.text || "{}";
+      let jsonStr = resText || "{}";
       jsonStr = jsonStr.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
       
       const analysis = JSON.parse(jsonStr);

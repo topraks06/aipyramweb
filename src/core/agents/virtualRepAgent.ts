@@ -7,8 +7,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Autonomous Sales Engine
 // ═══════════════════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 /**
  * Belirli bir tedarikçinin sanal temsilcisi olarak alıcı sorularını yanıtlar.
  * Tedarikçinin ürün kataloğu, kapasitesi ve sertifikaları bağlam olarak verilir.
@@ -49,18 +48,18 @@ KURALLAR:
 5. Alıcıyı teklif istemeye yönlendir (RFQ oluştur)`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: buyerMessage,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      buyerMessage,
+      {
         systemInstruction: systemPrompt,
         maxOutputTokens: budget.maxTokens,
         temperature: 0.5,
+        complexity: 'routine'
       },
-    });
+      'virtualRepAgent.handleBuyerInquiry'
+    );
 
-    const resultText = response.text || "";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     return {

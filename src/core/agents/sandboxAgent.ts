@@ -7,7 +7,6 @@ import { promisify } from "util";
 import { NotificationService } from "../../services/notificationService";
 
 const execAsync = promisify(exec);
-const ai = alohaAI.getClient();
 
 /**
  * FAZ 9: THE SANDBOX AGENT (Çalıştır - Patlat - Düzelt Döngüsü)
@@ -94,12 +93,13 @@ export class SandboxAgent {
        `;
     }
 
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `${systemPrompt}\n\n${userPrompt}`,
-    });
+    const { text } = await alohaAI.generate(
+      `${systemPrompt}\n\n${userPrompt}`,
+      { complexity: 'routine' },
+      'sandboxAgent.generateCode'
+    );
 
-    let code = res.text || "";
+    let code = text || "";
     // Basit bir markdown temizleyici (Eğer AI inat edip markdown yazarsa test bozulur)
     code = code.replace(/```(?:tsx|ts|javascript|js)?/g, '').replace(/```/g, '').trim();
     

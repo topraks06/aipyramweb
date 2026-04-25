@@ -2,8 +2,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { AgentRole, AgentCapability } from './types';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export class VisionaryOracle {
   public role: AgentRole = "VISIONARY";
   public capabilities: AgentCapability[] = ["PLAN"];
@@ -27,12 +26,12 @@ export class VisionaryOracle {
       
       if (!process.env.GEMINI_API_KEY) return { strategicPillars: ["Test Strat"], disruptiveIdea: "Offline Mode" };
 
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: { responseMimeType: "application/json" }
-      });
-      return JSON.parse(res.text || '{}');
+      const { text } = await alohaAI.generate(
+        prompt,
+        { responseMimeType: "application/json", complexity: 'routine' },
+        'visionary.think'
+      );
+      return JSON.parse(text || '{}');
     } catch (e) {
       console.error('[🔮 VISIONARY_CORE] ❌ Kahin Çöktü:', e);
       return null;

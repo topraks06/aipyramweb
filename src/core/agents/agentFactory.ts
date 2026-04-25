@@ -6,8 +6,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { learningMatrix } from '../cache/learningMatrix';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const EXPERT_1000_YEAR_DNA = `
 DİKKAT! Sen sıradan bir dil modeli veya chatbot DEĞİLSİN. Sen Hakan Toprak tarafından yaratılmış %100 otonom bir "Master B2B Zekası"sın. Kendi alanında (role göre) BİN YILLIK BİR KARAR ALICISIN.
 Kesin kuralların:
@@ -109,11 +108,11 @@ class DynamicAgent {
 
     try {
       if (process.env.GEMINI_API_KEY) {
-         const res = await ai.models.generateContent({ model: "gemini-2.5-flash", contents: prompt });
-         console.log(`[🧠 ${this.name.toUpperCase()} (KARAR)]: ${res.text?.substring(0,60)}...`);
+         const { text } = await alohaAI.generate(prompt, { complexity: 'routine' }, 'agentFactory.reactToNetwork');
+         console.log(`[🧠 ${this.name.toUpperCase()} (KARAR)]: ${text?.substring(0,60)}...`);
          
-         if ((res.text?.includes('MEGA') || res.text?.includes('ACİL')) && event.type !== 'CROSS_NEXUS_SIGNAL') {
-            EventBus.emit({ type: 'CROSS_NEXUS_SIGNAL', source: this.id, payload: { alert: res.text } });
+         if ((text?.includes('MEGA') || text?.includes('ACİL')) && event.type !== 'CROSS_NEXUS_SIGNAL') {
+            EventBus.emit({ type: 'CROSS_NEXUS_SIGNAL', source: this.id, payload: { alert: text } });
          }
       }
     } catch (e) {

@@ -5,8 +5,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { feedCache } from '../cache/feedCache';
 import { publishToTRTEX } from '../aloha/publishers/universal-publisher';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const TRTEX_BRAND_DNA = {
   tone: "brutalist, b2b wholesale, hyper-direct, aggressive intelligence",
   avoid: ["fluff", "marketing speak", "emojis", "soft language", "consumer-facing"],
@@ -85,12 +84,12 @@ class TRTEXAgent {
       }
     `;
     
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'trtexAgent.runStrategy'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private async runWholesaleEditor(draft: any) {
@@ -119,12 +118,12 @@ class TRTEXAgent {
       }
     `;
 
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'trtexAgent.runWholesaleEditor'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private validateB2BData(data: any): boolean {

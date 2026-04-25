@@ -8,8 +8,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Revenue Engine #1
 // ═══════════════════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const MATCHMAKER_PROMPT = `Sen AIPYRAM ekosisteminin Matchmaker Ajanısın — global ev tekstili B2B ticaretinin 30 yıllık sektör deneyimine sahip dijital eşleştirme zekası.
 
 🎯 GÖREVİN:
@@ -112,10 +111,9 @@ export async function matchSupplierWithRFQ(
       Eğer hiç uygun tedarikçi yoksa, NO_MATCH döndür ve neden uygun bulunamadığını açıkla.
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      prompt,
+      {
         systemInstruction: MATCHMAKER_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -143,11 +141,12 @@ export async function matchSupplierWithRFQ(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.3, // Düşük — eşleştirme kararlı olmalı
+        complexity: 'routine'
       },
-    });
+      'matchmakerAgent.matchSupplierWithRFQ'
+    );
 
-    const resultText = response.text || "{}";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     // Gemini Flash yaklaşık maliyet: $0.075 / 1M token
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
@@ -198,10 +197,9 @@ export async function generateLiveRFQs(
       - Tarih: Nisan 2026
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      prompt,
+      {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -224,11 +222,12 @@ export async function generateLiveRFQs(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.7,
+        complexity: 'routine'
       },
-    });
+      'matchmakerAgent.generateLiveRFQs'
+    );
 
-    const resultText = response.text || "[]";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     return {

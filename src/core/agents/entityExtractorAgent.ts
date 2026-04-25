@@ -14,11 +14,7 @@ export interface SemanticEntityData {
  * Instead of embedding text, we extract exact nodes and edges.
  */
 export class EntityExtractorAgent {
-  private aiClient: any;
-
-  constructor() {
-    this.aiClient = alohaAI.getClient();
-  }
+  constructor() {}
 
   async extractEntities(text: string): Promise<SemanticEntityData | null> {
     console.log("🕸️ [ENTITY EXTRACTOR] Metinden semantik düğümler (nodes) çıkartılıyor...");
@@ -51,19 +47,20 @@ export class EntityExtractorAgent {
     };
 
     try {
-      const response = await this.aiClient.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Lütfen aşağıdaki B2B ticaret metninden kesin ve spesifik varlıkları (Entity) çıkart.\n\nMETİN:\n${text}`,
-        config: {
+      const { text: responseText } = await alohaAI.generate(
+        `Lütfen aşağıdaki B2B ticaret metninden kesin ve spesifik varlıkları (Entity) çıkart.\n\nMETİN:\n${text}`,
+        {
           systemInstruction: "Sen bir Semantic Knowledge Graph (Bilgi Ağı) düğüm çıkarıcı (Entity Extractor) ajanısın. Metinden tam şirket adlarını, kesin ürün türlerini ve ülkeleri bulmalısın. Genel geçer terimleri (örn: 'kumaş') reddet, spesifik olanları (örn: 'FR döşemelik kumaş') al.",
           responseMimeType: "application/json",
           responseSchema: schema,
-          temperature: 0.1 // Deterministik sonuç
-        }
-      });
+          temperature: 0.1, // Deterministik sonuç
+          complexity: 'routine'
+        },
+        'entityExtractorAgent.extractEntities'
+      );
 
-      if (!response.text) return null;
-      return JSON.parse(response.text) as SemanticEntityData;
+      if (!responseText) return null;
+      return JSON.parse(responseText) as SemanticEntityData;
     } catch (error: any) {
       console.error("[EntityExtractorAgent] Error:", error.message);
       return null;

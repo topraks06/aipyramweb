@@ -3,8 +3,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { AgentRole, AgentCapability } from './types';
 import { learningMatrix } from '../cache/learningMatrix';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export class ArtDirectorQC {
   public role: string = "QC_MASTER";
   public capabilities: string[] = ["AUDIT", "REJECT", "ENFORCE"];
@@ -51,13 +50,13 @@ export class ArtDirectorQC {
         return { status: "APPROVED", qcScore: 98, harshCritique: "Lokal mock onaylandı." };
       }
 
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: { responseMimeType: "application/json" }
-      });
+      const { text } = await alohaAI.generate(
+        prompt,
+        { responseMimeType: "application/json", complexity: 'routine' },
+        'artDirector.auditFeedOrUI'
+      );
       
-      const qcResult = JSON.parse(res.text || '{}');
+      const qcResult = JSON.parse(text || '{}');
       
       if (qcResult.status === "REJECTED" || qcResult.qcScore < 95) {
          console.warn(`[🎨 ART_DIRECTOR_REJECT] 🚨 KABUL EDİLEMEZ! Puan: %${qcResult.qcScore}. "${sourceAgentId}" ajanı derhal düzeltmeli.`);

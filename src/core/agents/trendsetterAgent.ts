@@ -8,8 +8,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Market Intelligence Engine
 // ═══════════════════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const TRENDSETTER_PROMPT = `Sen AIPYRAM ekosisteminin Trendsetter Ajanısın — global ev tekstili piyasasının trend analizcisi.
 
 🎯 GÖREVİN:
@@ -42,10 +41,9 @@ export async function analyzeMarketTrends(
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Nisan 2026 itibarıyla ${region} ${sector} sektöründeki en güncel 5 trendi analiz et. Gerçekçi, ticari değeri yüksek trendler olsun.`,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      `Nisan 2026 itibarıyla ${region} ${sector} sektöründeki en güncel 5 trendi analiz et. Gerçekçi, ticari değeri yüksek trendler olsun.`,
+      {
         systemInstruction: TRENDSETTER_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -64,11 +62,12 @@ export async function analyzeMarketTrends(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.6,
+        complexity: 'routine'
       },
-    });
+      'trendsetterAgent.analyzeMarketTrends'
+    );
 
-    const resultText = response.text || "[]";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     return {

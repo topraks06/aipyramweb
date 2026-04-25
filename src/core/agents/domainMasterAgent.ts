@@ -9,8 +9,7 @@ import { adminDb } from "../../lib/firebase-admin";
  * Sadece Google Altyapısı - Sıfır Vercel/AWS Bağımlılığı
  */
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const DOMAIN_DNA_PROMPT = `
 Sen AIPyram İmparatorluğu'nun (270 B2B alan adı) Baş Mimarı ve Baş Stratejistisin.
 Sana verilen domain isminden (Örn: marmaris.ai veya heimtex.ai), Neural Semantic Analysis yaparak sadece teknik bir iskelet değil, otonom olarak para basacak bir "Ticari Savaş Paketi" üreteceksin.
@@ -75,10 +74,9 @@ export class DomainMasterAgent {
     try {
       // 1. NEURAL SEMANTIC & COMMERCIAL ANALYSIS
       console.log(`[🏰 DOMAIN MASTER] Ticari Savaş Paketi ve Otonom B2B DNA sentezleniyor...`);
-      const response = await ai.models.generateContent({
-         model: "gemini-2.5-flash",
-         contents: `Target Domain: ${domainName}`,
-         config: {
+      const { text: responseText } = await alohaAI.generate(
+         `Target Domain: ${domainName}`,
+         {
            systemInstruction: DOMAIN_DNA_PROMPT,
            responseMimeType: "application/json",
            responseSchema: {
@@ -136,13 +134,15 @@ export class DomainMasterAgent {
              },
              required: ["theme", "brand", "seoAndAds", "toneOfVoice"]
            },
-           temperature: 0.1
-         }
-      });
+           temperature: 0.1,
+           complexity: 'routine'
+         },
+         'domainMasterAgent.spawnDomainIdentity'
+      );
 
-      if (!response.text) throw new Error("DNA üretimi başarısız.");
+      if (!responseText) throw new Error("DNA üretimi başarısız.");
       
-      const rawConfig = JSON.parse(response.text);
+      const rawConfig = JSON.parse(responseText);
 
       const finalConfig = {
          ...rawConfig,

@@ -8,8 +8,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 // AIPYRAM Global Reach Engine
 // ═══════════════════════════════════════════════════════════════
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const POLYGLOT_PROMPT = `Sen AIPYRAM ekosisteminin Polyglot Ajanısın — 8 dilde uzmanlaşmış B2B tekstil çeviri zekası.
 
 🎯 GÖREVİN:
@@ -51,10 +50,9 @@ export async function translateContent(
       translationProperties[lang] = { type: Type.STRING, description: `${lang} çevirisi` };
     }
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Şu metni ${targetLanguages.join(", ")} dillerine çevir:\n\n"${text}"`,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      `Şu metni ${targetLanguages.join(", ")} dillerine çevir:\n\n"${text}"`,
+      {
         systemInstruction: POLYGLOT_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -64,11 +62,12 @@ export async function translateContent(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.2,
+        complexity: 'routine'
       },
-    });
+      'polyglotAgent.translateContent'
+    );
 
-    const resultText = response.text || "{}";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     return {

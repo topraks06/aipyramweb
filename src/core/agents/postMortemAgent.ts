@@ -5,8 +5,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 import { recordMemory } from "../memory/knowledgeFlywheel";
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const POSTMORTEM_PROMPT = `Sen AIPYRAM ekosisteminin Baş Otopsi (Post-Mortem) Ajanısın.
 Görevin: Kaybedilen Deal'lar, başarısız Kod/Goal Engine döngüleri veya ulaşılmayan metrikler için analiz yapıp derlenmiş 'Ders' + 'Next Best Action' üretmektir.
 
@@ -48,10 +47,9 @@ export async function analyzeFailureTracker(
       Bu bilgiyi analiz et ve gelecekte aynı hatanın yapılmaması için katı bir ders çıkar.
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
+    const { text: resultText, usageMetadata } = await alohaAI.generate(
+      prompt,
+      {
         systemInstruction: POSTMORTEM_PROMPT,
         responseMimeType: "application/json",
         responseSchema: {
@@ -66,11 +64,12 @@ export async function analyzeFailureTracker(
         },
         maxOutputTokens: budget.maxTokens,
         temperature: 0.2, 
+        complexity: 'routine'
       },
-    });
+      'postMortemAgent.analyzeFailureTracker'
+    );
 
-    const resultText = response.text || "{}";
-    const tokensUsed = response.usageMetadata?.totalTokenCount || 0;
+    const tokensUsed = usageMetadata?.totalTokenCount || 0;
     const costUSD = (tokensUsed / 1_000_000) * 0.075;
 
     const parsed = JSON.parse(resultText);

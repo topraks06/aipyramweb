@@ -4,8 +4,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const BRAND_DNA = {
   tone: "luxury, minimal, editorial, visionary",
   avoid: ["cheap", "discount", "fast fashion", "sale", "clickbait", "emoji", "exclamation marks"],
@@ -80,12 +79,12 @@ class HometexAgent {
       }
     `;
     
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'hometexAgent.runVisionary'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private async runEditor(draft: any) {
@@ -120,12 +119,12 @@ class HometexAgent {
       }
     `;
 
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'hometexAgent.runEditor'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private validateEditorial(data: any): boolean {

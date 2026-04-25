@@ -2,8 +2,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { AgentRole, AgentCapability } from './types';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export class RealityCritic {
   public role: AgentRole = "REALITY";
   public capabilities: AgentCapability[] = ["READ", "PLAN"];
@@ -28,12 +27,12 @@ export class RealityCritic {
       
       if (!process.env.GEMINI_API_KEY) return { isFeasible: true, cutFluff: ["Fake Check"], realityChanges: ["Aksiyon Al"] };
 
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: { responseMimeType: "application/json" }
-      });
-      return JSON.parse(res.text || '{}');
+      const { text } = await alohaAI.generate(
+        prompt,
+        { responseMimeType: "application/json", complexity: 'routine' },
+        'reality.critique'
+      );
+      return JSON.parse(text || '{}');
     } catch (e) {
       console.error('[🛡️ REALITY_CORE] ❌ Denetçi Çöktü:', e);
       return null;

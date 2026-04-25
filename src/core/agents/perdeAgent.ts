@@ -5,8 +5,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 const PERDE_BRAND_DNA = {
   tone: "technical, architectural, spatial, sales-driven",
   avoid: ["cheap decor", "vague", "emotional fluff", "non-technical terms"],
@@ -79,12 +78,12 @@ class PerdeAgent {
       }
     `;
     
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'perdeAgent.runFabricPhysics'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private async runSalesArchitect(draft: any) {
@@ -112,12 +111,12 @@ class PerdeAgent {
       }
     `;
 
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    return JSON.parse(res.text || '{}');
+    const { text } = await alohaAI.generate(
+      prompt,
+      { responseMimeType: "application/json", complexity: 'routine' },
+      'perdeAgent.runSalesArchitect'
+    );
+    return JSON.parse(text || '{}');
   }
 
   private validateRenderData(data: any): boolean {
