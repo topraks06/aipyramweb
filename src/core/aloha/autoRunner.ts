@@ -1177,10 +1177,7 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
             });
           } catch { webContext = ''; }
 
-          const brainAi = alohaAI.getClient();
-          const brainRes = await brainAi.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Sen TRTEX B2B istihbarat analisti. Web verilerinden TRTEX ana sayfası için güncel içerik üret.
+          const promptStr = `Sen TRTEX B2B istihbarat analisti. Web verilerinden TRTEX ana sayfası için güncel içerik üret.
 
 WEB VERİLERİ:
 ${(webContext || '').substring(0, 3000)}
@@ -1216,14 +1213,16 @@ JSON döndür (Türkçe):
 
 KURALLAR:
 - Fırsatlar SOMUT olmalı (genel cümleler YASAK)
-- Her opportunity farklı ülke ve ürün kategorisi`,
-            config: { responseMimeType: 'application/json', temperature: 0.3 }
-          });
+- Her opportunity farklı ülke ve ürün kategorisi`;
+
+          const jsonResult = await alohaAI.generateJSON(promptStr, {
+            temperature: 0.3,
+            complexity: 'routine'
+          }, 'autoRunner.brain');
 
           let parsed: any = {};
-          const brainResult = await safeParseLLM(schemas.brainContent, brainRes.text, 'autoRunner.brain', 'trtex');
-          if (brainResult.success && brainResult.data) {
-            parsed = brainResult.data;
+          if (jsonResult) {
+            parsed = jsonResult;
           }
 
           if (parsed.daily_headline) {
@@ -1276,12 +1275,12 @@ KURALLAR:
           let radarTopics: string[] = [];
           try {
             const searchRes = await executeToolCall({ name: 'web_search', args: { query: 'today breaking news global textile market supply chain freight materials' } });
-            const topicAi = alohaAI.getClient();
-            const res = await topicAi.models.generateContent({
-               model: 'gemini-2.5-flash',
-               contents: `Asagidaki guncel haber ozetinden TRTEX B2B Radar icin 3 carpici stratejik uyari/haber basligi cikar. Sadece basliklari dondur (her satira bir tane, numarasiz).\n\n${searchRes.substring(0, 3000)}`
-            });
-            radarTopics = (res.text || '').split('\\n').filter(t => t.trim().length > 15).map(t => t.replace(/^[-*]\\s*/, '').replace(/^\\d+\\.\\s*/, '').trim()).slice(0, 3);
+            const resText = await alohaAI.generate(
+               `Asagidaki guncel haber ozetinden TRTEX B2B Radar icin 3 carpici stratejik uyari/haber basligi cikar. Sadece basliklari dondur (her satira bir tane, numarasiz).\n\n${searchRes.substring(0, 3000)}`,
+               { complexity: 'routine' },
+               'autoRunner.radarTopics'
+            );
+            radarTopics = (resText || '').split('\n').filter(t => t.trim().length > 15).map(t => t.replace(/^[-*]\s*/, '').replace(/^\d+\.\s*/, '').trim()).slice(0, 3);
           } catch (e: any) {
             console.warn(`[ALOHA] ⚠️ Dinamik konu cekimi basarisiz, API/Search arizali: ${e.message}`);
           }

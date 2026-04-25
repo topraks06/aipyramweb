@@ -9,8 +9,7 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
         return `Tekstil pazarında güncel ${intent} hedefleri inceleniyor.`;
     }
 
-    const aiClient = alohaAI.getClient();
-
+    // removed aiClient
     // Melez Sinyal Mantığı: %70 Google (Spontaneous/Breaking), %30 RSS (Stable/Deep) 
     const isRssTurn = Math.random() < 0.3;
 
@@ -49,22 +48,23 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
         if (intent === 'FIRSAT') searchKeywords = "hotel contract textile supply problems OR opportunities B2B fabric news";
         if (intent === 'TREND') searchKeywords = "innovations or new colors in home textile international fairs";
 
-        const response = await aiClient.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: `Search the web for the absolute latest breaking news regarding: "${searchKeywords}". 
+        const text = await alohaAI.generate(
+            `Search the web for the absolute latest breaking news regarding: "${searchKeywords}". 
 Return ONLY ONE completely unique, highly specific and real B2B intelligence brief (max 2 sentences). 
 Focus on: ${intent} (If ACT/Fırsat, look for supply gaps. If Pazar, look for market data. If Trend, look for design shifts).
 DO NOT RETURN A GENERAL STATEMENT. It must be a specific event, shift, or price dynamic from the last 48 hours.
 Format: just the brief text.`,
-            config: {
+            {
                 tools: [{ googleSearch: {} }],
                 temperature: 0.9,
-            }
-        });
+                complexity: 'routine'
+            },
+            'dynamicSignalCollector.getDynamicBrief'
+        );
 
-        if (response.text && response.text.length > 20) {
-            console.log(`✅ [SIGNAL COLLECTOR] Google Canlı Brief Bulundu: ${response.text.substring(0, 100)}...`);
-            return response.text.trim();
+        if (text && text.length > 20) {
+            console.log(`✅ [SIGNAL COLLECTOR] Google Canlı Brief Bulundu: ${text.substring(0, 100)}...`);
+            return text.trim();
         }
     } catch (err: any) {
         console.error("❌ [SIGNAL COLLECTOR] Google Ağ Hatası:", err.message);

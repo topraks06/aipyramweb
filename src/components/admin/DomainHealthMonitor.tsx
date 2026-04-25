@@ -61,19 +61,23 @@ export default function DomainHealthMonitor() {
             const res = await fetch('/api/health-full');
             const data = await res.json();
             if (data.node_health) {
-                const updated = data.node_health.map((n: any) => ({
-                    domain: n.domain,
-                    label: n.domain.toUpperCase(),
-                    role: n.role,
-                    status: n.status,
-                    responseTime: n.responseTime || 0,
-                    lastChecked: new Date(),
-                    uptime: n.uptime,
-                    ssl: n.ssl,
-                    last_deploy: n.last_deploy,
-                    error_count: n.error_count
+                // Measure real response times for all nodes in parallel
+                const measuredHealth = await Promise.all(data.node_health.map(async (n: any) => {
+                    const measure = await checkDomain(n.domain);
+                    return {
+                        domain: n.domain,
+                        label: n.domain.toUpperCase(),
+                        role: n.role,
+                        status: n.status === 'online' && !measure.online ? 'offline' : n.status,
+                        responseTime: measure.ms,
+                        lastChecked: new Date(),
+                        uptime: n.uptime,
+                        ssl: n.ssl,
+                        last_deploy: n.last_deploy,
+                        error_count: n.error_count
+                    };
                 }));
-                setDomains(updated);
+                setDomains(measuredHealth);
             }
         } catch (e) {
             console.error("Health check failed", e);

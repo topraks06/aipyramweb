@@ -161,7 +161,7 @@ async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Pro
       ${chainHistory}
     `;
 
-    // 🛡️ THE FISCAL GUARDIAN INTERLOCK (Maliyet Zırhı)
+    // 🛡️ SOVEREIGN BRAIN (UAP ROUTER & CFO ENGINE)
     const ctxString = typeof input.context === 'string' ? input.context.toLowerCase() : JSON.stringify(input.context).toLowerCase();
     const targetProject = ctxString.includes("trtex") ? "trtex" : 
                           ctxString.includes("perde") ? "perde" : "CORE";
@@ -169,23 +169,38 @@ async function runAgent(agent: Agent, input: AgentInput, outputSchema: any): Pro
     // Her bir ajan tetiklemesi tahmini B2B/API maliyeti (Örn: $0.05)
     const estimatedCost = 0.05; 
     
-    const budgetCheck = await AccountingAgent.requestBudgetApproval(targetProject, estimatedCost);
-    if (!budgetCheck.approved) {
-        console.error(`[🛑 THE FISCAL GUARDIAN] Bütçe onayı verilmedi: ${budgetCheck.reason}`);
-        // Performans kaydı: bütçe reddi
-        recordAgentPerformance(`orchestrator_${agent.name.toLowerCase()}`, false, Date.now() - agentStartTime).catch(() => {});
-        return {
-            agent: agent.name,
-            result: `{"error": "SUSPENDED_LOW_FUNDS", "reason": "${budgetCheck.reason}"}`,
-            confidence: 0
-        };
-    }
-
     // Determine complexity based on Agent Role
     let complexity: 'routine' | 'complex' | 'vision' = 'routine';
     if (agent.name === 'VISIONARY' || agent.name === 'REALITY' || agent.name === 'ALOHA') {
       complexity = 'complex';
     }
+
+    // UAP format wrapper
+    const { AlohaRouter } = require('@/core/aloha/brain');
+    const decision = await AlohaRouter.processRequest({
+      agent_id: agent.name,
+      project: targetProject,
+      task_type: complexity,
+      data: { task: input.task },
+      metadata: {
+        confidence: 1.0, // Varsayılan güven, spesifik ajanlar bunu düşürebilir (geliştirilecek)
+        impact: complexity === 'complex' ? 'high' : 'medium',
+        cost_estimate: estimatedCost
+      }
+    });
+
+    if (decision.action === 'PENDING_APPROVAL') {
+        console.warn(`[🛑 SOVEREIGN BRAIN] Yüksek Maliyet/Risk nedeniyle işlem donduruldu (Inbox'a düştü): ${decision.reason}`);
+        // Performans kaydı: bütçe/risk reddi
+        recordAgentPerformance(`orchestrator_${agent.name.toLowerCase()}`, false, Date.now() - agentStartTime).catch(() => {});
+        return {
+            agent: agent.name,
+            result: `{"error": "PENDING_APPROVAL", "reason": "${decision.reason}", "transaction_id": "${decision.transaction_id}"}`,
+            confidence: 0
+        };
+    }
+    
+    console.log(`[SOVEREIGN BRAIN] ✅ Vize alındı. Mod: ${decision.mode}. İşlem başlıyor...`);
 
     const parsedResult = await alohaAI.generateJSON(
       input.task,

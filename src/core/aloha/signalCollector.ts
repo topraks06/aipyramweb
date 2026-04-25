@@ -169,16 +169,15 @@ export async function collectSignals(project: string = 'trtex', workerTask?: Wor
 async function gatherSignals(topics: string[]): Promise<RawSignal[]> {
   try {
     const topicList = topics.map((t, i) => `${i + 1}. ${t}`).join('\n');
-    const result = await getAI().models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Search the internet for 5 strictly B2B trade intelligence updates, breaking market news, or macro numbers based on these topics:\n${topicList}\n\nIMPORTANT: Find REAL, RECENT news from 2026. Each entry must be a unique, distinct story.\nReturn JSON ONLY exactly like:\n[{"title":"...","summary":"...","url":"...","source":"...","category":"..."}]`,
-      config: { 
+    let text = await alohaAI.generate(
+      `Search the internet for 5 strictly B2B trade intelligence updates, breaking market news, or macro numbers based on these topics:\n${topicList}\n\nIMPORTANT: Find REAL, RECENT news from 2026. Each entry must be a unique, distinct story.\nReturn JSON ONLY exactly like:\n[{"title":"...","summary":"...","url":"...","source":"...","category":"..."}]`,
+      { 
         temperature: 0.4,
         tools: [{ googleSearch: {} }],
-      }
-    });
-    
-    let text = result?.text || '';
+        complexity: 'routine'
+      },
+      'signalCollector.gatherSignals'
+    ) || '';
     // Clean markdown fences if present
     text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
     const match = text.match(/\[[\s\S]*\]/);
@@ -216,9 +215,8 @@ async function produceIntelligencePayload(signal: any, gravity: number, project:
 
   for (let attempt = 1; attempt <= SYSTEM_LAW.FAILURE_POLICY.max_retry; attempt++) {
     try {
-      const result = await getAI().models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `SYSTEM ROLE:
+      const parsed = await alohaAI.generateJSON(
+        `SYSTEM ROLE:
 You are TISF (TRTEX Intelligence Standard Format) AI Core — the world's most elite B2B textile intelligence analyst.
 You write like a senior Bloomberg/Reuters analyst who spent 20 years in the Turkish textile export sector.
 
@@ -275,14 +273,12 @@ RETURN EXACT JSON FORMAT:
   "keywords": ["tag1", "tag2", "tag3", "tag4", "tag5"]
 }
 Return ONLY JSON. NO MARKDOWN. NO COMMENTS.`,
-        config: { temperature: 0.4 },
-      });
+        { temperature: 0.4, complexity: 'routine' },
+        'signalCollector.produceIntelligencePayload'
+      );
 
-      const jsonMatch = (result.text || '').match(/\{[\s\S]*\}/);
-      if (!jsonMatch) continue;
+      if (!parsed) continue;
 
-      const parsed = JSON.parse(jsonMatch[0]);
-      
       // Art Director iptal edildi (God-Mode imageAgent devrede)
 
       finalParsed = parsed;

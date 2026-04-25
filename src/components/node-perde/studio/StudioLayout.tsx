@@ -15,10 +15,9 @@ export default function StudioLayout({ children }: StudioLayoutProps) {
   const router = useRouter();
 
   React.useEffect(() => {
-    // TEST YAYINI İÇİN ÜYELİK GİRİŞİ GEÇİCİ OLARAK BYPASS EDİLDİ
-    // if (!loading && !user) {
-    //   router.push('/sites/perde/login');
-    // }
+    if (!loading && !user) {
+      router.push('/sites/perde.ai/login');
+    }
   }, [user, loading, router]);
 
   return (

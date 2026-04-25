@@ -3,8 +3,36 @@
 import HometexNavbar from "./HometexNavbar";
 import HometexFooter from "./HometexFooter";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
 
 export default function HometexContact() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle'|'sending'|'sent'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          company: form.name,
+          role: 'HOMETEX_CONTACT',
+          message: form.message,
+          source: 'hometex_contact_page',
+          createdAt: new Date().toISOString()
+        })
+      });
+      setStatus('sent');
+      setForm({ name: '', email: '', message: '' });
+    } catch (e) {
+      console.error(e);
+      setStatus('idle');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <HometexNavbar />
@@ -43,23 +71,33 @@ export default function HometexContact() {
           </div>
           
           <div className="bg-zinc-950 p-8 border border-white/10">
-            <form className="space-y-6">
-              <div>
-                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Ad Soyad</label>
-                <input type="text" className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white" />
+            {status === 'sent' ? (
+              <div className="h-full flex flex-col items-center justify-center text-center py-12">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-6">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-serif mb-2">Mesajınız Alındı</h3>
+                <p className="text-zinc-400">En kısa sürede tarafınıza dönüş sağlanacaktır.</p>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">E-Posta</label>
-                <input type="email" className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Mesajınız</label>
-                <textarea rows={4} className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white"></textarea>
-              </div>
-              <button type="button" className="w-full bg-white text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors">
-                Gönder
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Ad Soyad</label>
+                  <input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} type="text" className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">E-Posta</label>
+                  <input required value={form.email} onChange={e=>setForm({...form,email:e.target.value})} type="email" className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Mesajınız</label>
+                  <textarea required value={form.message} onChange={e=>setForm({...form,message:e.target.value})} rows={4} className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white"></textarea>
+                </div>
+                <button disabled={status==='sending'} type="submit" className="w-full bg-white text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors disabled:opacity-50">
+                  {status === 'sending' ? 'GÖNDERİLİYOR...' : 'GÖNDER'}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </main>

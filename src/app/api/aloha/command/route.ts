@@ -185,15 +185,24 @@ function fallbackResolve(command: string, defaultNode?: string): ParsedCommand {
   }
 
   // --- SOVEREIGN PUBLISH (Kumaş yayınlama) ---
-  if (cmd.includes('yayınla') || cmd.includes('yayinla') || cmd.includes('publish') || cmd.includes('lansman') || cmd.includes('platforma')) {
+  if (cmd.includes('yayınla') || cmd.includes('yayinla') || cmd.includes('publish') || cmd.includes('lansman') || cmd.includes('platforma') || cmd.includes('dağıt') || cmd.includes('dagit')) {
     // Teknik bilgileri komuttan çıkart
     const costMatch = command.match(/(\d+)\s*(dolar|usd|\$)/i);
     const gsmMatch = command.match(/(\d+)\s*gsm/i);
     const widthMatch = command.match(/(\d+)\s*cm/i);
     const compositionMatch = command.match(/(yüzde|%)\s*\d+\s*(keten|pamuk|polyester|ipek)/gi);
     
+    // Hedefleri (targets) belirle
+    const targets: string[] = [];
+    if (cmd.includes('trtex') || cmd.includes('haber')) targets.push('trtex');
+    if (cmd.includes('hometex') || cmd.includes('fuar')) targets.push('hometex');
+    if (cmd.includes('vorhang') || cmd.includes('perakende')) targets.push('vorhang');
+    if (cmd.includes('perde') || cmd.includes('tasarım') || cmd.includes('tasarim')) targets.push('perde');
+    if (targets.length === 0) targets.push('all'); // Varsayılan: Her yere dağıt
+
     return {
       tool: 'sovereign.publish',
+      targets,
       technicalSpecs: command,
       fabricCostPerMeter: costMatch ? parseInt(costMatch[1]) : 8,
       gsm: gsmMatch ? parseInt(gsmMatch[1]) : 280,
@@ -255,7 +264,39 @@ export async function POST(request: Request) {
       });
     }
 
-    // 3. Tool çalıştır
+    // 3. Governance / UAP Check (Müşteri/Tenant Ağı Güvenliği)
+    // Eğer istek 'master' harici bir nodedan geliyorsa ve kritikse (publish vb.), CFO onayına düşür.
+    if (targetNode !== 'master' && parsed.tool === 'sovereign.publish') {
+      const { AlohaRouter } = await import('@/core/aloha/brain');
+      const uapReq = {
+        agent_id: targetNode || 'unknown',
+        project: targetNode || 'global',
+        task_type: parsed.tool,
+        data: parsed,
+        metadata: {
+          confidence: 0.8,
+          impact: 'high' as 'high', // Yayınlama yüksek etkilidir
+          cost_estimate: 0.1
+        }
+      };
+      
+      const decision = await AlohaRouter.processRequest(uapReq);
+      
+      if (decision.action === 'PENDING_APPROVAL') {
+        return NextResponse.json({
+          type: 'text',
+          alohaResponse: `Sovereign Ağı: Yayın emriniz alındı ancak sistem güvenliği (RLHF) gereği Merkez Onayına (Inbox) gönderildi. Onaylandığında otonom olarak hedeflere (${parsed.targets?.join(', ') || 'tümü'}) dağıtılacaktır.`,
+        });
+      } else if (decision.action === 'REJECT') {
+        return NextResponse.json({
+          type: 'error',
+          alohaResponse: `Sovereign Ağı: Talebiniz ALOHA tarafından otonom olarak REDDEDİLDİ. Sebep: ${decision.reason}`,
+        }, { status: 403 });
+      }
+      // Eğer AUTO_SUCCESS ise, bloklanmaz ve aşağıda çalıştırılır.
+    }
+
+    // 4. Tool çalıştır
     const result = await executeAlohaTool(parsed);
 
     return NextResponse.json({

@@ -1,15 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-export interface RoomAnalysis {
-    roomType: 'salon' | 'yatak_odasi' | 'ofis' | 'cocuk' | 'diger';
-    lightLevel: 'parlak' | 'orta' | 'karanlik';
-    colorPalette: string[];
-    windowType: 'genis' | 'dar' | 'kemer' | 'standart';
-    suggestedStyles: string[];
-    suggestedFabrics: { name: string; priceRange: string }[];
-}
-
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+import { alohaAI } from '@/core/aloha/aiClient';
+// removed GoogleGenAI import
 
 import { getNode } from "@/lib/sovereign-config";
 
@@ -22,10 +12,7 @@ export async function analyzeRoom(imageBase64: string, SovereignNodeId: string =
     } else if (SovereignNodeId === 'vorhang') {
         systemInstruction = "Du bist ein europäischer Innenarchitekt. Analysiere den Raum und mache Vorhang-Empfehlungen. Antworte NUR im JSON-Format auf Deutsch.";
     }
-    const model = ai.getGenerativeModel({
-        model: "gemini-2.5-flash",
-        systemInstruction
-    });
+    const model = 'gemini-2.5-flash';
 
     const prompt = `Analiz formatı:
 {
@@ -37,21 +24,12 @@ export async function analyzeRoom(imageBase64: string, SovereignNodeId: string =
   "suggestedFabrics": [{"name": "Kumaş Adı", "priceRange": "₺850 - ₺2.400/metre"}]
 }`;
 
-    const result = await model.generateContent([
-        prompt,
-        {
-            inlineData: {
-                data: imageBase64,
-                mimeType: "image/jpeg"
-            }
-        }
-    ]);
-
-    const text = result.response.text();
-    const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    
     try {
-        return JSON.parse(cleanText) as RoomAnalysis;
+        const jsonResult = await alohaAI.generateJSON([prompt, { inlineData: { data: imageBase64, mimeType: "image/jpeg" } }], {
+            systemInstruction,
+            complexity: 'routine'
+        }, 'vision-analyzer.analyzeRoom');
+        return jsonResult as RoomAnalysis;
     } catch (e) {
         console.error("Vision Analysis JSON parse error:", e);
         // Fallback

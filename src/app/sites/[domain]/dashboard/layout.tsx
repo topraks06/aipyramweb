@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 import { ShieldAlert, Loader2 } from 'lucide-react';
+import TenantAlohaWidget from '@/components/aloha/TenantAlohaWidget';
 
 export default function DashboardGuardLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname() || '';
@@ -62,6 +63,7 @@ export default function DashboardGuardLayout({ children }: { children: React.Rea
     return (
         <div className="min-h-screen bg-[#111] text-white font-sans selection:bg-[#D4AF37] selection:text-white">
             {children}
+            <TenantAlohaWidget nodeId={nodeId} nodeName={nodeConfig.shortName} />
         </div>
     );
 }

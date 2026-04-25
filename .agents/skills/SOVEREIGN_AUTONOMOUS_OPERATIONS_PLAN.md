@@ -46,3 +46,12 @@ ALOHA sıradan bir asistan değil, geleceğin "Genel Yapay Zekası" (AGI) olmaya
 1. **Otonom Numune (Swatch) Kargo Barkodlaması:** Toptancı numune istediğinde DHL/FedEx entegrasyonu ile fabrikaya otomatik kargo barkodu basılır.
 2. **Sovereign Escrow (Güvenli Havuz):** Ödemeler Stripe üzerinden havuzda tutulur, fabrika konşimento yüklediği an para serbest kalır.
 3. **Bölgesel (Kültürel) Render:** 3D tasarımlar; Rusya (shtory) için gösterişli altın detaylı mekanlarda, Almanya (vorhang) için minimalist arka planlarda otonom olarak (Gemini/Vertex) üretilir.
+
+## 7. ALOHA HİYERARŞİSİ VE ÇOKLU-KİRACI (MULTI-TENANT) PANEL MİMARİSİ
+Tüm projelerde Aether OS (Sci-Fi, Glassmorphism) arayüz tasarımı kullanılır ancak yetki ve ajan hiyerarşisi kesin çizgilerle ayrılmıştır:
+
+1. **ALOHA Sadece Sovereign (Master) İçindir:** ALOHA, sistemin tanrısıdır. Yalnızca Master Kokpit'te (`AIPyram`) yaşar. Hiçbir müşteri/bayi ALOHA'yı göremez, adını duyamaz ve kullanamaz.
+2. **Tenant (Müşteri) Dijital İkizleri:** Müşterilerin kendi panellerinde onlara özel işleri yürüten "Yerel Ajanları" (Digital Twins) bulunur. ALOHA bu ajanları yukarıdan yöneten orkestra şefidir.
+3. **Tek Merkezli Çoklu-Abonelik (Unified Dashboard):** Eğer bir müşteri birden fazla platforma (Örn: Perde.ai + TRTex + Vorhang) aboneyse, her biri için ayrı panele girmez. **Tek bir Aether OS paneline girer** ve alt kısımdaki "Proje Küreleri"ne tıklayarak tıpkı sekmeler (tabs) arası geçiş yapar gibi yetkili olduğu platformların yönetim ekranları arasında otonom olarak dolaşır.
+4. **Master Kokpit (God Mode):** Sadece Hakan Toprak, AIPyram paneli üzerinden ALOHA ile konuşarak tüm 7 kıtadaki projeleri, aktif ajan sayılarını ve tüm ekonomik veriyi tek ekrandan yönetebilir.
+

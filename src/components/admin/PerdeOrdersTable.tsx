@@ -16,7 +16,7 @@ export default function PerdeOrdersTable() {
       try {
         const { collection, query, orderBy, limit, onSnapshot } = await import('firebase/firestore');
         const { db } = await import('@/lib/firebase-client');
-        const q = query(collection(db, "perde_orders"), orderBy("createdAt", "desc"), limit(50));
+        const q = query(collection(db, "perde_projects"), orderBy("createdAt", "desc"), limit(50));
         
         unsubscribe = onSnapshot(q, (snapshot) => {
           const data = snapshot.docs.map(doc => {
@@ -52,8 +52,7 @@ export default function PerdeOrdersTable() {
   const handleStatusChange = async (docId: string, newStatus: string) => {
     try {
       const { doc, updateDoc } = await import('firebase/firestore');
-      const { db } = await import('@/lib/firebase-client');
-      await updateDoc(doc(db, "perde_orders", docId), { status: newStatus, updatedAt: new Date().toISOString() });
+      await updateDoc(doc(db, "perde_projects", docId), { status: newStatus, updatedAt: new Date().toISOString() });
     } catch (e) {
       console.error(e);
       alert("Durum güncellenemedi");
@@ -75,7 +74,7 @@ export default function PerdeOrdersTable() {
         <div>
           <CardTitle className="text-xl font-black uppercase tracking-tight text-slate-900">Perde.ai Canlı Sipariş Akışı</CardTitle>
           <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            Sovereign Collection: perde_orders
+            Sovereign Collection: perde_projects
           </CardDescription>
         </div>
         <div className="flex items-center gap-4">

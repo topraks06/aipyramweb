@@ -8,22 +8,24 @@ import { useCartStore } from "@/store/useCartStore";
 
 export function ProductDetail({ id, product: propProduct, seller: propSeller }: { id: string, product?: any, seller?: any }) {
   const { addItem, openCart } = useCartStore();
-  // Merge mock with props
+  if (!propProduct) {
+    return (
+      <div className="min-h-screen bg-white text-black flex items-center justify-center">
+        <p className="text-gray-500 uppercase tracking-widest text-sm">Produkt nicht gefunden</p>
+      </div>
+    );
+  }
+
   const product = {
-    id: propProduct?.id || id,
-    title: propProduct?.name || "Premium Blackout 'Elegance'",
-    seller: propSeller?.name || propProduct?.sellerName || "Weber Textil GmbH",
-    price: propProduct?.price || 12.50,
-    rating: propProduct?.rating || 4.8,
-    reviews: propProduct?.reviewCount || 124,
-    description: propProduct?.description || "Hochwertiger Verdunkelungsstoff für Hotels und anspruchsvolle Wohnräume. 100% blickdicht, schwer entflammbar (B1) und akustisch wirksam.",
-    images: propProduct?.images || null,
-    specs: [
-      { label: "Material", value: propProduct?.material || "100% Polyester FR" },
-      { label: "Gewicht", value: propProduct?.weight || "320 g/m²" },
-      { label: "Breite", value: propProduct?.width || "300 cm" },
-      { label: "MOQ", value: propProduct?.moq ? `${propProduct.moq}m` : "50m" }
-    ]
+    id: propProduct.id || id,
+    title: propProduct.name || propProduct.title || "Unknown Product",
+    seller: propSeller?.name || propProduct.sellerName || "Unknown Seller",
+    price: propProduct.price || 0,
+    rating: propProduct.rating || 0,
+    reviews: propProduct.reviewCount || 0,
+    description: propProduct.description || "",
+    images: propProduct.images || null,
+    specs: propProduct.specs || []
   };
 
   const handleAddToCart = () => {

@@ -445,6 +445,7 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
     // --- SOVEREIGN GLOBAL PUBLISH ---
     case 'sovereign.publish': {
       const result = await executeGlobalPublish({
+        targets: cmd.targets,
         technicalSpecs: cmd.technicalSpecs || cmd.specs || '',
         fabricCostPerMeter: cmd.cost || cmd.fabricCostPerMeter || 6,
         gsm: cmd.gsm,
@@ -456,9 +457,16 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
         patternType: cmd.patternType,
       });
       if (result.success) {
+        let msg = `Ürün istenen platformlara (Swarm Routing) otonom dağıtıldı!\n`;
+        if (result.trtexNewsId) msg += `• TRTex Haber ID: ${result.trtexNewsId}\n`;
+        if (result.perdeDesignId) msg += `• Perde.ai Tasarım Bekleme ID: ${result.perdeDesignId}\n`;
+        if (result.hometexProductId) msg += `• Hometex Ürün ID: ${result.hometexProductId}\n`;
+        if (result.vorhangProductId) msg += `• Vorhang Ürün ID: ${result.vorhangProductId}\n`;
+        msg += `\nB2B Toptan: $${result.pricing?.b2b?.wholesalePrice}/m\nB2C Perakende: €${result.pricing?.b2c?.retailPricePerMeter}/m`;
+        
         return {
           success: true,
-          message: `Üürün 3 platforma otonom yayınlandı!\n• TRTex Haber ID: ${result.trtexNewsId}\n• Hometex Ürün ID: ${result.hometexProductId}\n• Vorhang Ürün ID: ${result.vorhangProductId}\n\nB2B Toptan: $${result.pricing?.b2b?.wholesalePrice}/m\nB2C Perakende: €${result.pricing?.b2c?.retailPricePerMeter}/m`,
+          message: msg,
           data: result,
           widgetType: 'success',
         };
@@ -685,8 +693,8 @@ Kullanılabilir araçlar ve JSON formatları:
 19. agent.create_quote — Fiyat Teklifi / Satış Siparişi verilerini anla ve onay (Preview) için arayüze gönder. (Otonom satışı BAŞLATIR ancak insan onayı bekler)
     { "tool": "agent.create_quote", "node": "perde|hometex", "authorId": "user_uid", "customerName": "Ahmet Yılmaz", "grandTotal": 15000, "discount": 500, "notes": "Montajı zor", "phone": "+905..." }
 
-20. sovereign.publish — Ürünü 3 platforma otonom yayınla (TRTex haber + Hometex vitrin + Vorhang mağaza)
-    { "tool": "sovereign.publish", "technicalSpecs": "kumaş teknik bilgisi", "fabricCostPerMeter": 6, "gsm": 580, "widthCm": 320, "composition": "%95 PES %5 Viskon" }
+20. sovereign.publish — Ürünü istenen platformlara otonom dağıt/yayınla (Swarm Routing). Hedefler: trtex, hometex, vorhang, perde
+    { "tool": "sovereign.publish", "targets": ["trtex", "perde", "vorhang", "hometex"], "technicalSpecs": "kumaş teknik bilgisi", "fabricCostPerMeter": 6, "gsm": 580, "widthCm": 320, "composition": "%95 PES %5 Viskon" }
 
 21. sovereign.matchmaker — Üreticinin hammaddesine (iplik, kumaş) dünyadan otonom alıcı/ihale bulur
     { "tool": "sovereign.matchmaker", "productType": "yarn", "material": "20 denye PES iplik", "targetRegions": ["DACH", "RUSSIA"] }

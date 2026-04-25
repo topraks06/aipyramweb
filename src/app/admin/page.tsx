@@ -1,393 +1,480 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Bot, User, FileSearch, Zap, Terminal, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
-import DashboardOverview from '@/components/admin/DashboardOverview';
-import EconomyEngineGraph from '@/components/admin/EconomyEngineGraph';
-import DlqManager from '@/components/admin/DlqManager';
-import DomainHealthMonitor from '@/components/admin/DomainHealthMonitor';
-import LeadIntelligencePanel from '@/components/admin/LeadIntelligencePanel';
-import { MediaLibrary } from '@/components/admin/MediaLibrary';
-import KnowledgeTrainer from '@/components/admin/KnowledgeTrainer';
-import HometexDashboard from '@/components/node-hometex/HometexDashboard';
-import MarketplaceEngine from '@/components/node-vorhang/MarketplaceEngine';
-import AgentInbox from '@/components/admin/AgentInbox';
+import React, { useState, useEffect } from 'react';
+import { db } from '@/lib/firebase-client';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import {
+  Hexagon, ShieldAlert, Mic, CheckCircle, Shield, Orbit, Activity,
+  Paperclip, Volume2, VolumeX, Send
+} from 'lucide-react';
 
-type CommandMode = 'chat' | 'analysis' | 'action';
-
-interface Message {
+interface AgentMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  project: string;
+  type: string;
+  time: string;
   content: string;
-  attachments?: string[];
-  mode?: CommandMode;
-  widgetType?: string; // e.g. 'dashboard', 'economy', 'dlq'
+  agentId: string;
+  priority: 'YÜKSEK' | 'ORTA' | 'DÜŞÜK';
+  priorityColor: string;
+  badgeBg: string;
 }
 
-export default function MasterKokpit() {
-  const [mode, setMode] = useState<CommandMode>('chat');
-  const [input, setInput] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isTyping, setIsTyping] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const isListeningRef = useRef(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const recognitionRef = useRef<any>(null);
+interface ChatMessage {
+  role: 'user' | 'aloha';
+  content: string;
+  time: string;
+  attachments?: string[];
+}
 
+export default function AetherOSMasterKokpit() {
+  const [messages, setMessages] = useState<AgentMessage[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [chatActive, setChatActive] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+
+  // 1. Firebase Bağlantısı (Agent Inbox'ı Canlıya Alma)
   useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'tr-TR';
+    const q = query(collection(db, 'aloha_inbox'), orderBy('created_at', 'desc'), limit(15));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs: AgentMessage[] = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        let timeStr = '';
+        if (data.created_at) {
+          const date = data.created_at.toDate ? data.created_at.toDate() : new Date(data.created_at);
+          timeStr = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        }
 
-      recognitionRef.current.onresult = (event: any) => {
-        let finalTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+        let priority: 'YÜKSEK' | 'ORTA' | 'DÜŞÜK' = 'ORTA';
+        let priorityColor = 'text-amber-400';
+        let badgeBg = 'bg-amber-500/10 border-amber-500/20';
+
+        if (data.status === 'PENDING_APPROVAL') {
+          priority = 'YÜKSEK'; priorityColor = 'text-rose-400'; badgeBg = 'bg-rose-500/10 border-rose-500/20';
+        } else if (data.status === 'RESOLVED') {
+          priority = 'DÜŞÜK'; priorityColor = 'text-emerald-400'; badgeBg = 'bg-emerald-500/10 border-emerald-500/20';
+        }
+
+        msgs.push({
+          id: doc.id,
+          project: data.project ? data.project.toUpperCase() : 'SİSTEM',
+          type: data.task_type ? data.task_type.toUpperCase() : 'SİNYAL',
+          time: timeStr,
+          content: data.reason || (data.data && data.data.task ? data.data.task : 'Otonom işlem detayı bulunmuyor.'),
+          agentId: data.agent_id || 'ALOHA_CORE',
+          priority,
+          priorityColor,
+          badgeBg
+        });
+      });
+
+      if (msgs.length === 0) {
+        setMessages([
+          {
+            id: 'mock1', project: 'SİSTEM', type: 'DURUM', time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+            content: 'Firebase aloha_inbox şu an boş. Otonom ajanlardan yeni bir onay beklemiyor.', agentId: 'ALOHA',
+            priority: 'DÜŞÜK', priorityColor: 'text-emerald-400', badgeBg: 'bg-emerald-500/10 border-emerald-500/20'
           }
-        }
-        if (finalTranscript) {
-          setInput(prev => prev + (prev ? ' ' : '') + finalTranscript);
-        }
-      };
+        ]);
+      } else {
+        setMessages(msgs);
+      }
+    }, (error) => {
+      console.error("Firebase dinleme hatası:", error);
+    });
 
-      recognitionRef.current.onend = () => {
-        if (isListeningRef.current) {
-          try { recognitionRef.current.start(); } catch (e) {}
-        } else {
-          setIsListening(false);
-        }
-      };
-      
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        if (event.error === 'not-allowed') {
-          isListeningRef.current = false;
-          setIsListening(false);
-        }
-      };
-    }
+    return () => unsubscribe();
   }, []);
 
-  const toggleListen = () => {
-    if (isListening) {
-      isListeningRef.current = false;
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      isListeningRef.current = true;
-      recognitionRef.current?.start();
-      setIsListening(true);
-    }
-  };
+  // 2. Chat API Bağlantısı (Doğal Dil Komutunu LLM'e gönderme)
+  const handleSend = async () => {
+    if (!inputText.trim()) return;
 
-  const speakText = (text: string) => {
-    if (isMuted || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'tr-TR';
-    utterance.rate = 1.0;
-    utterance.pitch = 0.9;
-    window.speechSynthesis.speak(utterance);
-  };
+    if (!chatActive) setChatActive(true);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'system-init',
-      role: 'system',
-      content: `ALOHA SOVEREIGN AĞI BAŞLATILDI. HOŞ GELDİNİZ. SİSTEM EMİRLERİNİZİ BEKLİYOR.`
-    }
-  ]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isTyping]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      setFiles(prev => [...prev, ...selectedFiles].slice(0, 20)); // Limit 20
-    }
-  };
-
-  const removeFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
-  };
-
-  const executeCommand = async (e?: React.FormEvent, customText?: string) => {
-    if (e) e.preventDefault();
-    
-    const userText = customText || input;
-    if (!userText.trim() && files.length === 0) return;
-
-    const attachments = files.map(f => f.name);
-
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
+    const currentInput = inputText;
+    const userMsg: ChatMessage = {
       role: 'user',
-      content: userText,
-      attachments: attachments.length > 0 ? attachments : undefined,
-      mode
-    }]);
+      content: currentInput,
+      time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+    };
 
-    setInput('');
-    setFiles([]);
-    setIsTyping(true);
+    setChatHistory(prev => [...prev, userMsg]);
+    setInputText('');
 
     try {
-      let targetNode = 'master';
-      if (typeof window !== 'undefined') {
-        targetNode = localStorage.getItem('aloha_target_node') || 'master';
-      }
-
-      const res = await fetch('/api/aloha/command', {
+      const res = await fetch('/api/brain/v1/trigger', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: userText, targetNode })
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'sk_aipyram_master_71',
+          'x-project': 'aipyram'
+        },
+        body: JSON.stringify({
+          task: currentInput,
+          userId: 'master_hakan',
+          mode: 'fast' // LLM hızlı yanıt modunda
+        })
       });
 
       const data = await res.json();
-      setIsTyping(false);
+      if (data.success) {
+        let aiResponse = "İşlem tamamlandı.";
+        if (data.data?.finalDecision?.result) {
+          try {
+            const parsed = JSON.parse(data.data.finalDecision.result);
+            aiResponse = parsed.message || parsed.response || parsed.text || data.data.finalDecision.result;
+          } catch (e) {
+            aiResponse = data.data.finalDecision.result;
+          }
+        }
 
-      let finalContent = data.alohaResponse || "Anlaşılamadı.";
-      let widgetType = data.widgetType || undefined;
-
-      // Speak response if it's a chat text
-      if (!widgetType || widgetType === 'success' || widgetType === 'error') {
-        speakText(finalContent);
+        setChatHistory(prev => [...prev, {
+          role: 'aloha',
+          content: aiResponse,
+          time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+        }]);
+      } else {
+        setChatHistory(prev => [...prev, {
+          role: 'aloha',
+          content: 'Hata: ' + (data.error || 'Bilinmeyen bir iletişim hatası oluştu.'),
+          time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+        }]);
       }
-
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: finalContent,
-        mode,
-        widgetType
-      }]);
     } catch (err: any) {
-      setIsTyping(false);
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: `SİSTEM HATASI: ${err.message}`,
-        mode
+      setChatHistory(prev => [...prev, {
+        role: 'aloha',
+        content: 'Sunucu ile bağlantı koptu. Hata: ' + err.message,
+        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
       }]);
     }
   };
 
-  // Dinamik Widget Render Fonksiyonu
-  const renderWidget = (type?: string) => {
-    if (type === 'dashboard') return <div className="mt-4"><DashboardOverview /></div>;
-    if (type === 'economy') return <div className="mt-4"><EconomyEngineGraph /></div>;
-    if (type === 'dlq') return <div className="mt-4"><DlqManager /></div>;
-    if (type === 'network') return <div className="mt-4"><DomainHealthMonitor /></div>;
-    if (type === 'leads') return <div className="mt-4 w-full h-[600px] overflow-y-auto"><LeadIntelligencePanel /></div>;
-    if (type === 'media') return <div className="mt-4 w-full h-[600px] overflow-y-auto"><MediaLibrary initialAssets={[]} /></div>;
-    if (type === 'trainer') return <div className="mt-4"><KnowledgeTrainer /></div>;
-    if (type === 'hometex') return <div className="mt-4"><HometexDashboard /></div>;
-    if (type === 'vorhang') return <div className="mt-4"><MarketplaceEngine /></div>;
-    if (type === 'inbox') return <div className="mt-4 max-w-2xl"><AgentInbox /></div>;
-    return null;
-  };
-
   return (
-    <div className="flex flex-col h-full w-full max-w-5xl mx-auto">
-      
-      {/* SOHBET GEÇMİŞİ (CHAT AREA) */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6 pb-32 custom-scrollbar">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-            {msg.role === 'system' ? (
-              <div className="w-full text-center py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                --- {msg.content} ---
-              </div>
-            ) : (
-              <div className={`max-w-[90%] flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                {/* Avatar */}
-                <div className={`w-8 h-8 shrink-0 flex items-center justify-center rounded-md ${msg.role === 'user' ? 'bg-slate-100 border border-slate-200' : 'bg-indigo-600 shadow-sm'}`}>
-                  {msg.role === 'user' ? <User size={16} className="text-slate-500"/> : <Bot size={16} className="text-slate-900"/>}
-                </div>
-                
-                {/* Mesaj İçeriği */}
-                <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div className="text-xs font-semibold text-slate-400 mb-1 tracking-wider uppercase">
-                    {msg.role === 'user' ? 'YÖNETİCİ' : 'ALOHA SİSTEMİ'}
-                  </div>
-                  
-                  <div className="text-sm text-slate-700 font-sans leading-relaxed whitespace-pre-wrap bg-white p-4 rounded-lg border border-slate-200 shadow-sm w-full">
-                    {msg.content}
-                    
-                    {/* Generative UI (Dinamik Bileşenler) */}
-                    {msg.widgetType && renderWidget(msg.widgetType)}
-                  </div>
+    // ROOT KAPSAYICI - Tam Siyah, Anti-aliased, Kesinlikle Taşmaz
+    <div className="fixed inset-0 bg-black antialiased flex items-center justify-center font-sans overflow-hidden">
 
-                  {/* Dosya Ekleri */}
-                  {msg.attachments && msg.attachments.length > 0 && (
-                    <div className="flex gap-2 mt-2">
-                      {msg.attachments.map((file, i) => (
-                        <div key={i} className="flex items-center gap-1 px-2 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs font-medium text-slate-500">
-                          <Paperclip size={12} />
-                          <span>{file}</span>
+      {/* 
+        PREMIUM B2B HUD EKRANI
+        Sadece ince gradient'ler ve noise tekstürü ile uzay derinliği.
+      */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/40 via-black to-black opacity-80"></div>
+
+      {/* ÇOK İNCE MİMARİ IZGARA (Subtle Grid) */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEi fillPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIi8+PC9zdmc+')] pointer-events-none"></div>
+
+      {/* ANA EKRAN İSKELETİ */}
+      <div className="relative w-[98vw] h-[96vh] flex flex-col justify-between p-4 lg:p-6">
+
+        {/* ========================================
+            ÜST BİLGİ ÇUBUĞU (HEADER)
+            ======================================== */}
+        <header className="flex justify-between items-start w-full relative shrink-0">
+
+          {/* Sol: Logo */}
+          <div className="flex flex-col z-20 relative">
+            <h1 className="text-xl lg:text-2xl font-light tracking-[0.3em] text-white cursor-pointer" onClick={() => setChatActive(false)}>AETHER<span className="font-bold">OS</span></h1>
+            <p className="text-[9px] lg:text-[10px] font-mono tracking-[0.4em] text-slate-500 uppercase mt-1">Sovereign Command</p>
+          </div>
+
+          {/* Orta: Sistem Modu ve Lazer Çizgi */}
+          <div className="flex flex-col items-center z-20 relative">
+            <span className="text-[8px] font-bold tracking-[0.5em] text-slate-500 uppercase">Sistem Modu</span>
+            <span className="text-sm lg:text-base font-bold tracking-[0.5em] text-cyan-400 mt-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">NORMAL</span>
+
+            {/* Jilet Keskinliğinde Çizgi */}
+            <div className="mt-3 w-[200px] lg:w-[300px] flex items-center justify-center opacity-70">
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+              <div className="absolute w-12 h-px bg-cyan-300 shadow-[0_0_10px_#22d3ee]"></div>
+            </div>
+          </div>
+
+          {/* Sağ: Yönetici Profili */}
+          <div className="flex items-center gap-4 z-20 relative">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] lg:text-xs font-bold tracking-[0.2em] text-slate-200">HAKAN</span>
+              <span className="text-[8px] lg:text-[9px] font-mono tracking-[0.3em] text-amber-500/70 mt-0.5">MASTER NODE</span>
+            </div>
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border border-amber-500/30 flex items-center justify-center bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
+              <Shield className="text-amber-500 w-4 h-4 lg:w-5 lg:h-5" strokeWidth={1.5} />
+            </div>
+          </div>
+        </header>
+
+
+        {/* ========================================
+            ORTA ALAN (PANELS & CORE / CHAT)
+            ======================================== */}
+        <main className="flex-1 w-full flex justify-between items-center relative z-10 px-0 lg:px-2 min-h-0 mt-4 lg:mt-6">
+
+          {/* ----- SOL PANEL: AGENT INBOX ----- */}
+          <div className={`w-[300px] lg:w-[360px] h-full flex flex-col relative transition-opacity duration-700 ${chatActive ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+            <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-[12px] border border-white/[0.05] rounded-[24px]"></div>
+
+            <div className="relative z-10 p-5 lg:p-6 flex flex-col h-full">
+              <div className="flex items-center gap-3 mb-6">
+                <Hexagon size={16} strokeWidth={2} className="text-cyan-400" />
+                <div className="flex flex-col">
+                  <h2 className="text-[10px] lg:text-xs font-bold tracking-[0.3em] text-white">AGENT INBOX</h2>
+                  <span className="text-[8px] lg:text-[9px] font-mono text-slate-500 tracking-[0.2em] mt-0.5">OTONOM KARAR AKIŞI</span>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2">
+                {messages.map((msg) => (
+                  <div key={msg.id} className="w-full bg-black/40 border border-white/[0.03] rounded-2xl flex flex-col hover:border-cyan-500/30 transition-colors group">
+                    <div className="flex w-full h-full p-4">
+                      {/* Sol Sütun */}
+                      <div className="mr-4 mt-1">
+                        <Hexagon size={20} strokeWidth={1} className="text-slate-600 group-hover:text-cyan-500/50 transition-colors" />
+                      </div>
+                      {/* Sağ Sütun */}
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-[9px] lg:text-[10px] font-bold text-slate-300 tracking-wider">{msg.project}</span>
+                          <span className="text-[8px] lg:text-[9px] text-slate-600 font-mono">{msg.time}</span>
                         </div>
-                      ))}
+                        <p className="text-[10px] lg:text-[11px] text-slate-400 leading-relaxed mb-4 font-light">
+                          {msg.content}
+                        </p>
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="text-[8px] lg:text-[9px] font-mono text-slate-500 tracking-widest">{msg.agentId}</span>
+                          <span className={`text-[8px] font-bold tracking-widest px-2 py-0.5 rounded-full border ${msg.badgeBg} ${msg.priorityColor}`}>{msg.priority}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="flex-1 bg-cyan-950/40 border border-cyan-800/50 text-cyan-400 text-[9px] font-bold tracking-[0.2em] py-2 rounded-lg hover:bg-cyan-900 transition-colors">
+                            ONAYLA
+                          </button>
+                          <button className="flex-1 bg-transparent border border-white/5 text-slate-500 text-[9px] font-bold tracking-[0.2em] py-2 rounded-lg hover:text-white hover:border-white/20 transition-colors">
+                            REDDET
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ----- ORTA BÖLÜM: HOLOGRAFİK ZEKÂ VEYA SOHBET AKIŞI ----- */}
+          <div className="flex-1 flex flex-col items-center justify-center relative h-full min-w-0 transition-all duration-700">
+
+            {/* KÜRE (Chat aktifse küçülüp sağ üste gider ve silikleşir) */}
+            <div className={`transition-all duration-1000 absolute ${chatActive ? 'top-[-50px] right-[20%] scale-50 opacity-10 pointer-events-none' : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-100 opacity-100'} w-[30vh] lg:w-[45vh] max-w-[400px] aspect-square flex items-center justify-center z-0`}>
+              <div className="absolute w-[200px] h-[200px] bg-cyan-500/10 blur-[60px] rounded-full pointer-events-none"></div>
+              {/* Dış Lazer Halka */}
+              <svg className="absolute w-[95%] h-[95%] animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="49" fill="none" stroke="rgba(34,211,238,0.15)" strokeWidth="0.2" strokeDasharray="2 6" />
+              </svg>
+              {/* Orta Halka (Ters) */}
+              <svg className="absolute w-[80%] h-[80%] animate-[spin_25s_linear_infinite_reverse]" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" strokeDasharray="30 15 1 15" />
+              </svg>
+              {/* Çekirdek */}
+              <div className="w-[30%] h-[30%] rounded-full bg-white/[0.01] backdrop-blur-md border border-cyan-500/20 shadow-[inset_0_0_20px_rgba(34,211,238,0.1)] flex items-center justify-center z-10">
+                <Orbit size={24} strokeWidth={1} className="text-cyan-400/50" />
+              </div>
+              {/* Metrik */}
+              <div className={`absolute bottom-2 lg:bottom-10 flex flex-col items-center transition-opacity duration-500 ${chatActive ? 'opacity-0' : 'opacity-100'}`}>
+                <div className="text-5xl lg:text-7xl font-light text-white tracking-[0.1em] font-mono opacity-90">94</div>
+                <div className="text-[9px] lg:text-[10px] font-bold text-cyan-500 uppercase tracking-[0.6em] mt-2 lg:mt-4">AKTİF AJAN</div>
+                <div className="text-[8px] lg:text-[9px] font-mono text-slate-600 uppercase tracking-[0.4em] mt-2 border-t border-white/5 pt-2 w-32 lg:w-48 text-center">ÇEVRİMİÇİ</div>
+              </div>
+            </div>
+
+            {/* SOHBET AKIŞI (Chat aktifse görünür) */}
+            <div className={`w-full max-w-4xl h-full flex flex-col transition-all duration-700 z-10 relative ${chatActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none absolute'}`}>
+
+              {/* Chat History View */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 space-y-6 flex flex-col pb-32">
+                {chatHistory.length === 0 && (
+                  <div className="m-auto text-center opacity-50 flex flex-col items-center">
+                    <Orbit size={40} className="text-cyan-500 mb-4 animate-[spin_10s_linear_infinite]" />
+                    <span className="text-slate-400 font-mono tracking-widest text-xs uppercase">AETHER OS DİNLİYOR...</span>
+                  </div>
+                )}
+                {chatHistory.map((msg, i) => (
+                  <div key={i} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-[9px] font-bold tracking-[0.2em] ${msg.role === 'user' ? 'text-amber-500' : 'text-cyan-500'}`}>{msg.role === 'user' ? 'HAKAN' : 'ALOHA'}</span>
+                        <span className="text-[8px] font-mono text-slate-600">{msg.time}</span>
+                      </div>
+                      <div className={`p-4 lg:p-5 rounded-2xl text-[12px] lg:text-[13px] leading-relaxed font-light backdrop-blur-md border ${msg.role === 'user' ? 'bg-amber-950/20 border-amber-500/20 text-amber-50 rounded-tr-sm' : 'bg-cyan-950/20 border-cyan-500/20 text-cyan-50 rounded-tl-sm'}`}>
+                        {msg.content}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* ----- SAĞ PANEL: EKONOMİ MOTORU ----- */}
+          <div className={`w-[300px] lg:w-[360px] h-full flex flex-col relative transition-opacity duration-700 ${chatActive ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+            <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-[12px] border border-white/[0.05] rounded-[24px]"></div>
+
+            <div className="relative z-10 p-5 lg:p-6 flex flex-col h-full">
+              <div className="flex items-center gap-3 mb-6">
+                <Activity size={16} strokeWidth={2} className="text-emerald-400" />
+                <div className="flex flex-col">
+                  <h2 className="text-[10px] lg:text-xs font-bold tracking-[0.3em] text-white">EKONOMİ MOTORU</h2>
+                  <span className="text-[8px] lg:text-[9px] font-mono text-slate-500 tracking-[0.2em] mt-0.5">SİSTEM KAYNAK YÖNETİMİ</span>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
 
-        {isTyping && (
-          <div className="flex flex-col items-start">
-             <div className="max-w-[90%] flex gap-4">
-                <div className="w-8 h-8 shrink-0 flex items-center justify-center rounded-md bg-indigo-600 shadow-sm">
-                  <Bot size={16} className="text-slate-900 animate-pulse"/>
-                </div>
-                <div className="flex flex-col items-start">
-                  <div className="text-xs font-semibold text-slate-400 mb-1 tracking-wider uppercase">ALOHA SİSTEMİ</div>
-                  <div className="text-sm text-slate-500 font-medium bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex items-center gap-2">
-                    <span>Sistem işliyor</span>
-                    <span className="flex gap-1">
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-75"></span>
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-150"></span>
-                    </span>
+              <div className="mb-6 lg:mb-8">
+                <span className="text-[8px] lg:text-[9px] font-mono text-slate-500 tracking-[0.3em] uppercase">PERFORMANS PAYI</span>
+                <div className="flex items-end gap-3 mt-2 lg:mt-3">
+                  <span className="text-4xl lg:text-5xl font-light text-emerald-400 font-mono">%10</span>
+                  <div className="flex flex-col pb-1">
+                    <span className="text-[8px] lg:text-[9px] font-bold text-slate-300 tracking-widest uppercase">BÜTÇE İYİLEŞTİRMESİ</span>
+                    <span className="text-[8px] lg:text-[9px] font-mono text-emerald-500/70 tracking-widest uppercase mt-0.5">VERİM ONAYLANDI</span>
                   </div>
                 </div>
               </div>
-          </div>
-        )}
-      </div>
 
-      {/* GİRDİ ALANI (INPUT BAR) */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pointer-events-none flex justify-center">
-        <div className="w-full max-w-4xl bg-white border border-slate-200 shadow-xl p-2 pointer-events-auto rounded-xl">
-          
-          {/* Mod Seçici ve Hızlı Komutlar */}
-          <div className="flex items-center justify-between mb-2 px-2">
-            <div className="flex gap-2">
-              <button onClick={() => setMode('chat')} className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors flex items-center gap-2 ${mode === 'chat' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent'}`}>
-                <Terminal size={14} /> Sohbet
-              </button>
-              <button onClick={() => setMode('analysis')} className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors flex items-center gap-2 ${mode === 'analysis' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent'}`}>
-                <FileSearch size={14} /> Analiz
-              </button>
-              <button onClick={() => setMode('action')} className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors flex items-center gap-2 ${mode === 'action' ? 'bg-red-50 text-red-700 border border-red-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent'}`}>
-                <Zap size={14} /> Sistem Emri
-              </button>
-            </div>
-            
-            {/* Ses Kontrolleri */}
-            <div className="flex gap-2 border-l border-slate-200 pl-2 ml-2">
-              <button 
-                onClick={() => setIsMuted(!isMuted)}
-                title={isMuted ? "Hoparlör Kapalı" : "Hoparlör Açık"}
-                className={`p-1.5 rounded-md transition-colors ${isMuted ? 'text-red-500 bg-red-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'}`}
-              >
-                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-              </button>
-            </div>
-            
-            {/* Hızlı Emir Çipleri (Prompt Starters) */}
-            <div className="flex gap-2">
-              <button 
-                onClick={(e) => executeCommand(e, 'Canlı ekonomiyi çiz')}
-                className="text-xs font-semibold tracking-wider text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200 transition-colors"
-              >
-                [⚡ EKONOMİ]
-              </button>
-              <button 
-                onClick={(e) => executeCommand(e, 'Hata analizi yap')}
-                className="text-xs font-semibold tracking-wider text-red-600 hover:bg-red-50 px-2 py-1 rounded-md border border-red-200 transition-colors"
-              >
-                [⚠ HATALAR]
-              </button>
-              <button 
-                onClick={(e) => executeCommand(e, 'Sistem durumunu göster')}
-                className="text-xs font-semibold tracking-wider text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded-md border border-indigo-200 transition-colors"
-              >
-                [◱ SİSTEM]
-              </button>
-              <button 
-                onClick={(e) => executeCommand(e, 'Agent bildirimlerini göster')}
-                className="text-xs font-semibold tracking-wider text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md border border-blue-200 transition-colors flex items-center gap-1"
-              >
-                <Bot size={12} /> INBOX
-              </button>
-            </div>
-          </div>
+              {/* Keskin Çizgi Grafik */}
+              <div className="h-24 lg:h-32 w-full relative mb-6">
+                <div className="absolute inset-0 flex flex-col justify-between">
+                  <div className="w-full h-px bg-white/[0.03]"></div>
+                  <div className="w-full h-px bg-white/[0.03]"></div>
+                  <div className="w-full h-px bg-white/[0.03]"></div>
+                  <div className="w-full h-px bg-white/[0.03]"></div>
+                </div>
 
-          {/* Dosya Önizleme */}
-          {files.length > 0 && (
-            <div className="flex flex-wrap gap-3 mb-3 px-2">
-              {files.map((file, index) => {
-                const isImage = file.type.startsWith('image/');
-                return (
-                  <div key={index} className="relative group flex items-center gap-2 p-1.5 pr-3 bg-slate-50 border border-slate-200 rounded-lg shadow-sm hover:border-indigo-300 transition-colors">
-                    {isImage ? (
-                      <div className="w-10 h-10 rounded-md overflow-hidden bg-slate-200 shrink-0">
-                        <img src={URL.createObjectURL(file)} alt="preview" className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-10 h-10 rounded-md bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0">
-                        <FileSearch size={20} />
-                      </div>
-                    )}
-                    <div className="flex flex-col overflow-hidden max-w-[120px]">
-                      <span className="text-xs font-semibold text-slate-700 truncate">{file.name}</span>
-                      <span className="text-[10px] text-slate-400">{(file.size / 1024).toFixed(1)} KB</span>
+                <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
+                  <path d="M 0,90 Q 20,85 30,70 T 50,40 T 70,50 T 90,20 T 100,10" fill="none" stroke="#34d399" strokeWidth="1.5" opacity="0.8" />
+                </svg>
+
+                <div className="absolute -bottom-5 left-0 w-full flex justify-between text-[8px] text-slate-600 font-mono tracking-widest">
+                  <span>00H</span><span>06H</span><span>12H</span><span>18H</span><span>24H</span>
+                </div>
+              </div>
+
+              {/* Veri Dağılım Listesi */}
+              <div className="flex-1 space-y-3 lg:space-y-4 mt-6">
+                {[
+                  { name: 'PERDE.AI', cost: '12,430', pct: '%35', dot: 'bg-cyan-400' },
+                  { name: 'TRTEX', cost: '9,210', pct: '%26', dot: 'bg-purple-400' },
+                  { name: 'HOMETEX.AI', cost: '7,890', pct: '%22', dot: 'bg-emerald-400' },
+                  { name: 'VORHANG', cost: '5,120', pct: '%17', dot: 'bg-slate-500' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-1.5 h-1.5 rounded-full ${item.dot}`}></div>
+                      <span className="text-[10px] lg:text-[11px] text-slate-300 font-medium tracking-[0.15em]">{item.name}</span>
                     </div>
-                    <button 
-                      type="button" 
-                      onClick={() => removeFile(index)} 
-                      className="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      ✕
-                    </button>
+                    <div className="flex items-center gap-6">
+                      <span className="text-[10px] lg:text-[11px] text-slate-400 font-mono"><span className="text-slate-600 mr-1">$</span>{item.cost}</span>
+                      <span className="text-[9px] text-slate-600 font-mono w-6 text-right">{item.pct}</span>
+                    </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+
+              <div className="mt-auto pt-5 border-t border-white/[0.05] flex items-end justify-between">
+                <span className="text-[9px] font-mono text-slate-500 tracking-[0.3em] uppercase">GÜNLÜK HARCAMA</span>
+                <div className="text-lg lg:text-xl font-light text-white font-mono tracking-wider"><span className="text-slate-600 mr-2">$</span>34,650</div>
+              </div>
+
             </div>
-          )}
+          </div>
+        </main>
 
-          <form onSubmit={executeCommand} className="relative flex items-center">
-            <label className="absolute left-3 p-2 text-slate-400 hover:text-indigo-600 cursor-pointer transition-colors">
-              <Paperclip size={18} />
-              <input type="file" multiple className="hidden" onChange={handleFileChange} />
-            </label>
-            <button 
-              type="button"
-              onClick={toggleListen}
-              className={`absolute left-10 p-2 transition-colors ${isListening ? 'text-red-500 animate-pulse' : 'text-slate-400 hover:text-indigo-600'}`}
-              title="Sesli Komut"
-            >
-              {isListening ? <Mic size={18} /> : <MicOff size={18} />}
-            </button>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Sisteme bir talimat verin veya veri isteyin... (Örn: Sistem durumunu göster)"
-              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-4 pl-20 pr-14 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-sans"
-            />
-            <button 
-              type="submit" 
-              disabled={!input.trim() && files.length === 0} 
-              className={`absolute right-2 p-2 rounded-md transition-colors ${!input.trim() && files.length === 0 ? 'text-slate-300 bg-transparent' : 'bg-indigo-600 text-slate-900 hover:bg-indigo-700 shadow-sm'}`}
-            >
-              <Send size={18} />
-            </button>
-          </form>
-        </div>
+
+        {/* ========================================
+            ALT KAPSÜLLER (HUD MODULES) & KOMUT SATIRI
+            ======================================== */}
+        <footer className="w-full h-[80px] shrink-0 z-20 flex justify-between items-end gap-4 lg:gap-6 mt-4 lg:mt-6 relative">
+
+          {/* ----- Sol Alt: Proje Düğümleri (Node Orbs) ----- */}
+          <div className="w-[300px] lg:w-[360px] flex justify-start items-end gap-4 lg:gap-8 pb-2">
+            {[
+              { name: 'PERDE.AI', status: 'ONLİNE', color: 'text-cyan-400' },
+              { name: 'TRTEX', status: 'ONLİNE', color: 'text-purple-400' },
+              { name: 'HOMETEX.AI', status: 'ONLİNE', color: 'text-emerald-400' },
+              { name: 'VORHANG', status: 'BEKLEMEDE', color: 'text-slate-500' }
+            ].map((proj, idx) => (
+              <div key={idx} className="flex flex-col items-center group cursor-pointer">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full border border-white/[0.05] bg-white/[0.01] flex items-center justify-center group-hover:bg-white/[0.03] transition-colors">
+                  <div className={`w-2 h-2 rounded-full bg-current ${proj.color} ${proj.status === 'ONLİNE' ? 'shadow-[0_0_10px_currentColor]' : ''}`}></div>
+                </div>
+                <span className="text-[9px] lg:text-[10px] font-bold text-slate-300 tracking-[0.2em] mt-3">{proj.name}</span>
+                <span className={`text-[7px] lg:text-[8px] font-mono tracking-[0.3em] mt-1 ${proj.color}`}>{proj.status}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* ----- Merkez: Sovereign Command Console (Devasa Chat Bar) ----- */}
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[600px] lg:w-[800px] bg-black/80 backdrop-blur-2xl border border-white/10 rounded-[20px] shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(34,211,238,0.05)] p-2 lg:p-3 flex flex-col transition-all duration-300 focus-within:border-cyan-500/50 focus-within:shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(34,211,238,0.15)] z-30">
+
+            {/* Input ve Aksiyon Bölümü */}
+            <div className="flex items-center w-full">
+
+              {/* Ataş (Dosya / Resim Yükleme) */}
+              <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors group relative">
+                <Paperclip size={20} strokeWidth={1.5} />
+                <span className="absolute -top-8 bg-black border border-white/10 text-[9px] px-2 py-1 rounded text-white opacity-0 group-hover:opacity-100 transition-opacity font-mono tracking-widest whitespace-nowrap">DOSYA/RESİM EKLE</span>
+              </button>
+
+              {/* Ana Input */}
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="ALOHA'ya komut ver, dosya yükle veya sistemde ara..."
+                className="flex-1 h-12 bg-transparent border-none text-xs lg:text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none tracking-wide px-4"
+              />
+
+              {/* Sağ Aksiyonlar */}
+              <div className="flex items-center gap-1">
+
+                {/* Hoparlör (Sesli Yanıt) */}
+                <button onClick={() => setIsSpeakerOn(!isSpeakerOn)} className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors group relative">
+                  {isSpeakerOn ? <Volume2 size={20} strokeWidth={1.5} className="text-cyan-500" /> : <VolumeX size={20} strokeWidth={1.5} />}
+                  <span className="absolute -top-8 right-0 bg-black border border-white/10 text-[9px] px-2 py-1 rounded text-white opacity-0 group-hover:opacity-100 transition-opacity font-mono tracking-widest whitespace-nowrap">SESLİ YANIT {isSpeakerOn ? 'AÇIK' : 'KAPALI'}</span>
+                </button>
+
+                {/* Mikrofon (Sesli Komut) */}
+                <button className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:bg-cyan-950/50 transition-colors group relative">
+                  <Mic size={20} strokeWidth={1.5} />
+                  <span className="absolute -top-8 right-0 bg-black border border-white/10 text-[9px] px-2 py-1 rounded text-white opacity-0 group-hover:opacity-100 transition-opacity font-mono tracking-widest whitespace-nowrap">SESLİ KOMUT (BAS-KONUŞ)</span>
+                </button>
+
+                {/* Gönder Butonu */}
+                <button onClick={handleSend} className={`w-12 h-12 ml-2 rounded-xl flex items-center justify-center transition-all duration-300 ${inputText.trim() ? 'bg-cyan-600 text-white shadow-[0_0_15px_rgba(8,145,178,0.5)]' : 'bg-white/5 text-slate-600'}`}>
+                  <Send size={18} strokeWidth={2} />
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+
+          {/* ----- Sağ Alt: Sistem Özeti Kapsülü ----- */}
+          <div className="w-[300px] lg:w-[360px] h-[60px] bg-white/[0.02] backdrop-blur-xl border border-white/[0.05] rounded-[16px] flex items-center justify-between px-6 pb-1">
+            <div className="flex items-center gap-3">
+              <span className="text-xl lg:text-2xl font-light text-white font-mono">142</span>
+              <span className="text-[7px] lg:text-[8px] font-bold text-slate-500 tracking-[0.3em] w-14 leading-tight">HABER<br />TARANDI</span>
+            </div>
+            <div className="w-px h-6 bg-white/[0.05]"></div>
+            <div className="flex items-center gap-3">
+              <span className="text-xl lg:text-2xl font-light text-white font-mono">12</span>
+              <span className="text-[7px] lg:text-[8px] font-bold text-slate-500 tracking-[0.3em] w-14 leading-tight">RENDER<br />ALINDI</span>
+            </div>
+            <div className="w-px h-6 bg-white/[0.05]"></div>
+            <CheckCircle size={16} className="text-cyan-500/70" />
+          </div>
+
+        </footer>
+
       </div>
-
     </div>
   );
 }

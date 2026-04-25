@@ -9,15 +9,8 @@ export default async function ExhibitorsPage({ params }: { params: Promise<{ dom
   try {
     const exhibitorsSnap = await adminDb.collection('hometex_exhibitors').get();
     exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    
-    if (exhibitors.length === 0) {
-      const demoData = await import('@/lib/hometex-demoData');
-      exhibitors = demoData.HOMETEX_EXHIBITORS;
-    }
   } catch (error) {
     console.error('Error fetching exhibitors:', error);
-    const demoData = await import('@/lib/hometex-demoData');
-    exhibitors = demoData.HOMETEX_EXHIBITORS;
   }
 
   return (

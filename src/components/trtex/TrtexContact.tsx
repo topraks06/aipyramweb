@@ -13,9 +13,24 @@ export default function TrtexContact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState('sending');
-    // TODO: POST /api/contact ile Firestore'a kaydet + email gönder
-    await new Promise(r => setTimeout(r, 1500));
-    setFormState('sent');
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          company: form.company || form.name,
+          role: form.subject || 'GENERAL_CONTACT',
+          message: form.message,
+          source: 'trtex_contact_page',
+          createdAt: new Date().toISOString()
+        })
+      });
+      setFormState('sent');
+    } catch (err) {
+      console.error('Contact error:', err);
+      setFormState('idle');
+    }
   };
 
   return (

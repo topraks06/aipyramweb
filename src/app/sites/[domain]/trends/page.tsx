@@ -13,15 +13,9 @@ export default async function TrendsPage({ params }: { params: Promise<{ domain:
     
     if (!trendsSnap.empty) {
       trends = trendsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } else {
-      // TRTEX news is empty or no trends, use fallback
-      const demoData = await import('@/lib/hometex-demoData');
-      trends = demoData.HOMETEX_TRENDS;
     }
   } catch (error) {
     console.error('Error fetching TRTEX trends:', error);
-    const demoData = await import('@/lib/hometex-demoData');
-    trends = demoData.HOMETEX_TRENDS;
   }
 
   return (

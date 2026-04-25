@@ -6,11 +6,7 @@ import Link from "next/link";
 
 export default function SellerDashboard({ orders = [], seller }: { orders?: any[], seller?: any }) {
   const sellerName = seller?.name || "Weber Textil";
-  const displayOrders = orders.length > 0 ? orders : [
-    { id: '1001', item: 'Premium Blackout', amount: 562.50, status: 'In Bearbeitung' },
-    { id: '1002', item: 'Leinen Vorhang Beige', amount: 249.99, status: 'Versandt' },
-    { id: '1003', item: 'Zebra Rollo Grau', amount: 89.99, status: 'Abgeschlossen' }
-  ];
+  const displayOrders = orders || [];
 
   return (
     <div className="min-h-screen bg-gray-50 text-black">

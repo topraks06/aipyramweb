@@ -15,12 +15,11 @@ async function runScoutAgent(brief: string): Promise<string> {
     const TODAY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const CURRENT_YEAR = new Date().getFullYear(); // 2026
 
-    const response = await getAI().models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Aşağıdaki brief bilgisini baz alarak profesyonel, B2B ev tekstili piyasasına uygun, 100% gerçekçi bir haber taslağı oluştur.
+    const text = await alohaAI.generate(
+        `Aşağıdaki brief bilgisini baz alarak profesyonel, B2B ev tekstili piyasasına uygun, 100% gerçekçi bir haber taslağı oluştur.
         ${lessons}
         Brief: "${brief}"`,
-        config: {
+        {
             systemInstruction: `🎯 ALOHA HUNTER MODE — 7 CONTINENT B2B RETAIL & WHOLESALE INTELLIGENCE
 
 TODAY = ${TODAY}
@@ -57,9 +56,11 @@ If there is no clear B2B commercial value → REJECT.
 - Last paragraph = actionable trade recommendation for Wholesalers/Retailers.
 
 Sen sert mizaçlı, tüm kıtalarda sıfır hatayla çalışan global bir toptan/perakende tekstil istihbarat avcısısın.`,
-        }
-    });
-    return response.text || "";
+            complexity: 'routine'
+        },
+        'liveNewsSwarm.runScoutAgent'
+    );
+    return text || "";
 }
 
 /**
@@ -80,10 +81,9 @@ async function runRealityGuard(draft: string): Promise<{ status: "APPROVED" | "R
         required: ["status", "critique"]
     };
 
-    const response = await getAI().models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Aşağıdaki haber taslağını denetle. BUGÜN ${CURRENT_YEAR} yılındayız.\n\n${draft}`,
-        config: {
+    const parsed = await alohaAI.generateJSON(
+        `Aşağıdaki haber taslağını denetle. BUGÜN ${CURRENT_YEAR} yılındayız.\n\n${draft}`,
+        {
             systemInstruction: `Sen acımasız bir Gerçeklik Denetçisisin (Reality Guard). Şu anda ${CURRENT_YEAR} yılındayız.
 
 🔴 OTOMATİK RED SEBEPLERİ:
@@ -105,15 +105,15 @@ async function runRealityGuard(draft: string): Promise<{ status: "APPROVED" | "R
 - En az 1 rakam/yüzde/para birimi
 
 Eğer metinde sahte veri varsa acımasızca REJECT bas.`,
-            responseMimeType: "application/json",
-            responseSchema: schema
-        }
-    });
+            responseSchema: schema,
+            complexity: 'routine'
+        },
+        'liveNewsSwarm.runRealityGuard'
+    );
 
-    try {
-        if (!response.text) throw new Error("Empty response");
-        return JSON.parse(response.text);
-    } catch {
+    if (parsed) {
+        return parsed as { status: "APPROVED" | "REJECTED", critique: string };
+    } else {
         return { status: "REJECTED", critique: "JSON parse failed. Reality Guard panicked." };
     }
 }
@@ -257,18 +257,18 @@ async function runPublisherAgent(cleanContent: string) {
         required: ["intelligence", "insight", "action_layer", "visual_intent", "visual_intent_fallback", "watch_layer", "entity_data", "seo_matrix", "business_opportunities", "ai_commentary", "commercial_cta"]
     };
 
-    const response = await getAI().models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Following news is verified as 100% REAL. Format this into appropriate News JSON structure across 8 languages (TR, EN, DE, FR, ES, AR, RU, ZH).\nYou MUST strictly adhere to the Triple Output Format v1.1 (Intelligence, Insight, Action, Watch, Fallback).\n\n🔴 CRITICAL LANGUAGE RULE (ZORUNLU DİL KURALI):\n- The TR translation MUST be 100% pure Turkish. ZERO English words allowed in TR content.\n- ALL H2, H3, H4 section headers in TR MUST be in Turkish.\n- NEVER use English headers like: SITUATION, SO WHAT, NOW WHAT, WHO WINS, WHO LOSES, TRADE BRIEF, EXECUTIVE SUMMARY, ACTION ENGINE\n- Use ONLY these Turkish headers: PAZAR VERİLERİ, TİCARİ ETKİ, AKSIİYON ÖNERİSİ, KAZANANLAR, KAYBEDENLER, YÖNETİCİ ÖZETİ, HİZLI ANALİZ, FIRSAT HARİTASI, RİSK ANALİZİ, NE YAPMALI?\n- EN, DE, FR, ES, AR, RU, ZH translations must EACH be in their own native language.\n- No language mixing within any translation.\n\nCRITICAL RULE FOR 'content' FIELD (MAGAZINE STYLE & INTERNAL LINKS):\nThe 'content' field in EVERY language translation must be a COMPLETE, FULL-LENGTH HTML article body.\n- MINIMUM 800 words per language\n- Use proper HTML tags: <h2>, <p>, <table>, <blockquote>, <ul>, <li>, <strong>\n- Include at least 3 H2 sections with detailed analysis\n- Include at least 1 data table with real market figures\n- Include at least 1 expert blockquote\n- **ART DIRECTOR SUPPORT (CRITICAL):** You MUST write highly descriptive paragraphs explaining the fabric textures, dominant interior colors, lighting conditions, and luxury mood of the textile application discussed. This vivid vocabulary will train our downstream AI Image Generating Agent to produce incredible 'Magazine-Style' luxury photography. Use terms depicting volumetric light, high-end finishing, and spatial aesthetics.\n- **INTERNAL LINKING (MANDATORY):** At the end of the article, include a short section recommending the reader to browse related content. In TR use 'İlgili Fuar & Fırsatlar', in EN use 'Related Fairs & Opportunities', etc.\n- DO NOT write a short summary. Write a FULL investigative B2B magazine-style article.\n\nCRITICAL RANKING METRICS:\n- 'insight.intent': Must be ACT if this is a direct trade opportunity/matchmaking. ANALYZE if trend/academy. DISCOVER if general reading/fairs.\n- 'entity_data': YOU MUST extract exact Organizations (Brands/Companies), Places (Cities/Countries), and Products for our JSON-LD Semantic Engine.\n\nCRITICAL RULE FOR 'business_opportunities' & 'commercial_cta':\n- You MUST identify the target (manufacturer, wholesaler, or retailer) and generate a compelling 'commercial_cta' that drives sales (Monetization). For wholesalers, offer \"Request 2026 Collection Swatches\". For retailers, \"Download Luxury Trend Report\".\n\nCRITICAL RULE FOR 'ai_commentary' (CORPORATE AUTHORITY TONE):\n- Write 100-200 word Bloomberg/McKinsey style analysis.\n- The tone MUST be highly corporate, positive, confidence-inspiring and actionable. B2B buyers must feel trust and opportunity. Avoid catastrophic doom scenarios.\n\nCRITICAL RULE FOR 'seo_matrix.local_keys':\n- You MUST generate these SEO keywords explicitly mapped to 8 languages (TR, EN, DE, FR, ES, RU, AR, ZH). The Spanish array must have Spanish tags 'cortinas', German must have 'gardinen', Russian 'шторы', etc.\n\nContent:\n${cleanContent}`,
-        config: {
+    const parsed = await alohaAI.generateJSON(
+        `Following news is verified as 100% REAL. Format this into appropriate News JSON structure across 8 languages (TR, EN, DE, FR, ES, AR, RU, ZH).\nYou MUST strictly adhere to the Triple Output Format v1.1 (Intelligence, Insight, Action, Watch, Fallback).\n\n🔴 CRITICAL LANGUAGE RULE (ZORUNLU DİL KURALI):\n- The TR translation MUST be 100% pure Turkish. ZERO English words allowed in TR content.\n- ALL H2, H3, H4 section headers in TR MUST be in Turkish.\n- NEVER use English headers like: SITUATION, SO WHAT, NOW WHAT, WHO WINS, WHO LOSES, TRADE BRIEF, EXECUTIVE SUMMARY, ACTION ENGINE\n- Use ONLY these Turkish headers: PAZAR VERİLERİ, TİCARİ ETKİ, AKSIİYON ÖNERİSİ, KAZANANLAR, KAYBEDENLER, YÖNETİCİ ÖZETİ, HİZLI ANALİZ, FIRSAT HARİTASI, RİSK ANALİZİ, NE YAPMALI?\n- EN, DE, FR, ES, AR, RU, ZH translations must EACH be in their own native language.\n- No language mixing within any translation.\n\nCRITICAL RULE FOR 'content' FIELD (MAGAZINE STYLE & INTERNAL LINKS):\nThe 'content' field in EVERY language translation must be a COMPLETE, FULL-LENGTH HTML article body.\n- MINIMUM 800 words per language\n- Use proper HTML tags: <h2>, <p>, <table>, <blockquote>, <ul>, <li>, <strong>\n- Include at least 3 H2 sections with detailed analysis\n- Include at least 1 data table with real market figures\n- Include at least 1 expert blockquote\n- **ART DIRECTOR SUPPORT (CRITICAL):** You MUST write highly descriptive paragraphs explaining the fabric textures, dominant interior colors, lighting conditions, and luxury mood of the textile application discussed. This vivid vocabulary will train our downstream AI Image Generating Agent to produce incredible 'Magazine-Style' luxury photography. Use terms depicting volumetric light, high-end finishing, and spatial aesthetics.\n- **INTERNAL LINKING (MANDATORY):** At the end of the article, include a short section recommending the reader to browse related content. In TR use 'İlgili Fuar & Fırsatlar', in EN use 'Related Fairs & Opportunities', etc.\n- DO NOT write a short summary. Write a FULL investigative B2B magazine-style article.\n\nCRITICAL RANKING METRICS:\n- 'insight.intent': Must be ACT if this is a direct trade opportunity/matchmaking. ANALYZE if trend/academy. DISCOVER if general reading/fairs.\n- 'entity_data': YOU MUST extract exact Organizations (Brands/Companies), Places (Cities/Countries), and Products for our JSON-LD Semantic Engine.\n\nCRITICAL RULE FOR 'business_opportunities' & 'commercial_cta':\n- You MUST identify the target (manufacturer, wholesaler, or retailer) and generate a compelling 'commercial_cta' that drives sales (Monetization). For wholesalers, offer "Request 2026 Collection Swatches". For retailers, "Download Luxury Trend Report".\n\nCRITICAL RULE FOR 'ai_commentary' (CORPORATE AUTHORITY TONE):\n- Write 100-200 word Bloomberg/McKinsey style analysis.\n- The tone MUST be highly corporate, positive, confidence-inspiring and actionable. B2B buyers must feel trust and opportunity. Avoid catastrophic doom scenarios.\n\nCRITICAL RULE FOR 'seo_matrix.local_keys':\n- You MUST generate these SEO keywords explicitly mapped to 8 languages (TR, EN, DE, FR, ES, RU, AR, ZH). The Spanish array must have Spanish tags 'cortinas', German must have 'gardinen', Russian 'шторы', etc.\n\nContent:\n${cleanContent}`,
+        {
             systemInstruction: "You are the premium B2B Publisher Agent. Rules: (1) TR content = 100% TURKISH. All H2/H3 headers in Turkish (PAZAR VERİLERİ, TİCARİ ETKİ, NE YAPMALI? etc). NEVER use English headers in TR. (2) Each language must be pure native — no mixing. (3) HTML article + vivid visual descriptions. (4) 'commercial_cta' = Monetization hook. (5) 'seo_matrix.local_keys' = 8 native languages. (6) 'insight.intent' + 'entity_data' for strict LLM semantic routing. (7) Corporate WGSN tone.",
-            responseMimeType: "application/json",
-            responseSchema: schema
-        }
-    });
+            responseSchema: schema,
+            complexity: 'routine'
+        },
+        'liveNewsSwarm.runPublisherAgent'
+    );
 
-    if (!response.text) throw new Error("Publisher returned empty.");
-    return JSON.parse(response.text);
+    if (!parsed) throw new Error("Publisher returned empty.");
+    return parsed;
 }
 
 
@@ -305,18 +305,18 @@ async function runPatchRepairAgent(brokenJson: any) {
         required: ["intelligence_layer", "routing_actions"]
     };
 
-    const response = await getAI().models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Analiz edilen haber üzerinden eksik kalan intelligence_layer ve routing_actions verilerini üret, diğer alanlara dokunma.\nHaber Content:\n${JSON.stringify(brokenJson.translations?.TR || brokenJson.translations?.EN)}`,
-        config: {
+    const parsed = await alohaAI.generateJSON(
+        `Analiz edilen haber üzerinden eksik kalan intelligence_layer ve routing_actions verilerini üret, diğer alanlara dokunma.\nHaber Content:\n${JSON.stringify(brokenJson.translations?.TR || brokenJson.translations?.EN)}`,
+        {
             systemInstruction: "You are the Intelligence Patch Agent. Provide ONLY the missing intelligence_layer and routing_actions for the provided news snippet.",
-            responseMimeType: "application/json",
-            responseSchema: schema
-        }
-    });
+            responseSchema: schema,
+            complexity: 'routine'
+        },
+        'liveNewsSwarm.runPatchRepairAgent'
+    );
 
-    if (!response.text) throw new Error("Repair Agent returned empty.");
-    return JSON.parse(response.text);
+    if (!parsed) throw new Error("Repair Agent returned empty.");
+    return parsed;
 }
 
 /**

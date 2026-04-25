@@ -477,13 +477,12 @@ export async function weeklyGoogleTechScan(): Promise<{
   // 2. AI ile etki analizi yap
   if (findings.length > 0) {
     try {
-      const ai = alohaAI.getClient();
+      // removed ai instantiation
       
       const combinedFindings = findings.map(f => `[${f.topic}]: ${f.rawResult.substring(0, 500)}`).join('\n\n');
       
-      const analysisRes = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Sen AIPyram ekosistemi için bir teknoloji danışmanısın.
+      const analysis = await alohaAI.generateJSON(
+        `Sen AIPyram ekosistemi için bir teknoloji danışmanısın.
 AIPyram: Next.js + Firebase + Gemini API + Cloud Run üzerinde çalışan 280+ domainlik B2B platform.
 Aktif projeler: TRTEX (tekstil haberleri), HOMETEX (sanal fuar), PERDE.AI (AI perde tasarımı).
 Mevcut araçlar: Gemini 2.5 Flash (içerik üretimi), Imagen 3 (görsel), Firebase Firestore (DB), Cloud Run (deploy).
@@ -499,11 +498,11 @@ Her güncelleme için:
 
 JSON döndür:
 {"evaluations": [{"topic": "...", "impact": "high|medium|low|none", "affected_projects": ["trtex","hometex","perde"], "recommendation": "...", "implementation_effort": "hours|days|weeks"}]}`,
-        config: { responseMimeType: 'application/json', temperature: 0.3 }
-      });
+        { complexity: 'routine' },
+        'initiative.weeklyGoogleTechScan'
+      );
 
-      if (analysisRes.text) {
-        const analysis = JSON.parse(analysisRes.text);
+      if (analysis) {
         
         for (const eval_ of (analysis.evaluations || [])) {
           const finding = findings.find(f => f.topic === eval_.topic);

@@ -155,16 +155,15 @@ DO NOT wrap in markdown. Return ONLY the JSON array.
 `;
 
     try {
-      const response = await alohaAI.getClient().models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
+      const text = await alohaAI.generate(
+        prompt,
+        {
           tools: [{ googleSearch: {} }],
           temperature: 0.3,
-        }
-      });
-
-      let text = response.text || '[]';
+          complexity: 'routine'
+        },
+        'tenderAgent.searchAndExtractTenders'
+      ) || '[]';
       text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
       
       let tenders: any[] = [];

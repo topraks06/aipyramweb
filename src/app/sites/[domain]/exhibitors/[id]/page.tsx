@@ -16,16 +16,9 @@ export default async function ExhibitorDetailPage({ params }: { params: Promise<
       
       const productsSnap = await adminDb.collection('hometex_products').where('exhibitorId', '==', id).get();
       products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } else {
-      const demoData = await import('@/lib/hometex-demoData');
-      exhibitor = demoData.HOMETEX_EXHIBITORS.find(e => e.id === id) || null;
-      products = []; // Demo products can be added if needed
     }
   } catch (error) {
     console.error('Error fetching exhibitor detail:', error);
-    const demoData = await import('@/lib/hometex-demoData');
-    exhibitor = demoData.HOMETEX_EXHIBITORS.find(e => e.id === id) || null;
-    products = [];
   }
 
   if (!exhibitor) {

@@ -80,7 +80,7 @@ export async function autoRepair(
         }
 
         case 'fill_content': {
-          const gemini = alohaAI.getClient();
+          // removed getClient
           const docRef = adminDb.collection(collection).doc(action.articleId);
           const doc = await docRef.get();
           if (!doc.exists) { result.skipped++; continue; }
@@ -89,9 +89,7 @@ export async function autoRepair(
           const title = data.translations?.TR?.title || data.title || action.title;
           const summary = data.translations?.TR?.summary || data.summary || '';
           
-          const response = await gemini.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Sen profesyonel bir ev tekstili sektör gazetecisisin.
+          const promptStr = `Sen profesyonel bir ev tekstili sektör gazetecisisin.
 
 BAŞLIK: ${title}
 ÖZET: ${summary}
@@ -110,12 +108,12 @@ JSON döndür:
   "ai_commentary": "📊 AI analiz (2-3 cümle)",
   "business_opportunities": ["fırsat1", "fırsat2", "fırsat3"],
   "seo_keywords": ["perde", "ev tekstili", "dekorasyon", + 7 konu bazlı keyword]
-}`,
-            config: { responseMimeType: 'application/json', temperature: 0.7 }
-          });
-          
-          if (!response.text) throw new Error('AI yanıt vermedi');
-          const article = JSON.parse(response.text);
+}`;
+
+          const article = await alohaAI.generateJSON(promptStr, {
+            temperature: 0.7,
+            complexity: 'routine'
+          }, 'autoRepair.fill_content');
           
           const keywords = [...new Set([...mandatory, ...(article.seo_keywords || [])])].slice(0, 15);
           
@@ -268,10 +266,8 @@ JSON döndür:
           if (content.length > 200) {
             // AI ILE AUTHORITY SITE YAPISINA DONUSTUR
             try {
-              const gemini = alohaAI.getClient();
-              const restructureRes = await gemini.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: `Aşağıdaki haber içeriğini AUTHORITY SITE standardına yükselt.
+              // removed getClient
+              const promptStr = `Aşağıdaki haber içeriğini AUTHORITY SITE standardına yükselt.
 Mevcut içeriğin ANLAMINI KORU ama yapısını iyileştir.
 
 BAŞLIK: ${title}
@@ -289,12 +285,14 @@ ZORUNLU YAPISAL İYİLEŞTİRMELER:
 7. Mevcut içeriğin anlamını ve verilerini KORU — sadece yapıyı düzelt
 
 JSON döndür:
-{"content": "HTML formatında yeniden yapılandırılmış içerik"}`,
-                config: { responseMimeType: 'application/json', temperature: 0.5 }
-              });
+{"content": "HTML formatında yeniden yapılandırılmış içerik"}`;
+
+              const parsed = await alohaAI.generateJSON(promptStr, {
+                temperature: 0.5,
+                complexity: 'routine'
+              }, 'autoRepair.fix_formatting');
               
-              if (restructureRes.text) {
-                const parsed = JSON.parse(restructureRes.text);
+              if (parsed) {
                 if (parsed.content && parsed.content.length > content.length * 0.7) {
                   content = parsed.content;
                 }
@@ -337,7 +335,7 @@ JSON döndür:
         }
 
         case 'add_ai_commentary': {
-          const gemini = alohaAI.getClient();
+          // removed getClient
           const docRef = adminDb.collection(collection).doc(action.articleId);
           const doc = await docRef.get();
           if (!doc.exists) { result.skipped++; continue; }
@@ -345,14 +343,13 @@ JSON döndür:
           const data = doc.data()!;
           const title = data.translations?.TR?.title || data.title || '';
           
-          const res = await gemini.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `"${title}" hakkında kısa bir AI analiz yorumu yaz (2-3 cümle, 📊 ile başla). Ayrıca 3 somut iş fırsatı listele. JSON döndür: {"ai_commentary": "...", "business_opportunities": ["...", "...", "..."]}`,
-            config: { responseMimeType: 'application/json', temperature: 0.7 }
-          });
+          const parsed = await alohaAI.generateJSON(
+            `"${title}" hakkında kısa bir AI analiz yorumu yaz (2-3 cümle, 📊 ile başla). Ayrıca 3 somut iş fırsatı listele. JSON döndür: {"ai_commentary": "...", "business_opportunities": ["...", "...", "..."]}`,
+            { temperature: 0.7, complexity: 'routine' },
+            'autoRepair.add_ai_commentary'
+          );
           
-          if (res.text) {
-            const parsed = JSON.parse(res.text);
+          if (parsed) {
             await docRef.update({
               ai_commentary: parsed.ai_commentary || '',
               business_opportunities: parsed.business_opportunities || [],

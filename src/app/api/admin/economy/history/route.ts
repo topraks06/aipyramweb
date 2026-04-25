@@ -7,32 +7,64 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Firebase Admin not initialized' }, { status: 500 });
     }
 
-    // Gerçek Sovereign cüzdan verilerini çek
-    const walletsSnap = await adminDb.collection('sovereign_wallets').get();
-    let currentWallets: Record<string, number> = { trtex: 0, perde: 0, hometex: 0, vorhang: 0 };
+    // 1. Get the start of today in local time
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
-    walletsSnap.forEach(doc => {
+    // 2. Fetch aloha_costs for today
+    const costsSnap = await adminDb.collection('aloha_costs')
+      .where('timestamp', '>=', startOfToday)
+      .orderBy('timestamp', 'asc')
+      .get();
+
+    // 3. Initialize hourly buckets from 0 to current hour
+    const currentHour = now.getHours();
+    const hourlyData: Record<number, { trtex: number, perde: number, hometex: number, vorhang: number }> = {};
+    
+    for (let h = 0; h <= currentHour; h++) {
+      hourlyData[h] = { trtex: 0, perde: 0, hometex: 0, vorhang: 0 };
+    }
+
+    // 4. Aggregate costs into buckets (not cumulative yet)
+    costsSnap.forEach(doc => {
       const data = doc.data();
-      const node = doc.id; // trtex, perde, vs.
-      if (node in currentWallets) {
-        currentWallets[node] = data.consumed_credits || 0;
+      const node = data.node || 'global';
+      const cost = data.estimatedCost || 0;
+      const timestamp = data.timestamp.toDate();
+      const hour = timestamp.getHours();
+
+      if (hour <= currentHour && hourlyData[hour]) {
+        if (node === 'trtex' || node === 'perde' || node === 'hometex' || node === 'vorhang') {
+          hourlyData[hour][node] += cost;
+        } else {
+          // If global or other, we could optionally spread it or just log it
+        }
       }
     });
 
-    // Anlık tabloyu simüle et (Zaman serisi olmadığı için tek/son nokta olarak gönderiyoruz)
-    // Gerçek sistemde bu "daily_cost" tablolarından map edilecektir.
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    const data: any[] = [
-      {
+    // 5. Convert to cumulative sum array for Recharts
+    const data: any[] = [];
+    let cumTrtex = 0;
+    let cumPerde = 0;
+    let cumHometex = 0;
+    let cumVorhang = 0;
+
+    for (let h = 0; h <= currentHour; h++) {
+      cumTrtex += hourlyData[h].trtex;
+      cumPerde += hourlyData[h].perde;
+      cumHometex += hourlyData[h].hometex;
+      cumVorhang += hourlyData[h].vorhang;
+      
+      const timeStr = `${h.toString().padStart(2, '0')}:00`;
+      
+      data.push({
         time: timeStr,
-        trtex: currentWallets.trtex,
-        perde: currentWallets.perde,
-        hometex: currentWallets.hometex,
-        vorhang: currentWallets.vorhang
-      }
-    ];
+        trtex: cumTrtex,
+        perde: cumPerde,
+        hometex: cumHometex,
+        vorhang: cumVorhang
+      });
+    }
 
     return NextResponse.json({
       success: true,

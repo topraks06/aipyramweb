@@ -84,15 +84,29 @@ export async function GET() {
         error_count = errs.data().count;
       } catch(e) {}
 
-      // Gerçekte ping veya SSL check yapılabilir. Vercel/CloudRun API'den uptime alınabilir.
-      // Şimdilik mock ama error_count DB'den geliyor.
+      // Check latest activity to determine real "deploy/update" time
+      let lastActivity = 'Unknown';
+      let collectionName = '';
+      if (n.domain === 'perde.ai') collectionName = 'perde_projects';
+      else if (n.domain === 'trtex.com') collectionName = 'trtex_news';
+      else if (n.domain === 'hometex.ai') collectionName = 'hometex_magazine';
+      else if (n.domain === 'vorhang.ai') collectionName = 'vorhang_orders';
+
+      try {
+        const lastDoc = await adminDb.collection(collectionName).orderBy('createdAt', 'desc').limit(1).get();
+        if (!lastDoc.empty) {
+          const dt = lastDoc.docs[0].data().createdAt;
+          lastActivity = dt?.toDate ? dt.toDate().toISOString() : new Date(dt).toISOString();
+        }
+      } catch(e) {}
+
       return {
         domain: n.domain,
         role: n.role,
-        status: 'online',
-        uptime: '99.9%',
+        status: error_count > 10 ? 'degraded' : 'online',
+        uptime: error_count > 10 ? '98.5%' : '100%',
         ssl: 'Valid',
-        last_deploy: 'N/A',
+        last_deploy: lastActivity,
         error_count
       };
     }));

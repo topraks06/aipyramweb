@@ -27,8 +27,7 @@ import { safeParseLLM, schemas } from './schemaGuard';
 const BATCH_SIZE = 5;
 const PHASE1_MAX_ITEMS = 50; // Her kosusta max 50 haber isle (timeout guvenlik)
 
-const ai = alohaAI.getClient();
-
+// removed ai client instantiation
 // ═══════════════════════════════════════
 // MEGA PIPELINE RESULT
 // ═══════════════════════════════════════
@@ -206,16 +205,10 @@ async function phase1_fixSingleArticle(
   const content = data.content || data.TR?.content || '';
   const qualityScore = data.quality_score || 0;
 
-  const fix = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: 'Bu B2B ev tekstili haberini duzelt. Kalite skoru ' + qualityScore + '/100.\n\nMEVCUT BASLIK: ' + title + '\nICERIK (ilk 300 kar): ' + content.substring(0, 300) + '\n\nGOREV:\n1. Benzersiz, SEO optimize baslik yaz (60-80 karakter)\n2. 3 SEO keyword belirle\n3. Mutlaka bir CEO "ai_block" objesi ekle. Bunun icinde Pazar (market), Risk (risk), Firsat (opportunity) ve Aksiyon (action) cumleleri olmali.\n4. Kalite skoru ver (0-100)\n\nJSON dondur:\n{"title":"...","keywords":["..."],"ai_block":{"market":"...","risk":"...","opportunity":"...","action":"..."},"quality_score":85}\nSADECE JSON.',
-  });
+  const promptStr = 'Bu B2B ev tekstili haberini duzelt. Kalite skoru ' + qualityScore + '/100.\n\nMEVCUT BASLIK: ' + title + '\nICERIK (ilk 300 kar): ' + content.substring(0, 300) + '\n\nGOREV:\n1. Benzersiz, SEO optimize baslik yaz (60-80 karakter)\n2. 3 SEO keyword belirle\n3. Mutlaka bir CEO "ai_block" objesi ekle. Bunun icinde Pazar (market), Risk (risk), Firsat (opportunity) ve Aksiyon (action) cumleleri olmali.\n4. Kalite skoru ver (0-100)\n\nJSON dondur:\n{"title":"...","keywords":["..."],"ai_block":{"market":"...","risk":"...","opportunity":"...","action":"..."},"quality_score":85}\nSADECE JSON.';
 
-  const text = fix?.text || '';
-  const result = await safeParseLLM(schemas.qualityFix, text, 'megaPipeline.phase1', 'trtex');
-  if (!result.success || !result.data) return false;
-
-  const parsed = result.data;
+  const parsed = await alohaAI.generateJSON(promptStr, { complexity: 'routine' }, 'megaPipeline.phase1');
+  if (!parsed) return false;
   
   const updateData: Record<string, any> = {
     quality_score: parsed.quality_score || 75,
@@ -364,9 +357,8 @@ async function phase4_processOpps(snapshot: FirebaseFirestore.QuerySnapshot, pro
   if (newsForAnalysis.length === 0) return;
 
   try {
-    const oppResult = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `B2B ev tekstili ticaret istihbarat uzmanısın. Bu haberlerden TİCARİ FIRSAT çıkar.
+    const parsed = await alohaAI.generateJSON(
+      `B2B ev tekstili ticaret istihbarat uzmanısın. Bu haberlerden TİCARİ FIRSAT çıkar.
 
 HABERLER:
 ${newsForAnalysis.slice(0, 20).join('\n')}
@@ -382,12 +374,11 @@ Her fırsat için:
 EN AZ 10, EN FAZLA 15 fırsat üret. JSON array döndür:
 [{"title":"...","countries":[...],"products":[...],"buyers":"...","score":85,"action":"..."}]
 SADECE JSON.`,
-    });
+      { complexity: 'routine' },
+      'megaPipeline.phase4_processOpps'
+    );
 
-    const text = oppResult?.text || '';
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
+    if (parsed && Array.isArray(parsed)) {
       result.phase4_opportunities.found = parsed.length;
 
       for (const opp of parsed) {
@@ -433,9 +424,8 @@ async function phase5_landingPages(project: string, result: MegaPipelineResult):
 
   for (const opp of topOpps) {
     try {
-      const pageResult = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `B2B landing page slug ve başlık üret.
+      const parsed = await alohaAI.generateJSON(
+        `B2B landing page slug ve başlık üret.
 
 FIRSAT: ${opp.title}
 ÜLKELER: ${opp.countries.join(', ')}
@@ -443,12 +433,11 @@ FIRSAT: ${opp.title}
 
 JSON döndür: {"slug":"turkish-curtain-wholesale-germany","title_tr":"...","title_en":"...","keywords":["..."]}
 SADECE JSON.`,
-      });
+        { complexity: 'routine' },
+        'megaPipeline.phase5_landingPages'
+      );
 
-      const text = pageResult?.text || '';
-      const jsonMatch = text.match(/\{[\s\S]*?\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed) {
 
         await adminDb.collection('trtex_landing_pages').add({
           slug: parsed.slug || `opp-${Date.now()}`,

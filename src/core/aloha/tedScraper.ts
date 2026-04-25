@@ -168,9 +168,8 @@ export class TEDScraper {
   private static async fetchWithGoogleGrounding(): Promise<any[]> {
     console.log('[TED] 🔄 Google Search Grounding ile TED ihaleleri aranıyor...');
     try {
-      const result = await alohaAI.getClient().models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `Search the EU TED (Tenders Electronic Daily) website ted.europa.eu for the LATEST active procurement notices related to:
+      let text = await alohaAI.generate(
+        `Search the EU TED (Tenders Electronic Daily) website ted.europa.eu for the LATEST active procurement notices related to:
 - Hotel textile procurement (curtains, bed linen, towels)
 - Hospital textile supplies
 - Government building curtain/upholstery tenders
@@ -187,13 +186,14 @@ Find 10 REAL, CURRENT tenders from ted.europa.eu. For each, extract:
 
 Return as JSON array:
 [{"publicationNumber":"...","title":"...","country":"...","buyerName":"...","deadline":"...","estimatedValue":"...","cpv":"..."}]`,
-        config: {
+        {
           tools: [{ googleSearch: {} }],
           temperature: 0.2,
-        }
-      });
+          complexity: 'routine'
+        },
+        'tedScraper.fetchWithGoogleGrounding'
+      );
 
-      let text = result?.text || '[]';
       text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
       const match = text.match(/\[[\s\S]*\]/);
       if (!match) return [];
@@ -218,16 +218,15 @@ Return as JSON array:
     ).join('\n');
 
     try {
-      const result = await alohaAI.getClient().models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `You are the TRTEX Tender Normalizer. Convert these EU procurement notices into the TRTEX Trading Floor format.
+      const parsed = await alohaAI.generateJSON(
+        `You are the TRTEX Tender Normalizer. Convert these EU procurement notices into the TRTEX Trading Floor format.
 
 CRITICAL SECTOR RESTRICTION: ONLY Home Textiles, Curtains, Upholstery, Hospital/Hotel Linens, Towels, Carpets, and Commercial Fabrics.
 STRICTLY REJECT: "apparel", "clothing", "garments", "fashion", "furniture", "woodwork", "metals", "IT services", "military weapons". 
 If a raw notice is about these forbidden sectors, or if it is a RISKY/CANCELLED tender, DO NOT output it. Ignore it completely.
 
 RAW DATA:
-\${batchText}
+${batchText}
 
 For each VALID tender, create a JSON object:
 - "type": "TENDER" (always)
@@ -244,15 +243,13 @@ For each VALID tender, create a JSON object:
 - "cpv_code": CPV code
 
 Return JSON array ONLY. No markdown fences. Turkish language for all user-facing fields.`,
-        config: { temperature: 0.3 }
-      });
+        { temperature: 0.3, complexity: 'routine' },
+        'tedScraper.normalizeTenders'
+      );
 
-      let text = result?.text || '[]';
-      text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-      const match = text.match(/\[[\s\S]*\]/);
-      if (!match) return [];
+      if (!parsed || !Array.isArray(parsed)) return [];
       
-      const parsed = JSON.parse(match[0]);
+      
       
       return parsed.map((t: any) => ({
         id: uuidv4(),

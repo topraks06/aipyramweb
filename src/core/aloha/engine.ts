@@ -3135,16 +3135,17 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
         break;
       }
 
-      // â•â•â• CHAIN EXECUTOR TOOLS â•â•â•
+
+      // â• â• â•  CHAIN EXECUTOR TOOLS â• â• â• 
       case "run_full_repair": {
         try {
           const project = (args.project || 'trtex').toLowerCase();
           const { runFullRepair } = require('./chainExecutor');
           const chainResult = await runFullRepair(project);
-          toolResult = `[â›“ï¸ FULL REPAIR CHAIN]\n${chainResult.plan.summary}\n\nSüre: ${Math.round(chainResult.duration / 1000)}s\nDurum: ${chainResult.plan.status}`;
+          toolResult = `[â›“ï¸  FULL REPAIR CHAIN]\n${chainResult.plan.summary}\n\nSüre: ${Math.round(chainResult.duration / 1000)}s\nDurum: ${chainResult.plan.status}`;
           logAlohaAction('CHAIN_FULL_REPAIR', { project, status: chainResult.plan.status });
         } catch (e: any) {
-          toolResult = `[âŒ CHAIN HATASI] ${e.message}`;
+          toolResult = `[â Œ CHAIN HATASI] ${e.message}`;
         }
         break;
       }
@@ -3245,11 +3246,8 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           } catch(e) {}
 
           // 1. AI ile içerik üret (Ajan uzmanlığı enjekte)
-          const composeAi = alohaAI.getClient();
-
-          const contentResponse = await composeAi.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Role: Sen, dünyanın en prestijli tekstil istihbarat platformu TRTEX'in Senior Market Strategist & Creative Director'üsün. Görevin, sıradan haberleri elemek ve sadece global tekstil elitlerini (JAB, Zimmer + Rohde, Vanelli, Christian Fischbacher, Küçükçalık, Persan, Elvin, Coulisse vb.) ilgilendiren stratejik verileri işlemek.
+          // removed composeAi
+          const promptStr = `Role: Sen, dünyanın en prestijli tekstil istihbarat platformu TRTEX'in Senior Market Strategist & Creative Director'üsün. Görevin, sıradan haberleri elemek ve sadece global tekstil elitlerini (JAB, Zimmer + Rohde, Vanelli, Christian Fischbacher, Küçükçalık, Persan, Elvin, Coulisse vb.) ilgilendiren stratejik verileri işlemek.
 
 1. Kaynak Disiplini: Sadece ilk 50 dev firmanın (Master List) hareketlerini, fuar (Hometex, Heimtextil) raporlarını ve global tasarım trendlerini baz al. "Aydın Tekstil" veya "Kacar" gibi güncelliğini yitirmiş verileri sistemden sil.
 
@@ -3405,15 +3403,16 @@ JSON formatında döndür:
     "academy_value": 0.30,
     "b2b_opportunity": 0.95
   }
-}`,
-            config: {
-              responseMimeType: 'application/json',
+}`;
+          const article = await alohaAI.generateJSON(
+            promptStr,
+            {
               temperature: 0.7,
-            }
-          });
-
-          if (!contentResponse.text) throw new Error('AI içerik üretemedi');
-          const article = JSON.parse(contentResponse.text);
+              complexity: 'routine'
+            },
+            'engine.compose_article'
+          );
+          if (!article) throw new Error('AI içerik üretemedi');
 
           // Dinamik Terimleri Firebase'e Geri Besleme (Async)
           if (article.new_terms && Array.isArray(article.new_terms) && article.new_terms.length > 0) {
@@ -3446,9 +3445,8 @@ JSON formatında döndür:
           // â•â•â• GROUNDING KATMANI â€” Veri Doğrulama (Google Search) â•â•â•
           try {
             // İçerikten kritik istatistik cümleleri çıkar
-            const claimExtractor = await composeAi.models.generateContent({
-              model: 'gemini-2.5-flash',
-              contents: `Aşağıdaki haber metninden SADECE doğrulanması gereken rakamsal/istatistiksel iddiaları çıkar.
+            const claimExtractor = await alohaAI.generateJSON(
+              `Aşağıdaki haber metninden SADECE doğrulanması gereken rakamsal/istatistiksel iddiaları çıkar.
 Her iddia için kısa bir Google arama sorgusu oluştur.
 MAKSIMUM 3 iddia seç (en önemliler).
 
@@ -3457,11 +3455,12 @@ ${(article.content || '').replace(/<[^>]*>/g, '').substring(0, 2000)}
 
 JSON döndür:
 {"claims": [{"claim": "iddia cümlesi", "search_query": "doğrulama sorgusu"}]}`,
-              config: { responseMimeType: 'application/json', temperature: 0.1 }
-            });
+              { temperature: 0.1, complexity: 'routine' },
+              'engine.claimExtractor'
+            );
 
-            if (claimExtractor.text) {
-              const { claims } = JSON.parse(claimExtractor.text);
+            if (claimExtractor) {
+              const { claims } = claimExtractor;
               let groundingLog: string[] = [];
               
               if (claims && claims.length > 0) {
@@ -3474,20 +3473,19 @@ JSON döndür:
                     });
 
                     // Sonucu AI'ya gönderip doğrulat
-                    const verifyRes = await composeAi.models.generateContent({
-                      model: 'gemini-2.5-flash',
-                      contents: `İDDİA: "${c.claim}"
+                    const verification = await alohaAI.generateJSON(
+                      `İDDİA: "${c.claim}"
 
 ARAMA SONUCU:
 ${searchResult.substring(0, 1500)}
 
 Bu iddia doğru mu? Eğer yanlışsa, doğru veriyi ver.
 JSON döndür: {"verified": true/false, "correction": "doğru veri (sadece yanlışsa)"}`,
-                      config: { responseMimeType: 'application/json', temperature: 0.1 }
-                    });
+                      { temperature: 0.1, complexity: 'routine' },
+                      'engine.verifyClaim'
+                    );
 
-                    if (verifyRes.text) {
-                      const verification = JSON.parse(verifyRes.text);
+                    if (verification) {
                       if (!verification.verified && verification.correction) {
                         // Yanlış veriyi düzelt
                         article.content = article.content.replace(
@@ -4244,17 +4242,16 @@ JSON döndür: {"verified": true/false, "correction": "doğru veri (sadece yanl�
           // â•â•â• KATMAN 1: GEMINI SEARCH GROUNDING (En güçlü) â•â•â•
           let groundingSuccess = false;
           try {
-            const searchAi = alohaAI.getClient();
-            const groundedResponse = await searchAi.models.generateContent({
-              model: 'gemini-2.5-flash',
-              contents: `Sen bir B2B tekstil istihbarat analistisin. Şu konuda güncel, doğrulanmış bilgi topla ve özetle:\n\n"${query}"\n\nKurallar:\n- Sadece GERÃ‡EK, doğrulanmış veriler sun\n- Rakamlar, yüzdeler, tarihler ver\n- Kaynak belirt\n- Türk ev tekstili/perde sektörü perspektifinden değerlendir\n- Kısa ve öz ol (max 800 kelime)`,
-              config: {
+            // removed searchAi
+            const groundedText = await alohaAI.generate(
+              `Sen bir B2B tekstil istihbarat analistisin. Şu konuda güncel, doğrulanmış bilgi topla ve özetle:\n\n"${query}"\n\nKurallar:\n- Sadece GERÇEK, doğrulanmış veriler sun\n- Rakamlar, yüzdeler, tarihler ver\n- Kaynak belirt\n- Türk ev tekstili/perde sektörü perspektifinden değerlendir\n- Kısa ve öz ol (max 800 kelime)`,
+              {
                 tools: [{ googleSearch: {} }],
                 temperature: 0.2,
-              }
-            });
-
-            const groundedText = groundedResponse.text || '';
+                complexity: 'routine'
+              },
+              'engine.web_search'
+            ) || '';
             if (groundedText.length > 10) {
               results.push(`[âœ… GEMINI GROUNDED SEARCH] Doğrulanmış sonuçlar:`);
               results.push(groundedText.substring(0, 3000));

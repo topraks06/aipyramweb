@@ -30,6 +30,8 @@ export default function EconomyEngineGraph() {
     };
     
     fetchEconomyData();
+    const interval = setInterval(fetchEconomyData, 30000); // 30 seconds poll
+    return () => clearInterval(interval);
   }, []);
 
   return (
