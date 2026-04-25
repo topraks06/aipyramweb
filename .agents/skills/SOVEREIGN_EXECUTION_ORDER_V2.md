@@ -67,14 +67,14 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-1): perde auth doğrulama"`
 
 ### Sprint 2: Tasarım Motoru — Visualizer (EN KRİTİK)
-- [ ] `src/components/node-perde/RoomVisualizer.tsx` (42KB) → AÇ, OKU. Kumaş yükleme (`handleImageUpload`) çalışıyor mu? `fetch('/api/render')` doğru endpoint'e gidiyor mu?
-- [ ] `src/app/api/render/route.ts` → AÇ, OKU. Imagen API çağrısı var mı? API key doğru mu? Hata yönetimi var mı?
-- [ ] Rate limiting (anonim kullanıcıya max 1 render/gün) aktif mi?
-- [ ] `src/components/node-perde/Img2ImgVisualizer.tsx` (20KB) → Template seçimi + kumaş giydirme akışı tamamlanmış mı?
-- [ ] Tarayıcıdan `localhost:3000/sites/perde.ai/visualizer` aç, test et.
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-2): perde tasarım motoru doğrulama"`
+- [x] `src/components/node-perde/RoomVisualizer.tsx` (42KB) → AÇ, OKU. Kumaş yükleme (`handleImageUpload`) çalışıyor mu? `fetch('/api/render')` doğru endpoint'e gidiyor mu?
+- [x] `src/app/api/render/route.ts` → AÇ, OKU. Imagen API çağrısı var mı? API key doğru mu? Hata yönetimi var mı?
+- [x] Rate limiting (anonim kullanıcıya max 1 render/gün) aktif mi?
+- [x] `src/components/node-perde/Img2ImgVisualizer.tsx` (20KB) → Template seçimi + kumaş giydirme akışı tamamlanmış mı?
+- [x] Tarayıcıdan `localhost:3000/sites/perde.ai/visualizer` aç, test et.
+- **KANIT:** `RoomVisualizer.tsx` L139 fetch, `route.ts` L44 anon rate limit, `Img2ImgVisualizer.tsx` L86 compositing motoru onaylandı. HTTP 200 dönüyor.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-2): perde tasarim motoru dogrulama"`
 
 ### Sprint 3: Studio Sayfası
 - [ ] `src/components/node-perde/studio/` → Tüm dosyaları listele ve oku
