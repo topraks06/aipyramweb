@@ -14,6 +14,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 import { calculatePricing, PricingInput } from '@/lib/aloha/PricingEngine';
 
+import { alohaAI } from '@/core/aloha/aiClient';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export interface ProductIngestionPayload {
@@ -90,42 +91,13 @@ SADECE JSON döndür, başka bir şey yazma.`;
       });
     }
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts }],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 2048,
-            responseMimeType: 'application/json',
-          },
-        }),
-      }
-    );
+    const jsonResult = await alohaAI.generateJSON(parts, {
+      temperature: 0.2,
+      maxOutputTokens: 2048,
+      complexity: 'routine'
+    }, 'GlobalPublishWorkflow.analyzeWithGemini');
 
-    if (!res.ok) {
-      console.error(`[GlobalPublish] Gemini API hatası: ${res.status}`);
-      return buildDeterministicAnalysis(payload);
-    }
-
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      console.error('[GlobalPublish] Gemini boş yanıt döndü, fallback kullanılıyor');
-      return buildDeterministicAnalysis(payload);
-    }
-
-    // JSON parse güvenliği — bazen Gemini extra text ekliyor
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error('[GlobalPublish] Gemini yanıtında JSON bulunamadı');
-      return buildDeterministicAnalysis(payload);
-    }
-
-    return JSON.parse(jsonMatch[0]);
+    return jsonResult;
   } catch (err: any) {
     console.error('[GlobalPublish] Gemini analiz hatası:', err.message);
     return buildDeterministicAnalysis(payload);
@@ -273,10 +245,37 @@ async function publishToVorhang(analysis: any, pricing: any, imageUrl: string | 
 }
 
 /**
- * ANA ORKESTRATÖR: Tek bir ürün girişinden 3 platforma otonom yayın.
+ * AŞAMA 5: Perde.ai Tasarım Bekleme Kuyruğuna At (Yeni)
  */
-export async function executeGlobalPublish(payload: ProductIngestionPayload): Promise<WorkflowResult> {
+async function publishToPerde(analysis: any, imageUrl: string | undefined): Promise<string | null> {
+  if (!adminDb) return null;
+
+  const designDoc = {
+    title: analysis.collectionName + ' - Otonom Tasarım İsteği',
+    fabricSpecs: {
+      composition: analysis.composition,
+      gsm: analysis.gsm,
+      widthCm: analysis.widthCm,
+      patternType: analysis.patternType,
+    },
+    imageUrl: imageUrl || '',
+    status: 'pending_design',
+    source: 'sovereign-ingestion',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const ref = await adminDb.collection('perde_design_queue').add(designDoc);
+  return ref.id;
+}
+
+/**
+ * ANA ORKESTRATÖR: Tek bir ürün girişinden hedeflenen platformlara otonom yayın.
+ */
+export async function executeGlobalPublish(payload: ProductIngestionPayload & { targets?: string[] }): Promise<WorkflowResult> {
   try {
+    const targets = payload.targets && payload.targets.length > 0 ? payload.targets : ['trtex', 'hometex', 'vorhang', 'perde'];
+    
     // 1. Gemini Vision ile analiz
     const analysis = await analyzeWithGemini(payload);
     
@@ -290,27 +289,47 @@ export async function executeGlobalPublish(payload: ProductIngestionPayload): Pr
     };
     const pricing = calculatePricing(pricingInput);
     
-    // 3. Paralel yayın (TRTex + Hometex + Vorhang)
+    // 3. Paralel hedeflenmiş yayın (Swarm Routing)
     const imageUrl = payload.imageUrl || undefined;
     
-    const [trtexId, hometexId, vorhangId] = await Promise.all([
-      publishToTRTex(analysis, imageUrl),
-      publishToHometex(analysis, pricing, imageUrl),
-      publishToVorhang(analysis, pricing, imageUrl),
-    ]);
+    const isAll = targets.includes('all');
+    const promises = [];
+    
+    let trtexId, hometexId, vorhangId, perdeId;
+
+    if (isAll || targets.includes('trtex')) {
+      promises.push(publishToTRTex(analysis, imageUrl).then(id => { trtexId = id; }));
+    }
+    if (isAll || targets.includes('hometex')) {
+      promises.push(publishToHometex(analysis, pricing, imageUrl).then(id => { hometexId = id; }));
+    }
+    if (isAll || targets.includes('vorhang')) {
+      promises.push(publishToVorhang(analysis, pricing, imageUrl).then(id => { vorhangId = id; }));
+    }
+    if (isAll || targets.includes('perde')) {
+      promises.push(publishToPerde(analysis, imageUrl).then(id => { perdeId = id; }));
+    }
+
+    await Promise.all(promises);
 
     // 4. Sovereign Log
     if (adminDb) {
-      await adminDb.collection('sovereign_publish_log').add({
-        trtexNewsId: trtexId,
-        hometexProductId: hometexId,
-        vorhangProductId: vorhangId,
+      const logDoc = {
+        trtexNewsId: trtexId || null,
+        hometexProductId: hometexId || null,
+        vorhangProductId: vorhangId || null,
+        perdeDesignId: perdeId || null,
+        targets,
         analysis,
         pricing,
         payload: { ...payload, imageBase64: '[REDACTED]' },
         status: 'completed',
         createdAt: new Date().toISOString(),
-      });
+      };
+      
+      // Firestore does not allow undefined. Clean undefined fields safely.
+      const sanitizedDoc = JSON.parse(JSON.stringify(logDoc));
+      await adminDb.collection('sovereign_publish_log').add(sanitizedDoc);
     }
 
     return {
@@ -318,6 +337,7 @@ export async function executeGlobalPublish(payload: ProductIngestionPayload): Pr
       trtexNewsId: trtexId || undefined,
       hometexProductId: hometexId || undefined,
       vorhangProductId: vorhangId || undefined,
+      perdeDesignId: perdeId || undefined,
       pricing,
       analysis,
     };

@@ -37,11 +37,11 @@ import { adminDb } from '@/lib/firebase-admin';
 // → YENİ: veo-3.1-lite-preview (hızlı video üretimi, sanal fuar potansiyeli)
 // → YENİ: Gemini 3.1 Flash (agentic workflows, persistent context)
 
-const DEFAULT_MODEL = 'gemini-3.1-flash';
-const DEEP_MODEL = 'gemini-3.1-pro';
-const IMAGE_MODEL = 'gemini-3.1-flash-image';     // Nano Banana 2
-const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback: Imagen 4
-const EMBEDDING_MODEL = 'gemini-embedding-exp-03-07';  // Multimodal embeddings
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+const DEEP_MODEL = 'gemini-2.5-pro';
+const IMAGE_MODEL = 'gemini-2.5-flash';     // Flash image does not have an explicit -image string in standard API, but 2.5-flash supports multimodal.
+const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Using stable imagen 3 instead of 4
+const EMBEDDING_MODEL = 'text-embedding-004';  // Stable embedding model
 const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 1000;       // 1s → 2s → 4s
@@ -138,13 +138,16 @@ function checkBudget(caller?: string): { allowed: boolean; reason?: string } {
   }
 
   if (_cycleCallCount >= MAX_GEMINI_CALLS_PER_CYCLE) {
-    return {
-      allowed: false,
-      reason: `⚠️ DÖNGÜ ÇAĞRI LİMİTİ: Bu döngüde ${_cycleCallCount}/${MAX_GEMINI_CALLS_PER_CYCLE} çağrı yapıldı.`
-    };
+    // Sadece uyarı ver, sistemi tamamen kilitleme (Eskiden return false idi ve tüm ALOHA'yı kilitliyordu)
+    console.warn(`[AI_CLIENT] ⚠️ DÖNGÜ ÇAĞRI LİMİTİ UYARISI: Bu döngüde ${_cycleCallCount}/${MAX_GEMINI_CALLS_PER_CYCLE} çağrı yapıldı.`);
   }
 
   return { allowed: true };
+}
+
+export function resetAiCycle(): void {
+  _cycleCallCount = 0;
+  console.log('[AI_CLIENT] 🔄 Cycle call count sıfırlandı.');
 }
 
 // ═══════════════════════════════════════
@@ -368,6 +371,32 @@ export const alohaAI = {
           result.text.substring(0, 200)
         );
         throw new Error(`AI JSON parse başarısız: ${(parseErr as Error).message}`);
+      }
+    }
+  },
+
+  /**
+   * Embedding (vektör) üretimi
+   */
+  async generateEmbedding(text: string, caller?: string): Promise<number[] | null> {
+    try {
+      const client = getClient();
+      const response = await client.models.embedContent({
+        model: EMBEDDING_MODEL,
+        contents: text,
+      });
+      return response.embeddings?.[0]?.values || null;
+    } catch (err) {
+      console.error(`[AI_CLIENT] 🔴 Embedding hatası${caller ? ` [${caller}]` : ''}:`, err);
+      try {
+        const client = getClient();
+        const response = await client.models.embedContent({
+          model: EMBEDDING_MODEL_FALLBACK,
+          contents: text,
+        });
+        return response.embeddings?.[0]?.values || null;
+      } catch {
+        return null;
       }
     }
   },
