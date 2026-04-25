@@ -435,3 +435,47 @@ export function gateCheck(
   recordAction(action);
   return { allowed: true, reason: 'OK', requiresApproval: false };
 }
+
+// ═══════════════════════════════════════
+// 5. AGENT PERFORMANCE SCORING
+// ═══════════════════════════════════════
+
+/**
+ * FAZ 3.3: Ajan performans skoru (başarı/hata oranı, ortalama yanıt süresi) hesaplar
+ * ve aloha_agent_scores koleksiyonuna yazar.
+ */
+export async function recordAgentPerformance(agentId: string, success: boolean, durationMs: number): Promise<void> {
+  if (!adminDb) return;
+  try {
+    const docRef = adminDb.collection('aloha_agent_scores').doc(agentId);
+    const doc = await docRef.get();
+    
+    if (doc.exists) {
+      const data = doc.data()!;
+      const totalCalls = (data.totalCalls || 0) + 1;
+      const successCount = (data.successCount || 0) + (success ? 1 : 0);
+      const totalDuration = (data.totalDuration || 0) + durationMs;
+      
+      await docRef.update({
+        totalCalls,
+        successCount,
+        totalDuration,
+        avgDurationMs: totalDuration / totalCalls,
+        successRate: successCount / totalCalls,
+        lastActive: new Date().toISOString()
+      });
+    } else {
+      await docRef.set({
+        agentId,
+        totalCalls: 1,
+        successCount: success ? 1 : 0,
+        totalDuration: durationMs,
+        avgDurationMs: durationMs,
+        successRate: success ? 1 : 0,
+        lastActive: new Date().toISOString()
+      });
+    }
+  } catch (e) {
+    // Sessizce hatayı yut (performans takibi sistemi durdurmamalı)
+  }
+}

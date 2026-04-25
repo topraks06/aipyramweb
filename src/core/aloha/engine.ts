@@ -4911,3 +4911,28 @@ JSON döndür: {"verified": true/false, "correction": "doğru veri (sadece yanl�
 
   return toolResult;
 }
+
+/**
+ * FAZ 3.2: JSON-RPC Export Formatı (Google Agent Studio Entegrasyonu)
+ * Gelecekte Agent Engine'e doğrudan taşıma yapabilmek için mevcut araçları
+ * Google Agent Studio RPC yapısına uygun manifest formatında çıkarır.
+ */
+export function exportAgentStudioManifest() {
+  const manifest: any = {
+    agent_name: "AIPyram_Sovereign_Master",
+    version: "1.0",
+    rpc_methods: []
+  };
+
+  if (tools && tools[0] && tools[0].functionDeclarations) {
+    tools[0].functionDeclarations.forEach((decl: any) => {
+      manifest.rpc_methods.push({
+        method: decl.name,
+        description: decl.description,
+        params: decl.parameters || {}
+      });
+    });
+  }
+
+  return manifest;
+}

@@ -84,11 +84,8 @@ export class KnowledgeFlywheel {
        
        let vectorEmbedding: number[] = [];
        try {
-           const embedRes = await ai.models.embedContent({
-               model: 'text-embedding-004',
-               contents: parsed.insight,
-           });
-           vectorEmbedding = embedRes.embeddings?.[0]?.values || [];
+           const embedding = await alohaAI.generateEmbedding(parsed.insight, 'flywheel_memory');
+           if (embedding) vectorEmbedding = embedding;
        } catch (embedError) {
            console.warn(`[🧠 FLYWHEEL UYARI] Vektör üretilemedi. Düz metin olarak mühürleniyor.`, embedError);
        }
