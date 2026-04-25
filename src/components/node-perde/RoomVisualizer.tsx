@@ -163,8 +163,8 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
      }
      
      try {
-       const isProRender = canvasAttachments.length > 0;
-       const endpoint = isProRender ? '/api/perde/render-pro' : '/api/render';
+       // v4: TÜM renderlar render-pro üzerinden (Dual-Label + model seçim stratejisi)
+       const endpoint = '/api/perde/render-pro';
 
        // ── TÜM GÖRSELLERİ SIKIŞTIRIR (API payload boyutunu düşür) ──
        const compressedTarget = await compressImage(targetImage, 1200, 0.8);
@@ -176,21 +176,16 @@ export default function RoomVisualizer({ isDemoMode = false }: RoomVisualizerPro
            productsObj[role] = { data: compressedProduct, mimeType: 'image/jpeg' };
        }
 
-       const bodyPayload = isProRender 
-         ? {
-             spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
-             products: productsObj,
-             SovereignNodeId
-           }
-         : {
-             imageBase64: compressedTarget,
-             attachments: canvasAttachments.length > 0 
-               ? await Promise.all(canvasAttachments.map(async (a: any) => await compressImage(a.base64, 800, 0.7)))
-               : [],
-             variationCount,
-             SovereignNodeId,
-             isDemoMode
-           };
+       const bodyPayload = {
+           spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
+           products: productsObj,
+           variationCount,        // 1=4K tam render, 2/4=hızlı taslak
+           aspectRatio: '16:9',
+           studioSettings: {
+             decorationMode: canvasAttachments.length > 0 ? 'preserve' : 'auto-decor',
+           },
+           SovereignNodeId,
+       };
 
        const payloadStr = JSON.stringify(bodyPayload);
        console.log(`[RENDER] Sending ${Math.round(payloadStr.length / 1024)}KB to ${endpoint}`);

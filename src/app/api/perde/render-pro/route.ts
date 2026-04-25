@@ -6,21 +6,22 @@ export const dynamic = "force-dynamic";
 
 /**
  * ═══════════════════════════════════════════════════════════════
- *  PERDE.AI — SOVEREIGN RENDER ENGINE v3.0
+ *  PERDE.AI — SOVEREIGN RENDER ENGINE v4.0
  *  
- *  TEK AŞAMALI ÇOKLU-GÖRSEL MİMARİ (Gemini 3.1 Flash Image Preview)
+ *  İKİ SİSTEMİN BİRLEŞİMİ (Eski perde.ai + Yeni AIPyram)
  *  
- *  Bu model TEK İSTEKTE 14 ADEDE KADAR GÖRSEL kabul eder.
- *  Eski 2-aşamalı pipeline (analiz→render) kaldırıldı.
+ *  Eski Sistemden Alınan:
+ *    - Dual-Label Tekniği (her görselin arasına etiket)
+ *    - Dekorasyon Modu (auto-decor / preserve)
+ *    - Model Seçim Stratejisi (hızlı taslak vs tam render)
+ *    - Kanıtlanmış Türkçe domain-expert prompt
  *  
- *  Desteklenen modlar:
- *    1. RESIM→RESIM: Mekan fotoğrafı + kumaş görselleri → render
- *    2. RESIM→TEX:   Mekan fotoğrafı + metin tasviri → render
- *    3. TEX→TEX:     Metin tasviri + kumaş isimleri → render (sıfırdan)
- *    4. TEX→RESIM:   Metin tasviri → render (sıfırdan)
+ *  Yeni Sistemden Korunan:
+ *    - Next.js API route mimarisi
+ *    - Frontend sıkıştırma pipeline'ı
+ *    - Sovereign Node yapısı
  *  
- *  Inline Data Limiti: Toplam istek boyutu ≤ 20MB
- *  Görsel Limiti: ≤ 14 görsel / istek
+ *  Kaynak: .agents/skills/PERDE_DESIGN_ENGINE_V4_MERGE_PLAN.md
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -32,9 +33,11 @@ export async function POST(req: NextRequest) {
     const {
       spaceImage,        // { data: string, mimeType: string } | null
       spacePrompt,       // Mekan tasviri (mekan görseli yoksa)
-      products,          // Record<string, { data: string, mimeType: string }> — ürünler
+      products,          // Record<string, { data: string, mimeType: string }> — etiketli ürünler
       referenceModel,    // { data: string, mimeType: string } | null — beyaz model
-      studioSettings,    // { lighting, lens, composition, decorationMode, timeOfDay }
+      studioSettings,    // { lighting, lens, composition, decorationMode, renderQuality, timeOfDay }
+      variationCount = 1,// 1 | 2 | 4 — model seçimini belirler
+      aspectRatio: requestedAR, // '16:9' | '9:16' | '1:1'
       SovereignNodeId = 'perde'
     } = body;
 
@@ -48,15 +51,17 @@ export async function POST(req: NextRequest) {
     // ── Stüdyo Ayarları (Defaults) ──
     const settings = {
       lighting: studioSettings?.lighting || "Doğal Gün Işığı",
-      lens: studioSettings?.lens || "Geniş Açı 16mm",
-      composition: studioSettings?.composition || "Simetrik",
+      lens: studioSettings?.lens || "35mm Prime",
+      composition: studioSettings?.composition || "Genel salon",
       decorationMode: studioSettings?.decorationMode || "auto-decor",
-      timeOfDay: studioSettings?.timeOfDay || "Öğlen",
+      renderQuality: studioSettings?.renderQuality || "2K",
+      timeOfDay: studioSettings?.timeOfDay || "Gün ışığı",
     };
 
     // ══════════════════════════════════════════════════════════
-    //  TEK AŞAMALI ÇOKLU-GÖRSEL PIPELINE
-    //  Gemini 3.1 Flash Image Preview — 14 görsele kadar destekler
+    //  DUAL-LABEL PIPELINE (Eski Sistemin Kanıtlanmış Tekniği)
+    //  Her görselin arasına metin etiketi konur → Model hangi
+    //  görselin mekan, hangisinin kumaş olduğunu KESİN anlar.
     // ══════════════════════════════════════════════════════════
 
     const parts: any[] = [];
@@ -65,7 +70,9 @@ export async function POST(req: NextRequest) {
     // Yardımcı: base64'ten data: prefix'ini temizle
     const cleanBase64 = (data: string) => data.includes(",") ? data.split(",")[1] : data;
 
-    // 1. MEKAN GÖRSELİ (varsa)
+    // ────────────────────────────────────────────────────────
+    // 1. MEKAN GÖRSELİ + GÜÇLÜ ETİKET
+    // ────────────────────────────────────────────────────────
     if (spaceImage?.data) {
       parts.push({
         inlineData: {
@@ -74,30 +81,49 @@ export async function POST(req: NextRequest) {
         },
       });
       parts.push({
-        text: "[MEKAN]: Bu görsel hedef mekandır. Bu mekanın pencerelerini, duvarlarını, zeminini ve genel atmosferini koru. Perdeler ve tekstil ürünleri bu mekana entegre edilecek.",
+        text: `[MEKAN REFERANSI — KESİNLİKLE KORUNACAK]: Bu görsel hedef mekandır. 
+Bu odanın duvarları, pencereleri, pencere çerçeveleri, zemini, tavanı, radyatörleri, 
+prizleri ve TÜM mimari detayları BİREBİR KORUNACAKTIR. 
+Kamera açısı, perspektif ve aydınlatma DEĞİŞTİRİLMEYECEKTİR.
+Bu fotoğrafı DÜZENLE, yeni oda YARATMA.`,
       });
       imageCount++;
     }
 
-    // 2. ÜRÜN/KUMAŞ GÖRSELLERİ (her biri etiketli)
-    if (products && typeof products === "object") {
-      const productEntries = Object.entries(products) as [string, any][];
-      for (const [role, mat] of productEntries) {
-        if (!mat?.data || imageCount >= 13) continue; // 14 görsel limitine dikkat
-        parts.push({
-          inlineData: {
-            data: cleanBase64(mat.data),
-            mimeType: mat.mimeType || "image/jpeg",
-          },
-        });
-        parts.push({
-          text: `[ÜRÜN: ${role}]: Bu kumaşın/ürünün dokusunu, rengini, desenini ve yapısını analiz et. Bu malzeme mekandaki "${role}" olarak kullanılacak — pencereye veya uygun yüzeye bu kumaşı giydir.`,
-        });
-        imageCount++;
-      }
+    // ────────────────────────────────────────────────────────
+    // 2. ÜRÜN/KUMAŞ GÖRSELLERİ + KULLANICI ETİKETLERİ
+    //    Eski sistemin "[DİKKAT KESİN BİLGİ]" formatı
+    // ────────────────────────────────────────────────────────
+    const hasProducts = products && typeof products === "object" && Object.keys(products).length > 0;
+    const productEntries = hasProducts ? Object.entries(products) as [string, any][] : [];
+    
+    for (const [role, mat] of productEntries) {
+      if (!mat?.data || imageCount >= 13) continue; // 14 görsel limitine dikkat
+      
+      parts.push({
+        inlineData: {
+          data: cleanBase64(mat.data),
+          mimeType: mat.mimeType || "image/jpeg",
+        },
+      });
+      
+      // Eski sistemin etiket enjeksiyonu — modele kesin rol atıyor
+      parts.push({
+        text: `[DİKKAT KESİN BİLGİ - KULLANICI ETİKETİ]: Kullanıcı bu dosya için sisteme 
+özel bir etiket düştü: "${role}". 
+EĞER kullanıcı "Fon", "Fon Kumaşı" veya "Fon Perde" demişse → Bu kumaşı FON PERDE olarak kullan.
+EĞER "Tül", "Tül Kumaşı" veya "Tül Perde" demişse → Bu kumaşı TÜL PERDE olarak kullan (ana perdenin ARKASINA, pencere camına yakın).
+EĞER "Stor" veya "Stor Perde" demişse → Bu kumaşı STOR PERDE olarak kullan.
+EĞER "Döşemelik" demişse → Bu kumaşı koltuk/kanepe DÖŞEME olarak kullan.
+Bu kumaşın GERÇEK dokusunu, rengini, desenini ve yapısını BİREBİR kullan. 
+Kendi hayal ettiğin desen YASAKTIR — yüklenen kumaş fotoğrafı NE İSE O kullanılacak.`,
+      });
+      imageCount++;
     }
 
-    // 3. REFERANS FORM (beyaz model görseli, varsa)
+    // ────────────────────────────────────────────────────────
+    // 3. REFERANS FORM (beyaz model görseli, opsiyonel)
+    // ────────────────────────────────────────────────────────
     if (referenceModel?.data && imageCount < 14) {
       parts.push({
         inlineData: {
@@ -106,79 +132,82 @@ export async function POST(req: NextRequest) {
         },
       });
       parts.push({
-        text: "[FORM REFERANSI]: Bu görsel perdenin/tekstilin fiziksel formunu gösteriyor. Bu kesim ve silueti kullan.",
+        text: `[FORM REFERANSI / BEYAZ MODEL]: Bu görsel perdenin fiziksel formunu, 
+kesimini ve siluetini gösteriyor. Ürünün şeklini buna benzet.`,
       });
       imageCount++;
     }
 
-    // 4. ANA RENDER TALİMATI
+    // ────────────────────────────────────────────────────────
+    // 4. DEKORASYON MODU (Eski Sistemden — auto-decor / preserve)
+    // ────────────────────────────────────────────────────────
     const decorInstruction = settings.decorationMode === "auto-decor"
-      ? "Mekan boş veya eksikse, uygun mobilya ve dekoratif objelerle döşe."
-      : "Mekanın mevcut dekorasyonunu kesinlikle koru.";
+      ? `DEKORASYON MODU: Mekan boş veya eksikse, iç mimari vizyonunu kullanarak 
+mekanı uygun mobilya, halı ve dekoratif objelerle döşe, ardından 
+istenen tekstil ürünlerini yerleştir.`
+      : `DEKORASYON MODU: Mekanın mevcut dekorasyonunu ve mobilyalarını 
+kesinlikle koru, sadece istenen tekstil ürünlerini/perdeleri mekana entegre et.`;
 
-    const spaceDescription = spacePrompt 
-      ? `Hedef mekan tasviri: "${spacePrompt}".`
-      : "Hedef mekan yukarıda gönderilen MEKAN görselindeki odadır.";
+    // ────────────────────────────────────────────────────────
+    // 5. FİNAL PROMPT (Eski Sistemin Kanıtlanmış Türkçe Promtu)
+    // ────────────────────────────────────────────────────────
+    const productNames = hasProducts ? productEntries.map(([r]) => r).join(", ") : "modern, zarif perde";
+    
+    const finalPrompt = `Sen profesyonel bir iç mimari ve ürün fotoğrafçısısın.
+Zaman/Atmosfer: ${settings.timeOfDay}
+Işıklandırma: ${settings.lighting}
+Lens/Kamera: ${settings.lens}
+Kurgu/Kompozisyon: ${settings.composition}
 
-    const hasProducts = products && Object.keys(products).length > 0;
-    const productNames = hasProducts ? Object.keys(products).join(", ") : "modern, zarif perde";
+${decorInstruction}
 
-    const renderInstruction = `
-TASK: EDIT the provided room photograph. Do NOT create a new room from scratch.
+Görev: Verilen mekan referansındaki ODAYI KORUYARAK, yüklenen kategorize edilmiş ürünleri 
+(${productNames}) kusursuz bir şekilde mekana entegre et.
 
-STRICT RULES — VIOLATION OF ANY RULE IS UNACCEPTABLE:
+${spaceImage ? `MUTLAK KURAL: Yukarıdaki [MEKAN REFERANSI] fotoğrafını DÜZENLE. 
+Yeni oda YARATMA. Aynı duvarlar, aynı zemin, aynı pencereler, aynı kamera açısı.` : ""}
 
-1. PRESERVE THE ROOM EXACTLY:
-   - Keep the EXACT same walls, floor, ceiling, windows, radiators, and architectural details from the [MEKAN] photo
-   - Keep the EXACT same camera angle and perspective
-   - Keep the EXACT same lighting and shadows
-   - Do NOT change the wall color, floor material, or window frames
-   - Do NOT add or remove furniture unless [MEKAN] is completely empty
+${spacePrompt && !spaceImage ? `Mekan Tasviri: ${spacePrompt}. Bu mekanı sıfırdan oluştur ve perdeleri ekle.` : ""}
 
-2. ADD CURTAINS TO THE WINDOWS:
-   - Install curtains ONLY on the windows visible in the [MEKAN] photo
-   - Use the EXACT fabric texture, color, and pattern from the [ÜRÜN] photos provided above
-   - The curtain fabric must be a PIXEL-PERFECT match to the provided fabric photos
-   - Curtains should hang naturally with proper draping physics (gravity, folds, pleats)
-   - Add a curtain rod/rail above each window
+KRİTİK KURALLAR:
+1. Mekan fotoğrafı verildiyse: ODAYI BİREBİR KORU. Pencere pozisyonları, duvar rengi, zemin, hepsi AYNI kalmalı.
+2. Kumaş deseni verildiyse: Yüklenen kumaşın GERÇEK dokusunu, rengini, desenini BİREBİR kullan. Kendi hayal ettiğin desen YASAK.
+3. Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
+4. Tül perde verildiyse ARKAYA (pencere camına yakın), fon perde ÖNE yerleştirilmeli.
+5. Perde rayı/korniş pencere üstüne eklenmeli.
+6. Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
+7. Sadece render görselini üret, metin yanıt VERME.`;
 
-3. IF TULLE FABRIC IS PROVIDED:
-   - Layer it BEHIND the main curtain, closer to the window glass
-   - Tulle should be semi-transparent, allowing light to pass through
+    parts.push({ text: finalPrompt });
 
-4. COMPOSITION:
-   - Camera: ${settings.lens}
-   - Lighting: ${settings.lighting}, Time: ${settings.timeOfDay}
-   
-5. OUTPUT: Generate ONLY the edited photo. No text response.
-
-${hasProducts 
-  ? `FABRICS TO USE: ${productNames}. Match EXACTLY the textures from the uploaded fabric photos.` 
-  : "Add elegant, modern curtains that complement the room's color palette."}
-${spacePrompt ? `Additional instruction: ${spacePrompt}` : ""}
-`.trim();
-
-    parts.push({ text: renderInstruction });
+    // ────────────────────────────────────────────────────────
+    // 6. MODEL SEÇİM STRATEJİSİ (Eski Sistemden)
+    //    Hızlı taslak (2/4): gemini-2.5-flash-image → 5-8 sn
+    //    Tam render (1):     gemini-3.1-flash-image-preview → 15-25 sn
+    // ────────────────────────────────────────────────────────
+    const vCount = variationCount || 1;
+    const isHighRes = vCount === 1;
+    const modelName = isHighRes ? "gemini-3.1-flash-image-preview" : "gemini-2.5-flash-image";
 
     // Aspect Ratio
-    let aspectRatio = "16:9";
+    let aspectRatio = requestedAR || "16:9";
     if (spacePrompt?.includes("[AR:9:16]")) aspectRatio = "9:16";
     else if (spacePrompt?.includes("[AR:1:1]")) aspectRatio = "1:1";
 
-    // ── RENDER: Gemini 3.1 Flash Image Preview ──
+    // ── RENDER ──
     const ai = alohaAI.getClient();
     let renderUrl: string | null = null;
 
-    console.log(`[RENDER-PRO] Sending ${imageCount} images + prompt to gemini-3.1-flash-image-preview`);
+    console.log(`[RENDER-PRO v4] Model: ${modelName}, Images: ${imageCount}, AR: ${aspectRatio}, Quality: ${isHighRes ? '4K' : 'Taslak'}`);
 
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-image-preview",
+        model: modelName,
         contents: { parts },
         config: {
           responseModalities: ["IMAGE", "TEXT"],
           imageConfig: {
-            aspectRatio: aspectRatio
+            aspectRatio: aspectRatio as any,
           }
         }
       });
@@ -202,15 +231,13 @@ ${spacePrompt ? `Additional instruction: ${spacePrompt}` : ""}
       }
 
       if (!renderUrl) {
-        // Model sadece metin döndürmüş olabilir
         const textResponse = candidate.content?.parts?.find((p: any) => p.text)?.text || "";
-        console.error("[RENDER-PRO] Model görsel üretmedi. Metin yanıt:", textResponse.substring(0, 200));
+        console.error("[RENDER-PRO v4] Model görsel üretmedi. Metin yanıt:", textResponse.substring(0, 300));
         throw new Error("Model görsel çıktısı üretmedi. Lütfen farklı bir mekan veya ürün görseli deneyin.");
       }
     } catch (e: any) {
-      console.error("[RENDER-PRO] Gemini 3.1 Flash Image Error:", e);
+      console.error("[RENDER-PRO v4] Gemini Error:", e);
       
-      // Hatayı kullanıcıya anlaşılır şekilde ilet
       const msg = e.message || "Bilinmeyen hata";
       if (msg.includes("SAFETY")) {
         return NextResponse.json({ error: "Güvenlik filtresi aktif. Farklı görsel deneyin." }, { status: 422 });
@@ -218,11 +245,11 @@ ${spacePrompt ? `Additional instruction: ${spacePrompt}` : ""}
       if (msg.includes("too large") || msg.includes("exceeds")) {
         return NextResponse.json({ error: "Görseller çok büyük. Lütfen daha küçük dosyalar kullanın." }, { status: 413 });
       }
-      return NextResponse.json({ error: `Render hatası: ${msg.substring(0, 200)}` }, { status: 500 });
+      return NextResponse.json({ error: `Render hatası: ${msg.substring(0, 300)}` }, { status: 500 });
     }
 
     const duration = Date.now() - startTime;
-    console.log(`[RENDER-PRO] ✅ Başarılı! ${imageCount} görsel, ${duration}ms, renderUrl: ${renderUrl.length} bytes`);
+    console.log(`[RENDER-PRO v4] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
 
     return NextResponse.json({
       renderUrl,
@@ -230,13 +257,15 @@ ${spacePrompt ? `Additional instruction: ${spacePrompt}` : ""}
         roomType: "auto",
         imageCount,
         duration,
-        model: "gemini-3.1-flash-image-preview",
+        model: modelName,
+        quality: isHighRes ? "4K" : "Taslak",
+        decorationMode: settings.decorationMode,
       },
       suggestions: [],
     });
 
   } catch (error: any) {
-    console.error("[RENDER-PRO] API Error:", error);
+    console.error("[RENDER-PRO v4] API Error:", error);
     return NextResponse.json(
       { error: error.message || "Sunucu hatası" },
       { status: 500 }
