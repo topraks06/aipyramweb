@@ -1,11 +1,5 @@
 import { alohaAI } from '@/core/aloha/aiClient';
-let aiClient: any = null;
-function getAI(): any {
-  if (!aiClient) {
-    aiClient = alohaAI.getClient();
-  }
-  return aiClient;
-}
+// Removed raw ai client
 
 /**
  * Trendsetter Agent
@@ -21,12 +15,8 @@ export async function analyzeMarketTrends(trtexData: any) {
       Provide a short, punchy summary for a luxury B2B dashboard.
     `;
 
-    const response = await getAI().models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-    });
-
-    return response.text;
+    const { text } = await alohaAI.generate(prompt, { complexity: 'routine' }, 'TrendHarvesterAgent.analyzeMarketTrends');
+    return text;
   } catch (error) {
     console.error('[Trendsetter Agent] Analysis failed:', error);
     throw error;

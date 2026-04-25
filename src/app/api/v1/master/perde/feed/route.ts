@@ -8,8 +8,7 @@ let editorialCache: {
   timestamp: number;
 } | null = null;
 
-// AI SETUP
-const ai = alohaAI.getClient();
+// Removed raw ai client
 
 // 1. RAW DATA MOCK (Perde.ai 3D Rendering & Studio Constraints)
 async function getRawData() {
@@ -38,12 +37,11 @@ async function runVisionary(raw: any, mode: string) {
       Generate 2 3D rendering design trends for curtains and an overarching aesthetic style.
       Output pure JSON with no markdown: {"verifiedTrends": [{"id": "p1", "topic": "Trend Name", "confidence": 0.99}], "creativeStyle": "Aesthetic Style"}
     `;
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    if (res.text) return JSON.parse(res.text);
+    const { text } = await alohaAI.generate(prompt, { 
+      responseMimeType: "application/json",
+      complexity: 'routine'
+    }, 'perde.feed.runVisionary');
+    if (text) return JSON.parse(text);
   } catch (error) {
     console.warn("Visionary Agent failed, using fallback:", error);
   }

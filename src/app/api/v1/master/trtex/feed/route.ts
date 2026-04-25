@@ -11,8 +11,7 @@ let editorialCache: {
   timestamp: number;
 } | null = null;
 
-// AI SETUP
-const ai = alohaAI.getClient();
+// Removed raw ai client
 
 // 1. RAW DATA MOCK (TRTEX B2B Intelligence)
 async function getRawData() {
@@ -41,12 +40,11 @@ async function runVisionary(raw: any, mode: string) {
       Generate 2 market trends for wholesale textiles and an overarching market outlook style.
       Output pure JSON with no markdown: {"verifiedTrends": [{"id": "tx1", "topic": "Trend Name", "confidence": 0.98}], "creativeStyle": "Outlook Style"}
     `;
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: { responseMimeType: "application/json" }
-    });
-    if (res.text) return JSON.parse(res.text);
+    const { text } = await alohaAI.generate(prompt, { 
+      responseMimeType: "application/json",
+      complexity: 'routine'
+    }, 'trtex.feed.runVisionary');
+    if (text) return JSON.parse(text);
   } catch (error) {
     console.warn("Visionary Agent failed, using fallback:", error);
   }

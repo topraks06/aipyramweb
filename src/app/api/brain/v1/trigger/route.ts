@@ -14,8 +14,7 @@ const VALID_API_KEYS = [
   "sk_test_trtex"
 ];
 
-// Fallback LLM Client for 'FAST' mode
-const aiClient = alohaAI.getClient();
+// removed aiClient
 
 export async function POST(req: Request) {
   try {
@@ -76,22 +75,10 @@ export async function POST(req: Request) {
     if (mode === "fast") {
       console.log(`[API Gateway] Fast Execution triggered for ${project}...`);
       
-      const response = await aiClient.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: task,
-        config: {
-          systemInstruction: `${getAgent("ALOHA")?.systemPrompt}\n${domainContext}\n\nHızlı ve doğrudan cevap ver. Swarm (Sürü) toplama.`,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              finalAction: { type: Type.STRING },
-              confidence: { type: Type.NUMBER }
-            },
-            required: ["finalAction"]
-          }
-        }
-      });
+      const jsonResult = await alohaAI.generateJSON(task, {
+        systemInstruction: `${getAgent("ALOHA")?.systemPrompt}\n${domainContext}\n\nHızlı ve doğrudan cevap ver. Swarm (Sürü) toplama.`,
+        complexity: 'routine'
+      }, 'trigger.fastMode');
 
       return NextResponse.json({
         success: true,
@@ -100,7 +87,7 @@ export async function POST(req: Request) {
         data: {
           finalDecision: {
             agent: headAgentId,
-            result: response.text,
+            result: JSON.stringify(jsonResult),
             confidence: 0.95
           }
         }

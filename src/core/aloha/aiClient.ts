@@ -89,14 +89,15 @@ function resetDailyIfNeeded(): void {
   }
 }
 
-function estimateTokens(prompt: string, responseText: string): number {
+function estimateTokens(prompt: string | any[], responseText: string): number {
   // Yaklaşık: 1 token ≈ 4 karakter (Türkçe/İngilizce karışık)
-  const inputTokens = Math.ceil(prompt.length / 4);
+  const promptStr = typeof prompt === 'string' ? prompt : JSON.stringify(prompt);
+  const inputTokens = Math.ceil(promptStr.length / 4);
   const outputTokens = Math.ceil(responseText.length / 4);
   return inputTokens + outputTokens;
 }
 
-function recordTokenUsage(caller: string, prompt: string, responseText: string): void {
+function recordTokenUsage(caller: string, prompt: string | any[], responseText: string): void {
   const tokens = estimateTokens(prompt, responseText);
   _dailyTokensUsed += tokens;
   _dailyCallCount++;
@@ -231,7 +232,7 @@ function getRouterModel(complexity?: 'routine' | 'complex' | 'vision'): string {
  * Metin üretimi — retry + backoff dahil
  */
 async function generateWithRetry(
-  prompt: string,
+  prompt: string | any[],
   options: GenerateOptions = {},
   caller?: string
 ): Promise<AICallResult> {
@@ -327,7 +328,7 @@ export const alohaAI = {
    * Düz metin üretimi
    * @example const result = await alohaAI.generate('Haber yaz', { temperature: 0.7 });
    */
-  async generate(prompt: string, options: GenerateOptions = {}, caller?: string): Promise<string> {
+  async generate(prompt: string | any[], options: GenerateOptions = {}, caller?: string): Promise<string> {
     const result = await generateWithRetry(prompt, options, caller);
     if (result.retries > 0) {
       console.log(`[AI_CLIENT] 📊 Başarılı — ${result.retries} retry sonrası, ${result.durationMs}ms`);
@@ -340,7 +341,7 @@ export const alohaAI = {
    * @example const data = await alohaAI.generateJSON<MyType>('JSON ver');
    */
   async generateJSON<T = any>(
-    prompt: string,
+    prompt: string | any[],
     options: GenerateOptions = {},
     caller?: string
   ): Promise<T> {

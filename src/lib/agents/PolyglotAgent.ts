@@ -1,11 +1,5 @@
 import { alohaAI } from '@/core/aloha/aiClient';
-let aiClient: any = null;
-function getAI(): any {
-  if (!aiClient) {
-    aiClient = alohaAI.getClient();
-  }
-  return aiClient;
-}
+// Removed raw ai client
 
 /**
  * Polyglot Translator Agent
@@ -22,15 +16,12 @@ export async function translateContent(text: string, targetLanguages: string[]) 
       Return the result strictly as a JSON object where keys are language codes (e.g., 'tr', 'en', 'de') and values are the translated strings.
     `;
 
-    const response = await getAI().models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-      }
-    });
+    const { text } = await alohaAI.generate(prompt, { 
+      responseMimeType: 'application/json',
+      complexity: 'routine'
+    }, 'PolyglotAgent.translateContent');
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(text || '{}');
   } catch (error) {
     console.error('[Polyglot Agent] Translation failed:', error);
     throw error;

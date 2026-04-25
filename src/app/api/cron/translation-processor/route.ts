@@ -69,8 +69,7 @@ export async function GET(req: Request) {
 
     console.log(`[TRANSLATION] 🌍 ${queueSnap.size} haber çeviriye alınıyor...`);
 
-    const ai = alohaAI.getClient();
-
+    // removed getClient
     for (const qDoc of queueSnap.docs) {
       const qData = qDoc.data();
       const articleId = qData.articleId || qData.slug || '';
@@ -116,7 +115,7 @@ export async function GET(req: Request) {
         }
 
         // Toplu çeviri — tek Gemini çağrısıyla tüm dilleri çevir
-        const translations = await translateArticle(ai, title, summary, content, missingLocales);
+        const translations = await translateArticle(title, summary, content, missingLocales);
 
         if (translations && Object.keys(translations).length > 0) {
           // Mevcut çevirilerle birleştir
@@ -180,7 +179,6 @@ export async function GET(req: Request) {
  * Tek bir haberi eksik dillere çevir (toplu Gemini çağrısı)
  */
 async function translateArticle(
-  ai: any,
   title: string,
   summary: string,
   content: string,
@@ -192,9 +190,7 @@ async function translateArticle(
 
     const localeList = locales.map(l => `"${l}" (${LOCALE_NAMES[l]})`).join(', ');
 
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Aşağıdaki Türkçe B2B tekstil haberini belirtilen dillere profesyonelce çevir.
+    const promptStr = `Aşağıdaki Türkçe B2B tekstil haberini belirtilen dillere profesyonelce çevir.
 
 BAŞLIK: ${title}
 ÖZET: ${summary}
@@ -216,15 +212,12 @@ JSON döndür:
   "de": { "title": "...", "summary": "...", "content": "..." },
   ...
 }
-SADECE JSON döndür.`,
-      config: { temperature: 0.2 },
-    });
+SADECE JSON döndür.`;
 
-    const text = result?.text || '';
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
-
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = await alohaAI.generateJSON(promptStr, {
+      temperature: 0.2,
+      complexity: 'routine'
+    }, 'translation-processor.translateArticle');
 
     // Doğrula: her locale için title olmalı
     const validated: Record<string, { title: string; summary: string; content: string }> = {};

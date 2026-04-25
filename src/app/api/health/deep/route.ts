@@ -14,13 +14,8 @@ export async function GET() {
     checks.gemini = { status: "❌ DEAD", detail: "GEMINI_API_KEY eksik veya dummy. aistudio.google.com/apikey adresinden al." };
   } else {
     try {
-      const { GoogleGenAI } = await import("@google/genai");
-      const ai = alohaAI.getClient();
-      const res = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: "Sadece 'OK' yaz.",
-      });
-      checks.gemini = { status: "✅ ALIVE", detail: `Yanıt: ${res.text?.substring(0, 30)}` };
+      const text = await alohaAI.generate("Sadece 'OK' yaz.", { complexity: 'routine' }, 'health.deep');
+      checks.gemini = { status: "✅ ALIVE", detail: `Yanıt: ${text?.substring(0, 30)}` };
     } catch (e: any) {
       checks.gemini = { status: "❌ DEAD", detail: `Key var ama çağrı çöktü: ${e.message?.substring(0, 100)}` };
     }

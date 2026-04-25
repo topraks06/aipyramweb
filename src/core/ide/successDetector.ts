@@ -1,8 +1,7 @@
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export interface IDEBuildResult {
   success: boolean;
   exitCode: number;
@@ -34,15 +33,12 @@ Görev: ${task}
 
 Bu görev başarıyla tamamlandı mı? Sadece SUCCESS veya FAIL yaz.`;
 
-    const res = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: "Sen acımasız bir Başhakem (AI Judge). Eğer kod istenen görevi harfiyen yapmıyorsa FAIL yaz.",
-      }
-    });
+    const { text } = await alohaAI.generate(prompt, { 
+      systemInstruction: "Sen acımasız bir Başhakem (AI Judge). Eğer kod istenen görevi harfiyen yapmıyorsa FAIL yaz.",
+      complexity: 'routine'
+    }, 'successDetector.detectSuccess');
 
-    const verdict = (res.text || "").toUpperCase();
+    const verdict = (text || "").toUpperCase();
     console.log(`[⚖️ AI JUDGE] Karar: ${verdict.includes("SUCCESS") ? "SUCCESS" : "FAIL"}`);
     return verdict.includes("SUCCESS");
   } catch (err) {

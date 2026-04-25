@@ -4,8 +4,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import fs from 'fs';
 import path from 'path';
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export async function POST(request: Request) {
   try {
     const { query } = await request.json();
@@ -39,12 +38,9 @@ DÖNÜŞ FORMATI (SADECE JSON - MARKDOWN YOK):
 `;
 
     if (process.env.GEMINI_API_KEY) {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt
-      });
+      const { text } = await alohaAI.generate(prompt, { complexity: 'routine' }, 'concierge.route');
 
-      let jsonStr = response.text || "{}";
+      let jsonStr = text || "{}";
       jsonStr = jsonStr.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
       
       const action = JSON.parse(jsonStr);

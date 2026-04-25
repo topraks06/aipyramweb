@@ -1,11 +1,5 @@
 import { alohaAI } from '@/core/aloha/aiClient';
-let aiClient: any = null;
-function getAI(): any {
-  if (!aiClient) {
-    aiClient = alohaAI.getClient();
-  }
-  return aiClient;
-}
+// Removed raw ai client
 
 /**
  * Matchmaker Agent
@@ -28,15 +22,12 @@ export async function matchSupplierWithRFQ(rfqDetails: any, suppliers: any[]) {
       Return a JSON array of objects with keys: supplierId, matchScore (0-100), and reason.
     `;
 
-    const response = await getAI().models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-      }
-    });
+    const { text } = await alohaAI.generate(prompt, { 
+      responseMimeType: 'application/json',
+      complexity: 'routine'
+    }, 'MatchmakerAgent.matchSupplierWithRFQ');
 
-    return JSON.parse(response.text || '[]');
+    return JSON.parse(text || '[]');
   } catch (error) {
     console.error('[Matchmaker Agent] Matching failed:', error);
     throw error;

@@ -6,8 +6,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 /**
  * POST /api/v1/master/trtex/write-topic
  * 
@@ -243,23 +242,14 @@ JSON olarak dön:
     }
   }
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: contents,
-    config: {
-      responseMimeType: 'application/json',
-      temperature: 0.7,
-    }
-  });
-
-  const text = response.text || '';
   try {
-    return JSON.parse(text);
-  } catch {
-    // JSON parse hatası — text'ten çıkarmayı dene
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) return JSON.parse(jsonMatch[0]);
-    throw new Error('Gemini JSON döndüremedi');
+    const jsonResult = await alohaAI.generateJSON(contents, {
+      temperature: 0.7,
+      complexity: 'routine'
+    }, 'trtex.write-topic.generateArticle');
+    return jsonResult;
+  } catch (err: any) {
+    throw new Error('Gemini JSON döndüremedi: ' + err.message);
   }
 }
 

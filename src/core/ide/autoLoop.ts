@@ -3,8 +3,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { CodeRunnerAgent } from "../agents/codeRunnerAgent";
 import { detectSuccess } from "./successDetector";
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 export async function autoLoop(task: string, context: string, projectPath?: string) {
   let attempt = 0;
   let lastError: any = null;
@@ -64,13 +63,10 @@ Sadece düzeltilmiş net TypeScript/React kodunu ver, açıklama yazma.
 `;
 
     try {
-        const res = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt
-        });
+        const { text } = await alohaAI.generate(prompt, { complexity: 'routine' }, 'autoLoop.generateCodeNative');
         
         // Strip markdown backticks
-        let output = res.text || "";
+        let output = text || "";
         output = output.replace(/^```(typescript|tsx|ts|javascript|js)?\n/, "").replace(/```$/, "").trim();
         return output;
     } catch (e: any) {

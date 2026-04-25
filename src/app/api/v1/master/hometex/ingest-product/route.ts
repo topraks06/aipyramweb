@@ -6,8 +6,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
-const ai = alohaAI.getClient();
-
+// Removed raw ai client
 /**
  * POST /api/v1/master/hometex/ingest-product
  * 
@@ -90,23 +89,15 @@ JSON FORMATINDA YANIT VER:
   }
 }`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [prompt, { inlineData }],
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.2,
-      }
-    });
-
-    const text = response.text || '';
     let parsedProduct;
     try {
-      parsedProduct = JSON.parse(text).product;
-    } catch {
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) parsedProduct = JSON.parse(jsonMatch[0]).product;
-      else throw new Error('Gemini JSON formatında yanıt veremedi');
+      const jsonResult = await alohaAI.generateJSON([prompt, { inlineData }], {
+        temperature: 0.2,
+        complexity: 'routine'
+      }, 'hometex.ingest-product');
+      parsedProduct = jsonResult.product || jsonResult;
+    } catch (err: any) {
+      throw new Error('Gemini JSON formatında yanıt veremedi: ' + err.message);
     }
 
     if (!parsedProduct) throw new Error('Ürün analizi başarısız');
