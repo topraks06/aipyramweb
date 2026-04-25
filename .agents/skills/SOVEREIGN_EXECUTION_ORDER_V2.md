@@ -103,12 +103,12 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 - **COMMIT:** `git commit -m "audit(sprint-5): perde b2b siparis dogrulama"`
 
 ### Sprint 6: ERP (Muhasebe + Stok)
-- [ ] `src/components/node-perde/Accounting.tsx` → `perde_orders` aggregate hesabı doğru mu?
-- [ ] `src/components/node-perde/Inventory.tsx` → `perde_products` stok verisi nereden geliyor?
-- [ ] `src/components/node-perde/MyProjects.tsx` → `perde_renders` geçmişi çalışıyor mu?
-- **KANIT:** `___`
-- **BUILD:** `pnpm run build` → `___`
-- **COMMIT:** `git commit -m "audit(sprint-6): perde ERP doğrulama"`
+- [x] `src/components/node-perde/Accounting.tsx` → `perde_orders` aggregate hesabı doğru mu?
+- [x] `src/components/node-perde/Inventory.tsx` → `perde_products` stok verisi nereden geliyor?
+- [x] `src/components/node-perde/MyProjects.tsx` → `perde_renders` geçmişi çalışıyor mu?
+- **KANIT:** `Accounting.tsx` lokal satışlar ile ihracat verisini doğru şekilde hesaplayarak listeliyor. `Inventory.tsx` `onSnapshot` ile stok verilerini alıp eşikli kritik uyarı mantığını yürütüyor. `MyProjects.tsx` `image_library`'den o node'a ait ve `ownerId` filtresiyle doğru çekiyor.
+- **BUILD:** `pnpm run build` → Başarılı (Exit code: 0)
+- **COMMIT:** `git commit -m "audit(sprint-6): perde erp muhasebe stok dogrulama"`
 
 ### Sprint 7: Ödeme (Stripe)
 - [ ] `src/components/node-perde/Pricing.tsx` → "Şimdi Al" butonu `/api/stripe/checkout` tetikliyor mu?
