@@ -33,9 +33,10 @@ Perde kumaşları, döşemelik, yatak/banyo tekstili, korniş/rustik, perde rayl
 | Sıra | Dosya | İçerik | Kritiklik |
 |------|-------|--------|-----------|
 | 1 | `AGENTS.md` (bu dosya) | Anayasa, kurallar, proje kimlik kartı | 🔴 ZORUNLU |
-| 2 | `.agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md` | Tüm vizyonun anahtar teslim mimari belgesi (5+7 organ, ürün kapsamı, akış şeması) | 🔴 ZORUNLU |
-| 3 | `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` | 10 fazlı görev planı, mutlak yasalar, acil durum protokolü | 🔴 ZORUNLU |
-| 4 | `.agents/skills/SOVEREIGN_AUTONOMOUS_OPERATIONS_PLAN.md` | Otonom operasyonlar, Img2Img motor kuralları, ALOHA yetki matrisi | 🔴 ZORUNLU |
+| 2 | `.agents/skills/SOVEREIGN_EXECUTION_ORDER_V2.md` | **AKTİF GÖREV EMRİ** — 24 sprint, adım adım yürütme planı (Claude Opus yazdı, Hakan onayladı) | 🔴🔴 EN ÖNCELİKLİ |
+| 3 | `.agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md` | Tüm vizyonun anahtar teslim mimari belgesi (5+7 organ, ürün kapsamı, akış şeması) | 🔴 ZORUNLU |
+| 4 | `.agents/skills/GEMINI_SOVEREIGN_MISSION.md` | 10 fazlı görev planı, mutlak yasalar, acil durum protokolü | 🔴 ZORUNLU |
+| 5 | `.agents/skills/SOVEREIGN_AUTONOMOUS_OPERATIONS_PLAN.md` | Otonom operasyonlar, Img2Img motor kuralları, ALOHA yetki matrisi | 🔴 ZORUNLU |
 | 5 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART1.md` | Mevcut durum röntgeni + FAZ 3-4 | 🟡 Gerekli |
 | 6 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART2.md` | FAZ 5-6-7 | 🟡 Gerekli |
 | 7 | `.agents/skills/SOVEREIGN_MASTER_PLAN_PART3.md` | FAZ 8-9-10 | 🟡 Gerekli |
