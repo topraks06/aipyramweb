@@ -16,7 +16,7 @@ const DICT: Record<string, any> = {
   tr: {
     headerTitle: "SANAL İÇ MİMAR",
     headerSubtitle: "YAPAY ZEKA LİDERİ",
-    welcome: "Merhaba! Hangi meslek grubundayız? (Perde, Mobilya, Aydınlatma, İç Mimar, Konfeksiyon, Güzellik Merkezi vb.) Mesleğini söyle, B2B panelindeki tüm 'iş yapılarını' ve 'durumları' senin sektörüne göre baştan yaratayım!",
+    welcome: "Tasarım Stüdyosuna hoş geldiniz. Kumaşlarınızı ataş (📎) simgesinden yükleyebilir, mevcut tasarımı yeniden şekillendirmek (cila) için bana komut verebilirsiniz.",
     placeholder: "Örn: Ürün Ekle...",
     processing: "Sistemi inceliyorum...",
     startRenderMsg: "Kumaşlarınızı/desenlerinizi sisteme aldım. Tasarım motorunu hemen çalıştırıyorum...",
@@ -100,6 +100,7 @@ export default function PerdeAIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAttention, setIsAttention] = useState(false);
+  const [showAttachmentDrawer, setShowAttachmentDrawer] = useState(false);
   
   // Custom Drag & Resize State (Bulletproof tracking)
   const [bounds, setBounds] = useState(() => {
@@ -257,7 +258,7 @@ export default function PerdeAIAssistant() {
         setMessages(prev => [...prev, {
             id: 'render-cta-' + Date.now(),
             role: 'agent',
-            content: `Harika bir tasarım elde ettin! Odaya özel teklif (quote) üretmemi veya üretimi başlatmamı ister misin? "Teklif hazırla" demen yeterli.`
+            content: `Tasarım başarıyla tamamlandı. Yeniden şekillendirmek (cila) için komut verebilirsiniz.`
         }]);
         setTimeout(() => setIsAttention(false), 3000);
     };
@@ -444,16 +445,12 @@ export default function PerdeAIAssistant() {
       setIsTyping(false);
       return;
     }
-    if (lower.includes('sipariş') || lower.includes('ekle') || lower.includes('hesapla') || lower.includes('sepet')) {
-      window.dispatchEvent(new CustomEvent('open_order_slide', { detail: { aiSuggestedItems: [] } }));
-      setMessages(prev => [...prev, { id: 'order-' + Date.now(), role: 'agent', content: 'Sipariş formu açılıyor...' }]);
-      setIsTyping(false);
-      return;
-    }
 
-    // ── TASARIM MOTORU TETİKLEME (render-pro pipeline) ──
-    const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
-    if (isRenderIntent && currentAttachments.length > 0) {
+
+    const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula') || lower.includes('cila') || lower.includes('yap');
+    const isAnalysisIntent = lower.includes('analiz') || lower.includes('incele');
+    
+    if (isRenderIntent || (currentAttachments.length > 0 && !isAnalysisIntent)) {
       // Ürün ekleri var + render komutu → RoomVisualizer'a otonom render sinyali gönder
       setInputMsg('');
       setAttachments([]);
@@ -1112,43 +1109,73 @@ export default function PerdeAIAssistant() {
             </div>
 
             {/* Input Area */}
-            <div className="p-3 bg-black border-t border-white/10 shrink-0">
-               {attachments.length > 0 && (
-                  <div className="flex flex-col gap-2 overflow-y-auto max-h-40 pb-2 px-1 custom-scrollbar">
-                     {attachments.map(att => (
-                        <div key={att.id} className="flex flex-col bg-zinc-900 border border-white/10 rounded overflow-hidden relative shrink-0">
-                           <div className="flex items-center gap-2">
-                               <img src={att.base64} alt="preview" className="w-10 h-10 object-cover shrink-0" />
-                               <input 
-                                  type="text" 
-                                  value={att.label || ''} 
-                                  onChange={(e) => {
-                                     const newLabel = e.target.value;
-                                     setAttachments(prev => prev.map(p => p.id === att.id ? {...p, label: newLabel} : p));
-                                     window.dispatchEvent(new CustomEvent('agent_attachments_sync', { detail: attachments.map(p => p.id === att.id ? {...p, label: newLabel} : p) }));
-                                  }}
-                                  placeholder="Örn: Ürün Ekle..." 
-                                  className="flex-1 bg-transparent text-xs text-white p-1 outline-none placeholder:text-zinc-600"
-                               />
-                               <button 
-                                  onClick={() => {
-                                      setAttachments(prev => prev.filter(p => p.id !== att.id));
-                                  }}
-                                  className="p-2 text-zinc-500 hover:text-red-400 transition-colors"
-                               >
-                                  <X className="w-4 h-4" />
-                               </button>
-                           </div>
-                        </div>
-                     ))}
-                  </div>
-               )}
+            <div className="p-3 bg-black border-t border-white/10 shrink-0 relative">
+               
+               {/* Hidden Memory Drawer */}
+               <AnimatePresence>
+                 {showAttachmentDrawer && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }} 
+                      animate={{ opacity: 1, y: 0 }} 
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute bottom-full left-0 right-0 mb-2 p-3 bg-zinc-900/95 backdrop-blur-xl border border-zinc-700/50 rounded-xl shadow-2xl z-50 mx-3"
+                    >
+                       <div className="flex justify-between items-center mb-2">
+                           <span className="text-xs font-semibold text-emerald-400 tracking-widest uppercase">Aktif Materyaller</span>
+                           <button onClick={() => setShowAttachmentDrawer(false)} className="text-zinc-500 hover:text-white p-1 rounded-full hover:bg-white/10"><X className="w-4 h-4" /></button>
+                       </div>
+                       
+                       <div className="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                         {attachments.length === 0 ? (
+                            <div className="text-xs text-zinc-500 text-center py-6 font-medium">Hafızada materyal yok.</div>
+                         ) : (
+                            attachments.map(att => (
+                              <div key={att.id} className="flex flex-col bg-black/40 border border-white/5 rounded overflow-hidden relative shrink-0 transition-colors hover:border-white/10">
+                                 <div className="flex items-center gap-2">
+                                     <img src={att.base64} alt="preview" className="w-10 h-10 object-cover shrink-0" />
+                                     <input 
+                                        type="text" 
+                                        value={att.label || ''} 
+                                        onChange={(e) => {
+                                           const newLabel = e.target.value;
+                                           setAttachments(prev => prev.map(p => p.id === att.id ? {...p, label: newLabel} : p));
+                                           window.dispatchEvent(new CustomEvent('agent_attachments_sync', { detail: attachments.map(p => p.id === att.id ? {...p, label: newLabel} : p) }));
+                                        }}
+                                        placeholder="Örn: Tül Perde..." 
+                                        className="flex-1 bg-transparent text-xs text-white p-2 outline-none placeholder:text-zinc-600 font-medium"
+                                     />
+                                     <button 
+                                        onClick={() => {
+                                            setAttachments(prev => prev.filter(p => p.id !== att.id));
+                                        }}
+                                        className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors h-full"
+                                     >
+                                        <X className="w-4 h-4" />
+                                     </button>
+                                 </div>
+                              </div>
+                            ))
+                         )}
+                       </div>
+                       <button 
+                         onClick={() => attachmentInputRef.current?.click()}
+                         className="w-full mt-3 py-2.5 border border-dashed border-white/20 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg text-xs font-semibold tracking-wider flex items-center justify-center gap-2 transition-colors"
+                       >
+                         <Paperclip className="w-3 h-3" /> YENİ MATERYAL EKLE
+                       </button>
+                    </motion.div>
+                 )}
+               </AnimatePresence>
+
                <div className="flex gap-2 items-center">
                    <button 
-                     onClick={() => attachmentInputRef.current?.click()}
-                     className={`p-3 rounded-xl transition-all shrink-0 ${isAttention ? 'bg-blue-600 text-white animate-pulse shadow-[0_0_15px_rgba(37,99,235,0.6)] ring-2 ring-blue-400' : 'text-zinc-500 hover:text-white bg-zinc-900'}`}
+                     onClick={() => setShowAttachmentDrawer(!showAttachmentDrawer)}
+                     className={`p-3 rounded-xl transition-all shrink-0 relative ${attachments.length > 0 ? 'text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30' : 'text-zinc-500 hover:text-white bg-zinc-900 border border-transparent'}`}
                    >
                      <Paperclip className="w-4 h-4" />
+                     {attachments.length > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 text-black text-[10px] font-bold rounded-full flex items-center justify-center border border-black shadow-sm">{attachments.length}</span>
+                     )}
                    </button>
                    <input type="file" multiple ref={attachmentInputRef} className="hidden" accept="image/*" onChange={handleAttachment} />
                    <div className="flex-1 relative flex items-center">
@@ -1172,16 +1199,9 @@ export default function PerdeAIAssistant() {
                    <button 
                      onClick={handleSend}
                      disabled={( !inputMsg.trim() && attachments.length === 0 ) || isTyping}
-                     className={`p-3 text-white rounded-xl transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center gap-1 ${!inputMsg.trim() && attachments.length > 0 ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 shadow-[0_0_15px_rgba(168,85,247,0.4)] px-4' : 'bg-blue-600 hover:bg-blue-500 w-10'}`}
+                     className="bg-blue-600 hover:bg-blue-500 p-3 text-white rounded-xl transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center w-10"
                    >
-                     {(!inputMsg.trim() && attachments.length > 0) ? (
-                        <>
-                           <Sparkles className="w-4 h-4" />
-                           <span className="text-xs font-bold tracking-wider">TASARLA</span>
-                        </>
-                     ) : (
                         <Send className="w-4 h-4 ml-1" />
-                     )}
                    </button>
                </div>
             </div>

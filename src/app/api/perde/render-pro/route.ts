@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       studioSettings,    // { lighting, lens, composition, decorationMode, renderQuality, timeOfDay }
       variationCount = 1,// 1 | 2 | 4 — model seçimini belirler
       aspectRatio: requestedAR, // '16:9' | '9:16' | '1:1' | null
+      userPrompt,        // Chatbot'tan gelen özel tasarım komutu
       isUpscale = false,
       SovereignNodeId = 'perde'
     } = body;
@@ -200,8 +201,9 @@ TEKRAR: Bu kumaşın DESENİ, RENGİ ve DOKUSU BİREBİR kullanılacak. Kendi ta
         },
       });
       parts.push({
-        text: `[FORM REFERANSI / BEYAZ MODEL]: Bu görsel perdenin fiziksel formunu, 
-kesimini ve siluetini gösteriyor. Ürünün şeklini buna benzet.`,
+        text: `[FORM REFERANSI / BEYAZ MODEL - KESİN KURAL]: Bu görsel bir ŞABLONDUR (GEOMETRİ). 
+Kendi kafandan şekil veya pile uydurma. Bu referans görseldeki perdenin şeklini, pilelerini, dökümünü ve modelini %100 BİREBİR KOPYALA.
+Sadece referansın dokusunu silip, kullanıcının verdiği kumaş dokularını bu kalıbın üstüne giydireceksin.`,
       });
       imageCount++;
     }
@@ -240,6 +242,9 @@ YASAK: Fotoğrafı YATAY VEYA DİKEY OLARAK ASLA TERS ÇEVİRME (DO NOT MIRROR/F
 Mekanın orijinal en-boy oranını koru — fotoğrafı genişletme veya kırpma.` : ""}
 
 ${spacePrompt && !spaceImage ? `Mekan Tasviri: ${spacePrompt}. Bu mekanı sıfırdan oluştur ve perdeleri ekle.` : ""}
+
+${userPrompt ? `[KULLANICI ÖZEL TALİMATI - ÇOK ÖNEMLİ]: "${userPrompt}"
+Bu talimatı kesinlikle dinle! Kullanıcı belirli bir form, şekil, pile veya döküm istiyorsa mutlaka bu talimata uygun davran.` : ""}
 
 KRİTİK KURALLAR (İHLAL EDİLEMEZ):
 1. OTONOM MASKELEME (SEMANTIC INPAINTING): Fotoğraftaki pencereleri Otonom Vision Ajanı gibi otomatik tespit et. ${preFlightData?.window_bbox ? `Ön-Tespit Pencere Bounding Box Koordinatları: [${preFlightData.window_bbox.join(', ')}]. ` : ''}SADECE pencere alanını değiştirip perdeyi oraya as. Odanın geri kalanına (duvarlar, koltuklar, halılar, zemin, aydınlatma, nesneler) KESİNLİKLE DOKUNMA. %100 orijinal kalsın.

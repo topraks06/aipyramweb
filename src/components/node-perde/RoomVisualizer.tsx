@@ -71,6 +71,12 @@ export default function RoomVisualizer() {
   // Stil Referansı / Model (Opsiyonel)
   const [referenceModel, setReferenceModel] = useState<any>(null);
   
+  // 4K Zoom & Pan
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPos, setPanPos] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panRef = useRef({ startX: 0, startY: 0 });
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const { SovereignNodeId } = usePerdeAuth();
@@ -82,8 +88,9 @@ export default function RoomVisualizer() {
     else setGreeting('İyi Akşamlar');
 
     const handleStartRender = (e: any) => {
-       const img = e.detail?.attachments?.[0]?.base64 || e.detail?.base64;
-       triggerAutonomousRender(img);
+       // Only trigger with existing staged image and user prompt.
+       const prompt = e.detail?.prompt;
+       triggerAutonomousRender(undefined, false, prompt);
     };
     const handleSync = (e: any) => {
        if (e.detail && Array.isArray(e.detail)) {
@@ -94,7 +101,7 @@ export default function RoomVisualizer() {
       if (e.detail?.prompt) {
         const currentImage = resultImage || activeOriginalUrl || stagedImage?.base64;
         if (currentImage) {
-          triggerAutonomousRender(currentImage);
+          triggerAutonomousRender(currentImage, false, e.detail.prompt);
         }
       }
     };
@@ -251,6 +258,8 @@ export default function RoomVisualizer() {
        setResultImage(null);
        setActiveOriginalUrl(null);
        setReferenceModel(null);
+       setZoomLevel(1);
+       setPanPos({ x: 0, y: 0 });
     };
     reader.onerror = () => {
        toast.error("Dosya yüklenirken bir sorun oluştu.");
@@ -313,7 +322,7 @@ export default function RoomVisualizer() {
     toast.success(`${proj.customerName} projesi yüklendi. Kaldığınız yerden devam edebilirsiniz.`, { icon: '🔄' });
   };
 
-  const triggerAutonomousRender = async (sourceImageBase64?: string, isUpscale: boolean = false) => {
+  const triggerAutonomousRender = async (sourceImageBase64?: string, isUpscale: boolean = false, promptOverride?: string) => {
      const targetImage = sourceImageBase64 || stagedImage?.base64;
      if (!targetImage) return;
      
@@ -342,6 +351,7 @@ export default function RoomVisualizer() {
            variationCount: 1, // Her zaman 1 (4K)
            isUpscale: true,
            aspectRatio: calculatedAR,   // Mekanın orijinal oranını koru (hesaplanan: 16:9, 4:3 vs)
+           userPrompt: promptOverride,
            studioSettings: {
              decorationMode: canvasAttachments.length > 0 ? 'preserve' : 'auto-decor',
              semanticMasking: true // Phase 1: Otonom Pencere Tespiti Aktif
@@ -393,9 +403,9 @@ export default function RoomVisualizer() {
          setRenderHistory(newHistory);
          setHistoryIndex(newHistory.length - 1);
           setStagedImage(null);
-         window.dispatchEvent(new CustomEvent('agent_message', {
-           detail: { message: `✅ Tasarım tamamlandı! Oda tipi: ${data.analysis?.roomType || 'bilinmiyor'}. Önerilen kumaşlar: ${data.suggestions?.map((s: any) => s.name).join(', ') || 'yok'}` }
-         }));
+          setZoomLevel(1);
+          setPanPos({ x: 0, y: 0 });
+
          window.dispatchEvent(new CustomEvent('RENDER_COMPLETE', {
            detail: { url: data.renderUrl }
          }));
@@ -774,42 +784,68 @@ export default function RoomVisualizer() {
             <div 
               ref={containerRef}
               className="relative w-full h-full max-h-full bg-black md:shadow-2xl overflow-hidden md:rounded-2xl border border-white/10"
+              onWheel={(e) => {
+                 const delta = e.deltaY * -0.005;
+                 const newZoom = Math.min(Math.max(1, zoomLevel + delta), 4);
+                 setZoomLevel(newZoom);
+                 if (newZoom === 1) setPanPos({ x: 0, y: 0 });
+              }}
             >
-              {/* After Image (Generated) */}
-              <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950" alt="Generated" unoptimized />
               
-              {/* Before Image (Original) masked by clipPath */}
-              {activeOriginalUrl && (
-                <div 
-                  className="absolute inset-0 w-full h-full overflow-hidden"
-                  style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
-                </div>
-              )}
-              
-              {/* Slider Handle */}
-              {activeOriginalUrl && (
-                <div 
-                  className="absolute top-0 bottom-0 w-[2px] bg-white cursor-ew-resize z-20 flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.5)]"
-                  style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
-                  onPointerDown={(e) => { e.preventDefault(); setIsDraggingSlider(true); }}
-                >
-                  <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full shadow-2xl flex items-center justify-center border border-white/50">
-                    <Expand className="h-4 w-4 text-white" />
-                  </div>
-                </div>
-              )}
+              {/* Zoom Container */}
+              <div 
+                 className={`absolute inset-0 w-full h-full transition-transform ${isPanning ? 'duration-0 cursor-grabbing' : 'duration-100 cursor-grab'}`}
+                 style={{ transform: `scale(${zoomLevel}) translate(${panPos.x / zoomLevel}px, ${panPos.y / zoomLevel}px)` }}
+                 onPointerDown={(e) => {
+                    if (zoomLevel > 1) {
+                       setIsPanning(true);
+                       panRef.current.startX = e.clientX - panPos.x;
+                       panRef.current.startY = e.clientY - panPos.y;
+                    }
+                 }}
+                 onPointerMove={(e) => {
+                    if (isPanning && zoomLevel > 1) {
+                       setPanPos({ x: e.clientX - panRef.current.startX, y: e.clientY - panRef.current.startY });
+                    }
+                 }}
+                 onPointerUp={() => setIsPanning(false)}
+                 onPointerLeave={() => setIsPanning(false)}
+              >
+                 {/* After Image (Generated) */}
+                 <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950 pointer-events-none" alt="Generated" unoptimized />
+                 
+                 {/* Before Image (Original) masked by clipPath */}
+                 {activeOriginalUrl && (
+                   <div 
+                     className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
+                     style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+                   >
+                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                     <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
+                   </div>
+                 )}
+                 
+                 {/* Slider Handle */}
+                 {activeOriginalUrl && (
+                   <div 
+                     className="absolute top-0 bottom-0 w-[2px] bg-white cursor-ew-resize z-20 flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                     style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+                     onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingSlider(true); }}
+                   >
+                     <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full shadow-2xl flex items-center justify-center border border-white/50 pointer-events-none">
+                       <Expand className="h-4 w-4 text-white" />
+                     </div>
+                   </div>
+                 )}
+              </div>
 
-              {/* B2B CRM Müşteriye Kaydet Butonu (Faz 4) */}
               <div className="absolute bottom-6 left-6 z-30">
                   <button 
                       onClick={() => setIsSaveModalOpen(true)}
-                      className="bg-emerald-600/90 hover:bg-emerald-500 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-medium tracking-wide flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all"
+                      className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-emerald-500/50 backdrop-blur-xl text-zinc-300 hover:text-emerald-400 px-6 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase flex items-center gap-2 shadow-2xl transition-all"
                   >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                      MÜŞTERİYE KAYDET (ARŞİVLE)
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                      PROJEYİ KAYDET
                   </button>
               </div>
 
@@ -824,12 +860,6 @@ export default function RoomVisualizer() {
                 </div>
               )}
 
-              {/* Elegant B2B Watermark */}
-              <div className="absolute bottom-6 right-6 z-20 pointer-events-none opacity-40 flex flex-col items-end">
-                  <span className="text-2xl font-black text-white tracking-[0.3em] uppercase font-serif mix-blend-overlay">PERDE.AI</span>
-                  <span className="text-[8px] font-mono text-white/70 tracking-widest uppercase">Sovereign Engine</span>
-              </div>
-              
             </div>
           </div>
         )}
