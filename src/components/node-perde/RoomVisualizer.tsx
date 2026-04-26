@@ -590,7 +590,7 @@ export default function RoomVisualizer() {
               className="relative w-full h-full max-h-[80vh] bg-black shadow-2xl overflow-hidden rounded-md border border-white/10"
             >
               {/* After Image (Generated) */}
-              <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950" alt="Generated" unoptimized />
+              <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-cover object-center bg-zinc-950" alt="Generated" unoptimized />
               
               {/* Before Image (Original) masked by clipPath */}
               {activeOriginalUrl && (
@@ -599,7 +599,7 @@ export default function RoomVisualizer() {
                   style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
+                  <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-cover object-center border-r border-white/30" alt="Original" />
                 </div>
               )}
               
