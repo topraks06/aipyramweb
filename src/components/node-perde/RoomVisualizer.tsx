@@ -271,10 +271,12 @@ export default function RoomVisualizer() {
            const variationUrls = [data.renderUrl];
            for (let i = 1; i < variationCount; i++) {
              try {
-               const vRes = await fetch('/api/render', {
+               // v4.1 FIX: Use the exact same render-pro endpoint and payload for variations!
+               // Do not fallback to the legacy /api/render which lacks products & anti-hallucination.
+               const vRes = await fetch(endpoint, {
                  method: 'POST',
                  headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({ imageBase64: targetImage, SovereignNodeId })
+                 body: payloadStr
                });
                const vData = await vRes.json();
                if (vData.renderUrl) variationUrls.push(vData.renderUrl);
