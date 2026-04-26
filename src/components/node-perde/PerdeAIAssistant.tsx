@@ -449,6 +449,97 @@ export default function PerdeAIAssistant() {
     }
 
 
+    // ── STİL MAP: Tasarım stilleri ve prompt karşılıkları ──
+    const STYLE_MAP: Record<string, string> = {
+      'japandi': 'Japandi style: natural light wood, beige-white tones, minimal low-profile furniture, woven textures, diffused natural light',
+      'minimalist': 'Minimalist: clean lines, monochrome neutral palette, hidden storage, less is more, geometric shapes',
+      'modern': 'Modern contemporary: sleek surfaces, neutral palette with bold accent colors, statement pendant lighting',
+      'klasik': 'Classic elegant: ornate carved details, rich velvet and silk fabrics, warm dark wood, crystal chandelier',
+      'rustik': 'Rustic: exposed wood beams, natural stone walls, vintage distressed furniture, warm ambient lighting',
+      'bohem': 'Bohemian: layered colorful textiles, macramé wall hangings, indoor plants, eclectic furniture mix',
+      'endüstriyel': 'Industrial loft: exposed brick, metal pipe fixtures, raw concrete, Edison bulb lighting',
+      'skandinav': 'Scandinavian: white walls, light ash wood, cozy hygge textiles, functional minimal furniture',
+      'art deco': 'Art Deco: geometric patterns, gold and brass accents, velvet upholstery, jewel tones',
+      'country': 'Country cottage: floral prints, painted wood furniture, checkered textiles, warm pastel colors',
+      'loft': 'Urban loft: open high-ceiling, industrial elements, modern art, concrete floors, designer furniture',
+      'tropikal': 'Tropical: rattan and bamboo furniture, palm leaf patterns, bright green plants, airy white curtains',
+      'osmanlı': 'Ottoman Turkish: intricate tile patterns, kilim rugs, brass lanterns, carved wood, burgundy and gold',
+      'retro': 'Retro 70s: warm mustard and orange tones, curved furniture, shag rugs, statement wallpaper',
+    };
+    const STYLE_KEYS = Object.keys(STYLE_MAP);
+    const matchedStyle = STYLE_KEYS.find(s => lower.includes(s));
+
+    // ── 1.1 STİL DEĞİŞTİRME: "Bu odayı japandi yap" ──
+    const isStyleIntent = !!(matchedStyle || ((lower.includes('tarz') || lower.includes('stil') || lower.includes('style')) && hasCompletedRender.current));
+    if (isStyleIntent && hasCompletedRender.current && currentAttachments.length === 0) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const stylePrompt = matchedStyle 
+        ? `Completely redesign this room in ${STYLE_MAP[matchedStyle]}. Keep the room geometry and windows exactly the same.`
+        : userMsg;
+      const styleName = matchedStyle ? matchedStyle.charAt(0).toUpperCase() + matchedStyle.slice(1) : 'Custom';
+      setInputMsg('');
+      setMessages(prev => [...prev,
+        { id: 'u-' + uid, role: 'user', content: userMsg },
+        { id: 'style-' + uid, role: 'agent', content: `🎨 **${styleName}** stili uygulanıyor... Mekan geometrisi korunarak tüm dekorasyon yeniden tasarlanıyor.` }
+      ]);
+      window.dispatchEvent(new CustomEvent('request_render_edit', { detail: { editPrompt: stylePrompt } }));
+      setIsTyping(false);
+      return;
+    }
+
+    // ── 1.2 MOBİLYA/OBJE SWAP: "Koltuğu yeşil kadife yap" ──
+    const FURNITURE_WORDS = ['koltuk', 'kanepe', 'masa', 'sandalye', 'yatak', 'dolap', 'raf', 'avize', 'lamba', 'halı', 'paspas', 'yastık', 'vazo', 'ayna', 'tablo', 'sehpa', 'konsol', 'kitaplık', 'puf', 'berjer', 'tabure', 'komodin', 'gardırop', 'aplik', 'spot', 'abajur'];
+    const matchedFurniture = FURNITURE_WORDS.find(f => lower.includes(f));
+    if (matchedFurniture && hasCompletedRender.current && currentAttachments.length === 0) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      setInputMsg('');
+      setMessages(prev => [...prev,
+        { id: 'u-' + uid, role: 'user', content: userMsg },
+        { id: 'swap-' + uid, role: 'agent', content: `🔄 **${matchedFurniture.charAt(0).toUpperCase() + matchedFurniture.slice(1)}** değiştiriliyor...` }
+      ]);
+      window.dispatchEvent(new CustomEvent('request_render_edit', { detail: { editPrompt: userMsg } }));
+      setIsTyping(false);
+      return;
+    }
+
+    // ── 1.3 RENK PALETİ ÖNERİSİ: "Bu oda için renk öner" ──
+    const isColorAdvice = lower.includes('renk öner') || lower.includes('palet') || lower.includes('renk kombinasyonu') || lower.includes('hangi renk') || lower.includes('ne renk') || lower.includes('renk uyumu');
+    if (isColorAdvice) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      setInputMsg('');
+      setMessages(prev => [...prev, { id: 'u-' + uid, role: 'user', content: userMsg }]);
+      setIsTyping(true);
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `Kullanıcı iç mekan tasarımı için renk paleti önerisi istiyor: "${userMsg}". 60-30-10 kuralına göre 3 farklı renk paleti öner. Her palet için: ana renk, ikincil renk, aksan renk, hangi yüzeylere uygulanacağı. Kısa ve net cevap ver.`, history: [], sessionId: sessionId || `perde_${Date.now()}`, node: SovereignNodeId, authorId: user?.uid || 'anonymous' })
+        });
+        const data = await res.json();
+        setMessages(prev => [...prev, { id: 'colorres-' + uid, role: 'agent', content: data.text || '🎨 Renk analizi tamamlandı.' }]);
+      } catch { setMessages(prev => [...prev, { id: 'colorerr-' + uid, role: 'agent', content: 'Renk analizi sırasında hata oluştu.' }]); }
+      setIsTyping(false);
+      return;
+    }
+
+    // ── 1.4 İLHAM / MOODBOARD: "Fikir ver", "ilham" ──
+    const isInspirationIntent = lower.includes('ilham') || lower.includes('fikir ver') || lower.includes('moodboard') || lower.includes('nasıl güzel') || lower.includes('ne yapabilirim');
+    if (isInspirationIntent && !isNavigating && currentAttachments.length === 0) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      setInputMsg('');
+      setMessages(prev => [...prev, { id: 'u-' + uid, role: 'user', content: userMsg }]);
+      setIsTyping(true);
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `İç mekan tasarımcısı olarak kullanıcıya ilham ver: "${userMsg}". 3-5 somut tasarım fikri öner. Her fikir için: stil adı, anahtar elemanlar (mobilya, renk, tekstil, aydınlatma), ve neden iyi olacağı. Perde, kumaş, mobilya, aydınlatma önerilerini dahil et. Kısa cevap.`, history: [], sessionId: sessionId || `perde_${Date.now()}`, node: SovereignNodeId, authorId: user?.uid || 'anonymous' })
+        });
+        const data = await res.json();
+        setMessages(prev => [...prev, { id: 'inspres-' + uid, role: 'agent', content: data.text || '💡 Tasarım fikirleri hazır.' }]);
+      } catch { setMessages(prev => [...prev, { id: 'insperr-' + uid, role: 'agent', content: 'Fikir oluştururken hata oluştu.' }]); }
+      setIsTyping(false);
+      return;
+    }
+
     const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
     const isEditIntent = lower.includes('cila') || lower.includes('düzenle') || lower.includes('değiştir') || lower.includes('bordo') || lower.includes('sıkılaştır') || lower.includes('gevşet') || lower.includes('kaldır') || lower.includes('ekle') || lower.includes('rengi') || lower.includes('tonu') || lower.includes('açık yap') || lower.includes('koyu yap') || lower.includes('küçük') || lower.includes('büyük') || lower.includes('pile') || lower.includes('yığma') || lower.includes('kısa') || lower.includes('uzun') || lower.includes('kat') || lower.includes('fon') || lower.includes('tül') || lower.includes('desen') || lower.includes('olsun') || lower.includes('azalt') || lower.includes('artır') || lower.includes('koyulaştır') || lower.includes('açıklaştır');
     const isAnalysisIntent = lower.includes('analiz') || lower.includes('incele');

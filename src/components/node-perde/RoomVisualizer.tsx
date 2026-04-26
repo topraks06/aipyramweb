@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { PERDE_DICT } from './perde-dictionary';
 import Image from 'next/image';
 import { 
-  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent, Ruler, BookOpen, ChevronDown, X, Globe
+  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent, Ruler, BookOpen, ChevronDown, X, Globe, Share2, Columns, Presentation, Maximize
 } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import toast from 'react-hot-toast';
@@ -77,6 +77,8 @@ export default function RoomVisualizer() {
   
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
+  const [isSideBySide, setIsSideBySide] = useState(false);
+  const [presentationMode, setPresentationMode] = useState(false);
   const { SovereignNodeId } = usePerdeAuth();
 
   useEffect(() => {
@@ -833,10 +835,10 @@ export default function RoomVisualizer() {
 
         {/* Render Result with Before/After Slider */}
         {resultImage && (
-          <div className="absolute inset-0 md:inset-2 flex items-center justify-center z-10 pt-16 md:pt-0">
+          <div className={`absolute inset-0 flex items-center justify-center z-10 pt-16 md:pt-0 ${presentationMode ? 'fixed !inset-0 !z-[100] bg-black m-0 p-0' : 'md:inset-2'}`}>
             <div 
               ref={containerRef}
-              className="relative w-full h-full max-h-full bg-black md:shadow-2xl overflow-hidden md:rounded-2xl border border-white/10"
+              className={`relative w-full h-full max-h-full bg-black overflow-hidden border border-white/10 ${presentationMode ? '' : 'md:shadow-2xl md:rounded-2xl'}`}
               onWheel={(e) => {
                  const delta = e.deltaY * -0.005;
                  const newZoom = Math.min(Math.max(1, zoomLevel + delta), 4);
@@ -864,43 +866,128 @@ export default function RoomVisualizer() {
                  onPointerUp={() => setIsPanning(false)}
                  onPointerLeave={() => setIsPanning(false)}
               >
-                 {/* After Image (Generated) */}
-                 <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950 pointer-events-none" alt="Generated" unoptimized />
-                 
-                 {/* Before Image (Original) masked by clipPath */}
-                 {activeOriginalUrl && (
-                   <div 
-                     className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
-                     style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-                   >
-                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                     <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
-                   </div>
-                 )}
-                 
-                 {/* Slider Handle */}
-                 {activeOriginalUrl && (
-                   <div 
-                     className="absolute top-0 bottom-0 w-1 bg-white/80 cursor-ew-resize z-30 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.6)]"
-                     style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
-                     onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingSlider(true); }}
-                   >
-                     <div className="w-14 h-14 bg-black/60 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border-2 border-white/70 cursor-ew-resize hover:scale-110 transition-transform">
-                       <Expand className="h-5 w-5 text-white pointer-events-none" />
-                     </div>
-                   </div>
+                 {isSideBySide && activeOriginalUrl ? (
+                    <div className="absolute inset-0 w-full h-full flex pointer-events-none">
+                       <div className="flex-1 relative border-r border-white/20">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain" alt="Original" />
+                          <div className="absolute bottom-4 left-4 bg-black/60 px-2 py-1 rounded text-[10px] font-bold tracking-widest text-white backdrop-blur-md">ÖNCESİ</div>
+                       </div>
+                       <div className="flex-1 relative">
+                          <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain" alt="Generated" unoptimized />
+                          <div className="absolute bottom-4 right-4 bg-emerald-500/80 px-2 py-1 rounded text-[10px] font-bold tracking-widest text-white backdrop-blur-md">SONRASI</div>
+                       </div>
+                    </div>
+                 ) : (
+                    <>
+                       {/* After Image (Generated) */}
+                       <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950 pointer-events-none" alt="Generated" unoptimized />
+                       
+                       {/* Before Image (Original) masked by clipPath */}
+                       {activeOriginalUrl && (
+                         <div 
+                           className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
+                           style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+                         >
+                           {/* eslint-disable-next-line @next/next/no-img-element */}
+                           <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
+                         </div>
+                       )}
+                       
+                       {/* Slider Handle */}
+                       {activeOriginalUrl && (
+                         <div 
+                           className="absolute top-0 bottom-0 w-1 bg-white/80 cursor-ew-resize z-30 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.6)]"
+                           style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+                           onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingSlider(true); }}
+                         >
+                           <div className="w-14 h-14 bg-black/60 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border-2 border-white/70 cursor-ew-resize hover:scale-110 transition-transform">
+                             <Expand className="h-5 w-5 text-white pointer-events-none" />
+                           </div>
+                         </div>
+                       )}
+                    </>
                  )}
               </div>
 
-              <div className="absolute bottom-6 left-6 z-30">
-                  <button 
-                      onClick={() => setIsSaveModalOpen(true)}
-                      className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-emerald-500/50 backdrop-blur-xl text-zinc-300 hover:text-emerald-400 px-6 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase flex items-center gap-2 shadow-2xl transition-all"
-                  >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                      PROJEYİ KAYDET
-                  </button>
-              </div>
+              {!presentationMode && (
+                 <div className="absolute bottom-6 left-6 z-30 flex flex-wrap gap-2 items-center">
+                     <button 
+                         onClick={() => setIsSaveModalOpen(true)}
+                         className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-emerald-500/50 backdrop-blur-xl text-zinc-300 hover:text-emerald-400 px-6 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase flex items-center gap-2 shadow-2xl transition-all"
+                         title="Projeyi Kaydet"
+                     >
+                         <Save className="w-4 h-4" /> KAYDET
+                     </button>
+                     <button 
+                         onClick={() => {
+                            const a = document.createElement('a');
+                            a.href = resultImage!;
+                            a.download = `perde-ai-${crmData.projectName || 'tasarim'}-${Date.now()}.jpg`;
+                            a.click();
+                         }}
+                         className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-white/50 backdrop-blur-xl text-zinc-300 hover:text-white w-10 h-10 rounded-full flex items-center justify-center shadow-2xl transition-all"
+                         title="Görseli İndir"
+                     >
+                         <Download className="w-4 h-4" />
+                     </button>
+                     <button 
+                         onClick={() => {
+                            window.open(`https://wa.me/?text=${encodeURIComponent('Perde.ai ile hazırladığım yeni tasarıma göz atın!')}`, '_blank');
+                         }}
+                         className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-green-500/50 backdrop-blur-xl text-zinc-300 hover:text-green-400 w-10 h-10 rounded-full flex items-center justify-center shadow-2xl transition-all"
+                         title="WhatsApp'ta Paylaş"
+                     >
+                         <Share2 className="w-4 h-4" />
+                     </button>
+                     <div className="w-px h-6 bg-white/10 mx-1"></div>
+                     <button 
+                         onClick={() => setIsSideBySide(!isSideBySide)}
+                         className={`bg-zinc-950/80 hover:bg-black border border-zinc-700/50 backdrop-blur-xl w-10 h-10 rounded-full flex items-center justify-center shadow-2xl transition-all ${isSideBySide ? 'text-blue-400 border-blue-500/50' : 'text-zinc-300 hover:text-white hover:border-white/50'}`}
+                         title="Yan Yana / Slider Karşılaştırma"
+                     >
+                         <Columns className="w-4 h-4" />
+                     </button>
+                     <button 
+                         onClick={() => setPresentationMode(true)}
+                         className="bg-zinc-950/80 hover:bg-black border border-zinc-700/50 hover:border-purple-500/50 backdrop-blur-xl text-zinc-300 hover:text-purple-400 w-10 h-10 rounded-full flex items-center justify-center shadow-2xl transition-all"
+                         title="Sunum Modu (Tam Ekran)"
+                     >
+                         <Maximize className="w-4 h-4" />
+                     </button>
+                 </div>
+              )}
+
+              {/* Exit Presentation Mode Button */}
+              {presentationMode && (
+                 <button 
+                    onClick={() => setPresentationMode(false)}
+                    className="absolute top-6 right-6 z-50 bg-black/50 hover:bg-black border border-white/20 text-white px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase flex items-center gap-2 backdrop-blur-md transition-all"
+                 >
+                    <X className="w-4 h-4" /> Çıkış
+                 </button>
+              )}
+
+              {/* Render History Mini Gallery (Bottom Right) */}
+              {!presentationMode && renderHistory.length > 1 && (
+                 <div className="absolute bottom-6 right-6 z-30 flex gap-2 max-w-[50vw] overflow-x-auto p-1 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl">
+                    {renderHistory.map((item, idx) => (
+                       <button
+                         key={idx}
+                         onClick={() => {
+                            setHistoryIndex(idx);
+                            setResultImage(item.url);
+                            setActiveOriginalUrl(item.originalUrl);
+                            setSliderPosition(50);
+                         }}
+                         className={`relative w-12 h-12 shrink-0 rounded-lg overflow-hidden border-2 transition-all ${idx === historyIndex ? 'border-blue-500 scale-110 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                       >
+                         {/* eslint-disable-next-line @next/next/no-img-element */}
+                         <img src={item.url} className="w-full h-full object-cover" alt={`Render ${idx+1}`} />
+                       </button>
+                    ))}
+                 </div>
+              )}
 
               {/* Confidence Badge (Phase 1.5) */}
               {preFlightConfidence && (
