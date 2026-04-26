@@ -37,14 +37,14 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
 
            {/* RIGHT MENU */}
            <div className="flex items-center gap-4">
-              <Link href="/sites/perde/studio" className="flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-zinc-200 transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
+              <Link href="/admin" className="flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-zinc-200 transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
                  <LayoutDashboard className="w-4 h-4" /> Yönetim Paneli
               </Link>
            </div>
 
         </header>
 
-        <main className="flex-1 overflow-auto p-6 relative">
+        <main className="flex-1 overflow-auto p-0 md:p-2 relative">
           <React.Suspense fallback={<div className="text-[10px] text-zinc-500 uppercase tracking-widest text-center mt-20">Stüdyo Yükleniyor...</div>}>
             <RoomVisualizer />
           </React.Suspense>

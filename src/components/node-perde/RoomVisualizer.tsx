@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { PERDE_DICT } from './perde-dictionary';
 import Image from 'next/image';
 import { 
-  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent, Ruler, BookOpen, ChevronDown
+  Download, Loader2, Sparkles, Expand, Undo2, Redo2, Save, Image as ImageIcon, ArrowRight, ShoppingCart, Tent, Ruler, BookOpen, ChevronDown, X, Globe
 } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import toast from 'react-hot-toast';
@@ -20,8 +20,17 @@ export default function RoomVisualizer() {
   // Greeting logic
   const [greeting, setGreeting] = useState('Hoş Geldiniz');
 
-  // Lead Modal
+  // Lead Modal & CRM
   const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+  const [crmData, setCrmData] = useState({
+    customerName: '', identityNo: '', email: '', phone: '', address: '', company: '', projectName: '', notes: '', deliveryDate: '',
+    width: '', height: '', pleatStyle: '', seamStyle: '', mechanism: '',
+    totalPrice: '', downPayment: '', remainingBalance: '', paymentMethod: '', installments: ''
+  });
+  const [archivedProjects, setArchivedProjects] = useState<any[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // History / Inputs
   const [renderHistory, setRenderHistory] = useState<{ url: string; originalUrl: string | null }[]>([]);
@@ -29,6 +38,23 @@ export default function RoomVisualizer() {
   const searchParams = useSearchParams();
   const lang = (searchParams.get('lang') || 'TR').toUpperCase() as keyof typeof PERDE_DICT;
   const T = PERDE_DICT[lang]?.visualizer || PERDE_DICT['TR'].visualizer;
+  const projectId = searchParams?.get('projectId');
+
+  useEffect(() => {
+    if (projectId) {
+       fetch(`/api/perde/projects?id=${projectId}`)
+         .then(res => res.json())
+         .then(data => {
+            if (data.project) {
+              setStagedImage({ base64: data.project.originalImage, mimeType: 'image/jpeg' });
+              setResultImage(data.project.resultImage);
+              setActiveOriginalUrl(data.project.originalImage);
+              setCanvasAttachments(data.project.fabrics || []);
+              toast.success(`${data.project.customerName} projesi arşividen yüklendi.`, { icon: '🔄' });
+            }
+         }).catch(err => console.error(err));
+    }
+  }, [projectId]);
 
   // Outputs
   const [resultImage, setResultImage] = useState<string | null>(null);
@@ -38,11 +64,12 @@ export default function RoomVisualizer() {
   // Staged File state (Waiting for instruction)
   const [stagedImage, setStagedImage] = useState<{base64: string, mimeType: string} | null>(null);
   
-  // 4-Grid Variations State
-  const [variations, setVariations] = useState<string[] | null>(null);
-  const [variationCount, setVariationCount] = useState<1 | 2 | 4>(4);
-  const [uploadPhase, setUploadPhase] = useState(false);
+  // 4-Grid Variations State Removed (Always 4K single image)
+  const [preFlightConfidence, setPreFlightConfidence] = useState<number | null>(null); // Ürün kutucukları state'i (Sıfırıncı noktada boş)
   const [canvasAttachments, setCanvasAttachments] = useState<any[]>([]);
+  
+  // Stil Referansı / Model (Opsiyonel)
+  const [referenceModel, setReferenceModel] = useState<any>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
@@ -80,7 +107,7 @@ export default function RoomVisualizer() {
        window.removeEventListener('agent_request_edit', handleEditRequest);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stagedImage, variationCount, resultImage, activeOriginalUrl]);
+  }, [stagedImage, resultImage, activeOriginalUrl]);
 
   // ── Görsel Sıkıştırma (API Payload Boyutunu Düşürmek İçin) ──
   const compressImage = (base64: string, maxWidth = 1200, quality = 0.8): Promise<string> => {
@@ -164,6 +191,47 @@ export default function RoomVisualizer() {
     });
   };
 
+  const sliceCollage = (base64: string, count: number): Promise<string[]> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const slices: string[] = [];
+        const w = img.width;
+        const h = img.height;
+        
+        if (count === 2) {
+          const halfW = w / 2;
+          for (let i = 0; i < 2; i++) {
+            const canvas = document.createElement('canvas');
+            canvas.width = halfW;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d')!;
+            ctx.drawImage(img, i * halfW, 0, halfW, h, 0, 0, halfW, h);
+            slices.push(canvas.toDataURL('image/jpeg', 0.9));
+          }
+        } else if (count === 4) {
+          const halfW = w / 2;
+          const halfH = h / 2;
+          for (let row = 0; row < 2; row++) {
+            for (let col = 0; col < 2; col++) {
+              const canvas = document.createElement('canvas');
+              canvas.width = halfW;
+              canvas.height = halfH;
+              const ctx = canvas.getContext('2d')!;
+              ctx.drawImage(img, col * halfW, row * halfH, halfW, halfH, 0, 0, halfW, halfH);
+              slices.push(canvas.toDataURL('image/jpeg', 0.9));
+            }
+          }
+        } else {
+           slices.push(base64);
+        }
+        resolve(slices);
+      };
+      img.onerror = () => resolve([base64]);
+      img.src = base64;
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
         toast.error("Lütfen sadece resim dosyası yükleyin (JPG/PNG).");
@@ -181,8 +249,8 @@ export default function RoomVisualizer() {
        const compressed = await compressImage(rawBase64, 1200, 0.8);
        setStagedImage({ base64: compressed, mimeType: 'image/jpeg' });
        setResultImage(null);
-       setVariations(null);
        setActiveOriginalUrl(null);
+       setReferenceModel(null);
     };
     reader.onerror = () => {
        toast.error("Dosya yüklenirken bir sorun oluştu.");
@@ -190,16 +258,67 @@ export default function RoomVisualizer() {
     reader.readAsDataURL(file);
   };
 
-  const triggerAutonomousRender = async (sourceImageBase64?: string) => {
+  const fetchArchives = async () => {
+    try {
+      const res = await fetch('/api/perde/projects');
+      const data = await res.json();
+      if (data.projects) setArchivedProjects(data.projects);
+    } catch(e) {
+      console.error(e);
+    }
+  };
+
+  const handleSaveProject = async () => {
+    if (!crmData.customerName) {
+      toast.error('Müşteri Adı zorunludur.');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const payload = {
+        ...crmData,
+        originalImage: activeOriginalUrl || stagedImage?.base64,
+        resultImage: resultImage,
+        fabrics: canvasAttachments,
+        SovereignNodeId
+      };
+      
+      const res = await fetch('/api/perde/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success('Proje Müşteriye Kaydedildi!', { icon: '📁' });
+        setIsSaveModalOpen(false);
+        fetchArchives(); // Refresh
+      } else {
+        toast.error(data.error || 'Kaydedilemedi');
+      }
+    } catch(e) {
+      toast.error('Bir hata oluştu.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const loadArchivedProject = (proj: any) => {
+    // Kaldığın Yerden Devam Et (Rehydration)
+    setStagedImage({ base64: proj.originalImage, mimeType: 'image/jpeg' });
+    setResultImage(proj.resultImage);
+    setActiveOriginalUrl(proj.originalImage);
+    setCanvasAttachments(proj.fabrics || []);
+    setIsArchiveOpen(false);
+    toast.success(`${proj.customerName} projesi yüklendi. Kaldığınız yerden devam edebilirsiniz.`, { icon: '🔄' });
+  };
+
+  const triggerAutonomousRender = async (sourceImageBase64?: string, isUpscale: boolean = false) => {
      const targetImage = sourceImageBase64 || stagedImage?.base64;
      if (!targetImage) return;
      
      setIsProcessing(true);
-     if (variationCount === 1) {
-        setLoadingMsg(T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...');
-     } else {
-        setLoadingMsg(`İÇ MİMAR (YZ) ${variationCount} FARKLI KONSEPT (HIZLI TASLAK) ÜRETİYOR...`);
-     }
+     setLoadingMsg(T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...');
      
      try {
        // v4: TÜM renderlar render-pro üzerinden (Dual-Label + model seçim stratejisi)
@@ -213,16 +332,19 @@ export default function RoomVisualizer() {
        for (const [i, a] of canvasAttachments.entries()) {
            const role = a.label || `Ürün ${i+1}`;
            const compressedProduct = await compressImage(a.base64, 800, 0.7);
-           productsObj[role] = { data: compressedProduct, mimeType: 'image/jpeg' };
+           productsObj[role] = { data: compressedProduct, mimeType: 'image/jpeg', physics: a.physics || 'auto' };
        }
 
        const bodyPayload = {
            spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
            products: productsObj,
-           variationCount,        // 1=4K tam render, 2/4=hızlı taslak
+           referenceModel: referenceModel ? { data: await compressImage(referenceModel.base64, 800, 0.7), mimeType: 'image/jpeg' } : undefined,
+           variationCount: 1, // Her zaman 1 (4K)
+           isUpscale: true,
            aspectRatio: calculatedAR,   // Mekanın orijinal oranını koru (hesaplanan: 16:9, 4:3 vs)
            studioSettings: {
              decorationMode: canvasAttachments.length > 0 ? 'preserve' : 'auto-decor',
+             semanticMasking: true // Phase 1: Otonom Pencere Tespiti Aktif
            },
            SovereignNodeId,
        };
@@ -256,19 +378,21 @@ export default function RoomVisualizer() {
        const data = await response.json();
 
        if (data.renderUrl) {
+         if (data.preFlightData?.confidence) {
+            setPreFlightConfidence(data.preFlightData.confidence);
+         } else {
+            setPreFlightConfidence(null);
+         }
          setIsProcessing(false);
-          // v4.1 FIX: Hem 1 hem de 4 varyasyon seçeneği için backend'den TEK BİR RESİM gelir.
-          // 4 varyasyon seçildiyse, backend o tek resmi 4'e bölüp (kolaj) yollar.
-          const finalImage = await matchDimensions(targetImage, data.renderUrl);
-          setResultImage(finalImage);
-          setActiveOriginalUrl(targetImage);
-          const newHistory = renderHistory.slice(0, historyIndex + 1);
-          newHistory.push({ url: finalImage, originalUrl: targetImage });
-          setRenderHistory(newHistory);
-          setHistoryIndex(newHistory.length - 1);
-          setStagedImage(null);
-          setVariations(null);
          
+         const finalImage = await matchDimensions(targetImage, data.renderUrl);
+         setResultImage(finalImage);
+         setActiveOriginalUrl(targetImage);
+         const newHistory = renderHistory.slice(0, historyIndex + 1);
+         newHistory.push({ url: finalImage, originalUrl: targetImage });
+         setRenderHistory(newHistory);
+         setHistoryIndex(newHistory.length - 1);
+          setStagedImage(null);
          window.dispatchEvent(new CustomEvent('agent_message', {
            detail: { message: `✅ Tasarım tamamlandı! Oda tipi: ${data.analysis?.roomType || 'bilinmiyor'}. Önerilen kumaşlar: ${data.suggestions?.map((s: any) => s.name).join(', ') || 'yok'}` }
          }));
@@ -355,7 +479,7 @@ export default function RoomVisualizer() {
         )}
 
         {/* Empty State / Initial File Dropzone */}
-        {!resultImage && !stagedImage && !isProcessing && !variations && (
+        {!resultImage && !stagedImage && !isProcessing && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03)_0%,transparent_100%)] z-10">
 
              <div 
@@ -399,57 +523,39 @@ export default function RoomVisualizer() {
 
         {/* Staged Image - Waiting for User Instruction */}
         {stagedImage && !resultImage && !isProcessing && (
-           <div className="absolute inset-4 md:inset-12 flex items-center justify-center z-10">
-               <div className="relative w-full h-full max-h-[80vh] bg-zinc-950 shadow-2xl rounded-2xl border border-white/5 overflow-hidden flex flex-col items-center justify-center">
+           <div className="absolute inset-0 md:inset-2 flex items-center justify-center z-10">
+               <div className="relative w-full h-full max-h-full bg-zinc-950 md:shadow-2xl md:rounded-2xl border border-white/5 overflow-hidden flex flex-col items-center justify-center">
                    {/* eslint-disable-next-line @next/next/no-img-element */}
                    <img src={stagedImage.base64} className="absolute inset-0 w-full h-full object-cover opacity-20 filter grayscale" alt="Staged" />
                    
-                   <div className="relative z-10 flex flex-col items-center p-8 backdrop-blur-xl bg-black/40 border border-white/10 rounded-2xl md:w-[32rem] w-[95%] max-h-[95%] overflow-y-auto custom-scrollbar text-center shadow-2xl mx-4">
-                       <ImageIcon className="w-8 h-8 text-white/50 mb-6" />
-                       <h3 className="text-white text-2xl font-light tracking-tight mb-2">{T.configTitle || 'Tasarım Konfigürasyonu'}</h3>
-                       <p className="text-zinc-400 text-sm mb-6 font-light">{T.configDesc || 'Kredi maliyetini optimize etmek için üretim tipini seçin.'}</p>
+                   <div className="relative z-10 flex flex-col items-center p-4 md:px-6 md:pt-6 md:pb-4 backdrop-blur-xl bg-black/40 border border-white/10 rounded-2xl md:w-[38rem] w-[98%] max-h-[98%] text-center shadow-2xl mx-4">
+                       <button 
+                         onClick={() => {
+                            setStagedImage(null);
+                            setActiveOriginalUrl(null);
+                            setCanvasAttachments([]);
+                            setReferenceModel(null);
+                         }}
+                         className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-red-500/20 hover:text-red-400 rounded-full transition-colors"
+                         title="Fotoğrafı İptal Et / Yeniden Yükle"
+                       >
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                       </button>
+                       <h3 className="text-white text-xl font-medium tracking-tight mb-1">Perde Kumaşlarını Belirle</h3>
+                       <p className="text-zinc-400 text-sm mb-2 font-light">Tasarımda kullanılacak kumaşları yükleyin ve isimlendirin.</p>
                        
-                       {!uploadPhase ? (
-                          <>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full mb-6">
-                                  {[1, 2, 4].map((num) => (
-                                      <button
-                                          key={num}
-                                          onClick={() => setVariationCount(num as any)}
-                                          className={`py-3 px-2 rounded-lg border-2 transition-all font-medium flex flex-col items-center justify-center gap-1 ${
-                                              variationCount === num 
-                                                  ? 'border-[#8B7355] bg-[#8B7355]/10 text-white' 
-                                                  : 'border-white/10 text-zinc-500 hover:border-white/30'
-                                          }`}
-                                      >
-                                          <span className="text-lg">{num === 1 ? '1' : num === 2 ? "2'li" : "4'lü"}</span>
-                                          <span className="text-[10px] uppercase tracking-wider text-center">{T.generateVariations || 'Resim Tasarla'}</span>
-                                      </button>
-                                  ))}
-                              </div>
-                              
-                              <button 
-                                 onClick={() => {
-                                     setUploadPhase(true);
-                                 }} 
-                                 className="w-full bg-[#8B7355] text-white font-semibold tracking-wider py-4 rounded-xl shadow-lg hover:bg-[#725e45] transition-colors flex items-center justify-center gap-2"
-                              >
-                                  DEVAM ET <ArrowRight className="w-5 h-5"/>
-                              </button>
-                          </>
-                       ) : (
-                          <div className="w-full flex flex-col gap-4">
-                              <div className="w-full text-left">
-                                 <h4 className="text-white text-sm font-medium mb-1">{T.productsToUse || 'Kullanılacak Ürünler'}</h4>
-                                 <p className="text-zinc-400 text-xs">Yüklediğiniz ürünleri isimlendirerek YZ'nin daha doğru tasarım yapmasını sağlayın.</p>
-                              </div>
+                       <div className="w-full flex flex-col gap-2 overflow-y-auto custom-scrollbar pr-2 max-h-[60vh] md:max-h-[75vh]">
+                           <div className="w-full text-left">
+                              <h4 className="text-white text-sm font-medium mb-1">{T.productsToUse || 'Kullanılacak Ürünler'}</h4>
+                              <p className="text-zinc-400 text-xs">Yüklediğiniz ürünleri isimlendirerek YZ'nin daha doğru tasarım yapmasını sağlayın.</p>
+                           </div>
 
                               {canvasAttachments.length > 0 && (
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pb-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full pb-2">
                                      {canvasAttachments.map((att: any) => (
                                         <div key={att.id} className="w-full flex flex-col bg-zinc-900 border border-white/10 rounded-lg overflow-hidden relative shadow-lg">
-                                            <div className="flex bg-black/40 h-16 shrink-0 relative">
-                                                <img src={att.base64} alt="product" className="w-16 h-16 object-cover border-r border-white/10 shrink-0" />
+                                            <div className="flex bg-black/40 h-14 shrink-0 relative">
+                                                <img src={att.base64} alt="product" className="w-14 h-14 object-cover border-r border-white/10 shrink-0" />
                                                 <div className="flex-1 p-2 flex flex-col justify-center relative min-w-0">
                                                     <input 
                                                         type="text" 
@@ -463,9 +569,10 @@ export default function RoomVisualizer() {
                                                                 detail: { id: att.id, label: newLabel }
                                                             }));
                                                         }}
-                                                        placeholder="Öürün: Ürün Ekle..." 
+                                                        placeholder="Örn: Tül Perde, Fon Kumaşı..." 
                                                         className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600 font-medium"
                                                     />
+
                                                 </div>
                                                 <button 
                                                     onClick={() => {
@@ -486,7 +593,7 @@ export default function RoomVisualizer() {
 
                               {canvasAttachments.length < 6 && (
                                   <div 
-                                      className={`w-full ${canvasAttachments.length > 0 ? 'h-20' : 'h-40'} border-2 border-dashed border-[#8B7355] rounded-xl flex flex-col items-center justify-center bg-black/40 text-center p-4 cursor-pointer hover:bg-black/60 transition-colors`}
+                                      className={`w-full ${canvasAttachments.length > 0 ? 'h-14' : 'h-32'} border-2 border-dashed border-[#8B7355] rounded-xl flex flex-col items-center justify-center bg-black/40 text-center p-2 cursor-pointer hover:bg-black/60 transition-colors`}
                                       onClick={() => {
                                           const input = document.createElement('input');
                                           input.type = 'file';
@@ -499,12 +606,31 @@ export default function RoomVisualizer() {
                                               
                                               filesToAdd.forEach(file => {
                                                   const reader = new FileReader();
-                                                  reader.onload = (re) => {
+                                                  reader.onload = async (re) => {
                                                       const base64 = re.target?.result as string;
+
+                                                      // FAZ 3: AIPyram Brain Zero-Duplication Kumaş Hafızası
+                                                      let physicsValue = 'auto';
+                                                      try {
+                                                          const res = await fetch('/api/brain/v1/fabric-memory', {
+                                                              method: 'POST',
+                                                              headers: { 'Content-Type': 'application/json' },
+                                                              body: JSON.stringify({ image_base64: base64, source_node: 'perde_visualizer' })
+                                                          });
+                                                          if (res.ok) {
+                                                            const data = await res.json();
+                                                            if (data.physics?.type) physicsValue = data.physics.type;
+                                                            if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache' });
+                                                          }
+                                                      } catch (e) {
+                                                          console.error('[AIPyram Brain] Bağlantı hatası', e);
+                                                      }
+
                                                       const newAtt = {
                                                         id: `att_${Date.now()}_${Math.random().toString(36).substr(2,5)}`,
                                                         base64,
                                                         label: '',
+                                                        physics: physicsValue,
                                                         mimeType: file.type || 'image/jpeg',
                                                       };
                                                       setCanvasAttachments(prev => [...prev, newAtt]);
@@ -527,12 +653,31 @@ export default function RoomVisualizer() {
                                           
                                           filesToAdd.forEach(file => {
                                               const reader = new FileReader();
-                                              reader.onload = (re) => {
+                                              reader.onload = async (re) => {
                                                   const base64 = re.target?.result as string;
+
+                                                  // FAZ 3: AIPyram Brain Zero-Duplication Kumaş Hafızası
+                                                  let physicsValue = 'auto';
+                                                  try {
+                                                      const res = await fetch('/api/brain/v1/fabric-memory', {
+                                                          method: 'POST',
+                                                          headers: { 'Content-Type': 'application/json' },
+                                                          body: JSON.stringify({ image_base64: base64, source_node: 'perde_visualizer' })
+                                                      });
+                                                      if (res.ok) {
+                                                        const data = await res.json();
+                                                        if (data.physics?.type) physicsValue = data.physics.type;
+                                                        if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache_drop' });
+                                                      }
+                                                  } catch (e) {
+                                                      console.error('[AIPyram Brain] Bağlantı hatası', e);
+                                                  }
+
                                                   const newAtt = {
                                                     id: `att_${Date.now()}_${Math.random().toString(36).substr(2,5)}`,
                                                     base64,
                                                     label: '',
+                                                    physics: physicsValue,
                                                     mimeType: file.type || 'image/jpeg',
                                                   };
                                                   setCanvasAttachments(prev => [...prev, newAtt]);
@@ -548,16 +693,54 @@ export default function RoomVisualizer() {
                               )}
                               
                               {canvasAttachments.length >= 6 && (
-                                  <div className="w-full text-center text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg">
+                                  <div className="w-full text-center text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg shrink-0">
                                       Maksimum kapasiteye (6 ürün) ulaştınız.
                                   </div>
                               )}
+                              
+                              {/* REFERANS MODEL EKLEME */}
+                              <div className="w-full mt-2 shrink-0">
+                                {referenceModel ? (
+                                  <div className="flex items-center gap-2 bg-black border border-emerald-500/30 rounded-xl p-2 shadow-lg relative">
+                                     <img src={referenceModel.base64} className="w-10 h-10 object-cover rounded opacity-80" alt="Referans" />
+                                     <div className="flex-1 text-left">
+                                        <p className="text-emerald-400 text-xs font-semibold tracking-wide">Stil Referansı Aktif</p>
+                                        <p className="text-zinc-500 text-[10px]">YZ perdenin şeklini bu resme benzetecek.</p>
+                                     </div>
+                                     <button onClick={() => setReferenceModel(null)} className="p-2 text-zinc-400 hover:text-white hover:bg-red-500/20 rounded-full transition-colors"><X className="w-4 h-4" /></button>
+                                  </div>
+                                ) : (
+                                  <button 
+                                     onClick={() => {
+                                         const input = document.createElement('input');
+                                         input.type = 'file';
+                                         input.accept = 'image/jpeg, image/png';
+                                         input.onchange = (e: any) => {
+                                             if (e.target.files && e.target.files[0]) {
+                                                 const reader = new FileReader();
+                                                 reader.onload = () => setReferenceModel({ base64: reader.result as string, mimeType: e.target.files[0].type });
+                                                 reader.readAsDataURL(e.target.files[0]);
+                                             }
+                                         };
+                                         input.click();
+                                     }}
+                                     className="w-full h-10 border border-white/10 bg-black/20 rounded-xl text-xs text-zinc-400 flex items-center justify-center gap-2 hover:bg-black/60 hover:text-white hover:border-white/20 transition-all font-medium"
+                                  >
+                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m16 5 3 3 3-3"/><path d="m19 2 3 3-3 3"/></svg>
+                                     Örnek Model / Stil Görseli Ekle (İsteğe Bağlı)
+                                  </button>
+                                )}
+                              </div>
+                              
+                          </div>
+
+                          <div className="w-full mt-3 pt-3 border-t border-white/10 shrink-0 flex flex-col">
                               
                               {canvasAttachments.length > 0 ? (
                                   <>
                                       <button 
                                          onClick={() => triggerAutonomousRender()} 
-                                         className="w-full mt-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold tracking-wider py-4 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:from-purple-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2"
+                                         className="w-full mt-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold tracking-wider py-3 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:from-purple-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2"
                                       >
                                           <Sparkles className="w-5 h-5"/> {T.startRender || 'TASARIMI BAŞLAT'}
                                       </button>
@@ -565,55 +748,32 @@ export default function RoomVisualizer() {
                                           {canvasAttachments.length} ürün eklendi. Etiketleri yazarak AI&apos;ın doğru yerleştirmesini sağlayın.
                                       </p>
                                   </>
-                              ) : (
-                                  <p className="text-[10px] text-zinc-400 mt-2">Not: {T.syncNote || 'Eklediğiniz ürünler AI Stüdyo hafızasına (sağ alt panele) senkronize edilecektir.'}</p>
-                              )}
+                              ) : null}
+                              
+                              <button 
+                                onClick={() => {
+                                  setStagedImage(null);
+                                  setActiveOriginalUrl(null);
+                                  setCanvasAttachments([]);
+                                  setReferenceModel(null);
+                                }}
+                                className="w-full mt-3 bg-transparent border border-zinc-500/30 text-zinc-400 text-sm font-medium py-2.5 rounded-xl hover:bg-zinc-800 hover:text-white transition-colors flex items-center justify-center gap-2"
+                              >
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 2v6h6"/></svg>
+                                  Mekan Fotoğrafını Değiştir
+                              </button>
                           </div>
-                       )}
                    </div>
                </div>
            </div>
         )}
 
-        {/* 4-Grid Variations Result */}
-        {variations && !resultImage && !isProcessing && (
-          <div className="absolute inset-4 md:inset-12 flex flex-col items-center justify-center z-10 pt-16 md:pt-0">
-            <div className="text-center mb-6">
-               <h3 className="text-white text-2xl font-light tracking-tight mb-2">{variations.length} Farklı Tasarım Alteürünatifi</h3>
-               <p className="text-zinc-400 text-sm font-light">{T.upscaleNote || 'Seçiminizi 4K Çözünürlüğe (Upscale) yükseltecektir.'}</p>
-            </div>
-            <div className={`grid gap-4 w-full h-full max-h-[70vh] max-w-5xl ${variations.length === 2 ? 'grid-cols-2 grid-rows-1' : 'grid-cols-2 grid-rows-2'}`}>
-               {variations.map((url, idx) => (
-                  <div 
-                    key={idx} 
-                    className="relative rounded-xl overflow-hidden cursor-pointer group shadow-2xl border-2 border-transparent hover:border-[#8B7355] transition-all bg-zinc-900"
-                    onClick={() => {
-                        setIsProcessing(true);
-                        setLoadingMsg("T.upscaling || 'SEÇİLEN TASLAK 4K ÇÖZÜNÜRLÜKTE YENİDEN İŞLENİYOR (UPSCALE)...'");
-                        setTimeout(() => {
-                            setIsProcessing(false);
-                            setResultImage(url);
-                            const newHistory = renderHistory.slice(0, historyIndex + 1);
-                            newHistory.push({ url: url, originalUrl: activeOriginalUrl });
-                            setRenderHistory(newHistory);
-                            setHistoryIndex(newHistory.length - 1);
-                            setVariations(null);
-                        }, 2500);
-                    }}
-                  >
-                     <Image src={url} fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={`Variation ${idx}`} unoptimized />
-                  </div>
-               ))}
-            </div>
-          </div>
-        )}
-
         {/* Render Result with Before/After Slider */}
         {resultImage && (
-          <div className="absolute inset-4 md:inset-12 flex items-center justify-center z-10 pt-16 md:pt-0">
+          <div className="absolute inset-0 md:inset-2 flex items-center justify-center z-10 pt-16 md:pt-0">
             <div 
               ref={containerRef}
-              className="relative w-full h-full max-h-[80vh] bg-black shadow-2xl overflow-hidden rounded-md border border-white/10"
+              className="relative w-full h-full max-h-full bg-black md:shadow-2xl overflow-hidden md:rounded-2xl border border-white/10"
             >
               {/* After Image (Generated) */}
               <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950" alt="Generated" unoptimized />
@@ -642,92 +802,34 @@ export default function RoomVisualizer() {
                 </div>
               )}
 
+              {/* B2B CRM Müşteriye Kaydet Butonu (Faz 4) */}
+              <div className="absolute bottom-6 left-6 z-30">
+                  <button 
+                      onClick={() => setIsSaveModalOpen(true)}
+                      className="bg-emerald-600/90 hover:bg-emerald-500 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-medium tracking-wide flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all"
+                  >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                      MÜŞTERİYE KAYDET (ARŞİVLE)
+                  </button>
+              </div>
+
+              {/* Confidence Badge (Phase 1.5) */}
+              {preFlightConfidence && (
+                <div className="absolute top-6 left-6 z-30 pointer-events-none">
+                  <div className="bg-black/60 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-full text-sm flex items-center gap-2 shadow-2xl">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span className="font-semibold text-emerald-400">%{Math.round(preFlightConfidence * 100)}</span>
+                    <span className="text-zinc-300 font-light tracking-wide">Gerçeklik Simülasyonu</span>
+                  </div>
+                </div>
+              )}
+
               {/* Elegant B2B Watermark */}
               <div className="absolute bottom-6 right-6 z-20 pointer-events-none opacity-40 flex flex-col items-end">
                   <span className="text-2xl font-black text-white tracking-[0.3em] uppercase font-serif mix-blend-overlay">PERDE.AI</span>
                   <span className="text-[8px] font-mono text-white/70 tracking-widest uppercase">Sovereign Engine</span>
               </div>
               
-              {/* Admin Ecosystem Dropdown (Top Right) */}
-              <div className="absolute top-6 right-6 z-30 group">
-                 <button className="bg-black/50 backdrop-blur-md border border-white/10 text-white p-3 rounded-full hover:bg-black transition-colors flex items-center justify-center">
-                    <Tent className="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                 </button>
-                 <div className="absolute right-0 mt-2 flex-col gap-2 hidden group-hover:flex w-48">
-                    <button 
-                       onClick={async () => {
-                         toast.success('Vorhang.ai Pazaryerine Gönderiliyor...', { icon: '🚀' });
-                         try {
-                           await fetch('/api/system/signals', {
-                             method: 'POST',
-                             headers: { 'Content-Type': 'application/json' },
-                             body: JSON.stringify({
-                               type: 'VORHANG_PRODUCT_LISTED',
-                               source_node: 'perde',
-                               target_node: 'vorhang',
-                               payload: { image: activeOriginalUrl, seller: "Perde.ai Designer" }
-                             })
-                           });
-                           toast.success('Ürün başarıyla Vorhang.ai mağazanıza eklendi.');
-                         } catch (e) {
-                           toast.error('Gönderim başarısız.');
-                         }
-                       }}
-                       className="bg-black/90 backdrop-blur border border-white/10 text-white px-4 py-3 rounded-lg text-xs tracking-wider flex items-center justify-between hover:bg-[#8B7355]/20 hover:border-[#8B7355]/50 transition-all w-full text-left"
-                    >
-                       <span>Vorhang'a Aktar</span> <ShoppingCart className="w-3 h-3 text-[#8B7355]" />
-                    </button>
-                    <button 
-                       onClick={async () => {
-                         toast.success('Hometex Sanal Fuara Işınlanıyor...', { icon: '🎪' });
-                         try {
-                           await fetch('/api/system/signals', {
-                             method: 'POST',
-                             headers: { 'Content-Type': 'application/json' },
-                             body: JSON.stringify({
-                               type: 'TELEPORT_INITIATED',
-                               source_node: 'perde',
-                               target_node: 'hometex',
-                               payload: { image: activeOriginalUrl }
-                             })
-                           });
-                           setTimeout(() => {
-                             window.location.href = 'http://hometex.localhost:3000/exhibitors/upload';
-                           }, 1500);
-                         } catch (e) {
-                           toast.error('Işınlanma başarısız.');
-                         }
-                       }}
-                       className="bg-black/90 backdrop-blur border border-white/10 text-white px-4 py-3 rounded-lg text-xs tracking-wider flex items-center justify-between hover:bg-[#8B7355]/20 hover:border-[#8B7355]/50 transition-all w-full text-left"
-                    >
-                       <span>Hometex Fuarı</span> <Tent className="w-3 h-3 text-[#8B7355]" />
-                    </button>
-                 </div>
-              </div>
-
-              {/* B2B Floating Action Bar (Bottom Center) */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center bg-zinc-950/80 backdrop-blur-xl border border-white/10 p-2 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                 <button className="text-zinc-300 hover:text-white px-6 py-3 rounded-xl text-[11px] font-medium tracking-widest flex items-center gap-2 transition-colors hover:bg-white/5 uppercase">
-                    <Download className="w-4 h-4" />
-                    <span>SUNUM İNDİR</span>
-                 </button>
-                 <div className="w-px h-6 bg-white/10 mx-1"></div>
-                 <button 
-                    onClick={() => setLeadModalOpen(true)}
-                    className="text-zinc-300 hover:text-white px-6 py-3 rounded-xl text-[11px] font-medium tracking-widest flex items-center gap-2 transition-colors hover:bg-white/5 uppercase"
-                 >
-                    <BookOpen className="w-4 h-4" />
-                    <span>NUMUNE İSTE</span>
-                 </button>
-                 <div className="w-px h-6 bg-white/10 mx-1"></div>
-                 <button 
-                    onClick={() => setLeadModalOpen(true)}
-                    className="bg-gradient-to-r from-[#8B7355] to-[#725e45] text-white px-8 py-3 rounded-xl text-[11px] font-bold tracking-[0.15em] flex items-center gap-2 hover:shadow-[0_0_20px_rgba(139,115,85,0.4)] transition-all uppercase"
-                 >
-                    <Ruler className="w-4 h-4" />
-                    <span>METRAJ & FİYAT HESAPLA</span>
-                 </button>
-              </div>
             </div>
           </div>
         )}
@@ -758,6 +860,89 @@ export default function RoomVisualizer() {
           context={{ type: 'PERDE_DESIGN', title: 'Yapay Zeka Destekli Perde Tasarımı' }}
           brandName="PERDE.AI"
         />
+
+        {/* MÜŞTERİ KAYIT MODALI (CRM) */}
+        {isSaveModalOpen && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+               <div className="p-6 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex justify-between items-center">
+                 <h2 className="text-xl font-bold text-white flex items-center gap-2"><BookOpen className="w-5 h-5 text-emerald-400"/> B2B Sipariş ve Müşteri Arşivi</h2>
+                 <button onClick={() => setIsSaveModalOpen(false)} className="text-zinc-500 hover:text-white"><X className="w-6 h-6"/></button>
+               </div>
+               
+               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                 {/* Sol Kolon */}
+                 <div className="space-y-6">
+                   <div>
+                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">1. Müşteri Bilgileri</h3>
+                     <div className="grid gap-3">
+                       <input type="text" placeholder="Müşteri Adı Soyadı *" value={crmData.customerName} onChange={e=>setCrmData({...crmData, customerName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       <div className="grid grid-cols-2 gap-3">
+                         <input type="text" placeholder="TC / VKN" value={crmData.identityNo} onChange={e=>setCrmData({...crmData, identityNo: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                         <input type="text" placeholder="Şirket/Firma" value={crmData.company} onChange={e=>setCrmData({...crmData, company: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       </div>
+                       <div className="grid grid-cols-2 gap-3">
+                         <input type="text" placeholder="Telefon *" value={crmData.phone} onChange={e=>setCrmData({...crmData, phone: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                         <input type="email" placeholder="E-Posta" value={crmData.email} onChange={e=>setCrmData({...crmData, email: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       </div>
+                       <textarea placeholder="Açık Adres / Montaj Yeri" value={crmData.address} onChange={e=>setCrmData({...crmData, address: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none h-20 resize-none focus:border-emerald-500/50" />
+                       <input type="datetime-local" placeholder="Teslim/Montaj Günü ve Saati" value={crmData.deliveryDate} onChange={e=>setCrmData({...crmData, deliveryDate: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50" />
+                     </div>
+                   </div>
+
+                   <div>
+                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">2. Finans ve Tahsilat</h3>
+                     <div className="grid gap-3">
+                       <div className="grid grid-cols-3 gap-3">
+                         <input type="text" placeholder="Toplam Tutar" value={crmData.totalPrice} onChange={e=>setCrmData({...crmData, totalPrice: e.target.value})} className="w-full bg-emerald-950/30 border border-emerald-900/50 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                         <input type="text" placeholder="Alınan Kapora" value={crmData.downPayment} onChange={e=>setCrmData({...crmData, downPayment: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                         <input type="text" placeholder="Kalan Bakiye" value={crmData.remainingBalance} onChange={e=>setCrmData({...crmData, remainingBalance: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       </div>
+                       <div className="grid grid-cols-2 gap-3">
+                         <select value={crmData.paymentMethod} onChange={e=>setCrmData({...crmData, paymentMethod: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
+                           <option value="">Ödeme Yöntemi</option><option value="Kredi Kartı">Kredi Kartı</option><option value="Nakit">Nakit</option><option value="Havale/EFT">Havale/EFT</option>
+                         </select>
+                         <input type="text" placeholder="Taksit Sayısı (Örn: 3)" value={crmData.installments} onChange={e=>setCrmData({...crmData, installments: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Sağ Kolon */}
+                 <div className="space-y-6">
+                   <div>
+                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">3. Teknik Ölçüler ve Detaylar</h3>
+                     <div className="grid gap-3">
+                       <input type="text" placeholder="Proje / Oda Adı (Örn: Yatak Odası) *" value={crmData.projectName} onChange={e=>setCrmData({...crmData, projectName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       <div className="grid grid-cols-2 gap-3">
+                         <input type="text" placeholder="En (cm)" value={crmData.width} onChange={e=>setCrmData({...crmData, width: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                         <input type="text" placeholder="Boy (cm)" value={crmData.height} onChange={e=>setCrmData({...crmData, height: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       </div>
+                       <div className="grid grid-cols-2 gap-3">
+                         <select value={crmData.pleatStyle} onChange={e=>setCrmData({...crmData, pleatStyle: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
+                           <option value="">Pile Seçimi</option><option value="Sık Pile (1e 3)">Sık Pile (1'e 3)</option><option value="Normal Pile (1e 2.5)">Normal Pile (1'e 2.5)</option><option value="Seyrek Pile (1e 2)">Seyrek Pile (1'e 2)</option>
+                         </select>
+                         <select value={crmData.seamStyle} onChange={e=>setCrmData({...crmData, seamStyle: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
+                           <option value="">Dikiş Tipi</option><option value="Kruvaze">Kruvaze</option><option value="Düz">Düz</option><option value="Farbalalı">Farbalalı</option><option value="Rustik">Rustik</option>
+                         </select>
+                       </div>
+                       <input type="text" placeholder="Korniş / Mekanizma (Örn: Motorlu, Somfy)" value={crmData.mechanism} onChange={e=>setCrmData({...crmData, mechanism: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                       <textarea placeholder="Ekstra Notlar / Montaj Talimatı" value={crmData.notes} onChange={e=>setCrmData({...crmData, notes: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none h-24 resize-none focus:border-emerald-500/50" />
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+               <div className="p-6 border-t border-white/10 bg-zinc-900 sticky bottom-0 z-10 flex gap-4">
+                 <button onClick={() => setIsSaveModalOpen(false)} className="px-8 py-3 bg-zinc-800 text-white rounded-xl hover:bg-zinc-700 transition font-medium">İptal</button>
+                 <button onClick={handleSaveProject} disabled={isSaving} className="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-emerald-500 transition disabled:opacity-50 flex justify-center items-center gap-2">
+                   {isSaving ? <Loader2 className="w-5 h-5 animate-spin"/> : <Save className="w-5 h-5"/>}
+                   {isSaving ? 'Kaydediliyor...' : 'Tüm Sözleşmeyi Arşive Kaydet'}
+                 </button>
+               </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

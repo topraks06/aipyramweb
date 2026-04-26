@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       studioSettings,    // { lighting, lens, composition, decorationMode, renderQuality, timeOfDay }
       variationCount = 1,// 1 | 2 | 4 — model seçimini belirler
       aspectRatio: requestedAR, // '16:9' | '9:16' | '1:1' | null
+      isUpscale = false,
       SovereignNodeId = 'perde'
     } = body;
 
@@ -39,6 +40,50 @@ export async function POST(req: NextRequest) {
         { error: "En az bir mekan görseli/tasviri veya ürün görseli gereklidir." },
         { status: 400 }
       );
+    }
+
+    // Yardımcı: base64'ten data: prefix'ini temizle
+    const cleanBase64 = (data: string) => data.includes(",") ? data.split(",")[1] : data;
+
+    // ══════════════════════════════════════════════════════════
+    //  PRE-FLIGHT: OTONOM PENCERE & IŞIK TESPİTİ (FAZ 1.5 MVP)
+    // ══════════════════════════════════════════════════════════
+    let preFlightData = null;
+    if (spaceImage && studioSettings?.semanticMasking) {
+       try {
+         const visionAi = alohaAI.getClient();
+         const preFlightResponse = await visionAi.models.generateContent({
+           model: 'gemini-3.1-flash', // Hızlı analiz modeli
+           contents: [
+             {
+               role: 'user',
+               parts: [
+                 { text: `Sen profesyonel bir iç mimari zekasısın. Bu oda fotoğrafındaki PENCERE (window) alanını tespit et ve mekanın genel ışık yönünü bul.
+Mutlaka şu formatta geçerli bir JSON döndür:
+{
+  "window_bbox": [x1, y1, x2, y2],
+  "confidence": 0.94,
+  "light_direction": "left" | "right" | "front" | "top" | "unknown"
+}
+SADECE JSON DÖNÜP BAŞKA HİÇBİR ŞEY YAZMA.` },
+                 { inlineData: { data: cleanBase64(spaceImage.data), mimeType: spaceImage.mimeType || "image/jpeg" } }
+               ]
+             }
+           ],
+           config: {
+             responseMimeType: "application/json",
+             temperature: 0.1
+           }
+         });
+         
+         const text = preFlightResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+         if (text) {
+           preFlightData = JSON.parse(text);
+           console.log("[PRE-FLIGHT VISION] Otonom Tespit:", preFlightData);
+         }
+       } catch (e) {
+         console.warn("[PRE-FLIGHT VISION] Otonom tespit başarısız, normal akışla devam ediliyor:", e);
+       }
     }
 
     // ── Stüdyo Ayarları (Defaults) ──
@@ -57,9 +102,6 @@ export async function POST(req: NextRequest) {
 
     const parts: any[] = [];
     let imageCount = 0;
-
-    // Yardımcı: base64'ten data: prefix'ini temizle
-    const cleanBase64 = (data: string) => data.includes(",") ? data.split(",")[1] : data;
 
     // ────────────────────────────────────────────────────────
     // ADIM 0: ÖN TALİMAT — Anti-Halüsinasyon Kilidi
@@ -126,9 +168,17 @@ Bu kumaş fotoğrafından yeni bir şey UYDURMA — gördüğün kumaşın kendi
       imageCount++;
       
       // KATMAN 3: Kumaş sonrası kesin rol atama
+      let physicsContext = "";
+      if (mat.physics && mat.physics !== 'auto') {
+        physicsContext = `\n[AIPYRAM BEYİN] FİZİKSEL ÖZELLİK: Bu kumaşın tipi "${mat.physics}" olarak doğrulanmıştır. `;
+        if (mat.physics === 'sheer') physicsContext += "Yarı saydam, ince, uçuşan (tül) yapıda renderla. Arka planı hafifçe göstersin.";
+        if (mat.physics === 'heavy') physicsContext += "Kalın, ağır, ışık geçirmeyen (fon) yapıda renderla. Pileleri tok dökülsün.";
+        if (mat.physics === 'blackout') physicsContext += "Aşırı kalın, %100 ışık kesen blackout yapıda renderla. Arkasından hiçbir ışık sızmasın.";
+      }
+
       parts.push({
         text: `[ÜRÜN FOTOĞRAFI BİTİŞ — "${role}"]:
-Yukarıdaki kumaş fotoğrafının rolü: "${role}".
+Yukarıdaki kumaş fotoğrafının rolü: "${role}".${physicsContext}
 ${role.toLowerCase().includes('fon') ? '→ Bu kumaşı FON PERDE olarak kullan. Pencere önüne, tavan kornişinden yere kadar as.' : ''}
 ${role.toLowerCase().includes('tül') ? '→ Bu kumaşı TÜL PERDE olarak kullan. Pencere CAMI tarafına, fon perdenin ARKASINA as. Yarı şeffaf olmalı.' : ''}
 ${role.toLowerCase().includes('stor') ? '→ Bu kumaşı STOR PERDE olarak kullan. Pencere kasasına monte et.' : ''}
@@ -169,10 +219,16 @@ kesinlikle koru, sadece istenen tekstil ürünlerini/perdeleri mekana entegre et
     // ────────────────────────────────────────────────────────
     // ADIM 5: FİNAL PROMPT (Anti-Halüsinasyon Güçlendirilmiş)
     // ────────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────
+    let dynamicLighting = settings.lighting;
+    if (preFlightData?.light_direction) {
+      dynamicLighting = `${settings.lighting} + Orijinal Oda Işığı (YÖN: ${preFlightData.light_direction.toUpperCase()}). Perde üzerindeki gölge ve parlamaları bu yöne göre ayarla.`;
+    }
+
     const finalPrompt = `GÖREV: Yukarıdaki mekan fotoğrafını DÜZENLE ve kumaş fotoğraflarındaki GERÇEK kumaşları mekana monte et.
 
 Zaman/Atmosfer: ${settings.timeOfDay}
-Işıklandırma: ${settings.lighting}
+Işıklandırma: ${dynamicLighting}
 Lens/Kamera: ${settings.lens}
 Kurgu/Kompozisyon: ${settings.composition}
 
@@ -186,13 +242,14 @@ Mekanın orijinal en-boy oranını koru — fotoğrafı genişletme veya kırpma
 ${spacePrompt && !spaceImage ? `Mekan Tasviri: ${spacePrompt}. Bu mekanı sıfırdan oluştur ve perdeleri ekle.` : ""}
 
 KRİTİK KURALLAR (İHLAL EDİLEMEZ):
-1. MEKAN: Orijinal fotoğraftaki her piksel korunmalı — pencere pozisyonları, duvar rengi, zemin, perspektif AYNI. FOTOĞRAFI ASLA TERS ÇEVİRME (NO MIRRORING).
-2. KUMAŞ: Yüklenen kumaş fotoğraflarındaki GERÇEK doku/desen/renk BİREBİR kullanılmalı. KENDİ DESENİNİ UYDURMA.
-3. FİZİK: Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
-4. KATMANLAMA: Tül perde pencere CAMINA yakın (arka), fon perde ÖNE yerleştirilmeli.
-5. KORNIŞ: Perde rayı/korniş pencere üstüne eklenmeli.
-6. KALİTE: Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
-${vCount > 1 ? `7. KOLAJ (ZORUNLU): Sen bir kolaj oluşturucusun. Üreteceğin tek görseli 4 eşit parçaya (2x2 grid) böl. Her bir çeyrekte kumaşın farklı bir kullanım veya dikim stilini (farklı pile, kruvaze, düz vb.) göster. Çıktı SADECE TEK BİR RESİM olacak ama içinde 4 farklı seçenek barındıracak.` : `7. SADECE görsel üret, metin yanıt VERME.`}`;
+1. OTONOM MASKELEME (SEMANTIC INPAINTING): Fotoğraftaki pencereleri Otonom Vision Ajanı gibi otomatik tespit et. ${preFlightData?.window_bbox ? `Ön-Tespit Pencere Bounding Box Koordinatları: [${preFlightData.window_bbox.join(', ')}]. ` : ''}SADECE pencere alanını değiştirip perdeyi oraya as. Odanın geri kalanına (duvarlar, koltuklar, halılar, zemin, aydınlatma, nesneler) KESİNLİKLE DOKUNMA. %100 orijinal kalsın.
+2. MEKAN: Orijinal fotoğraftaki her piksel korunmalı — FOTOĞRAFI ASLA TERS ÇEVİRME (NO MIRRORING).
+3. KUMAŞ: Yüklenen kumaş fotoğraflarındaki GERÇEK doku/desen/renk BİREBİR kullanılmalı. KENDİ DESENİNİ UYDURMA.
+4. FİZİK: Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
+5. KATMANLAMA: Tül perde pencere CAMINA yakın (arka), fon perde ÖNE yerleştirilmeli.
+6. KORNIŞ: Perde rayı/korniş pencere üstüne eklenmeli.
+7. KALİTE: Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
+8. SADECE görsel üret, metin yanıt VERME.`;
 
     parts.push({ text: finalPrompt });
 
@@ -202,8 +259,7 @@ ${vCount > 1 ? `7. KOLAJ (ZORUNLU): Sen bir kolaj oluşturucusun. Üreteceğin t
     //    Hızlı taslak (2/4): Nano Banana 2 → yüksek verimli, hızlı
     //    DEPRECATED: gemini-2.0-flash-exp KULLANILMAZ
     // ────────────────────────────────────────────────────────
-    const vCount = variationCount || 1;
-    const isHighRes = vCount === 1;
+    const isHighRes = variationCount === 1;
     const modelName = isHighRes 
       ? "gemini-3-pro-image-preview"      // Nano Banana Pro — Studio kalite, 4K, reasoning
       : "gemini-3.1-flash-image-preview";  // Nano Banana 2 — Hızlı, yüksek verimli
@@ -284,6 +340,7 @@ ${vCount > 1 ? `7. KOLAJ (ZORUNLU): Sen bir kolaj oluşturucusun. Üreteceğin t
 
     return NextResponse.json({
       renderUrl,
+      preFlightData,
       analysis: {
         roomType: "auto",
         imageCount,
