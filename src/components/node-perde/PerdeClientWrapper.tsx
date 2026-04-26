@@ -28,7 +28,7 @@ export default function PerdeClientWrapper() {
             <OrderSlideOver 
                 isOpen={isOrderSlideOpen} 
                 onClose={() => setIsOrderSlideOpen(false)} 
-                order={{ title: 'Yeni Sipariş' }} // mockup for order
+                order={null}
             />
         </>
     );

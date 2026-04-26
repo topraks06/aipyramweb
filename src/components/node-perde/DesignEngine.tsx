@@ -204,7 +204,7 @@ export default function DesignEngine() {
            {ideas.map((idea, index) => (
              <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-black border border-white/10 shadow-2xl relative group overflow-hidden">
                 <div className="aspect-video bg-zinc-950 relative border-b border-white/5 overflow-hidden">
-                   {idea.imageUrl && idea.imageUrl !== "/placeholder-render.jpg" ? (
+                   {idea.imageUrl ? (
                      <img src={idea.imageUrl} alt={idea.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                    ) : (
                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 overflow-hidden">

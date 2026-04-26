@@ -29,7 +29,7 @@ const DEFAULT_CONFIG = {
   tableItem: 'Ä°ÅŸ / SipariÅŸ',
   shortcuts: ['Yeni KayÄ±t', 'HÄ±zlÄ± Fiyat Ver'],
   statusList: STATUS_LIST,
-  mockProjects: null
+  initialProjects: null
 };
 
 export default function B2B() {
@@ -264,7 +264,7 @@ export default function B2B() {
           <CardContent className="p-6 flex flex-col">
             <div className="p-3 bg-purple-500/10 w-fit rounded-lg text-purple-400 border border-purple-500/20 mb-4"><TrendingUp className="h-5 w-5" /></div>
             <p className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 mb-1">Ciro Hacmi</p>
-            <h3 className="font-sans font-bold text-3xl text-white">{formatCurrency(totalRevenue || 245000)}</h3>
+            <h3 className="font-sans font-bold text-3xl text-white">{formatCurrency(totalRevenue || 0)}</h3>
           </CardContent>
         </Card>
       </div>

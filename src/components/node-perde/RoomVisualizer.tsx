@@ -105,16 +105,71 @@ export default function RoomVisualizer() {
         }
       }
     };
+    // ── CİLA MODU: render-edit API ile mevcut tasarımı düzenle ──
+    const handleRenderEdit = async (e: any) => {
+      const editPrompt = e.detail?.editPrompt;
+      const currentRender = resultImage;
+      if (!editPrompt || !currentRender) {
+        window.dispatchEvent(new CustomEvent('agent_message', {
+          detail: { message: '⚠️ Düzenleme için önce bir tasarım oluşturmalısınız.' }
+        }));
+        return;
+      }
+      setIsProcessing(true);
+      setLoadingMsg('CİLA MOTORU TASARIMI DÜZENLİYOR...');
+      try {
+        const response = await fetch('/api/perde/render-edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            originalImageBase64: currentRender,
+            editPrompt,
+            SovereignNodeId,
+          }),
+        });
+        if (!response.ok) {
+          let errorMsg = `Sunucu hatası (${response.status})`;
+          try { const err = await response.json(); errorMsg = err.error || errorMsg; } catch {}
+          throw new Error(errorMsg);
+        }
+        const data = await response.json();
+        if (data.renderUrl) {
+          const finalImage = await matchDimensions(currentRender, data.renderUrl);
+          setResultImage(finalImage);
+          const newHistory = renderHistory.slice(0, historyIndex + 1);
+          newHistory.push({ url: finalImage, originalUrl: activeOriginalUrl });
+          setRenderHistory(newHistory);
+          setHistoryIndex(newHistory.length - 1);
+          setZoomLevel(1);
+          setPanPos({ x: 0, y: 0 });
+          window.dispatchEvent(new CustomEvent('agent_message', {
+            detail: { message: `✅ Cila tamamlandı: "${editPrompt}" uygulandı.` }
+          }));
+        } else {
+          throw new Error(data.error || 'Düzenleme sonucu alınamadı');
+        }
+      } catch (err: any) {
+        console.error('[RENDER-EDIT] Error:', err);
+        toast.error(`❌ Cila Hatası: ${err.message}`, { duration: 6000 });
+        window.dispatchEvent(new CustomEvent('agent_message', {
+          detail: { message: `❌ Cila motoru hata verdi: ${err.message}` }
+        }));
+      } finally {
+        setIsProcessing(false);
+      }
+    };
     window.addEventListener('start_autonomous_render', handleStartRender);
     window.addEventListener('agent_attachments_sync', handleSync);
     window.addEventListener('agent_request_edit', handleEditRequest);
+    window.addEventListener('request_render_edit', handleRenderEdit);
     return () => {
        window.removeEventListener('start_autonomous_render', handleStartRender);
        window.removeEventListener('agent_attachments_sync', handleSync);
        window.removeEventListener('agent_request_edit', handleEditRequest);
+       window.removeEventListener('request_render_edit', handleRenderEdit);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stagedImage, resultImage, activeOriginalUrl]);
+  }, [stagedImage, resultImage, activeOriginalUrl, renderHistory, historyIndex]);
 
   // ── Görsel Sıkıştırma (API Payload Boyutunu Düşürmek İçin) ──
   const compressImage = (base64: string, maxWidth = 1200, quality = 0.8): Promise<string> => {

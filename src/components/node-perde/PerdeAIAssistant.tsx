@@ -447,10 +447,26 @@ export default function PerdeAIAssistant() {
     }
 
 
-    const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula') || lower.includes('cila') || lower.includes('yap');
+    const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
+    const isEditIntent = lower.includes('cila') || lower.includes('düzenle') || lower.includes('değiştir') || lower.includes('bordo') || lower.includes('sıkılaştır') || lower.includes('gevşet') || lower.includes('kaldır') || lower.includes('ekle') || lower.includes('rengi') || lower.includes('tonu') || lower.includes('açık yap') || lower.includes('koyu yap');
     const isAnalysisIntent = lower.includes('analiz') || lower.includes('incele');
     
-    if (isRenderIntent || (currentAttachments.length > 0 && !isAnalysisIntent)) {
+    // ── CİLA MODU: Mevcut render varken düzenleme komutu → render-edit API ──
+    if (isEditIntent && !isRenderIntent && currentAttachments.length === 0) {
+      setInputMsg('');
+      setMessages(prev => [...prev,
+        { id: 'u-' + Date.now(), role: 'user', content: userMsg },
+        { id: 'edit-' + Date.now(), role: 'agent', content: 'Tasarım düzenleniyor... Cila motoru devrede.' }
+      ]);
+      // RoomVisualizer'dan mevcut render'ı al ve düzenle
+      window.dispatchEvent(new CustomEvent('request_render_edit', { detail: { editPrompt: userMsg } }));
+      setIsTyping(false);
+      return;
+    }
+
+    // ── YENİ RENDER: Attachment + render komutu ("yap" sadece attachment varken tetiklenir) ──
+    const isYapWithAttachment = lower.includes('yap') && currentAttachments.length > 0;
+    if (isRenderIntent || isYapWithAttachment || (currentAttachments.length > 0 && !isAnalysisIntent && !isEditIntent)) {
       // Ürün ekleri var + render komutu → RoomVisualizer'a otonom render sinyali gönder
       setInputMsg('');
       setAttachments([]);
@@ -474,11 +490,20 @@ export default function PerdeAIAssistant() {
       fetch('/api/perde/analyze-fabric', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: currentAttachments.map(a => a.base64) })
+        body: JSON.stringify({ imageBase64: currentAttachments[0]?.base64 })
       }).then(res => res.json()).then(data => {
-        setMessages(prev => [...prev, { id: 'sys-' + Date.now(), role: 'agent', content: data.analysis || 'Analiz tamamlandı.' }]);
+        // API returns { success, suggestions: [...] }
+        const suggestions = data.suggestions;
+        if (Array.isArray(suggestions) && suggestions.length > 0) {
+          const formatted = suggestions.map((s: any, i: number) => 
+            `${i + 1}. **${s.category}** — ${s.fabricType}\n   Renk: ${s.color} | Desen: ${s.pattern}\n   ${s.reason}\n   💰 ${s.priceRange} | 🧪 ${s.martindale || '-'}`
+          ).join('\n\n');
+          setMessages(prev => [...prev, { id: 'sys-' + Date.now(), role: 'agent', content: `Kumaş Analiz Sonuçları:\n\n${formatted}` }]);
+        } else {
+          setMessages(prev => [...prev, { id: 'sys-' + Date.now(), role: 'agent', content: 'Analiz tamamlandı ancak öneri üretilemedi.' }]);
+        }
       }).catch(err => {
-        setMessages(prev => [...prev, { id: 'err-' + Date.now(), role: 'agent', content: 'Analiz sırasında hata oluştu.' }]);
+        setMessages(prev => [...prev, { id: 'err-' + Date.now(), role: 'agent', content: 'Analiz sırasında hata oluştu: ' + err.message }]);
       });
       setIsTyping(false);
       return;
