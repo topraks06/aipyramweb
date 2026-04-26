@@ -49,9 +49,9 @@ hammaddeden son tüketicinin evine asılana/montajlanana kadar olan yolculuğunu
 
 ---
 
-## 2. SİSTEMİN 5+7 ORGANI
+## 2. SİSTEMİN 6+7 ORGANI (Global Mimari)
 
-### ANA DÜĞÜMLER (5 Node)
+### ANA DÜĞÜMLER (6 Node)
 
 #### 🔵 AIPyram (Master Node — BEYİN)
 - ALOHA burada yaşar
@@ -60,47 +60,39 @@ hammaddeden son tüketicinin evine asılana/montajlanana kadar olan yolculuğunu
 - Admin paneli (MasterKokpit / The Void) sadece buradan erişilir
 - Sovereign Escrow (güvenli havuz ödeme) burada tutulur
 
+#### 🟣 icmimar.ai (Master Design Engine & ERP — B2B Mutfak)
+**Görevleri:**
+1. **Sıfır Menü Stüdyo:** Dünyadaki tüm profesyonellerin (iç mimar, perdeci, mobilyacı) tasarım yaptığı yer.
+2. **Image-to-Image Motoru:** Müşteri kumaş fotoğrafı yükler → AI bunu 3D şablona giydirir. Cila ve edit işlemleri burada yapılır.
+3. **B2B ERP:** Sipariş, stok, muhasebe, CRM — küçük/orta ölçekli firmalar için yönetim paneli.
+4. Tüm akıl, üretim, tasarım ve toptan tedarik operasyonları burada gerçekleşir. 
+
 #### 🟢 TRTex.com (İstihbarat Radarı + Global Matchmaker)
 **Görevleri:**
-1. **Hammadde Radarı:** İplik, elyaf, kimyasal (boya/apre) fiyatlarını takip eder
-2. **İhale Radarı:** Dünya çapında otel, hastane, devlet ihaleleri tarar (TED, UN, özel)
-3. **Global Matchmaker:** Üretici "Elimde 20 denye PES iplik var" dediğinde dünyada o ipliğe alıcı bulur
-4. **Koleksiyon Vitrini:** Editör firmalar ve koleksiyoncular yeni kartelalarını burada yayınlar
-5. **Moda Trend Radarı:** Fuar takvimlerini, renk paletlerini (Pantone), tasarım akımlarını koklar
-6. **Haber Motoru:** Tüm bu verileri 8 dilde otonom B2B habere dönüştürür (7/24 çalışıyor ✅)
-7. **Perakendeci Onboarding:** Sovereign onayıyla, Vorhang/Shtori gibi sitelerde perakendecilere mağaza açtırır
-8. **Teknik Veri Bankası:** Martindale, GSM, GTIP, sertifika bilgilerini merkezi veritabanında tutar
+1. **Hammadde Radarı:** İplik, elyaf, kimyasal (boya/apre) fiyatlarını takip eder.
+2. **İhale Radarı:** Dünya çapında otel, hastane, devlet ihaleleri tarar.
+3. **Global Matchmaker:** Alıcı ve satıcıyı (üretici) buluşturur. Borsa gibi çalışır.
+4. **Haber Motoru:** Sektörel son dakika B2B haberleri (ihale ve eşleştirme haberleri) üretir.
+5. **Teknik Veri Bankası:** Martindale, GSM, GTIP, sertifika bilgilerini merkezi veritabanında tutar.
 
-#### 🟡 Perde.ai (Tasarım Motoru + ERP)
+#### 🟠 Hometex.ai (365 Gün Açık B2B Sanal Fuar)
 **Görevleri:**
-1. **Image-to-Image (Resimden Resime) Tasarım Motoru** ← EN KRİTİK VE EN ZOR İŞ
-   - Müşteri kumaş fotoğrafı yükler → AI bunu 3D perde/döşeme şablonuna giydirir
-   - Text-to-Image (metinden resim) YASAK — halüsinasyon üretir
-   - Rapor boyu (pattern repeat) verilirse kullanır, verilmezse Gemini Vision otonom hesaplar
-   - Pile kıvrımları, gölgeler ve kumaş fiziğine sadık kalır
-2. **Motor ve Mekanik Fire Hesabı:** Motorlu sistemlerde +15cm yükseklik, 2.5x pile payı otonom
-3. **Koleksiyon Oluşturma:** TRTex'ten gelen hammadde verisini alıp tasarım kombinasyonları üretir
-4. **B2B ERP:** Sipariş, stok, muhasebe, CRM — küçük/orta ölçekli firmalar için
-5. **Perakendeci Ekosistemi:** Perakendeciler buraya üye olur, AI kredisi satın alarak tasarım yapar, kendi ERP'lerini tutar ve sistem üzerinden toptan ürün siparişi verebilir. (Perakendeciye sanal mağaza SADECE Vorhang ve diğer bölgesel kapılarda açılır).
-6. **Klonlanabilir Motor:** Tasarım motoru API maliyeti yüksekse tüm node'lara klonlanabilir
+1. **Sanal Fuar Vitrini:** Sadece stantlar, toptan alım/satım, 3D showroomlar ve kataloglar. Dergi/haber barındırmaz.
+2. **Derin Teknik Etiketler:** "45.000 Martindale", "Pilling 4/5" gibi kalite rozetleriyle toptan ürün satışı.
+3. **Salon Sistemi:** Gerçek fuarlardaki gibi salon/stant yapısı.
 
-#### 🟠 Hometex.ai (365 Gün Açık Sanal Fuar)
+#### 🔴 Heimtex.ai (Global Trend, Magazine & Fashion Hub)
 **Görevleri:**
-1. **Sanal Fuar Vitrini:** Koleksiyoncular, toptancılar ve distribütörler ürünlerini sergiler
-2. **Derin Teknik Etiketler:** "45.000 Martindale", "Pilling 4/5", "DIN 4102-B1" gibi kalite rozeti
-3. **Rulo Bazında Toptan Satış:** Minimum sipariş adedi (MOQ), toptan fiyat, kargo koşulları
-4. **Salon Sistemi:** Gerçek fuarlardaki gibi salon/stant yapısı (Hall 1, 2, 3...)
-5. **Editör/Koleksiyoncu Profili:** Firma portfolyosu, sertifika vitrinleri
-6. **Trend Köprüsü:** TRTex'ten gelen trend haberlerini fuar vitrinine yansıtır
-7. **Tüm ürün kategorilerini kapsar:** Kumaş, mekanik, aksesuar, montaj malzemesi
+1. **Dijital Vogue:** Sektörel trendleri belirleyen marka otoritesi.
+2. Gelecek yılın renk kodları (Pantone), doku trendleri, yeni çıkan kumaş analizleri.
+3. Küresel moda vizyonu ve inovatif iplik teknolojileri haberleri (Dergilik alanı).
 
-#### 🔴 Vorhang.ai (B2C Perakende — DACH Pazarı)
-**Görevleri:**
-1. **Son Tüketiciye Satış:** Almanca, dikilmiş/bitmiş ürün, EUR fiyat
-2. **Anahtar Teslim Perakendeci Mağazası:** Alman perakendeciler üye olur, kendi sanal mağazasını alır
-3. **Müşteri Pencere Ölçüsü:** Müşteri pencere fotoğrafı yükler → AI ölçü + pile + fatura çıkarır
-4. **Marketplace Modeli:** Yemeksepeti gibi — ödeme AIPyram havuzuna düşer, onay sonrası satıcıya aktarılır
-5. **Fiyat Çarpanları:** Pile payı (2.5x), motor fire (+15cm), dikim işçiliği, kargo otonom hesaplanır
+#### 🟡 B2C Perakende Kapıları (Yemeksepeti Modeli)
+**Görevleri:** İcmimar.ai altyapısını kullanarak son tüketiciye dikilmiş/fiyatlandırılmış ürün satışı yapılan vitrinler.
+1. **perde.ai:** Türkiye pazarı (B2C Online Mağaza)
+2. **vorhang.ai:** DACH pazarı (Almanya/Avusturya/İsviçre B2C Mağaza)
+3. **curtaindesign.ai:** Global ve İngilizce konuşan pazar (Global B2C Mağaza)
+*Müşteri pencere fotoğrafı yükler → AI ölçü + pile + fatura çıkarır. Ödeme Sovereign Escrow'a düşer.*
 
 ### BÖLGESEL KAPILER (7 Dijital Gümrük)
 

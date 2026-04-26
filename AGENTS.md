@@ -8,15 +8,19 @@ Bu belge, AntiGravity AI Ajanları için tartışmasız bir anayasadır. Projede
 > hammaddeden (iplik, kumaş, mekanik, aksesuar) son tüketicinin evine kadar TÜM 
 > tedarik zincirini otonom yapay zeka ile yöneten dünyadaki tek sistemdir.
 
-### Sistemin 5 Ana Organı:
+### Sistemin 6 Ana Organı (Global Mimari):
 1. **AIPyram** (Master Node) — Beyindir. ALOHA AI burada yaşar. Tüm karar buradan verilir.
-2. **TRTex.com** — İstihbarat Radarı + Global Matchmaker. Haber üretir, ihale bulur, üreticiyle alıcı eşleştirir, koleksiyonları yayınlar, moda trendlerini koklar.
-3. **Perde.ai** — Tasarım Motoru + ERP. Image-to-Image (resimden resime) kumaş giydirme, koleksiyon oluşturma, sipariş/stok/muhasebe yönetimi. Perakendeciler buraya üye olur, AI kredisi satın alarak tasarım yapar, kendi ERP'lerini tutar ve sistemden toptan ürün satın alabilirler (Mağaza açma özelliği Perde.ai'de YOKTUR).
-4. **Hometex.ai** — 365 gün açık sanal fuar. Toptancılara ve distribütörlere ürün sergiler. Derin teknik etiketlerle (Martindale, GSM, DIN 4102) satış yapar.
-5. **Vorhang.ai** — B2C perakende (DACH pazarı). Almanca, dikilmiş/fiyatlandırılmış ürün satar. Marketplace (Yemeksepeti) modeli.
+2. **icmimar.ai** (Master Design Engine & ERP) — B2B Tasarım Mutfağı. Profesyoneller (perdeci, mimar, mobilyacı) buraya üye olur. Sıfır Menü Stüdyo, render, cila, ERP ve B2B yönetim paneli burada çalışır. Tüm akıl ve üretim buradadır.
+3. **TRTex.com** (B2B Trade News & Matchmaker) — İstihbarat Radarı. İhale bulur, üreticiyle alıcı eşleştirir, sektörel son dakika haberlerini yayınlar.
+4. **Heimtex.ai** (Global Trend, Magazine & Fashion Hub) — Dijital Vogue. Gelecek yılın renk kodları (Pantone), doku trendleri, moda vizyonu ve küresel sektörel dergi işlevini görür. Marka otoritesidir.
+5. **Hometex.ai** (365-Day B2B Virtual Fair) — Sanal Fuar. Ticaret odaklı, dikkat dağıtıcı unsurlardan arındırılmış toptan alım/satım, 3D showroom ve teknik katalog merkezidir.
+6. **B2C Perakende Kapıları (Yemeksepeti Modeli)** — İcmimar.ai'de üretilen tasarımların son tüketiciye satıldığı online vitrinler. 
+    *   **Perde.ai:** Türkiye pazarı B2C satış mağazası.
+    *   **Vorhang.ai:** DACH (Almanya/Avusturya/İsviçre) pazarı B2C satış mağazası.
+    *   **Curtaindesign.ai:** Global/İngilizce pazarı B2C satış mağazası.
 
 ### Bölgesel Kapılar (Dijital Gümrükler):
-Vorhang.ai (DACH) | Shtori.ai (Rusya) | Parda.ai (Farsça) | Donoithat.ai (Vietnam) | Perabot.ai (Endonezya) | Heimtex.ai (Avrupa sertifika kalkanı)
+Shtori.ai (Rusya) | Parda.ai (Farsça) | Donoithat.ai (Vietnam) | Perabot.ai (Endonezya)
 
 ### Ürün Kapsamı (Sadece kumaş DEĞİL):
 Perde kumaşları, döşemelik, yatak/banyo tekstili, korniş/rustik, perde rayları, motorlu mekanizmalar, stor/zebra/jaluzi, pasmanteri (saçak/püskül/boncuk), montaj malzemeleri, duvar kağıdı — kısaca ev tekstili fuarında satılan HER ŞEY.
