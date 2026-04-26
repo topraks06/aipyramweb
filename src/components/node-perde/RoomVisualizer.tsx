@@ -257,35 +257,17 @@ export default function RoomVisualizer() {
 
        if (data.renderUrl) {
          setIsProcessing(false);
-         if (variationCount === 1) {
-           const finalImage = await matchDimensions(targetImage, data.renderUrl);
-           setResultImage(finalImage);
-           setActiveOriginalUrl(targetImage);
-           const newHistory = renderHistory.slice(0, historyIndex + 1);
-           newHistory.push({ url: finalImage, originalUrl: targetImage });
-           setRenderHistory(newHistory);
-           setHistoryIndex(newHistory.length - 1);
-           setStagedImage(null);
-           setVariations(null);
-         } else {
-           const variationUrls = [data.renderUrl];
-           for (let i = 1; i < variationCount; i++) {
-             try {
-               // v4.1 FIX: Use the exact same render-pro endpoint and payload for variations!
-               // Do not fallback to the legacy /api/render which lacks products & anti-hallucination.
-               const vRes = await fetch(endpoint, {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: payloadStr
-               });
-               const vData = await vRes.json();
-               if (vData.renderUrl) variationUrls.push(vData.renderUrl);
-             } catch { /* skip failed variation */ }
-           }
-           setVariations(variationUrls);
-           setActiveOriginalUrl(targetImage);
-           setStagedImage(null);
-         }
+          // v4.1 FIX: Hem 1 hem de 4 varyasyon seçeneği için backend'den TEK BİR RESİM gelir.
+          // 4 varyasyon seçildiyse, backend o tek resmi 4'e bölüp (kolaj) yollar.
+          const finalImage = await matchDimensions(targetImage, data.renderUrl);
+          setResultImage(finalImage);
+          setActiveOriginalUrl(targetImage);
+          const newHistory = renderHistory.slice(0, historyIndex + 1);
+          newHistory.push({ url: finalImage, originalUrl: targetImage });
+          setRenderHistory(newHistory);
+          setHistoryIndex(newHistory.length - 1);
+          setStagedImage(null);
+          setVariations(null);
          
          window.dispatchEvent(new CustomEvent('agent_message', {
            detail: { message: `✅ Tasarım tamamlandı! Oda tipi: ${data.analysis?.roomType || 'bilinmiyor'}. Önerilen kumaşlar: ${data.suggestions?.map((s: any) => s.name).join(', ') || 'yok'}` }

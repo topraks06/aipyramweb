@@ -192,7 +192,7 @@ KRİTİK KURALLAR (İHLAL EDİLEMEZ):
 4. KATMANLAMA: Tül perde pencere CAMINA yakın (arka), fon perde ÖNE yerleştirilmeli.
 5. KORNIŞ: Perde rayı/korniş pencere üstüne eklenmeli.
 6. KALİTE: Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
-7. SADECE görsel üret, metin yanıt VERME.`;
+${vCount > 1 ? `7. KOLAJ (ZORUNLU): Sen bir kolaj oluşturucusun. Üreteceğin tek görseli 4 eşit parçaya (2x2 grid) böl. Her bir çeyrekte kumaşın farklı bir kullanım veya dikim stilini (farklı pile, kruvaze, düz vb.) göster. Çıktı SADECE TEK BİR RESİM olacak ama içinde 4 farklı seçenek barındıracak.` : `7. SADECE görsel üret, metin yanıt VERME.`}`;
 
     parts.push({ text: finalPrompt });
 
