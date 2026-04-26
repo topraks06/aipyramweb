@@ -123,6 +123,47 @@ export default function RoomVisualizer() {
     });
   };
 
+  const matchDimensions = (originalBase64: string, generatedBase64: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const origImg = new window.Image();
+      origImg.onload = () => {
+        const genImg = new window.Image();
+        genImg.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = origImg.width;
+          canvas.height = origImg.height;
+          const ctx = canvas.getContext('2d')!;
+          
+          // Calculate object-cover dimensions to draw genImg onto origImg dimensions
+          const origRatio = origImg.width / origImg.height;
+          const genRatio = genImg.width / genImg.height;
+          
+          let drawWidth = origImg.width;
+          let drawHeight = origImg.height;
+          let offsetX = 0;
+          let offsetY = 0;
+
+          if (genRatio > origRatio) {
+            // Generated is wider, crop sides
+            drawWidth = origImg.height * genRatio;
+            offsetX = (origImg.width - drawWidth) / 2;
+          } else {
+            // Generated is taller, crop top/bottom
+            drawHeight = origImg.width / genRatio;
+            offsetY = (origImg.height - drawHeight) / 2;
+          }
+
+          ctx.drawImage(genImg, offsetX, offsetY, drawWidth, drawHeight);
+          resolve(canvas.toDataURL('image/jpeg', 0.9));
+        };
+        genImg.onerror = () => resolve(generatedBase64);
+        genImg.src = generatedBase64;
+      };
+      origImg.onerror = () => resolve(generatedBase64);
+      origImg.src = originalBase64;
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
         toast.error("Lütfen sadece resim dosyası yükleyin (JPG/PNG).");
@@ -217,10 +258,11 @@ export default function RoomVisualizer() {
        if (data.renderUrl) {
          setIsProcessing(false);
          if (variationCount === 1) {
-           setResultImage(data.renderUrl);
+           const finalImage = await matchDimensions(targetImage, data.renderUrl);
+           setResultImage(finalImage);
            setActiveOriginalUrl(targetImage);
            const newHistory = renderHistory.slice(0, historyIndex + 1);
-           newHistory.push({ url: data.renderUrl, originalUrl: targetImage });
+           newHistory.push({ url: finalImage, originalUrl: targetImage });
            setRenderHistory(newHistory);
            setHistoryIndex(newHistory.length - 1);
            setStagedImage(null);
@@ -590,7 +632,7 @@ export default function RoomVisualizer() {
               className="relative w-full h-full max-h-[80vh] bg-black shadow-2xl overflow-hidden rounded-md border border-white/10"
             >
               {/* After Image (Generated) */}
-              <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-cover object-center bg-zinc-950" alt="Generated" unoptimized />
+              <Image src={resultImage} fill className="absolute inset-0 w-full h-full object-contain bg-zinc-950" alt="Generated" unoptimized />
               
               {/* Before Image (Original) masked by clipPath */}
               {activeOriginalUrl && (
@@ -599,7 +641,7 @@ export default function RoomVisualizer() {
                   style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-cover object-center border-r border-white/30" alt="Original" />
+                  <img src={activeOriginalUrl} className="absolute inset-0 w-full h-full object-contain border-r border-white/30" alt="Original" />
                 </div>
               )}
               
