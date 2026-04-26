@@ -25,9 +25,7 @@ export default function RoomVisualizer() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
   const [crmData, setCrmData] = useState({
-    customerName: '', identityNo: '', email: '', phone: '', address: '', company: '', projectName: '', notes: '', deliveryDate: '',
-    width: '', height: '', pleatStyle: '', seamStyle: '', mechanism: '',
-    totalPrice: '', downPayment: '', remainingBalance: '', paymentMethod: '', installments: ''
+    customerName: '', projectName: '', notes: ''
   });
   const [archivedProjects, setArchivedProjects] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -883,12 +881,12 @@ export default function RoomVisualizer() {
                  {/* Slider Handle */}
                  {activeOriginalUrl && (
                    <div 
-                     className="absolute top-0 bottom-0 w-[2px] bg-white cursor-ew-resize z-20 flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                     className="absolute top-0 bottom-0 w-1 bg-white/80 cursor-ew-resize z-30 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.6)]"
                      style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
                      onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingSlider(true); }}
                    >
-                     <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full shadow-2xl flex items-center justify-center border border-white/50 pointer-events-none">
-                       <Expand className="h-4 w-4 text-white" />
+                     <div className="w-14 h-14 bg-black/60 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border-2 border-white/70 cursor-ew-resize hover:scale-110 transition-transform">
+                       <Expand className="h-5 w-5 text-white pointer-events-none" />
                      </div>
                    </div>
                  )}
@@ -946,83 +944,49 @@ export default function RoomVisualizer() {
           brandName="PERDE.AI"
         />
 
-        {/* MÜŞTERİ KAYIT MODALI (CRM) */}
+        {/* TASARIM ARŞİVİ — Projeyi Kaydet */}
         {isSaveModalOpen && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+            <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
                <div className="p-6 border-b border-white/10 sticky top-0 bg-zinc-900 z-10 flex justify-between items-center">
-                 <h2 className="text-xl font-bold text-white flex items-center gap-2"><BookOpen className="w-5 h-5 text-emerald-400"/> B2B Sipariş ve Müşteri Arşivi</h2>
+                 <h2 className="text-xl font-bold text-white flex items-center gap-2"><BookOpen className="w-5 h-5 text-emerald-400"/> Tasarım Arşivi</h2>
                  <button onClick={() => setIsSaveModalOpen(false)} className="text-zinc-500 hover:text-white"><X className="w-6 h-6"/></button>
                </div>
                
-               <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                 {/* Sol Kolon */}
-                 <div className="space-y-6">
-                   <div>
-                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">1. Müşteri Bilgileri</h3>
-                     <div className="grid gap-3">
-                       <input type="text" placeholder="Müşteri Adı Soyadı *" value={crmData.customerName} onChange={e=>setCrmData({...crmData, customerName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       <div className="grid grid-cols-2 gap-3">
-                         <input type="text" placeholder="TC / VKN" value={crmData.identityNo} onChange={e=>setCrmData({...crmData, identityNo: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                         <input type="text" placeholder="Şirket/Firma" value={crmData.company} onChange={e=>setCrmData({...crmData, company: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       </div>
-                       <div className="grid grid-cols-2 gap-3">
-                         <input type="text" placeholder="Telefon *" value={crmData.phone} onChange={e=>setCrmData({...crmData, phone: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                         <input type="email" placeholder="E-Posta" value={crmData.email} onChange={e=>setCrmData({...crmData, email: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       </div>
-                       <textarea placeholder="Açık Adres / Montaj Yeri" value={crmData.address} onChange={e=>setCrmData({...crmData, address: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none h-20 resize-none focus:border-emerald-500/50" />
-                       <input type="datetime-local" placeholder="Teslim/Montaj Günü ve Saati" value={crmData.deliveryDate} onChange={e=>setCrmData({...crmData, deliveryDate: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50" />
-                     </div>
-                   </div>
-
-                   <div>
-                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">2. Finans ve Tahsilat</h3>
-                     <div className="grid gap-3">
-                       <div className="grid grid-cols-3 gap-3">
-                         <input type="text" placeholder="Toplam Tutar" value={crmData.totalPrice} onChange={e=>setCrmData({...crmData, totalPrice: e.target.value})} className="w-full bg-emerald-950/30 border border-emerald-900/50 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                         <input type="text" placeholder="Alınan Kapora" value={crmData.downPayment} onChange={e=>setCrmData({...crmData, downPayment: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                         <input type="text" placeholder="Kalan Bakiye" value={crmData.remainingBalance} onChange={e=>setCrmData({...crmData, remainingBalance: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       </div>
-                       <div className="grid grid-cols-2 gap-3">
-                         <select value={crmData.paymentMethod} onChange={e=>setCrmData({...crmData, paymentMethod: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
-                           <option value="">Ödeme Yöntemi</option><option value="Kredi Kartı">Kredi Kartı</option><option value="Nakit">Nakit</option><option value="Havale/EFT">Havale/EFT</option>
-                         </select>
-                         <input type="text" placeholder="Taksit Sayısı (Örn: 3)" value={crmData.installments} onChange={e=>setCrmData({...crmData, installments: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       </div>
-                     </div>
-                   </div>
+               <div className="p-6 space-y-4">
+                 <div>
+                   <label className="text-zinc-400 text-xs uppercase tracking-wider font-bold mb-1 block">Proje / Oda Adı *</label>
+                   <input type="text" placeholder="Örn: Yatak Odası, Salon..." value={crmData.projectName} onChange={e=>setCrmData({...crmData, projectName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                 </div>
+                 <div>
+                   <label className="text-zinc-400 text-xs uppercase tracking-wider font-bold mb-1 block">Müşteri Adı</label>
+                   <input type="text" placeholder="İsteğe bağlı" value={crmData.customerName} onChange={e=>setCrmData({...crmData, customerName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
+                 </div>
+                 <div>
+                   <label className="text-zinc-400 text-xs uppercase tracking-wider font-bold mb-1 block">Notlar</label>
+                   <textarea placeholder="Tasarım hakkında notlar..." value={crmData.notes} onChange={e=>setCrmData({...crmData, notes: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none h-20 resize-none focus:border-emerald-500/50" />
                  </div>
 
-                 {/* Sağ Kolon */}
-                 <div className="space-y-6">
-                   <div>
-                     <h3 className="text-emerald-500 font-bold text-sm uppercase tracking-wider mb-3">3. Teknik Ölçüler ve Detaylar</h3>
-                     <div className="grid gap-3">
-                       <input type="text" placeholder="Proje / Oda Adı (Örn: Yatak Odası) *" value={crmData.projectName} onChange={e=>setCrmData({...crmData, projectName: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       <div className="grid grid-cols-2 gap-3">
-                         <input type="text" placeholder="En (cm)" value={crmData.width} onChange={e=>setCrmData({...crmData, width: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                         <input type="text" placeholder="Boy (cm)" value={crmData.height} onChange={e=>setCrmData({...crmData, height: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       </div>
-                       <div className="grid grid-cols-2 gap-3">
-                         <select value={crmData.pleatStyle} onChange={e=>setCrmData({...crmData, pleatStyle: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
-                           <option value="">Pile Seçimi</option><option value="Sık Pile (1e 3)">Sık Pile (1'e 3)</option><option value="Normal Pile (1e 2.5)">Normal Pile (1'e 2.5)</option><option value="Seyrek Pile (1e 2)">Seyrek Pile (1'e 2)</option>
-                         </select>
-                         <select value={crmData.seamStyle} onChange={e=>setCrmData({...crmData, seamStyle: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-zinc-400 outline-none focus:border-emerald-500/50">
-                           <option value="">Dikiş Tipi</option><option value="Kruvaze">Kruvaze</option><option value="Düz">Düz</option><option value="Farbalalı">Farbalalı</option><option value="Rustik">Rustik</option>
-                         </select>
-                       </div>
-                       <input type="text" placeholder="Korniş / Mekanizma (Örn: Motorlu, Somfy)" value={crmData.mechanism} onChange={e=>setCrmData({...crmData, mechanism: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none focus:border-emerald-500/50" />
-                       <textarea placeholder="Ekstra Notlar / Montaj Talimatı" value={crmData.notes} onChange={e=>setCrmData({...crmData, notes: e.target.value})} className="w-full bg-black/50 border border-white/10 p-3 rounded-xl text-sm text-white outline-none h-24 resize-none focus:border-emerald-500/50" />
+                 {/* Öncesi / Sonrası Önizleme */}
+                 {resultImage && activeOriginalUrl && (
+                   <div className="grid grid-cols-2 gap-3">
+                     <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-white/10">
+                       <img src={activeOriginalUrl} className="w-full h-full object-cover" alt="Öncesi" />
+                       <span className="absolute bottom-2 left-2 text-[9px] uppercase tracking-widest bg-black/70 text-zinc-300 px-2 py-1 rounded-full font-bold">Öncesi</span>
+                     </div>
+                     <div className="relative aspect-video bg-black rounded-xl overflow-hidden border border-emerald-500/30">
+                       <img src={resultImage} className="w-full h-full object-cover" alt="Sonrası" />
+                       <span className="absolute bottom-2 left-2 text-[9px] uppercase tracking-widest bg-emerald-500/70 text-white px-2 py-1 rounded-full font-bold">Sonrası</span>
                      </div>
                    </div>
-                 </div>
+                 )}
                </div>
 
                <div className="p-6 border-t border-white/10 bg-zinc-900 sticky bottom-0 z-10 flex gap-4">
                  <button onClick={() => setIsSaveModalOpen(false)} className="px-8 py-3 bg-zinc-800 text-white rounded-xl hover:bg-zinc-700 transition font-medium">İptal</button>
                  <button onClick={handleSaveProject} disabled={isSaving} className="flex-1 bg-emerald-600 text-white p-3 rounded-xl font-bold hover:bg-emerald-500 transition disabled:opacity-50 flex justify-center items-center gap-2">
                    {isSaving ? <Loader2 className="w-5 h-5 animate-spin"/> : <Save className="w-5 h-5"/>}
-                   {isSaving ? 'Kaydediliyor...' : 'Tüm Sözleşmeyi Arşive Kaydet'}
+                   {isSaving ? 'Kaydediliyor...' : 'Tasarımı Arşive Kaydet'}
                  </button>
                </div>
             </div>

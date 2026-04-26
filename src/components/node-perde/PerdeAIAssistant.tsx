@@ -162,6 +162,7 @@ export default function PerdeAIAssistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<{ id: string, base64: string, file: File, label?: string }[]>([]);
+  const hasCompletedRender = useRef(false);
 
   // Voice State
   const [isListening, setIsListening] = useState(false);
@@ -260,6 +261,7 @@ export default function PerdeAIAssistant() {
             role: 'agent',
             content: `Tasarım başarıyla tamamlandı. Yeniden şekillendirmek (cila) için komut verebilirsiniz.`
         }]);
+        hasCompletedRender.current = true;
         setTimeout(() => setIsAttention(false), 3000);
     };
     window.addEventListener('agent_message', handleAgentMessage);
@@ -448,17 +450,18 @@ export default function PerdeAIAssistant() {
 
 
     const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
-    const isEditIntent = lower.includes('cila') || lower.includes('düzenle') || lower.includes('değiştir') || lower.includes('bordo') || lower.includes('sıkılaştır') || lower.includes('gevşet') || lower.includes('kaldır') || lower.includes('ekle') || lower.includes('rengi') || lower.includes('tonu') || lower.includes('açık yap') || lower.includes('koyu yap');
+    const isEditIntent = lower.includes('cila') || lower.includes('düzenle') || lower.includes('değiştir') || lower.includes('bordo') || lower.includes('sıkılaştır') || lower.includes('gevşet') || lower.includes('kaldır') || lower.includes('ekle') || lower.includes('rengi') || lower.includes('tonu') || lower.includes('açık yap') || lower.includes('koyu yap') || lower.includes('küçük') || lower.includes('büyük') || lower.includes('pile') || lower.includes('yığma') || lower.includes('kısa') || lower.includes('uzun') || lower.includes('kat') || lower.includes('fon') || lower.includes('tül') || lower.includes('desen') || lower.includes('olsun') || lower.includes('azalt') || lower.includes('artır') || lower.includes('koyulaştır') || lower.includes('açıklaştır');
     const isAnalysisIntent = lower.includes('analiz') || lower.includes('incele');
     
-    // ── CİLA MODU: Mevcut render varken düzenleme komutu → render-edit API ──
-    if (isEditIntent && !isRenderIntent && currentAttachments.length === 0) {
+    // ── CİLA MODU: Render tamamlanmışsa ve yeni attachment yoksa → düzenleme komutu ──
+    const shouldEdit = (isEditIntent || hasCompletedRender.current) && !isRenderIntent && currentAttachments.length === 0 && userMsg.trim().length > 0;
+    if (shouldEdit) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
       setInputMsg('');
       setMessages(prev => [...prev,
-        { id: 'u-' + Date.now(), role: 'user', content: userMsg },
-        { id: 'edit-' + Date.now(), role: 'agent', content: 'Tasarım düzenleniyor... Cila motoru devrede.' }
+        { id: 'u-' + uid, role: 'user', content: userMsg },
+        { id: 'edit-' + uid, role: 'agent', content: 'Tasarım düzenleniyor... Cila motoru devrede.' }
       ]);
-      // RoomVisualizer'dan mevcut render'ı al ve düzenle
       window.dispatchEvent(new CustomEvent('request_render_edit', { detail: { editPrompt: userMsg } }));
       setIsTyping(false);
       return;
@@ -466,13 +469,14 @@ export default function PerdeAIAssistant() {
 
     // ── YENİ RENDER: Attachment + render komutu ("yap" sadece attachment varken tetiklenir) ──
     const isYapWithAttachment = lower.includes('yap') && currentAttachments.length > 0;
-    if (isRenderIntent || isYapWithAttachment || (currentAttachments.length > 0 && !isAnalysisIntent && !isEditIntent)) {
-      // Ürün ekleri var + render komutu → RoomVisualizer'a otonom render sinyali gönder
+    if (isRenderIntent || isYapWithAttachment || (currentAttachments.length > 0 && !isAnalysisIntent)) {
+      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
       setInputMsg('');
       setAttachments([]);
+      hasCompletedRender.current = false; // Yeni render başlıyor, cila modu sıfırla
       setMessages(prev => [...prev, 
-        { id: 'u-' + Date.now(), role: 'user', content: userMsg || 'Tasarımı başlat', attachments: currentAttachments },
-        { id: 'r-' + Date.now(), role: 'agent', content: d.startRenderMsg }
+        { id: 'u-' + uid, role: 'user', content: userMsg || 'Tasarımı başlat', attachments: currentAttachments },
+        { id: 'r-' + uid, role: 'agent', content: d.startRenderMsg }
       ]);
       window.dispatchEvent(new CustomEvent('start_autonomous_render', { detail: { attachments: currentAttachments, prompt: userMsg } }));
       setIsTyping(false);
@@ -525,20 +529,13 @@ export default function PerdeAIAssistant() {
       return;
     }
 
-    // ── TEKLİF / KEŞİF FÖYÜ TETİKLEME ──
-    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj')) {
-      window.dispatchEvent(new CustomEvent('open_order_slide', { detail: { aiSuggestedItems: [], mode: 'quote' } }));
-      setMessages(prev => [...prev, { id: 'quote-' + Date.now(), role: 'agent', content: 'Teklif hazırlama modülü açılıyor... Otonom metraj ve fiyat hesaplama (b2b-calc) devrede.' }]);
-      
-      // Arka planda b2b-calc API çağrısı simüle ediliyor veya gerçek veri çekiliyor
-      fetch('/api/perde/b2b-calc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: [], action: 'prepare_quote' })
-      }).then(res => res.json()).then(data => {
-        console.log("B2B Calc data:", data);
-      });
-
+    // ── TEKLİF / FİYAT / ÖLÇÜ → YÖNETİM PANELİNE YÖNLENDİR ──
+    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj') || lower.includes('sipariş')) {
+      setMessages(prev => [...prev,
+        { id: 'u-' + Date.now(), role: 'user', content: userMsg },
+        { id: 'erp-' + Date.now(), role: 'agent', content: 'Fiyat, teklif ve sipariş işlemleri **Yönetim Paneli**\'nden yapılır. Sizi yönlendireyim mi? (Burası sadece tasarım stüdyosu)' }
+      ]);
+      setInputMsg('');
       setIsTyping(false);
       return;
     }
