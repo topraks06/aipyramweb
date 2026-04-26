@@ -269,3 +269,13 @@ B2B modeli ile farklılaşmış ama görsel kalite ve teknik derinlikte eksikler
 **Hiçbir rakip B2B toptan + tasarım motoru + ERP + tedarik zinciri entegrasyonunu
 TEK PLATFORMDA sunmuyor.** Bu Perde.ai'nin benzersiz değer önerisi.
 Teknik kaliteyi artırdığımızda, dünya liderliği KESİN.
+
+---
+
+## 8. CİLA FAZI (NİSAN 2026) TAMAMLANAN REVİZYONLAR
+
+Sıfır-Menü ve "Sovereign OS" felsefesine uygun olarak Stüdyo deneyimindeki pürüzler giderildi:
+1. **Chatbot Intent & Navigation Bug Fix:** Asistanın "ekle", "hesapla" gibi kelimelerde gereksiz yere B2B sipariş/sepet sayfasını açması ve `FirebaseError: Missing permissions` fırlatması engellendi. Tasarım stüdyosu tamamen yaratıcı sürece odaklandı.
+2. **Referans Görsel (White Model) Sıkılaştırması:** Kullanıcının eklediği stil referansları için Gemini 3.1'e `[BEYAZ MODEL - KESİN KURAL]` etiketiyle mutlak talimat (Prompt Injection) gönderilmesi sağlandı.
+3. **Kullanıcı Prompt Enjeksiyonu:** Sadece kumaş eklentileri değil, aynı zamanda chatten gelen "yana dökümlü yap", "sadece tül yap" gibi doğal dil talimatları da otonom render pipeline'ına başarıyla bağlandı.
+4. **4K Zoom & Kurumsal UI:** Scroll ile yakınlaştırma özelliği eklendi, gereksiz watermarklar temizlendi, karşılama mesajı profesyonel stüdyo asistanı seviyesine çıkarıldı.
