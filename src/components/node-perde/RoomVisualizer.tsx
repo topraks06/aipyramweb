@@ -107,6 +107,22 @@ export default function RoomVisualizer() {
     });
   };
 
+  const getClosestAspectRatio = (base64: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const ratio = img.width / img.height;
+        if (ratio > 1.5) resolve('16:9');
+        else if (ratio > 1.1) resolve('4:3');
+        else if (ratio > 0.8) resolve('1:1');
+        else if (ratio > 0.6) resolve('3:4');
+        else resolve('9:16');
+      };
+      img.onerror = () => resolve('1:1');
+      img.src = base64;
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
         toast.error("Lütfen sadece resim dosyası yükleyin (JPG/PNG).");
@@ -150,6 +166,7 @@ export default function RoomVisualizer() {
 
        // ── TÜM GÖRSELLERİ SIKIŞTIRIR (API payload boyutunu düşür) ──
        const compressedTarget = await compressImage(targetImage, 1200, 0.8);
+       const calculatedAR = await getClosestAspectRatio(compressedTarget);
 
        const productsObj: Record<string, any> = {};
        for (const [i, a] of canvasAttachments.entries()) {
@@ -162,7 +179,7 @@ export default function RoomVisualizer() {
            spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
            products: productsObj,
            variationCount,        // 1=4K tam render, 2/4=hızlı taslak
-           aspectRatio: 'auto',   // Mekanın orijinal oranını koru — 16:9 zorlaması kaldırıldı
+           aspectRatio: calculatedAR,   // Mekanın orijinal oranını koru (hesaplanan: 16:9, 4:3 vs)
            studioSettings: {
              decorationMode: canvasAttachments.length > 0 ? 'preserve' : 'auto-decor',
            },
