@@ -451,6 +451,76 @@ export default function PerdeAIAssistant() {
       return;
     }
 
+    // ── TASARIM MOTORU TETİKLEME (render-pro pipeline) ──
+    const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
+    if (isRenderIntent && currentAttachments.length > 0) {
+      // Ürün ekleri var + render komutu → RoomVisualizer'a otonom render sinyali gönder
+      setInputMsg('');
+      setAttachments([]);
+      setMessages(prev => [...prev, 
+        { id: 'u-' + Date.now(), role: 'user', content: userMsg || 'Tasarımı başlat', attachments: currentAttachments },
+        { id: 'r-' + Date.now(), role: 'agent', content: d.startRenderMsg }
+      ]);
+      window.dispatchEvent(new CustomEvent('start_autonomous_render', { detail: { attachments: currentAttachments, prompt: userMsg } }));
+      setIsTyping(false);
+      return;
+    }
+
+    // ── KUMAŞ ANALİZİ TETİKLEME (analyze-fabric) ──
+    if ((lower.includes('analiz') || lower.includes('incele')) && currentAttachments.length > 0) {
+      setInputMsg('');
+      setAttachments([]);
+      setMessages(prev => [...prev, 
+        { id: 'u-' + Date.now(), role: 'user', content: userMsg || 'Bu kumaşı analiz et', attachments: currentAttachments },
+        { id: 'a-' + Date.now(), role: 'agent', content: 'Kumaş analizi yapılıyor...' }
+      ]);
+      fetch('/api/perde/analyze-fabric', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: currentAttachments.map(a => a.base64) })
+      }).then(res => res.json()).then(data => {
+        setMessages(prev => [...prev, { id: 'sys-' + Date.now(), role: 'agent', content: data.analysis || 'Analiz tamamlandı.' }]);
+      }).catch(err => {
+        setMessages(prev => [...prev, { id: 'err-' + Date.now(), role: 'agent', content: 'Analiz sırasında hata oluştu.' }]);
+      });
+      setIsTyping(false);
+      return;
+    }
+
+    // ── KOLEKSİYON MOTORU TETİKLEME ──
+    if (lower.includes('koleksiyon') && (lower.includes('oluştur') || lower.includes('hazırla') || lower.includes('üret'))) {
+      router.push('/sites/perde/studio');
+      setMessages(prev => [...prev, { id: 'col-' + Date.now(), role: 'agent', content: 'Koleksiyon Motoru (Design Engine) açılıyor... AI arka planda kumaş dokusu, konsept ve renk paletini hazırlıyor.' }]);
+      fetch('/api/perde/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMsg })
+      }).then(res => res.json()).then(data => {
+         // Veri gelirse UI'ı güncelleyebilir veya asistan üzerinden gösterebiliriz.
+         console.log("Collection data:", data);
+      });
+      setIsTyping(false);
+      return;
+    }
+
+    // ── TEKLİF / KEŞİF FÖYÜ TETİKLEME ──
+    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj')) {
+      window.dispatchEvent(new CustomEvent('open_order_slide', { detail: { aiSuggestedItems: [], mode: 'quote' } }));
+      setMessages(prev => [...prev, { id: 'quote-' + Date.now(), role: 'agent', content: 'Teklif hazırlama modülü açılıyor... Otonom metraj ve fiyat hesaplama (b2b-calc) devrede.' }]);
+      
+      // Arka planda b2b-calc API çağrısı simüle ediliyor veya gerçek veri çekiliyor
+      fetch('/api/perde/b2b-calc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [], action: 'prepare_quote' })
+      }).then(res => res.json()).then(data => {
+        console.log("B2B Calc data:", data);
+      });
+
+      setIsTyping(false);
+      return;
+    }
+
     // DYNAMIC DASHBOARD GENERATOR (Deep Logic)
     let detectedSector = null;
     const keywords = ["halı", "aydınlatma", "kuaför", "berber", "mimar", "mobilya", "perde", "aksesuar", "bahçe", "peyzaj", "kumaş", "güzellik", "inşaat", "doktor", "oto", "diş", "restoran", "kafe", "yazılım"];

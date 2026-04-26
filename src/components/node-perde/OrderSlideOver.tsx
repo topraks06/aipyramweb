@@ -85,8 +85,27 @@ export default function OrderSlideOver({ isOpen, onClose, order, isCreateMode }:
      if (order?.mediaUrls?.[0]) window.open(order.mediaUrls[0], '_blank');
   };
 
-  const handleRefreshMock = () => {
-     alert("Fiyatlar güncelleniyor (Yapay zeka asistanı yeniden hesaplıyor...)");
+  const handleRefreshPricing = async () => {
+     window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { attention: true } }));
+     window.dispatchEvent(new CustomEvent('agent_message', {
+       detail: { message: `🔄 Fiyat güncelleme talebi alındı. Sipariş #${order?.id?.substring(0, 8) || ''} için canlı piyasa verilerine göre yeniden hesaplama yapılıyor...` }
+     }));
+
+     try {
+       const res = await fetch('/api/perde/b2b-calc', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ action: 'refresh_pricing', orderId: order?.id, currentItems: order?.items })
+       });
+       const data = await res.json();
+       if (data.newTotal) {
+           window.dispatchEvent(new CustomEvent('agent_message', {
+             detail: { message: `✅ Hesaplama tamamlandı. Yeni Tutar: ${data.newTotal} TL.` }
+           }));
+       }
+     } catch (e) {
+        console.error(e);
+     }
   };
 
   return (
@@ -255,7 +274,7 @@ export default function OrderSlideOver({ isOpen, onClose, order, isCreateMode }:
                          Siparişi Üretime Al (Manuel)
                        </button>
                        <button 
-                         onClick={handleRefreshMock}
+                         onClick={handleRefreshPricing}
                          className="px-4 py-3 bg-white border border-zinc-200 text-zinc-700 flex items-center justify-center gap-2 rounded-md text-sm hover:bg-zinc-100"
                          title="Fiyat Güncelle"
                        >

@@ -63,7 +63,7 @@ export default function WowDemoSection() {
                                 <div className="w-8 h-8 border-2 border-zinc-700 border-t-white animate-spin rounded-full" />
                             </div>
                         }>
-                            <RoomVisualizer isDemoMode={true} />
+                            <RoomVisualizer />
                         </Suspense>
                     </div>
                 ) : (

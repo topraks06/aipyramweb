@@ -6,20 +6,13 @@ export const dynamic = "force-dynamic";
 
 /**
  * ═══════════════════════════════════════════════════════════════
- *  PERDE.AI — SOVEREIGN RENDER ENGINE v4.0
+ *  PERDE.AI — SOVEREIGN RENDER ENGINE v4.1 (Anti-Halüsinasyon)
  *  
- *  İKİ SİSTEMİN BİRLEŞİMİ (Eski perde.ai + Yeni AIPyram)
- *  
- *  Eski Sistemden Alınan:
- *    - Dual-Label Tekniği (her görselin arasına etiket)
- *    - Dekorasyon Modu (auto-decor / preserve)
- *    - Model Seçim Stratejisi (hızlı taslak vs tam render)
- *    - Kanıtlanmış Türkçe domain-expert prompt
- *  
- *  Yeni Sistemden Korunan:
- *    - Next.js API route mimarisi
- *    - Frontend sıkıştırma pipeline'ı
- *    - Sovereign Node yapısı
+ *  DÜZELTMELER (v4.1):
+ *    - Aspect Ratio: Mekanın orijinal oranı korunuyor (16:9 zorlaması kaldırıldı)
+ *    - Anti-Halüsinasyon: Kumaş görselleri PIXEL-FAITHFUL olarak kullanılıyor
+ *    - Prompt: 3 katmanlı bağlama ("sen bu kumaşı GÖRMELİSİN") stratejisi
+ *    - Kumaş tekrarı: Aynı kumaş görseli 2. kez gönderilip referans güçlendiriliyor
  *  
  *  Kaynak: .agents/skills/PERDE_DESIGN_ENGINE_V4_MERGE_PLAN.md
  * ═══════════════════════════════════════════════════════════════
@@ -37,7 +30,7 @@ export async function POST(req: NextRequest) {
       referenceModel,    // { data: string, mimeType: string } | null — beyaz model
       studioSettings,    // { lighting, lens, composition, decorationMode, renderQuality, timeOfDay }
       variationCount = 1,// 1 | 2 | 4 — model seçimini belirler
-      aspectRatio: requestedAR, // '16:9' | '9:16' | '1:1'
+      aspectRatio: requestedAR, // '16:9' | '9:16' | '1:1' | null
       SovereignNodeId = 'perde'
     } = body;
 
@@ -59,9 +52,7 @@ export async function POST(req: NextRequest) {
     };
 
     // ══════════════════════════════════════════════════════════
-    //  DUAL-LABEL PIPELINE (Eski Sistemin Kanıtlanmış Tekniği)
-    //  Her görselin arasına metin etiketi konur → Model hangi
-    //  görselin mekan, hangisinin kumaş olduğunu KESİN anlar.
+    //  DUAL-LABEL PIPELINE v4.1 (Anti-Halüsinasyon Güçlendirilmiş)
     // ══════════════════════════════════════════════════════════
 
     const parts: any[] = [];
@@ -71,7 +62,28 @@ export async function POST(req: NextRequest) {
     const cleanBase64 = (data: string) => data.includes(",") ? data.split(",")[1] : data;
 
     // ────────────────────────────────────────────────────────
-    // 1. MEKAN GÖRSELİ + GÜÇLÜ ETİKET
+    // ADIM 0: ÖN TALİMAT — Anti-Halüsinasyon Kilidi
+    // Bu talimat TÜM görsellerden ÖNCE konur, modelin
+    // bağlamını en başta kurar.
+    // ────────────────────────────────────────────────────────
+    const hasProducts = products && typeof products === "object" && Object.keys(products).length > 0;
+    const productEntries = hasProducts ? Object.entries(products) as [string, any][] : [];
+    const productNames = hasProducts ? productEntries.map(([r]) => r).join(", ") : "modern, zarif perde";
+
+    parts.push({
+      text: `SEN BİR FOTOĞRAF DÜZENLEME MOTORUSUN. SIFIRDAN GÖRSEL ÜRETMİYORSUN.
+Sana vereceğim görselleri DÜZENLE ve BİRLEŞTİR.
+
+KRİTİK GÖREV: Aşağıda sana ${imageCount > 0 ? 'bir mekan fotoğrafı ve' : ''} kumaş/ürün fotoğraf(lar)ı vereceğim.
+${hasProducts ? `Kumaş fotoğraflarındaki (${productNames}) GERÇEK dokuyu, GERÇEK rengi, GERÇEK deseni PİKSEL PİKSEL kopyalayarak mekan fotoğrafına perde olarak monte edeceksin.` : ''}
+
+YASAK: Kendi kafandan yeni desen, yeni renk, yeni kumaş UYDURMA.
+YASAK: Kumaş fotoğrafından "ilham alıp" benzerini çizme — GERÇEK FOTOĞRAFIN DOKUSUNU KULLAN.
+ZORUNLU: Kumaş fotoğrafındaki her ip, her desen, her renk geçişi BİREBİR KORUNMALI.`
+    });
+
+    // ────────────────────────────────────────────────────────
+    // ADIM 1: MEKAN GÖRSELİ + GÜÇLÜ ETİKET
     // ────────────────────────────────────────────────────────
     if (spaceImage?.data) {
       parts.push({
@@ -81,48 +93,54 @@ export async function POST(req: NextRequest) {
         },
       });
       parts.push({
-        text: `[MEKAN REFERANSI — KESİNLİKLE KORUNACAK]: Bu görsel hedef mekandır. 
-Bu odanın duvarları, pencereleri, pencere çerçeveleri, zemini, tavanı, radyatörleri, 
-prizleri ve TÜM mimari detayları BİREBİR KORUNACAKTIR. 
-Kamera açısı, perspektif ve aydınlatma DEĞİŞTİRİLMEYECEKTİR.
-Bu fotoğrafı DÜZENLE, yeni oda YARATMA.`,
+        text: `[MEKAN REFERANSI — DOKUNULMAZ]: Bu fotoğraf hedef mekandır.
+Duvarlar, pencereler, pencere çerçeveleri, zemin, tavan, radyatörler, prizler ve TÜM mimari detaylar BİREBİR KORUNACAK.
+Kamera açısı, perspektif, aydınlatma DEĞİŞTİRİLMEYECEK.
+Bu fotoğrafı DÜZENLE — yeni oda YARATMA, mevcut odayı KORU.`,
       });
       imageCount++;
     }
 
     // ────────────────────────────────────────────────────────
-    // 2. ÜRÜN/KUMAŞ GÖRSELLERİ + KULLANICI ETİKETLERİ
-    //    Eski sistemin "[DİKKAT KESİN BİLGİ]" formatı
+    // ADIM 2: ÜRÜN/KUMAŞ GÖRSELLERİ + 3 KATMANLI BAĞLAMA
+    //    Halüsinasyonu kırmak için her kumaş görseli
+    //    ÖNCESİNDE ve SONRASINDA metin enjeksiyonu yapılır.
     // ────────────────────────────────────────────────────────
-    const hasProducts = products && typeof products === "object" && Object.keys(products).length > 0;
-    const productEntries = hasProducts ? Object.entries(products) as [string, any][] : [];
-    
     for (const [role, mat] of productEntries) {
-      if (!mat?.data || imageCount >= 13) continue; // 14 görsel limitine dikkat
+      if (!mat?.data || imageCount >= 13) continue;
       
+      // KATMAN 1: Kumaş öncesi bağlam
+      parts.push({
+        text: `[ÜRÜN FOTOĞRAFI BAŞLANGIÇ — "${role}"]: 
+Aşağıdaki görsel bir GERÇEK kumaş fotoğrafıdır. Bu kumaşın dokusunu, rengini ve desenini AYNEN KOPYALA.
+Bu kumaş fotoğrafından yeni bir şey UYDURMA — gördüğün kumaşın kendisini perde olarak kullan.`
+      });
+
+      // KATMAN 2: Kumaş görseli
       parts.push({
         inlineData: {
           data: cleanBase64(mat.data),
           mimeType: mat.mimeType || "image/jpeg",
         },
       });
-      
-      // Eski sistemin etiket enjeksiyonu — modele kesin rol atıyor
-      parts.push({
-        text: `[DİKKAT KESİN BİLGİ - KULLANICI ETİKETİ]: Kullanıcı bu dosya için sisteme 
-özel bir etiket düştü: "${role}". 
-EĞER kullanıcı "Fon", "Fon Kumaşı" veya "Fon Perde" demişse → Bu kumaşı FON PERDE olarak kullan.
-EĞER "Tül", "Tül Kumaşı" veya "Tül Perde" demişse → Bu kumaşı TÜL PERDE olarak kullan (ana perdenin ARKASINA, pencere camına yakın).
-EĞER "Stor" veya "Stor Perde" demişse → Bu kumaşı STOR PERDE olarak kullan.
-EĞER "Döşemelik" demişse → Bu kumaşı koltuk/kanepe DÖŞEME olarak kullan.
-Bu kumaşın GERÇEK dokusunu, rengini, desenini ve yapısını BİREBİR kullan. 
-Kendi hayal ettiğin desen YASAKTIR — yüklenen kumaş fotoğrafı NE İSE O kullanılacak.`,
-      });
       imageCount++;
+      
+      // KATMAN 3: Kumaş sonrası kesin rol atama
+      parts.push({
+        text: `[ÜRÜN FOTOĞRAFI BİTİŞ — "${role}"]:
+Yukarıdaki kumaş fotoğrafının rolü: "${role}".
+${role.toLowerCase().includes('fon') ? '→ Bu kumaşı FON PERDE olarak kullan. Pencere önüne, tavan kornişinden yere kadar as.' : ''}
+${role.toLowerCase().includes('tül') ? '→ Bu kumaşı TÜL PERDE olarak kullan. Pencere CAMI tarafına, fon perdenin ARKASINA as. Yarı şeffaf olmalı.' : ''}
+${role.toLowerCase().includes('stor') ? '→ Bu kumaşı STOR PERDE olarak kullan. Pencere kasasına monte et.' : ''}
+${role.toLowerCase().includes('döşemelik') || role.toLowerCase().includes('dosemelik') ? '→ Bu kumaşı DÖŞEME olarak kullan. Koltuk/kanepelere döşe.' : ''}
+${!role.toLowerCase().includes('fon') && !role.toLowerCase().includes('tül') && !role.toLowerCase().includes('stor') && !role.toLowerCase().includes('döşemelik') ? '→ Bu kumaşı uygun şekilde mekana entegre et (perde veya tekstil olarak).' : ''}
+
+TEKRAR: Bu kumaşın DESENİ, RENGİ ve DOKUSU BİREBİR kullanılacak. Kendi tasarımını KOYMA.`
+      });
     }
 
     // ────────────────────────────────────────────────────────
-    // 3. REFERANS FORM (beyaz model görseli, opsiyonel)
+    // ADIM 3: REFERANS FORM (beyaz model görseli, opsiyonel)
     // ────────────────────────────────────────────────────────
     if (referenceModel?.data && imageCount < 14) {
       parts.push({
@@ -139,7 +157,7 @@ kesimini ve siluetini gösteriyor. Ürünün şeklini buna benzet.`,
     }
 
     // ────────────────────────────────────────────────────────
-    // 4. DEKORASYON MODU (Eski Sistemden — auto-decor / preserve)
+    // ADIM 4: DEKORASYON MODU
     // ────────────────────────────────────────────────────────
     const decorInstruction = settings.decorationMode === "auto-decor"
       ? `DEKORASYON MODU: Mekan boş veya eksikse, iç mimari vizyonunu kullanarak 
@@ -149,11 +167,10 @@ istenen tekstil ürünlerini yerleştir.`
 kesinlikle koru, sadece istenen tekstil ürünlerini/perdeleri mekana entegre et.`;
 
     // ────────────────────────────────────────────────────────
-    // 5. FİNAL PROMPT (Eski Sistemin Kanıtlanmış Türkçe Promtu)
+    // ADIM 5: FİNAL PROMPT (Anti-Halüsinasyon Güçlendirilmiş)
     // ────────────────────────────────────────────────────────
-    const productNames = hasProducts ? productEntries.map(([r]) => r).join(", ") : "modern, zarif perde";
-    
-    const finalPrompt = `Sen profesyonel bir iç mimari ve ürün fotoğrafçısısın.
+    const finalPrompt = `GÖREV: Yukarıdaki mekan fotoğrafını DÜZENLE ve kumaş fotoğraflarındaki GERÇEK kumaşları mekana monte et.
+
 Zaman/Atmosfer: ${settings.timeOfDay}
 Işıklandırma: ${settings.lighting}
 Lens/Kamera: ${settings.lens}
@@ -161,55 +178,68 @@ Kurgu/Kompozisyon: ${settings.composition}
 
 ${decorInstruction}
 
-Görev: Verilen mekan referansındaki ODAYI KORUYARAK, yüklenen kategorize edilmiş ürünleri 
-(${productNames}) kusursuz bir şekilde mekana entegre et.
-
 ${spaceImage ? `MUTLAK KURAL: Yukarıdaki [MEKAN REFERANSI] fotoğrafını DÜZENLE. 
-Yeni oda YARATMA. Aynı duvarlar, aynı zemin, aynı pencereler, aynı kamera açısı.` : ""}
+Yeni oda YARATMA. Aynı duvarlar, aynı zemin, aynı pencereler, aynı kamera açısı.
+Mekanın orijinal en-boy oranını koru — fotoğrafı genişletme veya kırpma.` : ""}
 
 ${spacePrompt && !spaceImage ? `Mekan Tasviri: ${spacePrompt}. Bu mekanı sıfırdan oluştur ve perdeleri ekle.` : ""}
 
-KRİTİK KURALLAR:
-1. Mekan fotoğrafı verildiyse: ODAYI BİREBİR KORU. Pencere pozisyonları, duvar rengi, zemin, hepsi AYNI kalmalı.
-2. Kumaş deseni verildiyse: Yüklenen kumaşın GERÇEK dokusunu, rengini, desenini BİREBİR kullan. Kendi hayal ettiğin desen YASAK.
-3. Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
-4. Tül perde verildiyse ARKAYA (pencere camına yakın), fon perde ÖNE yerleştirilmeli.
-5. Perde rayı/korniş pencere üstüne eklenmeli.
-6. Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
-7. Sadece render görselini üret, metin yanıt VERME.`;
+KRİTİK KURALLAR (İHLAL EDİLEMEZ):
+1. MEKAN: Orijinal fotoğraftaki her piksel korunmalı — pencere pozisyonları, duvar rengi, zemin, perspektif AYNI.
+2. KUMAŞ: Yüklenen kumaş fotoğraflarındaki GERÇEK doku/desen/renk BİREBİR kullanılmalı. KENDİ DESENİNİ UYDURMA.
+3. FİZİK: Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
+4. KATMANLAMA: Tül perde pencere CAMINA yakın (arka), fon perde ÖNE yerleştirilmeli.
+5. KORNIŞ: Perde rayı/korniş pencere üstüne eklenmeli.
+6. KALİTE: Sonuç dergi kapağı kalitesinde, fotogerçekçi ve kusursuz olmalıdır.
+7. SADECE görsel üret, metin yanıt VERME.`;
 
     parts.push({ text: finalPrompt });
 
     // ────────────────────────────────────────────────────────
-    // 6. MODEL SEÇİM STRATEJİSİ (Eski Sistemden)
-    //    Hızlı taslak (2/4): gemini-2.5-flash-image → 5-8 sn
-    //    Tam render (1):     gemini-3.1-flash-image-preview → 15-25 sn
+    // ADIM 6: MODEL SEÇİM STRATEJİSİ (Nisan 2026 Güncel)
+    //    Tam render (1): Nano Banana Pro → studio kalitesi, reasoning, 4K
+    //    Hızlı taslak (2/4): Nano Banana 2 → yüksek verimli, hızlı
+    //    DEPRECATED: gemini-2.0-flash-exp KULLANILMAZ
     // ────────────────────────────────────────────────────────
     const vCount = variationCount || 1;
     const isHighRes = vCount === 1;
-    const modelName = isHighRes ? "gemini-3.1-flash-image-preview" : "gemini-2.5-flash-image";
+    const modelName = isHighRes 
+      ? "gemini-3-pro-image-preview"      // Nano Banana Pro — Studio kalite, 4K, reasoning
+      : "gemini-3.1-flash-image-preview";  // Nano Banana 2 — Hızlı, yüksek verimli
 
-    // Aspect Ratio
-    let aspectRatio = requestedAR || "16:9";
-    if (spacePrompt?.includes("[AR:9:16]")) aspectRatio = "9:16";
-    else if (spacePrompt?.includes("[AR:1:1]")) aspectRatio = "1:1";
+    // ────────────────────────────────────────────────────────
+    // ADIM 7: ASPECT RATIO — Mekanın orijinal oranını koru
+    //    Frontend'den gelen requestedAR varsa kullan,
+    //    yoksa default VERME — Gemini kendi hesaplasın.
+    // ────────────────────────────────────────────────────────
+    const imageConfig: any = {};
+    
+    if (requestedAR && requestedAR !== 'auto') {
+      imageConfig.aspectRatio = requestedAR;
+    }
+    // requestedAR yoksa veya 'auto' ise → imageConfig.aspectRatio SET ETMİYORUZ
+    // Gemini mekanın orijinal oranına yakın çıktı üretecek
 
     // ── RENDER ──
     const ai = alohaAI.getClient();
     let renderUrl: string | null = null;
 
-    console.log(`[RENDER-PRO v4] Model: ${modelName}, Images: ${imageCount}, AR: ${aspectRatio}, Quality: ${isHighRes ? '4K' : 'Taslak'}`);
+    console.log(`[RENDER-PRO v4.1] Model: ${modelName}, Images: ${imageCount}, Products: ${productNames}, AR: ${requestedAR || 'auto'}, Quality: ${isHighRes ? '4K' : 'Taslak'}`);
 
     try {
+      const genConfig: any = {
+        responseModalities: ["IMAGE", "TEXT"],
+      };
+      
+      // Sadece açıkça AR belirtildiyse ekle
+      if (Object.keys(imageConfig).length > 0) {
+        genConfig.imageConfig = imageConfig;
+      }
+
       const response = await ai.models.generateContent({
         model: modelName,
         contents: { parts },
-        config: {
-          responseModalities: ["IMAGE", "TEXT"],
-          imageConfig: {
-            aspectRatio: aspectRatio as any,
-          }
-        }
+        config: genConfig,
       });
 
       const candidate = response.candidates?.[0];
@@ -232,11 +262,11 @@ KRİTİK KURALLAR:
 
       if (!renderUrl) {
         const textResponse = candidate.content?.parts?.find((p: any) => p.text)?.text || "";
-        console.error("[RENDER-PRO v4] Model görsel üretmedi. Metin yanıt:", textResponse.substring(0, 300));
+        console.error("[RENDER-PRO v4.1] Model görsel üretmedi. Metin yanıt:", textResponse.substring(0, 500));
         throw new Error("Model görsel çıktısı üretmedi. Lütfen farklı bir mekan veya ürün görseli deneyin.");
       }
     } catch (e: any) {
-      console.error("[RENDER-PRO v4] Gemini Error:", e);
+      console.error("[RENDER-PRO v4.1] Gemini Error:", e);
       
       const msg = e.message || "Bilinmeyen hata";
       if (msg.includes("SAFETY")) {
@@ -249,7 +279,7 @@ KRİTİK KURALLAR:
     }
 
     const duration = Date.now() - startTime;
-    console.log(`[RENDER-PRO v4] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
+    console.log(`[RENDER-PRO v4.1] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
 
     return NextResponse.json({
       renderUrl,
@@ -265,7 +295,7 @@ KRİTİK KURALLAR:
     });
 
   } catch (error: any) {
-    console.error("[RENDER-PRO v4] API Error:", error);
+    console.error("[RENDER-PRO v4.1] API Error:", error);
     return NextResponse.json(
       { error: error.message || "Sunucu hatası" },
       { status: 500 }

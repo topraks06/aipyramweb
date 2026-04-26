@@ -7,11 +7,21 @@ import { Loader2, Building2, User, Mail, Lock, Eye, EyeOff, CheckCircle2 } from 
 
 export default function Register({ basePath = '/sites/perde.ai' }: { basePath?: string }) {
   const { registerDealer, loginWithGoogle } = usePerdeAuth();
-  const [formData, setFormData] = useState({ name: '', company: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', company: '', email: '', password: '', profession: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const PROFESSIONS = [
+    { value: 'perdeci', label: 'Perde Mağazası / Atölye' },
+    { value: 'ic_mimar', label: 'İç Mimar / Mimar' },
+    { value: 'perakendeci', label: 'Perakendeci / Esnaf' },
+    { value: 'mobilyaci', label: 'Mobilyacı' },
+    { value: 'toptanci', label: 'Toptancı / Distribütör' },
+    { value: 'uretici', label: 'Üretici / Fabrika' },
+    { value: 'diger', label: 'Diğer' },
+  ];
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +34,7 @@ export default function Register({ basePath = '/sites/perde.ai' }: { basePath?: 
       password: formData.password,
       name: formData.name,
       company: formData.company,
+      profession: formData.profession || 'diger',
     });
 
     if (result.success) {
@@ -109,6 +120,21 @@ export default function Register({ basePath = '/sites/perde.ai' }: { basePath?: 
             placeholder="Yetkili Ad Soyad"
             className="w-full bg-[#F9F9F6] border border-zinc-200 rounded-xl py-4 pl-12 pr-4 text-zinc-900 outline-none focus:border-[#8B7355] focus:ring-2 focus:ring-[#8B7355]/10 transition-all placeholder:text-zinc-400 text-sm"
           />
+        </div>
+
+        {/* Meslek Grubu Seçimi */}
+        <div className="relative">
+          <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          <select
+            value={formData.profession}
+            onChange={(e) => setFormData({ ...formData, profession: e.target.value })}
+            className="w-full bg-[#F9F9F6] border border-zinc-200 rounded-xl py-4 pl-12 pr-4 text-zinc-900 outline-none focus:border-[#8B7355] focus:ring-2 focus:ring-[#8B7355]/10 transition-all text-sm appearance-none cursor-pointer"
+          >
+            <option value="" disabled>Meslek Grubunuzu Seçin</option>
+            {PROFESSIONS.map(p => (
+              <option key={p.value} value={p.value}>{p.label}</option>
+            ))}
+          </select>
         </div>
 
         {/* E-posta */}

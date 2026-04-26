@@ -8,16 +8,18 @@ export default function EcosystemBridge() {
     const [latestNews, setLatestNews] = useState<any>(null);
 
     useEffect(() => {
-        // TRTEX'ten gerçek veri çekme (örnek/mock veya API call)
+        // Gerçek TRTEX İstihbarat Sinyali
         const fetchTrtex = async () => {
             try {
                 const res = await fetch('/api/v1/master/trtex/news-list?limit=1');
-                const data = await res.json();
-                if (data.success && data.data && data.data.length > 0) {
-                    setLatestNews(data.data[0]);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.data && data.data.length > 0) {
+                        setLatestNews(data.data[0]);
+                    }
                 }
             } catch (e) {
-                console.log('TRTEX fetch failed', e);
+                // Sessiz hata (Sinyal alınamadıysa UI boş kalır)
             }
         };
         fetchTrtex();

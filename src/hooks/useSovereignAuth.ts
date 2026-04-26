@@ -19,7 +19,7 @@ interface SovereignAuthState {
   SovereignNodeId: SovereignNodeId;
   loginWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  registerMember: (data: { email: string; password: string; name: string; company: string }) => Promise<{ success: boolean; error?: string }>;
+  registerMember: (data: { email: string; password: string; name: string; company: string; profession?: string }) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -123,13 +123,14 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
   }, []);
 
   // Üye kayıt
-  const registerMember = useCallback(async (data: { email: string; password: string; name: string; company: string }) => {
+  const registerMember = useCallback(async (data: { email: string; password: string; name: string; company: string; profession?: string }) => {
     try {
       const credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await setDoc(doc(db, node.memberCollection, credential.user.uid), {
         email: data.email,
         name: data.name,
         company: data.company,
+        profession: data.profession || 'diger',
         license: 'pending',
         role: 'member',
         permissions: derivePermissions('member'),
