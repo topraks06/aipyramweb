@@ -180,12 +180,13 @@ ${decorInstruction}
 
 ${spaceImage ? `MUTLAK KURAL: Yukarıdaki [MEKAN REFERANSI] fotoğrafını DÜZENLE. 
 Yeni oda YARATMA. Aynı duvarlar, aynı zemin, aynı pencereler, aynı kamera açısı.
+YASAK: Fotoğrafı YATAY VEYA DİKEY OLARAK ASLA TERS ÇEVİRME (DO NOT MIRROR/FLIP). Sağ duvar sağda, sol duvar solda kalmalıdır.
 Mekanın orijinal en-boy oranını koru — fotoğrafı genişletme veya kırpma.` : ""}
 
 ${spacePrompt && !spaceImage ? `Mekan Tasviri: ${spacePrompt}. Bu mekanı sıfırdan oluştur ve perdeleri ekle.` : ""}
 
 KRİTİK KURALLAR (İHLAL EDİLEMEZ):
-1. MEKAN: Orijinal fotoğraftaki her piksel korunmalı — pencere pozisyonları, duvar rengi, zemin, perspektif AYNI.
+1. MEKAN: Orijinal fotoğraftaki her piksel korunmalı — pencere pozisyonları, duvar rengi, zemin, perspektif AYNI. FOTOĞRAFI ASLA TERS ÇEVİRME (NO MIRRORING).
 2. KUMAŞ: Yüklenen kumaş fotoğraflarındaki GERÇEK doku/desen/renk BİREBİR kullanılmalı. KENDİ DESENİNİ UYDURMA.
 3. FİZİK: Perdeler doğal yerçekimi fiziğiyle asılmalı — pile kıvrımları, düşüş açısı gerçekçi olmalı.
 4. KATMANLAMA: Tül perde pencere CAMINA yakın (arka), fon perde ÖNE yerleştirilmeli.
