@@ -86,17 +86,17 @@ export default function StudioContent({ basePath }: StudioContentProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link href="?tab=inventory" className="bg-white p-6 border border-[#111111]/10 shadow-sm h-40 flex flex-col justify-between hover:border-[#8B7355] transition-colors group cursor-pointer">
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 group-hover:text-[#8B7355] transition-colors">Kumaş Stoğu</h3>
-              <div className="text-3xl font-serif text-[#111]">1,248 <span className="text-sm font-sans text-zinc-400">Mt.</span></div>
-              <p className="text-[9px] uppercase tracking-widest text-green-600 font-bold">%12 Stok Sağlığı</p>
+              <div className="text-3xl font-serif text-[#111]">0 <span className="text-sm font-sans text-zinc-400">Ürün</span></div>
+              <p className="text-[9px] uppercase tracking-widest text-zinc-400 font-bold">Henüz Kumaş Eklenmedi</p>
           </Link>
           <Link href="?tab=orders" className="bg-white p-6 border border-[#111111]/10 shadow-sm h-40 flex flex-col justify-between hover:border-[#8B7355] transition-colors group cursor-pointer">
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 group-hover:text-[#8B7355] transition-colors">Aktif Siparişler</h3>
-              <div className="text-3xl font-serif text-[#111]">14</div>
-              <p className="text-[9px] uppercase tracking-widest text-[#8B7355] font-bold">2 Adedi Onay Bekliyor</p>
+              <div className="text-3xl font-serif text-[#111]">0</div>
+              <p className="text-[9px] uppercase tracking-widest text-zinc-400 font-bold">Henüz Sipariş Yok</p>
           </Link>
           <div className="bg-white p-6 border border-[#111111]/10 shadow-sm h-40 flex flex-col justify-between">
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Bekleyen Teklifler (Bakiye)</h3>
-              <div className="text-3xl font-serif text-[#111]">₺48,200</div>
+              <div className="text-3xl font-serif text-[#111]">₺0</div>
               <p className="text-[9px] uppercase tracking-widest text-zinc-400 font-bold">Proforma Aşaması</p>
           </div>
       </div>

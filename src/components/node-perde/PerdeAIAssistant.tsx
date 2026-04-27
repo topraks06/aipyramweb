@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, X, Minimize2, Maximize2, Send, Paperclip, 
@@ -76,15 +76,20 @@ const DICT: Record<string, any> = {
   zh: {
     headerTitle: "虚拟室内设计师",
     headerSubtitle: "人工智能领导者",
-    panelAdjustMsg: "æ­£åœ¨è°ƒæ•´é¢æ¿..."
+    welcome: "你好！你的行业是什么？（窗帘、家具、灯饰、室内设计等）告诉我你的职业，我会为你定制系统！",
+    placeholder: "例：添加产品...",
+    processing: "正在分析系统...",
+    startRenderMsg: "已收到您的面料/图案。正在启动设计引擎...",
+    uploadPromptMsg: "现在请点击下方回形针图标上传您想要使用的产品图片。",
+    panelAdjustMsg: "正在调整面板..."
   },
   ar: {
-    headerTitle: "Ù…ØµÙ…Ù… Ø¯Ø§Ø®Ù„ÙŠ Ø§ÙØªØ±Ø§Ø¶ÙŠ",
-    headerSubtitle: "Ø±Ø§Ø¦Ø¯ ÙÙŠ Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ",
+    headerTitle: "مصمم داخلي افتراضي",
+    headerSubtitle: "رائد في الذكاء الاصطناعي",
     welcome: "مرحباً! ما هو مجالك؟ (ستائر، أثاث...) أخبرني بمهنتك وسأقوم بتخصيص النظام لك!",
-    placeholder: "Ù…Ø«Ø§Ù„: Ø¥Ø¶Ø§ÙØ© Ù…Ù†ØªØ¬...",
-    processing: "Ø¬Ø§Ø±Ù ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ù†Ø¸Ø§Ù…...",
-    startRenderMsg: "Ù„Ù‚Ø¯ ØªÙ„Ù‚ÙŠØª Ø§Ù„Ø£Ù‚Ù…Ø´Ø©. Ø¨Ø¯Ø¡ ØªØ´ØºÙŠÙ„ Ù…Ø­Ø±Ùƒ Ø§Ù„ØªØµÙ…ÙŠÙ… ÙÙˆØ±Ø§Ù‹...",
+    placeholder: "مثال: إضافة منتج...",
+    processing: "جاري تحليل النظام...",
+    startRenderMsg: "لقد تلقيت الأقمشة. بدء تشغيل محرك التصميم فوراً...",
     uploadPromptMsg: "الآن يرجى تحميل صور المنتجات بالنقر على أيقونة مشبك الورق.",
     panelAdjustMsg: "جاري ضبط اللوحة..."
   }
@@ -751,10 +756,9 @@ export default function PerdeAIAssistant() {
       }
   };
 
-  const revenueData = [
-    { name: 'Hafta 1', ciro: 45000 }, { name: 'Hafta 2', ciro: 52000 },
-    { name: 'Hafta 3', ciro: 38000 }, { name: 'Hafta 4', ciro: 65000 },
-  ];
+  // TODO: Firestore'dan gercek gelir verileri cekilecek (Accounting koleksiyonundan)
+  // Bos baslat - sahte veri SIFIR MOCK kurali geregi kaldirildi
+  const revenueData: { name: string; ciro: number }[] = [];
 
   return (
     <>

@@ -16,6 +16,36 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // ── Action Router: OrderSlideOver "refresh_pricing" desteği ──
+    if (body.action === 'refresh_pricing') {
+      const { orderId, currentItems } = body;
+      
+      // Basit yeniden hesaplama: Mevcut kalemlerin toplamını döndür
+      // İleride piyasa fiyatı API'sine bağlanabilir
+      const itemsTotal = (currentItems || []).reduce((sum: number, item: any) => {
+        return sum + ((item.price || 0) * (item.qty || 1));
+      }, 0);
+      
+      const result = await alohaAI.generateJSON(
+        `Bir perde siparişinin fiyat güncellemesini yap. Sipariş ID: ${orderId || 'bilinmiyor'}.
+Mevcut kalemler: ${JSON.stringify(currentItems || [])}.
+Mevcut toplam: ${itemsTotal} TL.
+
+Güncel piyasa koşullarına göre (kumaş fiyat artışları, döviz kuru vb.) yeni bir toplam tutar hesapla.
+SADECE JSON döndür: { "newTotal": <sayı>, "adjustmentNote": "<açıklama>" }`,
+        { complexity: 'routine' },
+        'perde.b2b-calc-refresh'
+      );
+      
+      return NextResponse.json({
+        success: true,
+        newTotal: (result as any).newTotal || itemsTotal,
+        adjustmentNote: (result as any).adjustmentNote || 'Fiyat güncellendi.',
+      });
+    }
+
+    // ── Orijinal Keşif Föyü Hesaplama ──
     const { customer, measurements, fabricPrice, sewingDetails } = body;
 
     if (!customer?.name || !measurements?.length) {

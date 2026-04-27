@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { alohaAI } from "@/core/aloha/aiClient";
+import { admin, adminDb } from "@/lib/firebase-admin";
+import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
+
+// Yeni üyelere verilen ücretsiz render hakkı
+const FREE_RENDER_QUOTA = 5;
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -40,6 +45,57 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "En az bir mekan görseli/tasviri veya ürün görseli gereklidir." },
         { status: 400 }
+      );
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  AUTH GEÇİDİ: Mail onaylı üye zorunlu + 5 ücretsiz render
+    // ══════════════════════════════════════════════════════════
+    const sessionCookie = req.cookies.get("session");
+    let uid: string | null = null;
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "Render kullanmak için giriş yapmanız gerekiyor. Ücretsiz üye olun ve 5 tasarım hakkı kazanın!" },
+        { status: 401 }
+      );
+    }
+
+    try {
+      const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+      uid = decoded.uid;
+
+      // E-posta doğrulama kontrolü
+      const userRecord = await admin.auth().getUser(uid);
+      if (!userRecord.emailVerified) {
+        return NextResponse.json(
+          { error: "Render kullanmak için e-posta adresinizi doğrulamanız gerekiyor. Lütfen gelen kutunuzu kontrol edin." },
+          { status: 403 }
+        );
+      }
+
+      // Kredi kontrolü — önce aloha-sdk wallet'ı kontrol et
+      const walletCheck = await checkCredits(SovereignNodeId, uid, "render");
+      if (!walletCheck.allowed) {
+        // Wallet'ta kredi yoksa → ücretsiz kota kontrolü
+        if (adminDb) {
+          const userDoc = await adminDb.collection('perde_render_quota').doc(uid).get();
+          const quota = userDoc.exists ? userDoc.data() : null;
+          const usedRenders = quota?.usedRenders || 0;
+
+          if (usedRenders >= FREE_RENDER_QUOTA) {
+            return NextResponse.json(
+              { error: `Ücretsiz ${FREE_RENDER_QUOTA} tasarım hakkınız doldu. Devam etmek için kredi satın alın.` },
+              { status: 402 }
+            );
+          }
+        }
+      }
+    } catch (authErr) {
+      console.error("[RENDER-PRO] Auth error:", authErr);
+      return NextResponse.json(
+        { error: "Oturum süresi dolmuş. Lütfen tekrar giriş yapın." },
+        { status: 401 }
       );
     }
 
@@ -342,6 +398,31 @@ KRİTİK KURALLAR (İHLAL EDİLEMEZ):
 
     const duration = Date.now() - startTime;
     console.log(`[RENDER-PRO v4.1] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
+
+    // ── Kredi Düşürme + Ücretsiz Kota Sayacı ──
+    if (uid) {
+      await deductCredit(SovereignNodeId, uid, "render");
+      // Ücretsiz kota sayacını da artır
+      if (adminDb) {
+        const quotaRef = adminDb.collection('perde_render_quota').doc(uid);
+        const quotaDoc = await quotaRef.get();
+        if (quotaDoc.exists) {
+          await quotaRef.update({ usedRenders: (quotaDoc.data()?.usedRenders || 0) + 1 });
+        } else {
+          await quotaRef.set({ usedRenders: 1, createdAt: new Date() });
+        }
+      }
+    }
+
+    // ── Sovereign Log ──
+    await logSovereignAction({
+      node: SovereignNodeId,
+      action: "render-pro",
+      payload: { imageCount, model: modelName, quality: isHighRes ? "4K" : "Taslak" },
+      result: { success: true } as any,
+      duration,
+      cost: 0,
+    });
 
     return NextResponse.json({
       renderUrl,

@@ -379,31 +379,6 @@ export const alohaAI = {
     }
   },
 
-  /**
-   * Embedding (vektör) üretimi
-   */
-  async generateEmbedding(text: string, caller?: string): Promise<number[] | null> {
-    try {
-      const client = getClient();
-      const response = await client.models.embedContent({
-        model: EMBEDDING_MODEL,
-        contents: text,
-      });
-      return response.embeddings?.[0]?.values || null;
-    } catch (err) {
-      console.error(`[AI_CLIENT] 🔴 Embedding hatası${caller ? ` [${caller}]` : ''}:`, err);
-      try {
-        const client = getClient();
-        const response = await client.models.embedContent({
-          model: EMBEDDING_MODEL_FALLBACK,
-          contents: text,
-        });
-        return response.embeddings?.[0]?.values || null;
-      } catch {
-        return null;
-      }
-    }
-  },
 
   /**
    * Ham GoogleGenAI istemcisine erişim (özel kullanımlar için)

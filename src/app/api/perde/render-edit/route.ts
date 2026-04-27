@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     const ai = alohaAI.getClient();
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-image-generation",
+      model: "gemini-3.1-flash-image-preview",
       contents: {
         parts: [
           {
