@@ -40,8 +40,8 @@ import { adminDb } from '@/lib/firebase-admin';
 // MALİYET SAVUNMASI (CFO GUARD):
 // Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
 // en düşük maliyetli model (Flash-Lite) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
-const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash-Lite / Yüksek Hız, Düşük Maliyet)
-const DEEP_MODEL = 'gemini-2.5-pro';
+const DEFAULT_MODEL = 'gemini-3.1-flash'; // (Flash-Lite / Yüksek Hız, Düşük Maliyet)
+const DEEP_MODEL = 'gemini-3.1-pro'; // (Deep Research Max / Kompleks İşlemler)
 const IMAGE_MODEL = 'imagen-4.0-fast-generate-001';     // Default for generateImages
 const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback for generateImages
 const EMBEDDING_MODEL = 'text-embedding-004';  // Stable embedding model
@@ -264,7 +264,13 @@ async function generateWithRetry(
       if (options.systemInstruction) config.systemInstruction = options.systemInstruction;
       if (options.responseMimeType) config.responseMimeType = options.responseMimeType;
       if (options.maxOutputTokens) config.maxOutputTokens = options.maxOutputTokens;
-      if (options.tools) config.tools = options.tools;
+      if (options.tools) {
+        config.tools = options.tools;
+      } else if (options.complexity === 'complex') {
+        // Deep Research Max (Aşama 1 Upgrade): Kompleks işlemlerde otonom Google Search yetkisi ver
+        config.tools = [{ googleSearch: {} }];
+      }
+      
       if ((options as any).responseSchema) config.responseSchema = (options as any).responseSchema;
 
       // BÜTÇE KONTROLÜ — Maliye Bakanı v2

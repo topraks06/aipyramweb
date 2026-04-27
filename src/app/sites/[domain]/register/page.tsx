@@ -2,11 +2,11 @@ import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 
 export const dynamic = "force-dynamic";
 
-// Node → Register bileşen map'i
-const nodeRegisterMap: Record<string, () => Promise<any>> = {
-  perde: () => import('@/components/node-perde/auth/Register'),
-  hometex: () => import('@/components/node-hometex/auth/Register'),
-};
+import RegisterPerde from '@/components/node-perde/auth/Register';
+import RegisterHometex from '@/components/node-hometex/auth/Register';
+// icmimar için register bileşeni var mı kontrol ediyoruz
+// icmimar için @/components/node-icmimar/auth/Register var.
+import RegisterIcmimar from '@/components/node-icmimar/auth/Register';
 
 export default async function RegisterPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
@@ -14,17 +14,18 @@ export default async function RegisterPage({ params }: { params: Promise<{ domai
   const basePath = `/sites/${exactDomain}`;
   const node = resolveNodeFromDomain(exactDomain);
 
-  const loader = nodeRegisterMap[node.id];
-  if (!loader) {
+  let Register = null;
+  if (node.id === 'perde') Register = RegisterPerde;
+  else if (node.id === 'hometex') Register = RegisterHometex;
+  else if (node.id === 'icmimar') Register = RegisterIcmimar;
+
+  if (!Register) {
     return (
       <main className="h-screen bg-black flex items-center justify-center text-zinc-600 text-sm font-mono">
         Bu site için kayıt sayfası bulunmamaktadır.
       </main>
     );
   }
-
-  const RegisterModule = await loader();
-  const Register = RegisterModule.default;
 
   return (
     <main>

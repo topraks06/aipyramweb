@@ -77,12 +77,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { headers } = await import("next/headers");
-  const headersList = await headers();
-  const locale = headersList.get("x-next-intl-locale") || "de";
-  const host = headersList.get("host") || "";
-  const isPerde = host.includes("perde") || host.includes("perde.localhost");
-  const isIcmimar = host.includes("icmimar") || host.includes("icmimar.localhost");
+  // Remove headers() to prevent Next.js from forcing dynamic rendering (cookie/header error fix)
+  // Locale is defaulted to 'de'. Tenant-specific components will be handled dynamically via a client wrapper.
+  const locale = "de";
+  const isPerde = false; // We will handle these wrappers dynamically if needed, or rely on the domain layout.
+  const isIcmimar = false;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -160,9 +159,6 @@ export default async function RootLayout({
       <body className="antialiased bg-background text-foreground">
         <AipyramAuthProvider>
           {children}
-          {!isPerde && !isIcmimar && <ConciergeWidget />}
-          {isPerde && <PerdeClientWrapper />}
-          {isIcmimar && <IcmimarClientWrapper />}
           <Toaster />
           <GlobalClientEffects />
         </AipyramAuthProvider>

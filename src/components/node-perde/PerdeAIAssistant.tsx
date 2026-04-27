@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, X, Minimize2, Maximize2, Send, Paperclip, 
@@ -11,6 +11,7 @@ import {
     PieChart, Pie, Cell, BarChart, Bar
 } from 'recharts';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
+import { PieChart as VIPieChart, MiniBarChart as VIMiniBarChart, KPICard as VIKPICard, DataCredibility } from '@/components/ui/visual-intelligence';
 
 const DICT: Record<string, any> = {
   tr: {
@@ -874,6 +875,66 @@ export default function PerdeAIAssistant() {
                           </div>
 
                           {/* Dynamic Widgets */}
+                          {msg.widget === 'dashboard' && msg.payload && (
+                             <div className="bg-[#111] shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 rounded-xl p-5 w-full flex flex-col gap-4 mt-3 backdrop-blur-md">
+                                <div className="border-b border-white/10 pb-3 flex flex-col gap-1">
+                                  <div className="text-[10px] font-bold text-accent uppercase flex items-center gap-2">
+                                    <Globe className="w-4 h-4" /> ALOHA Deep Research
+                                  </div>
+                                  <h3 className="text-white font-serif text-lg">{msg.payload.title}</h3>
+                                  <DataCredibility source="Sovereign AI Node" confidence={98} className="mt-1" />
+                                </div>
+                                
+                                {msg.payload.charts && msg.payload.charts.map((chart: any, i: number) => (
+                                   <div key={i} className="bg-black/30 p-3 rounded-lg border border-white/5 w-full flex justify-center">
+                                     {chart.type === 'pie' ? (
+                                       <VIPieChart data={chart.data} size={140} centerLabel="Toplam" />
+                                     ) : chart.type === 'bar' ? (
+                                       <VIMiniBarChart data={chart.data} className="w-full" />
+                                     ) : null}
+                                   </div>
+                                ))}
+
+                                {msg.payload.table && msg.payload.table.length > 0 && (
+                                   <div className="bg-black/30 p-3 rounded-lg border border-white/5 w-full overflow-x-auto">
+                                     <table className="w-full text-left text-xs text-zinc-300">
+                                        <thead>
+                                          <tr className="border-b border-white/10 text-zinc-500 uppercase tracking-widest text-[9px]">
+                                            {Object.keys(msg.payload.table[0]).map(key => <th key={key} className="pb-2 pr-2">{key}</th>)}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {msg.payload.table.map((row: any, i: number) => (
+                                            <tr key={i} className="border-b border-white/5 last:border-0">
+                                              {Object.values(row).map((val: any, j: number) => <td key={j} className="py-2 pr-2">{val}</td>)}
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                     </table>
+                                   </div>
+                                )}
+
+                                {msg.payload.actions && msg.payload.actions.length > 0 && (
+                                   <div className="flex flex-col gap-2 mt-2">
+                                      <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Otonom Aksiyonlar</div>
+                                      {msg.payload.actions.map((act: any, i: number) => (
+                                        <button 
+                                            key={i}
+                                            className="w-full bg-white hover:bg-zinc-200 text-black font-bold uppercase tracking-widest text-[10px] py-3 rounded-md transition-all flex justify-between items-center px-4"
+                                            onClick={() => window.dispatchEvent(new CustomEvent('agent_message', { detail: { message: `⚙️ [${act.action}] tetiklendi...` } }))}
+                                        >
+                                            <span className="flex items-center gap-2"><Sparkles className="w-3 h-3" /> {act.label}</span>
+                                            <span className="bg-black/10 px-2 py-1 rounded text-[9px] flex gap-2">
+                                              <span className="text-emerald-700">Güven: %{act.confidence || 90}</span>
+                                              <span className="text-zinc-600">Risk: {act.riskLevel || 'Düşük'}</span>
+                                            </span>
+                                        </button>
+                                      ))}
+                                   </div>
+                                )}
+                             </div>
+                          )}
+
                           {msg.widget === 'quotePreview' && msg.payload && (
                              <div className="bg-[#111] shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 rounded-xl p-5 w-full flex flex-col gap-4 mt-3 backdrop-blur-md">
                                 <div className="border-b border-white/10 pb-3 flex justify-between items-center">

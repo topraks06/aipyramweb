@@ -92,6 +92,10 @@ function NodeJsonLd({ domain }: { domain: string }) {
   );
 }
 
+import PerdeClientWrapper from "@/components/node-perde/PerdeClientWrapper";
+import IcmimarClientWrapper from "@/components/node-icmimar/IcmimarClientWrapper";
+import ConciergeWidget from "@/components/ConciergeWidget";
+
 export default async function DomainLayout({
   children,
   params,
@@ -102,10 +106,16 @@ export default async function DomainLayout({
   const resolvedParams = await params;
   const exactDomain = decodeURIComponent(resolvedParams.domain).split(":")[0];
   
+  const isPerde = exactDomain.includes("perde");
+  const isIcmimar = exactDomain.includes("icmimar");
+
   return (
     <>
       <NodeJsonLd domain={exactDomain} />
       {children}
+      {!isPerde && !isIcmimar && <ConciergeWidget />}
+      {isPerde && <PerdeClientWrapper />}
+      {isIcmimar && <IcmimarClientWrapper />}
     </>
   );
 }

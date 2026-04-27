@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, X, Send, Bot, User, Globe, TrendingUp, BarChart3, Network, ArrowRight, Minimize2, Maximize2 } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Globe, TrendingUp, BarChart3, Network, ArrowRight, Minimize2, Maximize2, Sparkles, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEcosystemActions } from "@/hooks/useEcosystemActions";
+import { useSovereignAuth } from "@/hooks/useSovereignAuth";
 import { DataCard } from "@/core/aloha/orchestrationLayer";
 import LeadCaptureModal from "@/components/trtex/LeadCaptureModal";
+import { PieChart as VIPieChart, MiniBarChart as VIMiniBarChart, DataCredibility } from "@/components/ui/visual-intelligence";
 
 /* ═══════════════════════════════════════════════════════════
    AIPyram Master Concierge — v3 Visual Intelligence Widget
@@ -32,6 +34,9 @@ interface ChatMessage {
     visual?: VisualData;
     dataCards?: DataCard[];
     links?: { label: string; href: string }[];
+    widgetType?: string;
+    payload?: any;
+    persona?: "CFO" | "Sales" | "Supply" | "Default";
     timestamp: Date;
 }
 
@@ -407,6 +412,7 @@ export default function ConciergeWidget() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [isTTSEnabled, setIsTTSEnabled] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -424,6 +430,8 @@ export default function ConciergeWidget() {
     const accentColor = isPerde ? "text-[#8B7355]" : "text-emerald-500";
 
     const { processQuery, isOrchestrating } = useEcosystemActions();
+    const { role, user } = useSovereignAuth('aipyram');
+    const isAdmin = role === 'admin' || (user?.email && user.email.includes('admin'));
     const [sessionId, setSessionId] = useState<string>('');
 
     useEffect(() => {
@@ -442,6 +450,71 @@ export default function ConciergeWidget() {
     useEffect(() => {
         scrollToBottom();
     }, [messages, scrollToBottom]);
+
+    const speak = useCallback((text: string, lang: string, persona: string = "Default") => {
+        if (!isTTSEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+
+        // Clean text (remove emojis, markdown logic)
+        const cleanText = text.replace(/[\u{1F600}-\u{1F6FF}]/gu, '').replace(/[#*`_]/g, '');
+
+        window.speechSynthesis.cancel(); // stop current
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        
+        // Map language to BCP-47
+        if (lang === 'tr') utterance.lang = 'tr-TR';
+        else if (lang === 'de') utterance.lang = 'de-DE';
+        else utterance.lang = 'en-US';
+
+        // Try to find a good voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.lang.startsWith(utterance.lang) && (v.name.includes('Google') || v.name.includes('Premium') || v.name.includes('Natural')));
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
+        }
+
+        // Persona bazlı ses modülasyonu
+        if (persona === 'CFO') {
+            utterance.rate = 0.95; // Yavaş
+            utterance.pitch = 0.8; // Ciddi, kalın
+        } else if (persona === 'Sales') {
+            utterance.rate = 1.15; // Hızlı
+            utterance.pitch = 1.2; // Enerjik, ince
+        } else if (persona === 'Supply') {
+            utterance.rate = 1.1; // Kısa ve net
+            utterance.pitch = 1.0;
+        } else {
+            utterance.rate = 1.05; // Agentic varsayılan
+            utterance.pitch = 1.0;
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }, [isTTSEnabled]);
+
+    // Otonom TTS Tetikleyicisi (UX Kuralları: Sadece özet veya önemli şeyleri oku)
+    useEffect(() => {
+        if (messages.length > 0) {
+            const lastMsg = messages[messages.length - 1];
+            if (lastMsg.role === "assistant" && isTTSEnabled) {
+                let textToRead = "";
+                
+                if (lastMsg.widgetType === 'dashboard' && lastMsg.payload) {
+                    // Kural 1: Dashboard geldiğinde ASLA tümünü okuma. Sadece özeti (summary) oku.
+                    textToRead = lastMsg.payload.summary || `Analiz tamamlandı: ${lastMsg.payload.title}`;
+                } else {
+                    // Kural 2: Eğer düz metinse ve çok uzun değilse oku. Çok uzun metinleri sessiz geç veya ilk cümlesini oku.
+                    if (lastMsg.text.length < 250) {
+                        textToRead = lastMsg.text;
+                    } else if (lastMsg.payload?.importance === 'high') {
+                         textToRead = "Önemli Karar: " + lastMsg.text.substring(0, 150) + "...";
+                    }
+                }
+
+                if (textToRead) {
+                    speak(textToRead, siteLocale, lastMsg.persona || 'Default');
+                }
+            }
+        }
+    }, [messages, isTTSEnabled, siteLocale, speak]);
 
     useEffect(() => {
         if (isOpen && inputRef.current) {
@@ -514,6 +587,7 @@ export default function ConciergeWidget() {
                     message: text,
                     locale: siteLocale,
                     sessionId: sessionId,
+                    isAdmin: isAdmin, // API'ye Admin olduğunu bildir, yoksa Deep Research yapmaz
                     history: messages.filter(m => m.id !== "welcome").map(m => ({ role: m.role, text: m.text })),
                 }),
             });
@@ -549,11 +623,25 @@ export default function ConciergeWidget() {
                      }
                 }
 
+                let assignedPersona: "CFO" | "Sales" | "Supply" | "Default" = "Default";
+                if (data.payload?.persona) {
+                     assignedPersona = data.payload.persona;
+                } else if (text.toLowerCase().includes('fiyat') || text.toLowerCase().includes('maliyet') || text.toLowerCase().includes('finans')) {
+                     assignedPersona = "CFO";
+                } else if (text.toLowerCase().includes('satış') || text.toLowerCase().includes('müşteri') || text.toLowerCase().includes('kampanya')) {
+                     assignedPersona = "Sales";
+                } else if (text.toLowerCase().includes('tedarik') || text.toLowerCase().includes('stok') || text.toLowerCase().includes('depo')) {
+                     assignedPersona = "Supply";
+                }
+
                 const assistantMsg: ChatMessage = {
                     id: `ai-${Date.now()}`,
                     role: "assistant",
                     text: data.text,
                     visual,
+                    widgetType: data.widgetType,
+                    payload: data.payload,
+                    persona: assignedPersona,
                     dataCards: crossNodeDataCards,
                     links: finalLinks.length > 0 ? finalLinks : undefined,
                     timestamp: new Date(),
@@ -671,6 +759,15 @@ export default function ConciergeWidget() {
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
+                            {isAdmin && (
+                                <button
+                                    onClick={() => setIsTTSEnabled(!isTTSEnabled)}
+                                    className={`p-1.5 transition-colors rounded-lg hover:bg-slate-800 ${isTTSEnabled ? 'text-emerald-400' : 'text-slate-500 hover:text-white'}`}
+                                    title={isTTSEnabled ? "Sesi Kapat" : "Sesi Aç"}
+                                >
+                                    {isTTSEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                                </button>
+                            )}
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
                                 className="p-1.5 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
@@ -705,6 +802,67 @@ export default function ConciergeWidget() {
 
                                     {/* Visual Deck */}
                                     {msg.visual && <VisualDeck visual={msg.visual} />}
+
+                                    {/* Agentic B2B Dashboard (Nano Banana) */}
+                                    {msg.widgetType === 'dashboard' && msg.payload && (
+                                       <div className="bg-[#111] shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 rounded-xl p-5 w-full flex flex-col gap-4 mt-3 backdrop-blur-md">
+                                          <div className="border-b border-white/10 pb-3 flex flex-col gap-1">
+                                            <div className="text-[10px] font-bold text-accent uppercase flex items-center gap-2">
+                                              <Globe className="w-4 h-4" /> ALOHA Deep Research
+                                            </div>
+                                            <h3 className="text-white font-serif text-lg">{msg.payload.title}</h3>
+                                            <DataCredibility source="Sovereign AI Node" confidence={98} className="mt-1" />
+                                          </div>
+                                          
+                                          {msg.payload.charts && msg.payload.charts.map((chart: any, i: number) => (
+                                             <div key={i} className="bg-black/30 p-3 rounded-lg border border-white/5 w-full flex justify-center">
+                                               {chart.type === 'pie' ? (
+                                                 <VIPieChart data={chart.data} size={140} centerLabel="Toplam" />
+                                               ) : chart.type === 'bar' ? (
+                                                 <VIMiniBarChart data={chart.data} className="w-full" />
+                                               ) : null}
+                                             </div>
+                                          ))}
+
+                                          {msg.payload.table && msg.payload.table.length > 0 && (
+                                             <div className="bg-black/30 p-3 rounded-lg border border-white/5 w-full overflow-x-auto">
+                                               <table className="w-full text-left text-xs text-zinc-300">
+                                                  <thead>
+                                                    <tr className="border-b border-white/10 text-zinc-500 uppercase tracking-widest text-[9px]">
+                                                      {Object.keys(msg.payload.table[0]).map(key => <th key={key} className="pb-2 pr-2">{key}</th>)}
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {msg.payload.table.map((row: any, i: number) => (
+                                                      <tr key={i} className="border-b border-white/5 last:border-0">
+                                                        {Object.values(row).map((val: any, j: number) => <td key={j} className="py-2 pr-2">{val}</td>)}
+                                                      </tr>
+                                                    ))}
+                                                  </tbody>
+                                               </table>
+                                             </div>
+                                          )}
+
+                                          {msg.payload.actions && msg.payload.actions.length > 0 && (
+                                             <div className="flex flex-col gap-2 mt-2">
+                                                <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Otonom Aksiyonlar</div>
+                                                {msg.payload.actions.map((act: any, i: number) => (
+                                                  <button 
+                                                      key={i}
+                                                      className="w-full bg-white hover:bg-zinc-200 text-black font-bold uppercase tracking-widest text-[10px] py-3 rounded-md transition-all flex justify-between items-center px-4"
+                                                      onClick={() => window.dispatchEvent(new CustomEvent('agent_message', { detail: { message: `⚙️ [${act.action}] tetiklendi...` } }))}
+                                                  >
+                                                      <span className="flex items-center gap-2"><Sparkles className="w-3 h-3 text-black" /> {act.label}</span>
+                                                      <span className="bg-black/10 px-2 py-1 rounded text-[9px] flex gap-2">
+                                                        <span className="text-emerald-700">Güven: %{act.confidence || 90}</span>
+                                                        <span className="text-zinc-600">Risk: {act.riskLevel || 'Düşük'}</span>
+                                                      </span>
+                                                  </button>
+                                                ))}
+                                             </div>
+                                          )}
+                                       </div>
+                                    )}
 
                                     {/* Data Cards from Orchestrator */}
                                     {msg.dataCards && msg.dataCards.length > 0 && <DataCardView cards={msg.dataCards} />}

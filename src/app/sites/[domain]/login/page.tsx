@@ -1,11 +1,8 @@
 import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 
-// Node → Login bileşen map'i (if/else cehennemi yerine)
-const nodeLoginMap: Record<string, () => Promise<any>> = {
-  perde: () => import('@/components/node-perde/auth/Login'),
-  hometex: () => import('@/components/node-hometex/auth/Login'),
-  icmimar: () => import('@/components/node-icmimar/auth/Login'),
-};
+import LoginPerde from '@/components/node-perde/auth/Login';
+import LoginHometex from '@/components/node-hometex/auth/Login';
+import LoginIcmimar from '@/components/node-icmimar/auth/Login';
 
 export default async function LoginPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
@@ -13,9 +10,12 @@ export default async function LoginPage({ params }: { params: Promise<{ domain: 
   const basePath = `/sites/${exactDomain}`;
   const node = resolveNodeFromDomain(exactDomain);
 
-  // Dinamik import — node'a göre doğru Login bileşeni
-  const loader = nodeLoginMap[node.id];
-  if (!loader) {
+  let Login = null;
+  if (node.id === 'perde') Login = LoginPerde;
+  else if (node.id === 'hometex') Login = LoginHometex;
+  else if (node.id === 'icmimar') Login = LoginIcmimar;
+
+  if (!Login) {
     // TRTEX veya tanımsız node → login sayfası yok
     return (
       <main className="h-screen bg-black flex items-center justify-center text-zinc-600 text-sm font-mono">
@@ -23,9 +23,6 @@ export default async function LoginPage({ params }: { params: Promise<{ domain: 
       </main>
     );
   }
-
-  const LoginModule = await loader();
-  const Login = LoginModule.default;
 
   return (
     <main>

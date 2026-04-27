@@ -3,6 +3,7 @@ import { getWeeklyDigest } from "@/lib/trtex-bridge";
 import { saveMessage, getRecentContext } from "@/lib/chat-memory";
 import { ALOHA_TOOL_SCHEMA, executeAlohaTool, ParsedCommand } from "@/lib/aloha/tools";
 import { getNode } from "@/lib/sovereign-config";
+import { alohaAI } from "@/core/aloha/aiClient";
 
 export const maxDuration = 300; // Allow up to 5 minutes for generation
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic';
 /* ═══════════════════════════════════════════════════════
    /api/chat — AIPyram Master Concierge API
    Gemini AI powered conversational endpoint
-   + Rate Limiting + Prompt Injection Protection
+   + Agentic B2B JSON Output + Deep Research
    ═══════════════════════════════════════════════════════ */
 
 /* ─── Rate Limiter (handled by middleware) ─── */
@@ -98,6 +99,7 @@ export async function POST(req: NextRequest) {
         let sessionId = "";
         let node = "aipyram";
         let authorId = "anonymous";
+        let isAdmin = false;
 
         if (contentType.includes("multipart/form-data")) {
             const formData = await req.formData();
@@ -106,6 +108,7 @@ export async function POST(req: NextRequest) {
             sessionId = formData.get("sessionId") as string || "";
             node = formData.get("node") as string || "aipyram";
             authorId = formData.get("authorId") as string || "anonymous";
+            isAdmin = formData.get("isAdmin") === "true";
             // ... (keep file handling) ...
 
             if (!file) {
@@ -153,6 +156,7 @@ export async function POST(req: NextRequest) {
             sessionId = jsonBody.sessionId || "";
             node = jsonBody.node || "aipyram";
             authorId = jsonBody.authorId || "anonymous";
+            isAdmin = jsonBody.isAdmin === true;
         }
 
         if (!message || typeof message !== "string") {
@@ -221,34 +225,58 @@ export async function POST(req: NextRequest) {
         let finalSystemInstruction = node === 'perde' ? PERDE_SYSTEM_PROMPT : AIPYRAM_SYSTEM_PROMPT;
 
         if (config.features.salesEngine) {
-            finalSystemInstruction += `\n\n${ALOHA_TOOL_SCHEMA}\nEĞER YUKARIDAKİ ARAÇLARDAN BİRİ TALEBİ KARŞILIYORSA, LÜTFEN ASIL METİN YANITINIZIN SONUNA ARAÇ İÇİN BİR JSON BLOĞU (RAW FORMAT: {"tool": "..."}) EKLEYİNİZ. MÜŞTERININ GÖRMESİ İÇİN ONA BİR METİN (Örn: "Hemen hallediyorum, onaylıyor musunuz?") YAZIN VE ALTINA JSON BLOĞUNU YERLEŞTİRİN. JSON bloğunu "\`\`\`json" gibi tagler içine ALMAYIN, doğrudan bir JSON objesi yazın.`;
+            finalSystemInstruction += `\n\nEkstra araçları çağırabilirsin, ancak ANA ÇIKTIN ZORUNLU OLARAK AŞAĞIDAKİ JSON FORMATINDA OLMALIDIR.`;
         }
 
-        const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    systemInstruction: { parts: [{ text: finalSystemInstruction }] },
-                    contents,
-                    generationConfig: {
-                        maxOutputTokens: 400,
-                        temperature: 0.7,
-                        topP: 0.9,
-                    },
-                }),
-            }
-        );
+        // B2B Agentic OS Kuralı: Adminler için JSON Dashboard, normal ziyaretçiler için düz metin (JSON içi text)
+        if (isAdmin) {
+            finalSystemInstruction += `
+            
+ÖNEMLİ KURAL: Çıktın ASLA düz metin olmamalıdır. Çıktın her zaman aşağıdaki JSON formatında olmalıdır.
+Eğer analiz yapıyorsan "type": "dashboard" kullan, grafik ve aksiyonları doldur. 
+Eğer sadece sohbet ediyorsan "type": "text" kullan ve sadece summary alanını doldur.
 
-        if (!res.ok) {
-            const errText = await res.text();
-            console.error("Gemini API error:", res.status, errText);
-            return NextResponse.json({ error: "AI service unavailable" }, { status: 502 });
+JSON FORMATI:
+{
+  "type": "dashboard", // veya "text"
+  "title": "Başlık (Analizler için)",
+  "summary": "Müşteriye söylenecek ana metin / özet",
+  "charts": [
+    { 
+       "type": "pie", // "pie" veya "bar"
+       "data": [{ "label": "Öğe 1", "value": 40, "color": "blue" }] 
+    }
+  ],
+  "table": [
+    { "Kategori": "Değer 1", "Fiyat": "Değer 2" }
+  ],
+  "actions": [
+    { "label": "Tedarikçileri Tara", "action": "scan_suppliers", "confidence": 95, "riskLevel": "Düşük" }
+  ]
+}
+`;
+        } else {
+            // Normal ziyaretçiler için basit JSON kuralı (çünkü generateJSON kullanıyoruz)
+            finalSystemInstruction += `
+            
+ÖNEMLİ KURAL: Çıktın her zaman aşağıdaki basit JSON formatında olmalıdır. Asla karmaşık analiz (dashboard) yapma. Sadece soruyu cevapla.
+JSON FORMATI:
+{
+  "type": "text",
+  "summary": "Kullanıcıya verilecek kısa ve öz cevap..."
+}
+`;
         }
 
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Üzgünüm, şu anda yanıt üretemiyorum. Lütfen info@aipyram.com adresinden bize ulaşın.";
+        const jsonResult = await alohaAI.generateJSON(finalMessage, {
+            systemInstruction: finalSystemInstruction,
+            complexity: isAdmin && /analiz|fiyat|fark|kıyas|pazar|trend/i.test(finalMessage) ? 'complex' : 'routine' // Deep Research sadece adminler için tetiklenir
+        }, 'chat.masterNode');
+
+        // Extract text and widget data
+        const text = jsonResult.summary || jsonResult.text || "İşlem tamamlandı.";
+        let widgetType = jsonResult.type === 'dashboard' ? 'dashboard' : undefined;
+        let payload = jsonResult.type === 'dashboard' ? jsonResult : undefined;
 
         // Extract links from response
         const linkRegex = /\[LINK:([^:]+):([^\]]+)\]/g;
@@ -260,38 +288,10 @@ export async function POST(req: NextRequest) {
             cleanText = cleanText.replace(match[0], "");
         }
 
-        // TOOL CALLING PARSING
         let finalOutput = cleanText.trim();
-        let widgetType = undefined;
-        let payload = undefined;
 
-        // Try to find raw JSON block in the output
-        const jsonMatch = finalOutput.match(/\{[\s\S]*"tool"[\s\S]*\}/);
-        if (jsonMatch) {
-            try {
-                const jsonObj = JSON.parse(jsonMatch[0]);
-                if (jsonObj.tool) {
-                    // Remove the json block from the visible text
-                    finalOutput = finalOutput.replace(jsonMatch[0], "").trim();
-
-                    // Fallback to currently active node/uid logic if missing
-                    const cmd: ParsedCommand = { ...jsonObj, raw: jsonMatch[0] };
-                    if (!cmd.node) cmd.node = node;
-                    if (!cmd.authorId) cmd.authorId = authorId;
-
-                    const toolRes = await executeAlohaTool(cmd);
-
-                    // Modify output and use widgets if tool execution gives output
-                    if (toolRes.message && !finalOutput) {
-                        finalOutput = toolRes.message;
-                    }
-                    widgetType = toolRes.widgetType;
-                    payload = toolRes.data;
-                }
-            } catch (e) {
-                console.error("Chat tool execution JSON parse error:", e);
-            }
-        }
+        // Tool execution from parsed output? (if actions are requested directly via older tools, we skip them for now or adapt)
+        // Since we enforce JSON format, we rely on the returned 'actions' array in the dashboard payload.
 
         // Save assistant message to session
         if (sessionId) {
