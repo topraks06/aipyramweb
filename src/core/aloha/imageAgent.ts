@@ -375,7 +375,7 @@ export async function processMultipleImages(
       try {
         console.log(`[IMAGE_AGENT] 🎨 Çiziliyor [${i+1}/3] Aspect: ${plan.aspect} (Model: İzinli? ${allowHumans}) (Deneme: ${retry})...`);
         const response = await client.models.generateImages({
-          model: 'imagen-3.0-generate-001',
+          model: alohaAI.getImageModel?.() || 'imagen-3.0-generate-002',
           prompt: promptText.substring(0, 1800), // 480 TOKEN ≈ 1800 karakter (eski 480 char limiti YANLIŞTI)
           config: {
             numberOfImages: 1,

@@ -396,6 +396,13 @@ export const alohaAI = {
   },
 
   /**
+   * Merkezi görsel model sabiti — imageAgent, newsEngine, vb. buradan çeker
+   */
+  getImageModel(): string {
+    return IMAGE_MODEL;
+  },
+
+  /**
    * API key durumunu kontrol et
    */
   isAvailable(): boolean {

@@ -381,7 +381,7 @@ async function photograph(title: string, category: string): Promise<string[]> {
     for (let retry = 0; retry < 2; retry++) {
       try {
         const response = await imagenClient.models.generateImages({
-          model: 'imagen-3.0-generate-001',
+          model: alohaAI.getImageModel?.() || 'imagen-3.0-generate-002',
           prompt,
           config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' },
         });
