@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import AuthWrapper from './AuthWrapper';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/lib/firebase-client';
 
 export default function Login({ basePath = '/sites/perde.ai' }: { basePath?: string }) {
   const router = useRouter();
@@ -86,7 +88,18 @@ export default function Login({ basePath = '/sites/perde.ai' }: { basePath?: str
 
         {/* Şifremi Unuttum */}
         <div className="flex justify-end">
-          <button type="button" className="text-[11px] text-[#8B7355] hover:text-[#725e45] font-medium transition-colors">
+          <button 
+            type="button" 
+            onClick={async () => {
+              if (!email) { setError('Lütfen önce e-posta adresinizi girin.'); return; }
+              try {
+                await sendPasswordResetEmail(auth, email);
+                setError(null);
+                alert('Şifre sıfırlama linki e-postanıza gönderildi.');
+              } catch { setError('Şifre sıfırlama başarısız.'); }
+            }}
+            className="text-[11px] text-[#8B7355] hover:text-[#725e45] font-medium transition-colors"
+          >
             Şifremi Unuttum
           </button>
         </div>

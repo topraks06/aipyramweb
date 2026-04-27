@@ -61,27 +61,27 @@ export default function Register({ basePath = '/sites/perde.ai' }: { basePath?: 
     return (
       <AuthWrapper title="Başvurunuz Alındı" basePath={basePath}>
         <div className="text-center space-y-6 py-4">
-          <div className="w-20 h-20 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+          <div className="w-20 h-20 bg-[#8B7355]/10 border border-[#8B7355]/20 rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle2 className="w-10 h-10 text-[#8B7355]" />
           </div>
           <div className="space-y-3">
-            <h3 className="text-xl font-serif text-zinc-900">Kurumsal Üyelik Başvurunuz İşleme Alındı</h3>
+            <h3 className="text-xl font-serif text-zinc-900">Hesabınız Oluşturuldu!</h3>
             <p className="text-sm text-zinc-500 font-light leading-relaxed max-w-sm mx-auto">
-              VIP Bayi lisans başvurunuz sisteme kaydedilmiştir. İnceleme sürecinin ardından müşteri temsilcilerimiz sizinle iletişime geçecektir.
+              E-posta adresinize bir doğrulama linki gönderdik. Onayladıktan sonra 5 ücretsiz tasarım hakkınızla stüdyoyu kullanmaya başlayabilirsiniz.
             </p>
           </div>
           <div className="pt-4 space-y-3">
             <a 
-              href={basePath} 
-              className="block w-full bg-zinc-900 text-white py-4 rounded-xl font-semibold text-sm text-center hover:bg-black transition-all"
+              href={`${basePath}/verify-email`} 
+              className="block w-full bg-[#8B7355] text-white py-4 rounded-xl font-semibold text-sm text-center hover:bg-[#725e45] transition-all shadow-lg shadow-[#8B7355]/20"
             >
-              Ana Sayfaya Dön
+              E-posta Doğrulama Sayfasına Git
             </a>
             <a 
               href={`${basePath}/login`} 
-              className="block text-[#8B7355] text-sm font-medium hover:text-[#725e45] transition-colors"
+              className="block text-zinc-500 text-sm font-medium hover:text-zinc-800 transition-colors pt-2"
             >
-              Giriş Sayfasına Git →
+              Zaten doğruladım, Giriş Yap →
             </a>
           </div>
         </div>

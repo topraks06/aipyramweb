@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/components/auth/AipyramAuthProvider';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase-client';
 import { getNode, type SovereignNodeId, type UserRole } from '@/lib/sovereign-config';
 import { useState, useEffect, useCallback } from 'react';
@@ -18,7 +18,7 @@ interface SovereignAuthState {
   permissions: string[];
   SovereignNodeId: SovereignNodeId;
   loginWithGoogle: () => Promise<void>;
-  loginWithEmail: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithEmail: (email: string, password: string) => Promise<{ success: boolean; error?: string; needsVerification?: boolean }>;
   registerMember: (data: { email: string; password: string; name: string; company: string; profession?: string }) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
@@ -109,7 +109,11 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
   // E-posta ile giriş
   const loginWithEmail = useCallback(async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      // emailVerified kontrolü — doğrulanmamışsa yönlendirme flag'i
+      if (credential.user && !credential.user.emailVerified) {
+        return { success: true, needsVerification: true };
+      }
       return { success: true };
     } catch (err: any) {
       const code = err.code;
@@ -137,7 +141,12 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
         SovereignNodeId: node.id,
         createdAt: new Date().toISOString(),
         source: 'email_register',
+        onboardingCompleted: false,
       });
+      // E-posta doğrulama linki gönder
+      if (credential.user) {
+        await sendEmailVerification(credential.user);
+      }
       return { success: true };
     } catch (err: any) {
       const code = err.code;
