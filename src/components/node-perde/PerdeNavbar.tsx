@@ -128,10 +128,10 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
            {user ? (
              <div className="flex items-center gap-4">
                {/* ALOHA UZAYI: CÜZDAN */}
-               <div className="flex items-center bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5 cursor-help" title="Sovereign Agent Kredisi">
+               <Link href={`${domainPath}/pricing`} className="flex items-center bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5 cursor-pointer hover:bg-accent/20 transition-colors" title="Kredi Yükle">
                    <Sparkles className="w-3.5 h-3.5 text-accent mr-1.5" />
                    <span className="text-[11px] font-mono text-accent font-bold tracking-widest">{credits}</span>
-               </div>
+               </Link>
                
                <Link href={`${domainPath}/studio`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass}`}>
                  {T.nav.studio_panel}

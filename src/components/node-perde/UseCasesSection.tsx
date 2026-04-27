@@ -1,7 +1,8 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { Building2, Paintbrush, Globe, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function UseCasesSection() {
     return (
@@ -44,10 +45,10 @@ export default function UseCasesSection() {
                                 <span>Rakiplerden önce <strong>Pazar İstihbaratına</strong> ulaşın.</span>
                             </li>
                         </ul>
-                        <button className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
+                        <Link href="/sites/perde.ai/about" className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
                             Detayları İncele
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        </Link>
                     </div>
 
                     {/* İç Mimar */}
@@ -74,10 +75,10 @@ export default function UseCasesSection() {
                                 <span>Beğendiğiniz kumaş için üreticiden tek tıkla <strong>numune talep edin</strong>.</span>
                             </li>
                         </ul>
-                        <button className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors mt-auto">
+                        <Link href="/sites/perde.ai/visualizer" className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors mt-auto">
                             Stüdyoyu Aç
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Toptancı */}
@@ -103,10 +104,10 @@ export default function UseCasesSection() {
                                 <span>Chatten anında çoklu dil destekli <strong>Proforma Fatura</strong> üretin.</span>
                             </li>
                         </ul>
-                        <button className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
+                        <a href="https://trtex.com" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
                             Radara Bağlan
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        </a>
                     </div>
 
                 </div>

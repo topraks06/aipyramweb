@@ -4,9 +4,9 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import MyProjects from '@/components/node-perde/MyProjects';
 import Link from 'next/link';
-import { Box, Scissors, LayoutDashboard } from 'lucide-react';
+import { Box, Scissors, LayoutDashboard, Sparkles } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import WelcomeWizard from '../onboarding/WelcomeWizard';
 
@@ -20,6 +20,8 @@ export default function StudioContent({ basePath }: StudioContentProps) {
   const { user } = usePerdeAuth();
   const [showOnboarding, setShowOnboarding] = React.useState(false);
   const [userData, setUserData] = React.useState<any>(null);
+  const [usedRenders, setUsedRenders] = React.useState<number>(0);
+  const FREE_RENDER_QUOTA = 5;
 
   React.useEffect(() => {
     if (!user) return;
@@ -39,6 +41,15 @@ export default function StudioContent({ basePath }: StudioContentProps) {
       }
     };
     checkOnboarding();
+
+    // usedRenders bilgisini canlı dinle
+    const unsub = onSnapshot(doc(db, 'perde_render_quota', user.uid), (docSnap) => {
+      if (docSnap.exists()) {
+        setUsedRenders(docSnap.data().usedRenders || 0);
+      }
+    });
+
+    return () => unsub();
   }, [user]);
 
   React.useEffect(() => {
@@ -122,7 +133,7 @@ export default function StudioContent({ basePath }: StudioContentProps) {
           </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Link href="?tab=inventory" className="bg-white p-6 border border-[#111111]/10 shadow-sm h-40 flex flex-col justify-between hover:border-[#8B7355] transition-colors group cursor-pointer">
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 group-hover:text-[#8B7355] transition-colors">Kumaş Stoğu</h3>
               <div className="text-3xl font-serif text-[#111]">0 <span className="text-sm font-sans text-zinc-400">Ürün</span></div>
@@ -137,6 +148,16 @@ export default function StudioContent({ basePath }: StudioContentProps) {
               <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500">Bekleyen Teklifler (Bakiye)</h3>
               <div className="text-3xl font-serif text-[#111]">₺0</div>
               <p className="text-[9px] uppercase tracking-widest text-zinc-400 font-bold">Proforma Aşaması</p>
+          </div>
+          <div className="bg-white p-6 border border-[#111111]/10 shadow-sm h-40 flex flex-col justify-between relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Sparkles className="w-16 h-16 text-[#8B7355]" />
+              </div>
+              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 z-10">Kalan Ücretsiz Kredi</h3>
+              <div className="text-3xl font-serif text-[#111] z-10">{Math.max(0, FREE_RENDER_QUOTA - usedRenders)}</div>
+              <Link href={`${basePath}/pricing`} className="text-[9px] uppercase tracking-widest text-[#8B7355] hover:text-[#725e45] font-bold z-10 flex items-center gap-1">
+                Kredi Al &rarr;
+              </Link>
           </div>
       </div>
       

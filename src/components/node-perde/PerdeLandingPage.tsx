@@ -258,11 +258,18 @@ export default function PerdeLandingPage() {
              <p className="text-zinc-400 font-light text-base md:text-lg mb-12 max-w-xl mx-auto">
                 {T.cta.desc}
              </p>
-             <Link href={`${basePath}/contact`}>
-                <button className="h-16 px-8 md:px-12 bg-white text-zinc-900 hover:bg-[#EBEBE6] transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold tracking-wider">
-                   {T.cta.button}
-                </button>
-             </Link>
+             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                 <Link href={`${basePath}/register`}>
+                    <button className="h-16 px-8 md:px-12 bg-[#8B7355] text-white hover:bg-[#725e45] transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold tracking-wider">
+                       5 ÜCRETSİZ TASARIM DENE
+                    </button>
+                 </Link>
+                 <Link href={`${basePath}/contact`}>
+                    <button className="h-16 px-8 md:px-12 bg-transparent border border-white/20 text-white hover:bg-white/10 transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold tracking-wider">
+                       {T.cta.button}
+                    </button>
+                 </Link>
+             </div>
          </div>
       </section>
 
