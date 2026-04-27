@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ArrowLeft, LayoutDashboard, LogOut } from 'lucide-react';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 
@@ -13,12 +13,14 @@ interface StudioLayoutProps {
 export default function StudioLayout({ children }: StudioLayoutProps) {
   const { user, loading, logout } = usePerdeAuth();
   const router = useRouter();
+  const pathname = usePathname() || '';
+  const domainPath = pathname.startsWith('/sites/') ? `/${pathname.split('/')[1]}/${pathname.split('/')[2]}` : '/sites/perde.ai';
 
   React.useEffect(() => {
     if (!loading && !user) {
-      router.push('/sites/perde.ai/login');
+      router.push(`${domainPath}/login`);
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, domainPath]);
 
   return (
     <div className="flex flex-col h-screen bg-[#F9F9F6] text-[#111111] overflow-hidden font-sans">
@@ -28,7 +30,7 @@ export default function StudioLayout({ children }: StudioLayoutProps) {
          
          {/* LEFT MENU */}
          <div className="flex items-center gap-6">
-            <Link href="/sites/perde" className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 hover:text-[#111] transition-colors rounded-sm px-4 py-2 hover:bg-zinc-100">
+            <Link href={domainPath} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 hover:text-[#111] transition-colors rounded-sm px-4 py-2 hover:bg-zinc-100">
               <ArrowLeft className="w-4 h-4" /> Ana Sayfaya Dön
             </Link>
          </div>
@@ -47,7 +49,7 @@ export default function StudioLayout({ children }: StudioLayoutProps) {
                 {user.email}
               </span>
             )}
-            <Link href="/sites/perde/studio" className="flex items-center gap-2 px-5 py-2.5 bg-[#111] text-white hover:bg-black transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
+            <Link href={`${domainPath}/studio`} className="flex items-center gap-2 px-5 py-2.5 bg-[#111] text-white hover:bg-black transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
                <LayoutDashboard className="w-4 h-4" /> Yönetim Paneli
             </Link>
             {user && (
