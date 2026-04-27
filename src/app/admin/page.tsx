@@ -27,6 +27,8 @@ function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
     setLoading(true);
 
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
       const res = await fetch('/api/aloha/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,11 +39,19 @@ function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
           systemContext: { activeNode, source: 'sovereign_command_center' },
           history: messages.slice(-6),
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'aloha', text: data.text || data.error || 'Yanıt yok' }]);
     } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'aloha', text: `❌ ${err.message}` }]);
+      const errorMsg = err.name === 'AbortError' 
+        ? '⏱️ Zaman aşımı — ALOHA yanıt veremedi (30s)' 
+        : `❌ ${err.message}`;
+      setMessages(prev => [...prev, { role: 'aloha', text: errorMsg }]);
     }
     setLoading(false);
   }, [input, loading, messages, activeNode]);
@@ -174,6 +184,38 @@ function PanelLoader({ label }: { label: string }) {
       <span className="text-[11px] text-zinc-600 font-mono">{label} yükleniyor...</span>
     </div>
   );
+}
+
+// Error Boundary — panel çökerse sistemi kilitlemesin
+class PanelErrorBoundary extends React.Component<
+  { children: React.ReactNode; name: string },
+  { hasError: boolean; error: string }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: '' };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <Shield className="w-8 h-8 text-red-500/50" />
+          <p className="text-[12px] text-red-400 font-mono">{this.props.name} yüklenemedi</p>
+          <p className="text-[10px] text-zinc-600 max-w-md text-center">{this.state.error}</p>
+          <button
+            onClick={() => this.setState({ hasError: false, error: '' })}
+            className="text-[10px] px-4 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-zinc-400 hover:text-white"
+          >
+            Tekrar Dene
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -445,10 +487,10 @@ export default function SovereignCommandCenter() {
         {/* Panel Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {activePanel === 'overview' && <NodeOverview nodeId={activeNode} />}
-          {activePanel === 'inbox' && <div className="p-6"><AgentInbox /></div>}
-          {activePanel === 'commercial' && <div className="p-6"><CommercialPanel /></div>}
-          {activePanel === 'domains' && <div className="p-6"><DomainManagement /></div>}
-          {activePanel === 'trtex' && activeNode === 'trtex' && <div className="p-6"><TrtexControlPanel /></div>}
+          {activePanel === 'inbox' && <PanelErrorBoundary name="Agent Inbox"><div className="p-6"><AgentInbox /></div></PanelErrorBoundary>}
+          {activePanel === 'commercial' && <PanelErrorBoundary name="Ticaret"><div className="p-6"><CommercialPanel /></div></PanelErrorBoundary>}
+          {activePanel === 'domains' && <PanelErrorBoundary name="Domainler"><div className="p-6"><DomainManagement /></div></PanelErrorBoundary>}
+          {activePanel === 'trtex' && activeNode === 'trtex' && <PanelErrorBoundary name="TRTEX Kontrol"><div className="p-6"><TrtexControlPanel /></div></PanelErrorBoundary>}
         </div>
       </div>
 

@@ -256,9 +256,9 @@ export default function DomainManagement() {
             </SelectTrigger>
             <SelectContent className="rounded-none border-2">
               <SelectItem value="all">TÜM SEKTÖRLER</SelectItem>
-              {sectors.map((sector) => (
+              {sectors.filter(Boolean).map((sector) => (
                 <SelectItem key={sector} value={sector}>
-                  {sector.toUpperCase()}
+                  {(sector || '').toUpperCase()}
                 </SelectItem>
               ))}
             </SelectContent>

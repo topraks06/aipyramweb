@@ -34,16 +34,17 @@ import { adminDb } from '@/lib/firebase-admin';
 // - imagen-3.0-generate-002: Mevcut görsel üretim (stabil)
 // → YENİ: imagen-4.0-generate-001 (Subject Identity, 4K, 2-into-1 birleştirme)
 // → YENİ: gemini-embedding-exp-03-07 (multimodal embeddings — metin+görüntü+video)
-// → YENİ: veo-3.1-lite-preview (hızlı video üretimi, sanal fuar potansiyeli)
-// → YENİ: Gemini 3.1 Flash (agentic workflows, persistent context)
+// → NOT: gemini-3.x henüz mevcut değil. Güncel stabil modeller:
+// → gemini-2.5-flash (agentic, hızlı, düşük maliyet)
+// → gemini-2.5-pro (derin analiz, complex workflows)
 
 // MALİYET SAVUNMASI (CFO GUARD):
 // Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
-// en düşük maliyetli model (Flash-Lite) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
-const DEFAULT_MODEL = 'gemini-3.1-flash'; // (Flash-Lite / Yüksek Hız, Düşük Maliyet)
-const DEEP_MODEL = 'gemini-3.1-pro'; // (Deep Research Max / Kompleks İşlemler)
-const IMAGE_MODEL = 'imagen-4.0-fast-generate-001';     // Default for generateImages
-const IMAGE_MODEL_FALLBACK = 'imagen-4.0-generate-001';  // Fallback for generateImages
+// en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
+const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash / Yüksek Hız, Düşük Maliyet)
+const DEEP_MODEL = 'gemini-2.5-pro'; // (Pro / Kompleks İşlemler)
+const IMAGE_MODEL = 'imagen-3.0-generate-002';     // Default for generateImages (stabil)
+const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback for generateImages
 const EMBEDDING_MODEL = 'text-embedding-004';  // Stable embedding model
 const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
 const MAX_RETRIES = 3;
