@@ -5,6 +5,10 @@ import { useSearchParams } from 'next/navigation';
 import MyProjects from '@/components/node-perde/MyProjects';
 import Link from 'next/link';
 import { Box, Scissors, LayoutDashboard } from 'lucide-react';
+import { usePerdeAuth } from '@/hooks/usePerdeAuth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase-client';
+import WelcomeWizard from '../onboarding/WelcomeWizard';
 
 interface StudioContentProps {
   basePath: string;
@@ -13,6 +17,29 @@ interface StudioContentProps {
 export default function StudioContent({ basePath }: StudioContentProps) {
   const searchParams = useSearchParams();
   const tab = searchParams?.get('tab') || 'dashboard';
+  const { user } = usePerdeAuth();
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
+  const [userData, setUserData] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const checkOnboarding = async () => {
+      try {
+        const docRef = doc(db, 'perde_members', user.uid);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          setUserData(data);
+          if (data.onboardingCompleted === false) {
+            setShowOnboarding(true);
+          }
+        }
+      } catch (err) {
+        console.error("Onboarding check failed", err);
+      }
+    };
+    checkOnboarding();
+  }, [user]);
 
   React.useEffect(() => {
      if (searchParams?.get('payment') === 'success') {
@@ -31,6 +58,18 @@ export default function StudioContent({ basePath }: StudioContentProps) {
          });
      }
   }, [searchParams]);
+
+  if (showOnboarding && user && userData) {
+    return (
+      <WelcomeWizard 
+        userUid={user.uid}
+        userName={userData.name || 'Misafir'}
+        profession={userData.profession || 'diger'}
+        onComplete={() => setShowOnboarding(false)}
+        basePath={basePath}
+      />
+    );
+  }
 
   if (tab === 'inventory') {
     return (
