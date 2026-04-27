@@ -14,21 +14,36 @@ import {
 // ALOHA CHAT PANEL (Sağ taraf — sabit)
 // ═══════════════════════════════════════════════════
 function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
-  const [messages, setMessages] = useState<{ role: 'user' | 'aloha'; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'aloha'; text: string; ts: number }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+
+  // Chat geçmişi yükle
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('aloha_chat_history');
+      if (saved) setMessages(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  // Chat geçmişini kaydet (son 50 mesaj)
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('aloha_chat_history', JSON.stringify(messages.slice(-50)));
+    }
+  }, [messages]);
 
   const sendMessage = useCallback(async () => {
     if (!input.trim() || loading) return;
     const msg = input;
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setMessages(prev => [...prev, { role: 'user', text: msg, ts: Date.now() }]);
     setLoading(true);
 
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
+      const timeout = setTimeout(() => controller.abort(), 60000); // 60s — engine tool zinciri uzun sürebilir
       const res = await fetch('/api/aloha/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,12 +61,12 @@ function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
       const data = await res.json();
-      setMessages(prev => [...prev, { role: 'aloha', text: data.text || data.error || 'Yanıt yok' }]);
+      setMessages(prev => [...prev, { role: 'aloha', text: data.text || data.error || 'Yanıt yok', ts: Date.now() }]);
     } catch (err: any) {
       const errorMsg = err.name === 'AbortError' 
         ? '⏱️ Zaman aşımı — ALOHA yanıt veremedi (30s)' 
         : `❌ ${err.message}`;
-      setMessages(prev => [...prev, { role: 'aloha', text: errorMsg }]);
+      setMessages(prev => [...prev, { role: 'aloha', text: errorMsg, ts: Date.now() }]);
     }
     setLoading(false);
   }, [input, loading, messages, activeNode]);
@@ -109,7 +124,7 @@ function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
             <span className="text-[9px] font-bold text-zinc-600 uppercase block mb-1">
               {m.role === 'user' ? 'SEN' : 'ALOHA'}
             </span>
-            <div className="whitespace-pre-wrap">{m.text}</div>
+            <AlohaMessage text={m.text} />
           </div>
         ))}
         {loading && (
@@ -142,6 +157,42 @@ function AlohaChat({ activeNode }: { activeNode: SovereignNodeId }) {
       </div>
     </div>
   );
+}
+
+// Basit markdown render (bold, code, lists, links)
+function AlohaMessage({ text }: { text: string }) {
+  const lines = text.split('\n');
+  return (
+    <div className="space-y-1">
+      {lines.map((line, i) => {
+        // List items
+        if (/^[\-\*] /.test(line)) {
+          return <div key={i} className="flex gap-1.5"><span className="text-blue-500">•</span><span dangerouslySetInnerHTML={{ __html: inlineFormat(line.replace(/^[\-\*] /, '')) }} /></div>;
+        }
+        // Numbered list
+        if (/^\d+\.\s/.test(line)) {
+          return <div key={i} className="flex gap-1.5"><span className="text-blue-500 font-mono text-[10px]">{line.match(/^(\d+)/)?.[1]}.</span><span dangerouslySetInnerHTML={{ __html: inlineFormat(line.replace(/^\d+\.\s/, '')) }} /></div>;
+        }
+        // Headers
+        if (/^###?\s/.test(line)) {
+          return <div key={i} className="font-bold text-white text-[13px] mt-1">{line.replace(/^###?\s/, '')}</div>;
+        }
+        // Code blocks
+        if (line.startsWith('```')) return null;
+        // Empty
+        if (!line.trim()) return <div key={i} className="h-1" />;
+        // Normal
+        return <div key={i} dangerouslySetInnerHTML={{ __html: inlineFormat(line) }} />;
+      })}
+    </div>
+  );
+}
+
+function inlineFormat(text: string): string {
+  return text
+    .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 bg-white/10 rounded text-blue-300 text-[11px] font-mono">$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em class="text-zinc-400">$1</em>');
 }
 
 // ═══════════════════════════════════════════════════
