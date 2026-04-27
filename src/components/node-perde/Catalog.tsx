@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Loader2, UploadCloud, Search, Tag, Box, DollarSign, X } from 'lucide-react';
-import { collection, addDoc, getDocs, Timestamp, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, getDocs, Timestamp, query, where, orderBy, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { getNode } from '@/lib/sovereign-config';
@@ -79,6 +79,19 @@ export default function Catalog() {
     }
   };
 
+  const handleDeleteProduct = async (productId: string) => {
+    if(!user || !SovereignNodeId) return;
+    if(confirm('Katalogdan bu ürünü silmek istediğinize emin misiniz?')) {
+      try {
+        const config = getNode(SovereignNodeId);
+        await deleteDoc(doc(db, config.productCollection || 'products', productId));
+      } catch(err) {
+        console.error("Silme hatası", err);
+        alert("Ürün silinirken bir hata oluştu.");
+      }
+    }
+  };
+
   if (loading) return <div className="fixed inset-0 bg-black flex justify-center items-center"><Loader2 className="h-8 w-8 text-white animate-spin" /></div>;
   if (!user) return (
     <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50">
@@ -110,44 +123,44 @@ export default function Catalog() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="font-sans text-4xl md:text-5xl font-bold uppercase tracking-tighter text-white">
-              KATALOG & STOK YÃ–NETÄ°MÄ°
+              KATALOG & STOK YÖNETİMİ
             </h1>
             <span className="bg-white text-black text-[10px] px-3 py-1 uppercase tracking-widest font-bold">
-              Ä°zole: {SovereignNodeId?.substring(0,6) || '---'}
+              İzole: {SovereignNodeId?.substring(0,6) || '---'}
             </span>
           </div>
           <p className="text-zinc-500 text-sm max-w-2xl uppercase tracking-wider">
-            ÅÄ°RKET VEYA MAÄAZANIZA AÄ°T KUMAÅ, MEKANÄ°ZMA VE BÄ°TMÄ°Å ÃœRÃœN STOKLARINI YÃ–NETÄ°N. DÄ°ÄER MAÄAZALAR SÄ°ZÄ°N BÄ°LGÄ°LERÄ°NÄ°ZÄ° GÃ–REMEZ.
+            ŞİRKET VEYA MAĞAZANIZA AİT KUMAŞ, MEKANİZMA VE BİTMİŞ ÜRÜN STOKLARINI YÖNETİN. DİĞER MAĞAZALAR SİZİN BİLGİLERİNİZİ GÖREMEZ.
           </p>
         </div>
         <Button onClick={() => setShowAddForm(!showAddForm)} variant={showAddForm ? "outline" : "default"} className="gap-2 shrink-0 bg-white text-black hover:bg-zinc-200 uppercase text-[10px] tracking-widest font-bold">
-          <UploadCloud className="w-4 h-4" /> {showAddForm ? 'KÃœTÃœPHANEYE DÃ–N' : 'YENÄ° ÃœRÃœN EKLE'}
+          <UploadCloud className="w-4 h-4" /> {showAddForm ? 'KÜTÜPHANEYE DÖN' : 'YENİ ÜRÜN EKLE'}
         </Button>
       </div>
 
       {showAddForm ? (
         <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500 bg-zinc-900 border-white/10">
            <CardHeader>
-             <CardTitle className="text-white">YENÄ° ÃœRÃœN KARTI</CardTitle>
+             <CardTitle className="text-white">YENİ ÜRÜN KARTI</CardTitle>
            </CardHeader>
            <CardContent>
              <form onSubmit={handleAddProduct} className="space-y-6 max-w-2xl">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div>
-                   <label className="text-xs font-bold uppercase text-zinc-500 mb-2 block">ÃœrÃ¼n / KumaÅŸ AdÄ±</label>
-                   <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full bg-black border border-zinc-700 text-white p-3 font-mono text-sm focus:border-white focus:outline-none" placeholder="Ã–rn: Blackout Keten Gri" />
+                   <label className="text-xs font-bold uppercase text-zinc-500 mb-2 block">Ürün / Kumaş Adı</label>
+                   <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full bg-black border border-zinc-700 text-white p-3 font-mono text-sm focus:border-white focus:outline-none" placeholder="Örn: Blackout Keten Gri" />
                  </div>
                  <div>
                    <label className="text-xs font-bold uppercase text-zinc-500 mb-2 block">Kategori</label>
                    <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className="w-full bg-black border border-zinc-700 text-white p-3 font-mono text-sm focus:border-white focus:outline-none appearance-none">
-                     <option value="Fon">Fon KumaÅŸ</option>
-                     <option value="TÃ¼l">TÃ¼l</option>
+                     <option value="Fon">Fon Kumaş</option>
+                     <option value="Tül">Tül</option>
                      <option value="Stor">Stor / Zebra</option>
                      <option value="Aksesuar">Mekanizma / Aksesuar</option>
                    </select>
                  </div>
                  <div>
-                   <label className="text-xs font-bold uppercase text-zinc-500 mb-2 block">Birim SatÄ±ÅŸ FiyatÄ± (TL)</label>
+                   <label className="text-xs font-bold uppercase text-zinc-500 mb-2 block">Birim Satış Fiyatı (TL)</label>
                    <input required type="number" step="0.01" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full bg-black border border-zinc-700 text-white p-3 font-mono text-sm focus:border-white focus:outline-none" placeholder="0.00" />
                  </div>
                  <div>
@@ -157,7 +170,7 @@ export default function Catalog() {
                </div>
                
                <div className="pt-4 border-t border-white/10 flex justify-end">
-                 <Button type="button" variant="outline" onClick={() => setShowAddForm(false)} className="mr-4 text-white hover:text-black">Ä°PTAL</Button>
+                 <Button type="button" variant="outline" onClick={() => setShowAddForm(false)} className="mr-4 text-white hover:text-black">İPTAL</Button>
                  <Button type="submit" disabled={isSubmitting} className="min-w-48 bg-white text-black hover:bg-zinc-200">
                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'KAYDET'}
                  </Button>
@@ -169,7 +182,7 @@ export default function Catalog() {
         <div className="space-y-6">
           <div className="flex border border-white/10 bg-zinc-900/50 p-2 items-center gap-3 rounded-lg">
              <Search className="w-5 h-5 text-zinc-500 ml-2" />
-             <input type="text" placeholder="KATALOGDA ARA (ISÄ°M, KATEGORÄ° VEYA SKU)" className="w-full bg-transparent border-none text-white focus:outline-none font-mono text-sm placeholder:text-zinc-600" />
+             <input type="text" placeholder="KATALOGDA ARA (İSİM, KATEGORİ VEYA SKU)" className="w-full bg-transparent border-none text-white focus:outline-none font-mono text-sm placeholder:text-zinc-600" />
           </div>
 
           {isFetching ? (
@@ -177,8 +190,8 @@ export default function Catalog() {
           ) : products.length === 0 ? (
              <div className="border border-white/10 p-16 flex flex-col items-center justify-center text-center bg-zinc-900/20 border-dashed rounded-2xl">
                 <Box className="w-12 h-12 text-zinc-600 mb-4" />
-                <h3 className="font-bold uppercase tracking-wider text-white mb-2">KATALOG BOÅ</h3>
-                <p className="text-sm text-zinc-500 max-w-md">HenÃ¼z bu iÅŸletmeye tanÄ±mlanmÄ±ÅŸ bir Ã¼rÃ¼n yok. Yeni bir Ã¼rÃ¼n ekleyerek fiyatlarÄ± ve malzeme stoklarÄ±nÄ±zÄ± yÃ¶netmeye baÅŸlayÄ±n.</p>
+                <h3 className="font-bold uppercase tracking-wider text-white mb-2">KATALOG BOŞ</h3>
+                <p className="text-sm text-zinc-500 max-w-md">Henüz bu işletmeye tanımlanmış bir ürün yok. Yeni bir ürün ekleyerek fiyatları ve malzeme stoklarınızı yönetmeye başlayın.</p>
              </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -194,14 +207,9 @@ export default function Catalog() {
                      <div className="flex items-center gap-2">
                         <Tag className="w-3 h-3 text-zinc-600 hidden group-hover:block" />
                         <button 
-                          onClick={async (e) => {
-                             e.preventDefault();
-                             if(confirm('Katalogdan bu Ã¼rÃ¼nÃ¼ silmek istediÄŸinize emin misiniz?')) {
-                               setProducts(p => p.filter(x => x.id !== product.id));
-                             }
-                          }}
+                          onClick={(e) => { e.preventDefault(); handleDeleteProduct(product.id); }}
                           className="text-zinc-600 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          title="ÃœrÃ¼nÃ¼ Sil"
+                          title="Ürünü Sil"
                         >
                            <X className="w-4 h-4" />
                         </button>

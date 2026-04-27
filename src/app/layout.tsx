@@ -7,6 +7,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { AipyramAuthProvider } from "@/components/auth/AipyramAuthProvider";
 import ConciergeWidget from "@/components/ConciergeWidget";
 import PerdeClientWrapper from "@/components/node-perde/PerdeClientWrapper";
+import IcmimarClientWrapper from "@/components/node-icmimar/IcmimarClientWrapper";
 
 import "./globals.css";
 
@@ -81,6 +82,7 @@ export default async function RootLayout({
   const locale = headersList.get("x-next-intl-locale") || "de";
   const host = headersList.get("host") || "";
   const isPerde = host.includes("perde") || host.includes("perde.localhost");
+  const isIcmimar = host.includes("icmimar") || host.includes("icmimar.localhost");
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -158,8 +160,9 @@ export default async function RootLayout({
       <body className="antialiased bg-background text-foreground">
         <AipyramAuthProvider>
           {children}
-          {!isPerde && <ConciergeWidget />}
+          {!isPerde && !isIcmimar && <ConciergeWidget />}
           {isPerde && <PerdeClientWrapper />}
+          {isIcmimar && <IcmimarClientWrapper />}
           <Toaster />
           <GlobalClientEffects />
         </AipyramAuthProvider>

@@ -83,6 +83,7 @@ export default async function middleware(req: NextRequest) {
       'hometex': 'hometex.ai',
       'perde': 'perde.ai',
       'vorhang': 'vorhang.ai',
+      'icmimar': 'icmimar.ai',
     };
     SovereignNodeId = domainMap[sub] || `${sub}.com`;
     console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → node: ${SovereignNodeId}`);

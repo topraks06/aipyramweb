@@ -33,8 +33,8 @@ export async function POST(req: Request) {
         customerEmail: undefined, // Could add from user later
         amountUSD,
         isYearly,
-        successUrl: `${origin}/b2b?payment=success`,
-        cancelUrl: `${origin}/pricing?payment=cancelled`
+        successUrl: `${origin}/sites/${SovereignNodeId}/yonetim?payment=success`,
+        cancelUrl: `${origin}/sites/${SovereignNodeId}/pricing?payment=cancelled`
       });
     } else {
       return NextResponse.json({ success: false, error: 'Invalid checkout type' }, { status: 400 });

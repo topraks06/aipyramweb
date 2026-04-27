@@ -1,21 +1,23 @@
-import { NextResponse } from 'next/server';
-import { adminDb } from '@aipyram/firebase';
+import { NextRequest, NextResponse } from 'next/server';
+import { admin, adminDb } from '@/lib/firebase-admin';
 import { getNode } from '@/lib/sovereign-config';
 
 export const dynamic = 'force-dynamic';
 
 // GET /api/perde/customers
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     if (!adminDb) throw new Error("Firebase Admin not ready");
 
-    const { searchParams } = new URL(req.url);
-    const uid = searchParams.get('uid'); 
-    const SovereignNodeConfig = getNode('perde');
-
-    if (!uid) {
-      return NextResponse.json({ success: false, error: 'Kullanıcı kimliği (uid) gerekli.' }, { status: 400 });
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
     }
+
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
+    const SovereignNodeConfig = getNode('perde');
 
     if (!SovereignNodeConfig.customerCollection) {
       return NextResponse.json({ success: false, error: 'Customer collection tanımlanmamış.' }, { status: 500 });
@@ -38,15 +40,23 @@ export async function GET(req: Request) {
 
 // POST /api/perde/customers
 // Create a new customer
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     if (!adminDb) throw new Error("Firebase Admin not ready");
 
-    const body = await req.json();
-    const { uid, name, phone, email, address, notes } = body;
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    }
 
-    if (!uid || !name) {
-      return NextResponse.json({ success: false, error: 'uid ve name zorunlu.' }, { status: 400 });
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
+    const body = await req.json();
+    const { name, phone, email, address, notes } = body;
+
+    if (!name) {
+      return NextResponse.json({ success: false, error: 'name zorunlu.' }, { status: 400 });
     }
 
     const SovereignNodeConfig = getNode('perde');

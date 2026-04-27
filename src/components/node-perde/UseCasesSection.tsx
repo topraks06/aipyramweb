@@ -45,7 +45,7 @@ export default function UseCasesSection() {
                                 <span>Rakiplerden önce <strong>Pazar İstihbaratına</strong> ulaşın.</span>
                             </li>
                         </ul>
-                        <Link href="/sites/perde.ai/about" className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
+                        <Link href="/sites/perde.ai/pricing" className="text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2 text-zinc-900 group-hover:text-[#8B7355] transition-colors">
                             Detayları İncele
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// Geçiçi In-Memory Arşiv Deposu (Faz 4 MVP için)
-// Gerçek sistemde Firestore 'perde_projects' koleksiyonuna kaydedilecek.
-const globalProjectsStore = new Map<string, any>();
+import { admin, adminDb } from "@/lib/firebase-admin";
 
 export async function POST(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
+    }
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
     const body = await req.json();
     const { 
       customerName, phone, address, company, projectName, notes,
@@ -19,10 +23,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Eksik veri: Müşteri adı, orijinal veya sonuç görseli zorunludur." }, { status: 400 });
     }
 
-    const projectId = `prj_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    
     const newProject = {
-      id: projectId,
+      uid, // Tie to the logged in user
       customerName, phone: phone || '', address: address || '', company: company || '', projectName: projectName || 'İsimsiz Proje', notes: notes || '',
       identityNo: identityNo || '', email: email || '', deliveryDate: deliveryDate || '',
       width: width || '', height: height || '', pleatStyle: pleatStyle || '', seamStyle: seamStyle || '', mechanism: mechanism || '',
@@ -32,13 +34,13 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString()
     };
 
-    globalProjectsStore.set(projectId, newProject);
+    const docRef = await adminDb.collection('perde_projects').add(newProject);
 
     return NextResponse.json({
       success: true,
       message: "Proje müşteriye başarıyla kaydedildi.",
-      projectId,
-      project: newProject
+      projectId: docRef.id,
+      project: { id: docRef.id, ...newProject }
     });
 
   } catch (error: any) {
@@ -49,20 +51,31 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
+    }
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (id) {
-      if (globalProjectsStore.has(id)) {
-        return NextResponse.json({ project: globalProjectsStore.get(id) });
+      const doc = await adminDb.collection('perde_projects').doc(id).get();
+      if (doc.exists && doc.data()?.uid === uid) {
+        return NextResponse.json({ project: { id: doc.id, ...doc.data() } });
       }
       return NextResponse.json({ error: "Proje bulunamadı" }, { status: 404 });
     }
 
     // Tüm projeleri döndür
-    const projects = Array.from(globalProjectsStore.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    const snapshot = await adminDb.collection('perde_projects')
+      .where('uid', '==', uid)
+      .orderBy('createdAt', 'desc')
+      .get();
+      
+    const projects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
     return NextResponse.json({ projects });
   } catch (error: any) {

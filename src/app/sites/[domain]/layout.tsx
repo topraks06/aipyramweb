@@ -1,7 +1,6 @@
 import { Schema, Type } from "@google/genai";
 import { ReactNode } from "react";
 import { Metadata } from "next";
-import PerdeClientWrapper from "@/components/node-perde/PerdeClientWrapper";
 import { resolveNodeFromDomain as getNodeConfig } from "@/lib/sovereign-config";
 
 /**
@@ -107,7 +106,6 @@ export default async function DomainLayout({
     <>
       <NodeJsonLd domain={exactDomain} />
       {children}
-      {exactDomain.includes('perde') && <PerdeClientWrapper />}
     </>
   );
 }

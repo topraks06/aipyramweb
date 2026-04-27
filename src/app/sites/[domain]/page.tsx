@@ -211,11 +211,16 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   if (exactDomain.includes('hometex')) projectName = 'hometex';
   if (exactDomain.includes('perde')) projectName = 'perde';
   if (exactDomain.includes('vorhang')) projectName = 'vorhang';
+  if (exactDomain.includes('icmimar')) projectName = 'icmimar';
   const brandName = exactDomain.split('.')[0].toUpperCase();
 
   // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
   if (projectName === 'perde') {
     return <PerdeLandingPage />;
+  }
+  if (projectName === 'icmimar') {
+    const IcmimarLandingPage = (await import('@/components/node-icmimar/IcmimarLandingPage')).default;
+    return <IcmimarLandingPage />;
   }
   if (projectName === 'hometex') {
     let articles: any[] = [];

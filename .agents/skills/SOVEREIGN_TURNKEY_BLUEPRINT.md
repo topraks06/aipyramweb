@@ -208,8 +208,9 @@ Aşağıdaki araçlar ALOHA chat'ten tetiklenebilmelidir:
 | `vorhang_products` | Vorhang | B2C perakende ürünler |
 | `vorhang_orders` | Vorhang | B2C siparişler |
 | `vorhang_sellers` | Vorhang | Perakendeci mağazaları |
-| `perde_renders` | Perde.ai | Img2Img render geçmişi |
-| `perde_orders` | Perde.ai | ERP siparişleri |
+| `icmimar_renders` | icmimar.ai | Img2Img render geçmişi |
+| `icmimar_orders` | icmimar.ai | ERP siparişleri |
+| `perde_orders` | Perde.ai | B2C Perakende Siparişleri |
 | `sovereign_publish_log` | AIPyram | Otonom yayın logları |
 | `sovereign_certifications` | AIPyram | Sertifika veritabanı |
 | `design_templates` | AIPyram | 3D şablon kütüphanesi |

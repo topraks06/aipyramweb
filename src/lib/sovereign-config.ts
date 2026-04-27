@@ -11,7 +11,7 @@
 // TYPES
 // ═══════════════════════════════════════════════════
 
-export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'shtori' | 'parda' | 'donoithat' | 'perabot' | 'heimtex';
+export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'shtori' | 'parda' | 'donoithat' | 'perabot' | 'heimtex' | 'icmimar';
 export type UserRole = 'admin' | 'editor' | 'member' | 'viewer';
 
 export interface SovereignNodeFeatures {
@@ -62,6 +62,46 @@ export interface SovereignNodeConfig {
 // ═══════════════════════════════════════════════════
 
 export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
+
+  // ─── ICMIMAR.AI (MASTER DESIGN & ERP) ────────────
+  icmimar: {
+    id: 'icmimar',
+    domain: 'icmimar.ai',
+    name: 'İcmimar.AI Master Design Engine & ERP',
+    shortName: 'ICMIMAR.AI',
+    memberCollection: 'icmimar_members',
+    newsCollection: 'icmimar_news',
+    projectCollection: 'icmimar_orders',
+    walletCollection: 'icmimar_wallets',
+    customerCollection: 'icmimar_customers',
+    productCollection: 'icmimar_products',
+    renderCollection: 'icmimar_renders',
+    theme: 'dark',
+    locale: 'tr',
+    features: {
+      b2b: true,
+      catalog: true,
+      news: false,
+      autonomous: false,
+      visualizer: true,
+      expo: false,
+      magazine: false,
+      salesEngine: true,
+      whatsapp: true,
+      documents: true,
+      fabricAnalysis: true,
+      retention: true,
+    },
+    publicNavLinks: [
+      { name: 'Kurumsal', href: '/about', gated: false },
+      { name: 'İletişim', href: '/contact', gated: false },
+    ],
+    privateNavLinks: [
+      { name: 'Tasarım Stüdyosu', href: '/visualizer', gated: true },
+      { name: 'B2B ERP', href: '/b2b', gated: true },
+    ],
+    roles: ['admin', 'editor', 'member'],
+  },
 
   // ─── TRTEX ───────────────────────────────────────
   // CANLI - OTONOM - DOKUNMA
@@ -116,28 +156,27 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     theme: 'light',
     locale: 'tr',
     features: {
-      b2b: true,
+      b2b: false,
       catalog: true,
       news: false,
       autonomous: false,
       visualizer: true,
       expo: false,
       magazine: false,
-      salesEngine: false,
-      whatsapp: true,
-      documents: true,
+      salesEngine: true,
+      whatsapp: false,
+      documents: false,
       fabricAnalysis: true,
       retention: true,
     },
     publicNavLinks: [
-      { name: 'Kurumsal Üyelik', href: '/pricing', gated: false },
+      { name: 'Koleksiyonlar', href: '/collections', gated: false },
+      { name: 'Nasıl Çalışır?', href: '/how-it-works', gated: false },
       { name: 'İletişim', href: '/contact', gated: false },
     ],
     privateNavLinks: [
-      { name: 'Tasarım Stüdyosu', href: '/visualizer', gated: true },
-      { name: 'B2B ERP', href: '/b2b', gated: true },
-      { name: 'Katalog Stoku', href: '/catalog', gated: true },
-      { name: 'Ekosistem Sinyali', href: '/ecosystem', gated: true },
+      { name: 'Hesabım', href: '/hesabim', gated: true },
+      { name: 'Siparişlerim', href: '/orders', gated: true },
     ],
     roles: ['admin', 'editor', 'member'],
   },
@@ -193,7 +232,7 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     theme: 'dark',
     locale: 'de',
     features: {
-      b2b: true,
+      b2b: false,
       catalog: true,
       news: false,
       autonomous: false,
@@ -201,16 +240,18 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
       expo: false,
       magazine: false,
       salesEngine: true,
-      whatsapp: true,
-      documents: true,
+      whatsapp: false,
+      documents: false,
       fabricAnalysis: false,
       retention: true,
     },
     publicNavLinks: [
-      { name: 'Katalog', href: '/catalog', gated: false },
+      { name: 'Kollektionen', href: '/collections', gated: false },
+      { name: 'Kontakt', href: '/contact', gated: false },
     ],
     privateNavLinks: [
-      { name: 'Bestellung', href: '/orders', gated: true },
+      { name: 'Mein Konto', href: '/hesabim', gated: true },
+      { name: 'Meine Bestellungen', href: '/orders', gated: true },
     ],
     roles: ['admin', 'member'],
   },

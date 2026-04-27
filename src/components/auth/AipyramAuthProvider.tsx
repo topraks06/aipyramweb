@@ -52,9 +52,20 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
 
   const loginWithGoogle = async () => {
     try {
+      const isDev = process.env.NODE_ENV === 'development';
+      if (isDev) {
+        console.log("[DEV BYPASS] Localhost üzerinden Google Agresif Yetkili Girişi yapıldı.");
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('dev_bypass_admin', 'true');
+        }
+        setUser({ email: 'hakantoprak71@gmail.com', uid: 'admin-local-bypass' } as User);
+        setLoading(false);
+        return;
+      }
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Login failed:", error);
+      throw error; // Throw the error so the caller can handle it
     }
   };
 
@@ -64,9 +75,9 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
       const cleanEmail = e.trim().toLowerCase();
       const cleanPass = p.trim();
       
-      const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const isDev = process.env.NODE_ENV === 'development';
 
-      if (isLocalhost) {
+      if (isDev && cleanPass === 'oyaalya123') {
         console.log("[DEV BYPASS] Localhost üzerinden Agresif Yetkili Girişi yapıldı.");
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('dev_bypass_admin', 'true');
@@ -86,7 +97,12 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
 
   const logout = async () => {
     try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('dev_bypass_admin');
+      }
       await signOut(auth);
+      // Ensure user state is cleared immediately when bypassing
+      setUser(null);
     } catch (error) {
       console.error("Logout failed:", error);
     }

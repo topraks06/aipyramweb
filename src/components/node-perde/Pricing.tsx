@@ -130,7 +130,7 @@ export default function Pricing() {
               </ul>
            </div>
            
-           {/* Enterprise */}
+            {/* Enterprise */}
            <div className="bg-white p-10 border border-[#EBEBE6] flex flex-col rounded-sm relative hover:-translate-y-1 transition-transform duration-500">
               <div className="absolute top-0 right-0 bg-zinc-100 text-zinc-500 px-3 py-1 text-[8px] uppercase tracking-[0.2em] font-semibold rounded-bl-sm">
                  {T.fullSystem}

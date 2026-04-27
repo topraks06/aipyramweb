@@ -1,13 +1,8 @@
-import StudioLayout from '@/components/node-perde/studio/StudioLayout';
-import StudioContent from '@/components/node-perde/studio/StudioContent';
+import { redirect } from 'next/navigation';
 
-export default async function StudioPage({ params }: { params: Promise<{ domain: string }> }) {
-    const { domain } = await params;
-    const basePath = `/sites/${domain}/studio`;
-
-    return (
-        <StudioLayout>
-            <StudioContent basePath={basePath} />
-        </StudioLayout>
-    );
+export default async function LegacyStudioPage(props: { params: Promise<{ domain: string }> }) {
+  const params = await props.params;
+  const domain = params.domain;
+  
+  redirect(`/sites/${domain}/yonetim`);
 }

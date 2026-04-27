@@ -4,6 +4,7 @@ import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 const nodeLoginMap: Record<string, () => Promise<any>> = {
   perde: () => import('@/components/node-perde/auth/Login'),
   hometex: () => import('@/components/node-hometex/auth/Login'),
+  icmimar: () => import('@/components/node-icmimar/auth/Login'),
 };
 
 export default async function LoginPage({ params }: { params: Promise<{ domain: string }> }) {

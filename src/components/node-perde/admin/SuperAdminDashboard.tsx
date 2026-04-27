@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase-client';
 import { usePerdeAuth } from '@/hooks/usePerdeAuth';
-import { Loader2, DollarSign, Activity, FileText, Users, ShieldAlert } from 'lucide-react';
+import { Loader2, DollarSign, Activity, FileText, Users, ShieldAlert, Globe } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function SuperAdminDashboard({ basePath = '/sites/perde.ai' }: { basePath?: string }) {
@@ -14,6 +14,15 @@ export default function SuperAdminDashboard({ basePath = '/sites/perde.ai' }: { 
   const [members, setMembers] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeNode, setActiveNode] = useState('icmimar');
+
+  const nodes = [
+    { id: 'icmimar', label: 'İcmimar.ai', color: 'red' },
+    { id: 'perde', label: 'Perde.ai', color: 'emerald' },
+    { id: 'trtex', label: 'TRTex.com', color: 'blue' },
+    { id: 'hometex', label: 'Hometex.ai', color: 'purple' },
+    { id: 'vorhang', label: 'Vorhang.ai', color: 'amber' }
+  ];
 
   // Süper Admin Email Kontrolü
   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com';
@@ -30,17 +39,17 @@ export default function SuperAdminDashboard({ basePath = '/sites/perde.ai' }: { 
       try {
         setLoading(true);
         // Üyeleri çek
-        const memberSnap = await getDocs(query(collection(db, 'perde_members'), orderBy('createdAt', 'desc')));
+        const memberSnap = await getDocs(query(collection(db, `${activeNode}_members`), orderBy('createdAt', 'desc')));
         const memberData = memberSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         setMembers(memberData);
 
-        // Projeleri/Renderları çek (şimdilik perde_orders veya perde_renders)
-        // Eğer koleksiyonlar boşsa hata almamak için try/catch içinde yapıyoruz
+        // Projeleri/Renderları çek
         try {
-          const projectSnap = await getDocs(query(collection(db, 'perde_orders'), orderBy('createdAt', 'desc')));
+          const projectSnap = await getDocs(query(collection(db, `${activeNode}_orders`), orderBy('createdAt', 'desc')));
           setProjects(projectSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (e) {
-          console.warn("perde_orders koleksiyonu henüz yok veya okunamadı.");
+          console.warn(`${activeNode}_orders koleksiyonu henüz yok veya okunamadı.`);
+          setProjects([]);
         }
         
       } catch (err) {
@@ -51,7 +60,7 @@ export default function SuperAdminDashboard({ basePath = '/sites/perde.ai' }: { 
     }
     
     fetchAdminData();
-  }, [user, authLoading, router, basePath, ADMIN_EMAIL]);
+  }, [user, authLoading, router, basePath, ADMIN_EMAIL, activeNode]);
 
   if (authLoading || loading) {
     return <div className="min-h-screen flex items-center justify-center bg-zinc-950"><Loader2 className="h-8 w-8 text-[#8B7355] animate-spin" /></div>;
@@ -81,6 +90,19 @@ export default function SuperAdminDashboard({ basePath = '/sites/perde.ai' }: { 
           <div className="bg-red-500/10 text-red-400 text-[10px] px-4 py-2 font-mono uppercase tracking-widest border border-red-500/20">
             SuperAdmin Mode Active
           </div>
+        </div>
+
+        {/* Node Shortcuts */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          {nodes.map(node => (
+            <button
+              key={node.id}
+              onClick={() => setActiveNode(node.id)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${activeNode === node.id ? `bg-${node.color}-500 text-white shadow-[0_0_15px_rgba(0,0,0,0.5)]` : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+            >
+              <Globe className="w-4 h-4" /> {node.label}
+            </button>
+          ))}
         </div>
 
         {/* İstatistikler */}

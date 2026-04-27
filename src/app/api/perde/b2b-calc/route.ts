@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { alohaAI } from "@/core/aloha/aiClient";
+import { admin } from "@/lib/firebase-admin";
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -15,6 +16,12 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
+    }
+    await admin.auth().verifySessionCookie(sessionCookie.value, true);
+
     const body = await req.json();
 
     // ── Action Router: OrderSlideOver "refresh_pricing" desteği ──

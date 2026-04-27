@@ -19,16 +19,16 @@ export default function Configurator() {
   const fabrics = [
     { id: 'linen', name: 'Premium Keten', pricePerSqm: 450, color: '#e5e0d8' },
     { id: 'velvet', name: 'Kraliyet Kadifesi', pricePerSqm: 650, color: '#2c3e50' },
-    { id: 'sheer', name: 'Havadar TÃ¼l', pricePerSqm: 300, color: '#f8f9fa' },
+    { id: 'sheer', name: 'Havadar Tül', pricePerSqm: 300, color: '#f8f9fa' },
     { id: 'blackout', name: 'Tam Karartma', pricePerSqm: 550, color: '#343a40' },
   ];
 
   const mechanisms = [
     { id: 'manual', name: 'Standart Manuel Ray', price: 250 },
-    { id: 'motorized', name: 'AkÄ±llÄ± Motorlu Sistem', price: 1500 },
+    { id: 'motorized', name: 'Akıllı Motorlu Sistem', price: 1500 },
   ];
 
-  if (authLoading) return <div className="fixed inset-0 top-[60px] bg-zinc-950 flex flex-col items-center justify-center z-50"><Loader2 className="h-8 w-8 text-zinc-500 animate-spin" /><p className="text-zinc-500 mt-4 text-xs tracking-widest font-mono uppercase">YÃ¼kleniyor...</p></div>;
+  if (authLoading) return <div className="fixed inset-0 top-[60px] bg-zinc-950 flex flex-col items-center justify-center z-50"><Loader2 className="h-8 w-8 text-zinc-500 animate-spin" /><p className="text-zinc-500 mt-4 text-xs tracking-widest font-mono uppercase">Yükleniyor...</p></div>;
   if (!user) return (
     <div className="fixed inset-0 top-[60px] bg-zinc-950 flex flex-col items-center justify-center z-50">
       <div className="text-center">
@@ -49,9 +49,9 @@ export default function Configurator() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 bg-black mt-16 text-white min-h-screen">
       <div className="mb-10 text-center pt-8">
-        <h1 className="font-serif text-4xl md:text-5xl mb-4 text-white uppercase tracking-tighter">Ä°malat & Maliyet</h1>
+        <h1 className="font-serif text-4xl md:text-5xl mb-4 text-white uppercase tracking-tighter">İmalat & Maliyet</h1>
         <p className="text-zinc-500 max-w-2xl mx-auto text-[10px] tracking-widest uppercase font-bold">
-          B2B Ã–LÃ‡ÃœLERÄ°NÄ°ZÄ° GÄ°RÄ°N VE ARKA PLANDA SÄ°STEMÄ°N OTOMATÄ°K MALÄ°YET HESABINI Ä°ZLEYÄ°N.
+          B2B ÖLÇÜLERİNİZİ GİRİN VE ARKA PLANDA SİSTEMİN OTOMATİK MALİYET HESABINI İZLEYİN.
         </p>
       </div>
 
@@ -80,7 +80,7 @@ export default function Configurator() {
           
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black border border-white/20 px-8 py-4 rounded-xl shadow-2xl flex items-center space-x-6 z-20">
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Maliyet</span>
-            <span className="font-serif text-3xl text-emerald-400 font-bold">{totalPrice} â‚º</span>
+            <span className="font-serif text-3xl text-emerald-400 font-bold">{totalPrice} ₺</span>
           </div>
         </div>
 
@@ -91,7 +91,7 @@ export default function Configurator() {
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/10 pb-2">Boyutlar (cm)</h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 ml-1">GeniÅŸlik</label>
+                    <label className="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 ml-1">Genişlik</label>
                     <Input 
                       type="number" 
                       value={width} 
@@ -101,7 +101,7 @@ export default function Configurator() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 ml-1">YÃ¼kseklik</label>
+                    <label className="block text-[10px] uppercase tracking-widest text-zinc-500 font-bold mb-2 ml-1">Yükseklik</label>
                     <Input 
                       type="number" 
                       value={height} 
@@ -114,7 +114,7 @@ export default function Configurator() {
               </div>
 
               <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/10 pb-2">KumaÅŸ Tipi</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/10 pb-2">Kumaş Tipi</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {fabrics.map(f => (
                     <div 
@@ -125,7 +125,7 @@ export default function Configurator() {
                       <div className="w-8 h-8 rounded-full shadow-inner border border-white/20" style={{ backgroundColor: f.color }}></div>
                       <div className="flex-1">
                         <div className="text-[11px] font-bold text-white uppercase tracking-wider">{f.name}</div>
-                        <div className="text-[10px] text-zinc-500 font-mono">+{f.pricePerSqm}â‚º/mÂ²</div>
+                        <div className="text-[10px] text-zinc-500 font-mono">+{f.pricePerSqm}₺/m²</div>
                       </div>
                       {fabric === f.id && <Check className="h-4 w-4 text-emerald-400" />}
                     </div>
@@ -143,7 +143,7 @@ export default function Configurator() {
                       className={`p-4 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${mechanism === m.id ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-black hover:border-white/30'}`}
                     >
                       <span className="text-[11px] font-bold text-white uppercase tracking-wider">{m.name}</span>
-                      <span className="text-[10px] font-mono text-blue-400">+{m.price}â‚º</span>
+                      <span className="text-[10px] font-mono text-blue-400">+{m.price}₺</span>
                     </div>
                   ))}
                 </div>
@@ -163,7 +163,7 @@ export default function Configurator() {
                   className="w-full rounded-xl py-6 bg-white text-black hover:bg-zinc-200 uppercase tracking-widest text-[10px] font-bold transition-colors"
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
-                  SipariÅŸe DÃ¶nÃ¼ÅŸtÃ¼r (ERP)
+                  Siparişe Dönüştür (ERP)
                 </Button>
               </div>
             </CardContent>

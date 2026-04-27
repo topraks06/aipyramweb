@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { adminDb } from '@aipyram/firebase';
+import { NextRequest, NextResponse } from 'next/server';
+import { admin, adminDb } from '@/lib/firebase-admin';
 import { getNode } from '@/lib/sovereign-config';
 import { calculateItemPrice, type PriceCalcInput } from '@/services/perdePricingEngine';
 
@@ -7,17 +7,19 @@ export const dynamic = 'force-dynamic';
 
 // GET /api/perde/orders
 // Returns all orders for a specific user (or all if admin)
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     if (!adminDb) throw new Error("Firebase Admin not ready");
 
-    const { searchParams } = new URL(req.url);
-    const uid = searchParams.get('uid'); // Should be replaced with secure server-side auth token check
-    const SovereignNodeConfig = getNode('perde');
-
-    if (!uid) {
-      return NextResponse.json({ success: false, error: 'Kullanıcı kimliği (uid) gerekli.' }, { status: 400 });
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
     }
+
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
+    const SovereignNodeConfig = getNode('perde');
 
     const ordersSnap = await adminDb
       .collection(SovereignNodeConfig.projectCollection)
@@ -36,14 +38,22 @@ export async function GET(req: Request) {
 
 // POST /api/perde/orders
 // Create a new order
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     if (!adminDb) throw new Error("Firebase Admin not ready");
 
-    const body = await req.json();
-    const { uid, customerName, customerPhone, items } = body;
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 });
+    }
 
-    if (!uid || !items || !Array.isArray(items)) {
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    const uid = decoded.uid;
+
+    const body = await req.json();
+    const { customerName, customerPhone, items } = body;
+
+    if (!items || !Array.isArray(items)) {
       return NextResponse.json({ success: false, error: 'Eksik parametreler.' }, { status: 400 });
     }
 

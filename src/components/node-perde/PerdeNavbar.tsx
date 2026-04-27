@@ -86,14 +86,11 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
         </div>
         
         <nav className="hidden lg:flex gap-10 text-[10px] uppercase tracking-[0.2em] font-semibold">
-            <Link href={`${domainPath}/about`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
-              {T.nav.about}
-            </Link>
             <Link href={`${domainPath}/visualizer`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
               {T.nav.studio}
             </Link>
-            <Link href={user ? `${domainPath}/studio` : `${domainPath}/login`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
-              {T.nav.erp}
+            <Link href={`${domainPath}/pricing`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
+              {T.nav.pricing}
             </Link>
             <Link href={`${domainPath}/contact`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
               {T.nav.contact}
@@ -101,29 +98,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
         </nav>
         
         <div className="flex items-center gap-4 md:gap-6">
-           <button 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'upload' } }))}
-              className={`hidden md:block transition-colors py-2 text-[10px] uppercase tracking-[0.2em] font-bold ${textClass}`}
-           >
-              {T.nav.open_assistant}
-           </button>
-
-           <div className={`h-6 w-[1px] ${borderClass} hidden md:block`}></div>
-
-           <div className="flex items-center gap-1 relative text-[10px] font-bold text-zinc-500 uppercase tracking-widest cursor-pointer group">
-             <Globe className="w-3.5 h-3.5 mr-1" />
-             <select 
-               value={curLang} 
-               onChange={switchLang}
-               className="bg-transparent appearance-none cursor-pointer hover:text-black transition-colors focus:outline-none"
-             >
-               {langs.map((l) => (
-                 <option key={l.code} value={l.code} className="text-[#111] bg-white">{l.label}</option>
-               ))}
-             </select>
-           </div>
-
-           <div className={`h-6 w-[1px] ${borderClass} hidden md:block`}></div>
+           {/* Dil Seçici Kaldırıldı - Sadece TR */}
 
            {user ? (
              <div className="flex items-center gap-4">
@@ -133,7 +108,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
                    <span className="text-[11px] font-mono text-accent font-bold tracking-widest">{credits}</span>
                </Link>
                
-               <Link href={`${domainPath}/studio`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass}`}>
+               <Link href={`${domainPath}/yonetim`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass} hover:opacity-70`}>
                  {T.nav.studio_panel}
                </Link>
                <button 
@@ -144,12 +119,14 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
                </button>
              </div>
            ) : (
-             <Link 
-               href={`${domainPath}/login`} 
-               className={`hidden md:block px-6 py-3 border text-[10px] uppercase tracking-[0.2em] font-bold transition-all ${isDark ? 'bg-white text-black hover:bg-zinc-200' : 'bg-[#111] text-white hover:bg-black rounded-sm'}`}
-             >
-               {T.nav.studio_login}
-             </Link>
+             <div className="hidden md:flex items-center gap-6">
+               <Link 
+                 href={`${domainPath}/login`} 
+                 className={`px-8 py-3.5 text-[10px] uppercase tracking-[0.2em] font-bold transition-all rounded-sm flex items-center gap-2 ${isDark ? 'bg-white text-black hover:bg-zinc-200' : 'bg-[#111] text-white hover:bg-black shadow-lg hover:shadow-xl hover:-translate-y-0.5'}`}
+               >
+                 SİSTEME GİRİŞ <Sparkles className="w-3.5 h-3.5" />
+               </Link>
+             </div>
            )}
             
             {/* Hamburger (Mobile) */}
@@ -193,6 +170,18 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
                 </button>
               </div>
 
+             {!user && (
+               <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-zinc-100 px-6">
+                 <Link 
+                   href={`${domainPath}/login`} 
+                   onClick={() => setMobileMenuOpen(false)}
+                   className="bg-[#111111] text-white text-center py-4 flex items-center justify-center gap-2 text-[11px] font-bold tracking-[0.2em] rounded-sm"
+                 >
+                   SİSTEME GİRİŞ <Sparkles className="w-4 h-4" />
+                 </Link>
+               </div>
+             )}
+
               <div className="flex flex-col p-6 gap-6 text-[11px] uppercase tracking-[0.2em] font-bold">
                 <Link href={`${domainPath}/about`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
                   {T.nav.about}
@@ -200,7 +189,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
                 <Link href={`${domainPath}/visualizer`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
                   {T.nav.studio}
                 </Link>
-                <Link href={`${domainPath}/studio`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
+                <Link href={`${domainPath}/yonetim`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
                   {T.nav.erp}
                 </Link>
                 <Link href={`${domainPath}/contact`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">

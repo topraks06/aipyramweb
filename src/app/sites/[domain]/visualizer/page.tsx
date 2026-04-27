@@ -23,7 +23,7 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
            
            {/* LEFT MENU */}
            <div className="flex items-center gap-6">
-              <Link href="/sites/perde" className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-400 hover:text-white transition-colors rounded-sm px-4 py-2 hover:bg-white/5">
+              <Link href={`/sites/${exactDomain}`} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-400 hover:text-white transition-colors rounded-sm px-4 py-2 hover:bg-white/5">
                 <ArrowLeft className="w-4 h-4" /> Ana Sayfaya Dön
               </Link>
            </div>
@@ -37,7 +37,7 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
 
            {/* RIGHT MENU */}
            <div className="flex items-center gap-4">
-              <Link href="/admin" className="flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-zinc-200 transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
+              <Link href={`/sites/${exactDomain}/yonetim`} className="flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-zinc-200 transition-colors rounded-sm text-[10px] uppercase tracking-[0.1em] font-bold">
                  <LayoutDashboard className="w-4 h-4" /> Yönetim Paneli
               </Link>
            </div>

@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { admin, adminDb } from "@/lib/firebase-admin";
 
 export async function POST(req: NextRequest) {
   try {
+    const sessionCookie = req.cookies.get("session");
+    if (!sessionCookie?.value) {
+      return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
+    }
+
+    const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
+    if (!decoded.uid) {
+      return NextResponse.json({ error: "Geçersiz oturum" }, { status: 401 });
+    }
+
     const data = await req.json();
 
     await adminDb.collection("perde_orders").add({

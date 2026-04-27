@@ -75,7 +75,7 @@ Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncell
 - **Otonom İletişim:** Bileşenler arası "Nexus signal-emitting architecture" üzerinden sinyal paylaşılacaktır.
 
 ## 4. Otonom Ekosistem (5+7 Küresel Ağ)
-- **5 Ana Node:** AIPyram (Beyin) + TRTex (Radar) + Perde.ai (Tasarım) + Hometex (Fuar) + Vorhang (Perakende)
+- **5 Ana Node:** AIPyram (Beyin) + TRTex (Radar) + icmimar.ai (Tasarım & ERP) + Hometex (Fuar) + Perde/Vorhang (Perakende)
 - **7 Bölgesel Kapı:** Vorhang (DACH), Shtori (Rusya), Parda (Farsça), Donoithat (Vietnam), Perabot (Endonezya), Heimtex (Sertifika), Cortina (İspanya - gelecek)
 - **Tak-Çalıştır Mimari:** Yeni bölgesel node eklenmesi `sovereign-config.ts`'e 10 satır eklemekle yapılabilir olmalıdır. Tüm ALOHA kararları ve kayıt defterleri bu büyük resmi tanıyarak çalışır.
 
