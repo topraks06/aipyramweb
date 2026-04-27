@@ -10,6 +10,7 @@ import { alohaAI } from '@/core/aloha/aiClient';
 import { processMultipleImages, getImageCount } from './imageAgent';
 import { slugify } from '@/core/utils/slugify';
 import type { RepairAction, AuditReport } from './deepAudit';
+import { getBaseUrl } from '@/lib/utils';
 
 const MANDATORY_KW: Record<string, string[]> = {
   trtex: ['perde', 'ev tekstili', 'dekorasyon'],
@@ -136,7 +137,7 @@ JSON döndür:
         case 'replace_image': {
           // Aloha API üzerinden görsel güncelle
           try {
-            const res = await fetch('http://localhost:3000/api/aloha/chat', {
+            const res = await fetch(`${getBaseUrl()}/api/aloha/chat`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({

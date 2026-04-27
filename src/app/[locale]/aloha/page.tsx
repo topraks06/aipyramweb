@@ -27,7 +27,7 @@ export default function AlohaRedirect() {
       </div>
       <h1 className="text-2xl font-black uppercase tracking-widest mb-2">ALOHA v2.0</h1>
       <p className="text-sm text-zinc-400 font-mono">Admin paneline yönlendiriliyorsunuz...</p>
-      <p className="text-[10px] text-zinc-600 mt-4 font-mono">localhost:3000/admin → Aloha Sekmesi</p>
+      <p className="text-[10px] text-zinc-600 mt-4 font-mono">Admin Paneli → Aloha Sekmesi</p>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { adminDb } from '@/lib/firebase-admin';
 import { processMultipleImages } from '../imageAgent';
+import { getBaseUrl } from '@/lib/utils';
 
 // Veriler bizzat Merkezi Kasa'da (Sovereign Node - Firebase Native) tutuluyor.
 const MEMORY_DIR = path.resolve(process.cwd(), 'data/sovereign');
@@ -325,7 +326,7 @@ export async function saveToGoogleNativeMemory(collection: string, payload: any)
     // ⚡ V5 Sıfır Gecikme (Zero-Latency) Webhook Tetikleyicisi (Ateşle ve Unut)
     const webhookUrl = process.env.NODE_ENV === 'production' 
         ? 'https://trtex.com/api/webhook/aipyram' 
-        : 'http://localhost:3000/api/webhook/aipyram';
+        : `${getBaseUrl()}/api/webhook/aipyram`;
         
     console.log(`📡 [AIPYRAM PING] Dumb Client (TRTEX) uyarılıyor -> ${webhookUrl}`);
     
