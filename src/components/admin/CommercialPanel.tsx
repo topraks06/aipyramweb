@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import {
     DollarSign, Users, FileText, TrendingUp,
     Clock, CheckCircle2, XCircle, Mail, Phone,
-    ArrowUpRight, MessageCircle, RefreshCw, AlertTriangle, type LucideIcon
+    ArrowUpRight, MessageCircle, RefreshCw, AlertTriangle, ExternalLink, type LucideIcon
 } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────
@@ -350,7 +350,7 @@ export default function CommercialPanel() {
                 <CardContent className="pt-0">
                     {leads.length === 0 ? (
                         <div className="text-center py-8 text-sm text-muted-foreground">
-                            <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                            <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
                             No leads yet.
                             <br />
                             <span className="text-xs">Contact form submissions will appear here.</span>

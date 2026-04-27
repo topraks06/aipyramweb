@@ -99,7 +99,7 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
       for (const sig of parsed.ecosystem_signals_fired) {
         // Mevcut tiplerden birine denk geliyorsa fırlat
         const validTypes: EcosystemSignalType[] = ['RAW_MATERIAL_UPDATE', 'TREND_ALERT', 'PRODUCT_DESIGNED', 'RENDER_COMPLETED', 'MATCH_FOUND', 'LEAD_CAPTURED', 'ORDER_CREATED', 'FABRIC_ANALYZED', 'FAIR_OPPORTUNITY', 'PRICE_SHIFT', 'VORHANG_PRODUCT_LISTED', 'TELEPORT_INITIATED'];
-        if (validTypes.includes(sig)) {
+        if (validTypes.includes(sig as any)) {
           await ecosystemBus.emit({
             type: sig as EcosystemSignalType,
             source_node: (request.node_context || 'master') as any,

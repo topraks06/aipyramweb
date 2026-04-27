@@ -5,6 +5,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase-client';
 import { getNode, type SovereignNodeId, type UserRole } from '@/lib/sovereign-config';
+import { syncSovereignIdentity, type SovereignUser } from '@/lib/auth/SovereignIdentity';
 import { useState, useEffect, useCallback } from 'react';
 
 export type LicenseStatus = 'active' | 'pending' | 'rejected' | 'suspended' | 'none';
@@ -61,6 +62,9 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
         // Admin kontrolü — tüm node'larda geçerli
         const isAdmin = ADMIN_EMAILS.includes(user.email || '');
 
+        // 1. Sync Universal Sovereign Identity
+        await syncSovereignIdentity(user, node.id);
+
         const memberDoc = await getDoc(doc(db, node.memberCollection, user.uid));
         if (memberDoc.exists()) {
           const data = memberDoc.data();
@@ -104,7 +108,7 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
     };
 
     checkMembership();
-  }, [user, authLoading, node.memberCollection, node.id]);
+  }, [user, authLoading, node.memberCollection, node.id, node.walletCollection]);
 
   // E-posta ile giriş
   const loginWithEmail = useCallback(async (email: string, password: string) => {

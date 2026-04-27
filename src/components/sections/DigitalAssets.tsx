@@ -6,16 +6,16 @@ import { Building2, Globe, Stethoscope, Landmark, Plane, Zap, Target, Cpu, Brief
 export default function DigitalAssets() {
   const t = useTranslations("DigitalAssets");
 
-  const BENTO_SECTORS = [
-    { id: "textile", name: "Textile & Design Core", domains: 34, icon: Briefcase, featured: "perde.ai, trtex.com", color: "text-red-600" },
-    { id: "realestate", name: "Real Estate Analytics", domains: 28, icon: Building2, featured: "didimemlak.ai", color: "text-neutral-800" },
-    { id: "rental", name: "Global Rentals", domains: 12, icon: Globe, featured: "rentworld.ai", color: "text-red-500" },
-    { id: "health", name: "Healthcare AI", domains: 15, icon: Stethoscope, featured: "spital.ai", color: "text-neutral-800" },
-    { id: "fintech", name: "Financial Networks", domains: 17, icon: Landmark, featured: "autopayment.ai", color: "text-red-600" },
-    { id: "aviation", name: "Aviation Systems", domains: 18, icon: Plane, featured: "ajet.ai", color: "text-neutral-800" },
-    { id: "energy", name: "Renewable Energy", domains: 10, icon: Zap, featured: "onlyenergy.ai", color: "text-red-500" },
-    { id: "defense", name: "Cyber & Defense", domains: 8, icon: Target, featured: "onlyaudit.ai", color: "text-neutral-900" },
-    { id: "logistics", name: "Supply Chain", domains: 14, icon: Cpu, featured: "onlycargo.ai", color: "text-red-600" },
+    const BENTO_SECTORS = [
+    { id: "textile", name: t("sector_textile"), domains: 34, icon: Briefcase, featured: "perde.ai, trtex.com", color: "text-red-600" },
+    { id: "realestate", name: t("sector_realestate"), domains: 28, icon: Building2, featured: "didimemlak.ai", color: "text-neutral-800" },
+    { id: "rental", name: t("sector_rental"), domains: 12, icon: Globe, featured: "rentworld.ai", color: "text-red-500" },
+    { id: "health", name: t("sector_health"), domains: 15, icon: Stethoscope, featured: "spital.ai", color: "text-neutral-800" },
+    { id: "fintech", name: t("sector_fintech"), domains: 17, icon: Landmark, featured: "autopayment.ai", color: "text-red-600" },
+    { id: "aviation", name: t("sector_aviation"), domains: 18, icon: Plane, featured: "ajet.ai", color: "text-neutral-800" },
+    { id: "energy", name: t("sector_energy"), domains: 10, icon: Zap, featured: "onlyenergy.ai", color: "text-red-500" },
+    { id: "defense", name: t("sector_defense"), domains: 8, icon: Target, featured: "onlyaudit.ai", color: "text-neutral-900" },
+    { id: "logistics", name: t("sector_logistics"), domains: 14, icon: Cpu, featured: "onlycargo.ai", color: "text-red-600" },
   ];
 
   return (

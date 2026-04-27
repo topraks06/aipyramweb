@@ -6,7 +6,7 @@ import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { Loader2, Building2, User, Mail, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 
 export default function Register({ basePath = '/sites/icmimar.ai' }: { basePath?: string }) {
-  const { registerDealer, loginWithGoogle } = useSovereignAuth('icmimar');
+  const { registerDealer, loginWithGoogle } = useSovereignAuth('icmimar') as any;
   const [formData, setFormData] = useState({ name: '', company: '', email: '', password: '', profession: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);

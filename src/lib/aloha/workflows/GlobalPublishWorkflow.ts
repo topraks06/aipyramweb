@@ -37,6 +37,7 @@ interface WorkflowResult {
   trtexNewsId?: string;
   hometexProductId?: string;
   vorhangProductId?: string;
+  perdeDesignId?: string;
   pricing?: any;
   analysis?: any;
   error?: string;

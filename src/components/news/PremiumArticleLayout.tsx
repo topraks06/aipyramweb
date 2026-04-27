@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { getBaseUrl } from '@/lib/utils';
+import { getBaseUrl, getNodeUrl } from '@/lib/utils';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import ShareButtons from '@/components/trtex/ShareButtons';
@@ -198,7 +198,7 @@ export default function PremiumArticleLayout({
         {/* ═══ PERDE.AI TELEPORT CTA ═══ */}
         <div style={{ marginBottom: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <a 
-            href={`${getBaseUrl()}/sites/perde/studio?inspiration=${encodeURIComponent(title)}`}
+            href={`${getNodeUrl('perde')}/studio?inspiration=${encodeURIComponent(title)}`}
             onClick={(e) => {
               // Send telemetry signal in the background
               fetch('/api/system/signals', {

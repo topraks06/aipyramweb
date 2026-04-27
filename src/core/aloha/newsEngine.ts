@@ -264,7 +264,7 @@ JSON döndür:
 }`, { systemInstruction: systemPrompt, temperature: 0.85 }, 'newsEngine.meta');
 
   // AŞAMA 2: Content (tam HTML makale) — düz metin, JSON yok
-  const content = await alohaAI.generate(`
+  const { text: content } = await alohaAI.generate(`
 "${meta.title}" başlıklı haber için HTML makale gövdesi yaz.
 Özet: ${meta.summary}
 Editoryal Açı: ${angle.tone} — ${angle.style}

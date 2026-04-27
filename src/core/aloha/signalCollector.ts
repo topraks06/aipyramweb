@@ -169,7 +169,7 @@ export async function collectSignals(project: string = 'trtex', workerTask?: Wor
 async function gatherSignals(topics: string[]): Promise<RawSignal[]> {
   try {
     const topicList = topics.map((t, i) => `${i + 1}. ${t}`).join('\n');
-    let text = await alohaAI.generate(
+    let { text } = await alohaAI.generate(
       `Search the internet for 5 strictly B2B trade intelligence updates, breaking market news, or macro numbers based on these topics:\n${topicList}\n\nIMPORTANT: Find REAL, RECENT news from 2026. Each entry must be a unique, distinct story.\nReturn JSON ONLY exactly like:\n[{"title":"...","summary":"...","url":"...","source":"...","category":"..."}]`,
       { 
         temperature: 0.4,

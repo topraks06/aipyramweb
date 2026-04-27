@@ -17,62 +17,6 @@ export default function PerdeFooter() {
             
             {/* Col 1 */}
             <div>
-              <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[9px] mb-8">Perde Türleri</h4>
-              <ul className="space-y-4 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Fon Perde</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Tül Perde</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Stor Perde</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Zebra Perde</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Blackout</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Jaluzi</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Panel Perde</Link></li>
-              </ul>
-            </div>
-
-            {/* Col 2 */}
-            <div>
-              <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[9px] mb-8">Kumaşlar</h4>
-              <ul className="space-y-4 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Kadife</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Keten</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Şifon</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Jakar</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Brode</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Voile</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Organik</Link></li>
-              </ul>
-            </div>
-
-            {/* Col 3 */}
-            <div>
-              <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[9px] mb-8">Tasarım Stilleri</h4>
-              <ul className="space-y-4 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Modern</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Klasik</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Minimalist</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Rustik</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Bohem</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Art Deco</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">İskandinav</Link></li>
-              </ul>
-            </div>
-
-            {/* Col 4 */}
-            <div>
-              <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[9px] mb-8">Mekanlar</h4>
-              <ul className="space-y-4 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Salon</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Yatak Odası</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Mutfak</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Çocuk Odası</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Ofis</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Otel / Restoran</Link></li>
-                <li><Link href="#" title="Çok Yakında" className="hover:text-black transition-colors">Balkon</Link></li>
-              </ul>
-            </div>
-
-            {/* Col 5 */}
-            <div>
               <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[9px] mb-8">Platform</h4>
               <ul className="space-y-4 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
                 <li><Link href={`${domainPath}/visualizer`} className="hover:text-[#8B7355] transition-colors">Nasıl Çalışır?</Link></li>

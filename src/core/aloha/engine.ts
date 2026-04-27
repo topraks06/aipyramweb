@@ -62,6 +62,30 @@ export const tools: any[] = [
         },
       },
       {
+        name: "crawl_external_url",
+        description: "Tedarik zinciri ajanının dış ağları (stok/fiyat/ihale platformları) taraması için kullanılır. (CrawlerAgent)",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            url: { type: Type.STRING, description: "Taranacak hedef URL." },
+            instruction: { type: Type.STRING, description: "Ajanın sayfada arayacağı bilgi veya komut." }
+          },
+          required: ["url", "instruction"],
+        },
+      },
+      {
+        name: "retrieve_context",
+        description: "RAG (AsyncRetrieveContexts) altyapısını kullanarak Local Agent ve Style Advisor için Sovereign Knowledge veritabanından bağlam getirir.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            query: { type: Type.STRING, description: "Aranacak vektör sorgusu." },
+            agentType: { type: Type.STRING, description: "Ajanın tipi (Local Agent, Style Advisor, vb.)" }
+          },
+          required: ["query"],
+        },
+      },
+      {
         name: "audit_all_projects",
         description:
           "Ekosistemdeki TÃœM projeleri fiziksel olarak tarar: dizin yapısı, package.json, firebase.json, hata dosyaları, TypeScript durumu.",
@@ -2552,6 +2576,27 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
         break;
       }
 
+      case "crawl_external_url": {
+        try {
+          const { executeCrawlerAgent } = await import('./crawlerAgent');
+          toolResult = await executeCrawlerAgent(args.url, args.instruction);
+        } catch (e: any) {
+          toolResult = `[HATA] CrawlerAgent başarısız: ${e.message}`;
+        }
+        break;
+      }
+
+      case "retrieve_context": {
+        try {
+          const { AsyncRetrieveContexts } = await import('./rag');
+          const contexts = await AsyncRetrieveContexts(args.query, args.agentType);
+          toolResult = JSON.stringify(contexts);
+        } catch (e: any) {
+          toolResult = `[HATA] RAG araması başarısız: ${e.message}`;
+        }
+        break;
+      }
+
       case "trtex_publish_article": {
         try {
           const articleId = args.articleId || args.id;
@@ -4243,7 +4288,7 @@ JSON döndür: {"verified": true/false, "correction": "doğru veri (sadece yanl�
           let groundingSuccess = false;
           try {
             // removed searchAi
-            const groundedText = await alohaAI.generate(
+            const { text: groundedText, rawResponse: groundedResponse } = await alohaAI.generate(
               `Sen bir B2B tekstil istihbarat analistisin. Şu konuda güncel, doğrulanmış bilgi topla ve özetle:\n\n"${query}"\n\nKurallar:\n- Sadece GERÇEK, doğrulanmış veriler sun\n- Rakamlar, yüzdeler, tarihler ver\n- Kaynak belirt\n- Türk ev tekstili/perde sektörü perspektifinden değerlendir\n- Kısa ve öz ol (max 800 kelime)`,
               {
                 tools: [{ googleSearch: {} }],

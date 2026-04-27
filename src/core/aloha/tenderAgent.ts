@@ -155,7 +155,7 @@ DO NOT wrap in markdown. Return ONLY the JSON array.
 `;
 
     try {
-      const text = await alohaAI.generate(
+      let { text } = await alohaAI.generate(
         prompt,
         {
           tools: [{ googleSearch: {} }],

@@ -97,7 +97,7 @@ export function ProductDetail({ id, product: propProduct, seller: propSeller }: 
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
-               {product.specs.map(spec => (
+               {product.specs.map((spec: any) => (
                  <div key={spec.label} className="border-b border-gray-100 pb-2">
                     <p className="text-xs text-gray-400 uppercase mb-1">{spec.label}</p>
                     <p className="font-medium">{spec.value}</p>

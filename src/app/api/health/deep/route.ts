@@ -14,7 +14,7 @@ export async function GET() {
     checks.gemini = { status: "❌ DEAD", detail: "GEMINI_API_KEY eksik veya dummy. aistudio.google.com/apikey adresinden al." };
   } else {
     try {
-      const text = await alohaAI.generate("Sadece 'OK' yaz.", { complexity: 'routine' }, 'health.deep');
+      const { text } = await alohaAI.generate("Sadece 'OK' yaz.", { complexity: 'routine' }, 'health.deep');
       checks.gemini = { status: "✅ ALIVE", detail: `Yanıt: ${text?.substring(0, 30)}` };
     } catch (e: any) {
       checks.gemini = { status: "❌ DEAD", detail: `Key var ama çağrı çöktü: ${e.message?.substring(0, 100)}` };

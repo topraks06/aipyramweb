@@ -52,6 +52,7 @@ export default function PerdeOrdersTable() {
   const handleStatusChange = async (docId: string, newStatus: string) => {
     try {
       const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase-client');
       await updateDoc(doc(db, "perde_projects", docId), { status: newStatus, updatedAt: new Date().toISOString() });
     } catch (e) {
       console.error(e);

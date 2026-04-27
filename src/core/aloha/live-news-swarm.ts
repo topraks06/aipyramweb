@@ -15,7 +15,7 @@ async function runScoutAgent(brief: string): Promise<string> {
     const TODAY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const CURRENT_YEAR = new Date().getFullYear(); // 2026
 
-    const text = await alohaAI.generate(
+    const { text } = await alohaAI.generate(
         `Aşağıdaki brief bilgisini baz alarak profesyonel, B2B ev tekstili piyasasına uygun, 100% gerçekçi bir haber taslağı oluştur.
         ${lessons}
         Brief: "${brief}"`,

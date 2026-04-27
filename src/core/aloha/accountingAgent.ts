@@ -122,4 +122,40 @@ export class AccountingAgent {
 
     return { vatReserve, stripeLoss, lockedProfit, netCapital };
   }
+
+  /**
+   * Q2 Vision: Native Infographics
+   * Üretilen finansal raporu görselleştirilebilir bir JSON şablonu halinde döndürür.
+   * Bu veri istemci tarafında (ör. Recharts, Tailwind chart) render edilecektir.
+   */
+  public static async generateFiscalInfographic(targetProject: string): Promise<any> {
+    const totalSpent = await this.getSpent(`spent_${targetProject}`);
+    let totalRevenue = 0;
+    try {
+      const db = await getFirestoreDb();
+      const doc = await db.collection("accounting").doc("total_revenue").get();
+      totalRevenue = doc.exists ? (doc.data()?.amount || 0) : 0;
+    } catch {}
+
+    const { vatReserve, stripeLoss, lockedProfit, netCapital } = this.calculateSwissNetCapital(totalRevenue);
+
+    return {
+      type: "NATIVE_INFOGRAPHIC",
+      chartType: "DONUT",
+      title: `${targetProject.toUpperCase()} Mali Tablo (Swiss GAAP)`,
+      data: [
+        { name: "Kilitli Kâr (Zorunlu)", value: lockedProfit, color: "#10b981" },
+        { name: "Harcanan (Gider)", value: totalSpent, color: "#ef4444" },
+        { name: "Kalan Yakıt", value: netCapital - totalSpent, color: "#3b82f6" },
+        { name: "Vergi / Kesintiler", value: vatReserve + stripeLoss, color: "#f59e0b" }
+      ],
+      meta: {
+        totalRevenue,
+        totalSpent,
+        currency: "USD",
+        status: (netCapital - totalSpent) > 0 ? "SAĞLIKLI" : "KRİTİK"
+      }
+    };
+  }
 }
+

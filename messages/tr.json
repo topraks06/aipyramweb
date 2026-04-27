@@ -469,7 +469,16 @@
     "title_2": "Akıllı Ekosistem",
     "description": "15 ana sektörde 271+ premium dijital varlığı otonom olarak yöneten İsviçre standartlarında teknoloji hubı.",
     "explore_all": "Tüm Portföyü Keşfet",
-    "more_domains": "domain daha"
+    "more_domains": "domain daha",
+    "sector_textile": "Tekstil ve Tasarım",
+    "sector_realestate": "Emlak Analitiği",
+    "sector_rental": "Küresel Kiralama",
+    "sector_health": "Sağlık Yapay Zekası",
+    "sector_fintech": "Finansal Ağlar",
+    "sector_aviation": "Havacılık Sistemleri",
+    "sector_energy": "Yenilenebilir Enerji",
+    "sector_defense": "Siber ve Savunma",
+    "sector_logistics": "Tedarik Zinciri"
   },
   "ContactHome": {
     "badge": "İletişime Geçin",
@@ -495,7 +504,11 @@
     "title_1": "15 Sektörel Dikey —",
     "title_2": "Tek AI Mimarisi",
     "description": "Her sektörel dikeyde stratejik domain portföyü ve AI-native platform altyapısı",
-    "cta": "Tüm sektörleri detaylı inceleyin"
+    "cta": "Tüm sektörleri detaylı inceleyin",
+    "metric_1_label": "Otonom Ajan (Düğüm)",
+    "metric_2_label": "B2B Endüstri Alanı",
+    "metric_3_label": "Günlük Karar (İşlem)",
+    "metric_4_label": "Global Pazar Kapsamı"
   },
   "FlagshipProjects": {
     "badge": "AI-Native Platformlar",

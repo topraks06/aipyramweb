@@ -42,10 +42,10 @@ import { adminDb } from '@/lib/firebase-admin';
 // Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
 // en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
 const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash / Yüksek Hız, Düşük Maliyet)
-const DEEP_MODEL = 'gemini-2.5-pro'; // (Pro / Kompleks İşlemler)
+const DEEP_MODEL = 'gemini-3.1-pro'; // (Pro / Kompleks İşlemler - Deep Research Max)
 const IMAGE_MODEL = 'imagen-3.0-generate-002';     // Default for generateImages (stabil)
 const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback for generateImages
-const EMBEDDING_MODEL = 'text-embedding-004';  // Stable embedding model
+const EMBEDDING_MODEL = 'gemini-embedding-exp-03-07';  // Multimodal embedding model
 const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 1000;       // 1s → 2s → 4s
@@ -218,6 +218,7 @@ interface AICallResult {
   text: string;
   retries: number;
   durationMs: number;
+  rawResponse?: any;
 }
 
 /**
@@ -298,10 +299,11 @@ async function generateWithRetry(
       // TOKEN KULLANIMI KAYDET
       recordTokenUsage(caller || 'unknown', typeof prompt === 'string' ? prompt : JSON.stringify(prompt), text);
 
-      return {
-        text,
-        retries: attempt,
+      return { 
+        text, 
+        retries: attempt, 
         durationMs: Date.now() - startTime,
+        rawResponse: response
       };
     } catch (err: any) {
       lastError = err;
@@ -342,12 +344,12 @@ export const alohaAI = {
    * Düz metin üretimi
    * @example const result = await alohaAI.generate('Haber yaz', { temperature: 0.7 });
    */
-  async generate(prompt: string | any[], options: GenerateOptions = {}, caller?: string): Promise<string> {
+  async generate(prompt: string | any[], options: GenerateOptions = {}, caller?: string): Promise<{ text: string, usageMetadata?: any, rawResponse?: any }> {
     const result = await generateWithRetry(prompt, options, caller);
     if (result.retries > 0) {
       console.log(`[AI_CLIENT] 📊 Başarılı — ${result.retries} retry sonrası, ${result.durationMs}ms`);
     }
-    return result.text;
+    return { text: result.text, rawResponse: result.rawResponse };
   },
 
   /**
@@ -555,16 +557,6 @@ export const alohaAI = {
     }
   },
 
-  /**
-   * Görsel üretim model adını döndür (fallback dahil)
-   */
-  getImageModel(): string {
-    return IMAGE_MODEL;
-  },
-
-  getImageModelFallback(): string {
-    return IMAGE_MODEL_FALLBACK;
-  },
 
   /**
    * Derin analiz modeli (Gemini 3.1 Pro)

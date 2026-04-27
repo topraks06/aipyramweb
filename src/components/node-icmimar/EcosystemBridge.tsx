@@ -61,9 +61,12 @@ export default function EcosystemBridge() {
                             </p>
                             
                             <div className="mt-auto">
-                                <span className="px-6 py-3 bg-zinc-900 text-white font-semibold text-[10px] uppercase tracking-widest rounded inline-flex items-center gap-2">
-                                    Pek Yakında
-                                </span>
+                                <Link href="https://hometex.ai" target="_blank">
+                                    <button className="px-6 py-3 bg-zinc-900 text-white font-semibold text-[10px] uppercase tracking-widest rounded flex items-center gap-2 hover:bg-zinc-800 transition-colors">
+                                        HOMETEX'e Git
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -84,9 +87,12 @@ export default function EcosystemBridge() {
                             </p>
                             
                             <div className="mt-auto">
-                                <span className="px-6 py-3 bg-purple-600 text-white font-semibold text-[10px] uppercase tracking-widest rounded inline-flex items-center gap-2">
-                                    Pek Yakında
-                                </span>
+                                <Link href="https://vorhang.ai" target="_blank">
+                                    <button className="px-6 py-3 bg-purple-600 text-white font-semibold text-[10px] uppercase tracking-widest rounded flex items-center gap-2 hover:bg-purple-700 transition-colors">
+                                        VORHANG'a Git
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

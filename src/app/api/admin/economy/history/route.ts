@@ -28,14 +28,14 @@ export async function GET() {
     // 4. Aggregate costs into buckets (not cumulative yet)
     costsSnap.forEach(doc => {
       const data = doc.data();
-      const node = data.node || 'global';
       const cost = data.estimatedCost || 0;
       const timestamp = data.timestamp.toDate();
       const hour = timestamp.getHours();
 
       if (hour <= currentHour && hourlyData[hour]) {
-        if (node === 'trtex' || node === 'perde' || node === 'hometex' || node === 'vorhang') {
-          hourlyData[hour][node] += cost;
+        const nodeId = (data.node || 'global').toLowerCase() as "trtex" | "perde" | "hometex" | "vorhang";
+        if (hourlyData[hour][nodeId] !== undefined) {
+          hourlyData[hour][nodeId] += cost;
         } else {
           // If global or other, we could optionally spread it or just log it
         }

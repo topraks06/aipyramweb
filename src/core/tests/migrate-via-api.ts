@@ -5,7 +5,7 @@
  * Lokal'de JSON okur, Cloud Run endpoint'e POST eder
  * (Cloud Run'da Firebase izinleri çalışır)
  */
-const fs = require('fs');
+import * as fs from 'fs';
 
 // ⚠️ ESKİ URL (pasif — referans için saklanıyor): https://aipyram-447227868528.europe-west1.run.app/api/admin/migrate-news
 const API_URL = 'https://aipyram-web-994786407721.europe-west1.run.app/api/admin/migrate-news';

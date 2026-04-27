@@ -16,7 +16,7 @@ export async function translateContent(text: string, targetLanguages: string[]) 
       Return the result strictly as a JSON object where keys are language codes (e.g., 'tr', 'en', 'de') and values are the translated strings.
     `;
 
-    const { text } = await alohaAI.generate(prompt, { 
+    const res = await alohaAI.generate(prompt, { 
       responseMimeType: 'application/json',
       complexity: 'routine'
     }, 'PolyglotAgent.translateContent');

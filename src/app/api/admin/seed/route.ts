@@ -7,6 +7,10 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const secret = url.searchParams.get('secret');
 
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ success: false, error: 'Seed API is disabled in production' }, { status: 403 });
+  }
+
   if (secret !== 'hometex-demo-2026') {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }

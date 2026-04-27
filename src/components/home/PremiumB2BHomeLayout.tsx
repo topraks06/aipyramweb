@@ -700,8 +700,8 @@ export default function PremiumB2BHomeLayout({
       <section className="z2"><div className="tc">
         <div className="z2h" style={{ borderBottom: '3px solid var(--t)', paddingBottom: '1.2rem', marginBottom: '3rem', flexWrap:'wrap', gap:'1rem' }}>
           <div>
-            <div className="ml" style={{color:'var(--t)', marginBottom:'5px'}}><span className="live-dot"></span> {HL.sectorNetwork} • {new Date().toISOString().split('T')[0]}</div>
-            <div className="z2t" style={{fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', letterSpacing:'-0.03em'}}>{HL.b2bPlatform}</div>
+            <div className="ml" style={{color:'var(--t)', marginBottom:'5px'}}><span className="live-dot"></span> {payload?.cmsData?.slogan?.title || HL.sectorNetwork} • {new Date().toISOString().split('T')[0]}</div>
+            <div className="z2t" style={{fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', letterSpacing:'-0.03em'}}>{payload?.cmsData?.hero_text?.title || HL.b2bPlatform}</div>
           </div>
           <div style={{display:'flex', alignItems:'center', background:'#FAFAF8', border:'1px solid var(--b)', padding:'0.5rem 1rem'}}>
             <div className="ml" style={{color:'var(--t)', display:'flex', alignItems:'center', gap:'6px'}}><span style={{color: 'green', fontSize: '1rem'}}>✅</span> {HL.liveData}</div>

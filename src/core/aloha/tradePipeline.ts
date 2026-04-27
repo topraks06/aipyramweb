@@ -48,6 +48,38 @@ export interface TradePipelineResult {
   summary: string;
 }
 
+/**
+ * Q2 Vision: Native Infographics
+ * Üretilen ticari analiz raporunu görselleştirilebilir bir JSON şablonu halinde döndürür.
+ * Bu veri istemci tarafında (ör. Recharts, Tailwind chart) render edilecektir.
+ */
+export async function generateTradeInfographic(): Promise<any> {
+  const snapshot = await adminDb.collection('trtex_opportunities')
+    .orderBy('score', 'desc')
+    .limit(5)
+    .get();
+
+  const opps = snapshot.docs.map(d => d.data());
+  const categories = opps.flatMap(o => o.productCategories || []);
+  const categoryCounts = categories.reduce((acc, cat) => {
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const data = Object.entries(categoryCounts).map(([name, value]) => ({ name, value }));
+
+  return {
+    type: "NATIVE_INFOGRAPHIC",
+    chartType: "BAR",
+    title: "TRTex Fırsat Dağılımı",
+    data: data.length > 0 ? data : [{ name: "Yükleniyor", value: 0 }],
+    meta: {
+      totalOpportunities: opps.length,
+      topCategory: data.sort((a, b) => b.value - a.value)[0]?.name || "N/A"
+    }
+  };
+}
+
 // ═══════════════════════════════════════
 // 1. ANA PIPELINE — HABER→FIRSAT→SAYFA
 // ═══════════════════════════════════════

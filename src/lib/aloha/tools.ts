@@ -477,8 +477,8 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
     // --- SOVEREIGN GLOBAL MATCHMAKER ---
     case 'sovereign.matchmaker': {
       const result = await executeMatchmaker({
-        productType: cmd.productType || 'fabric',
-        material: cmd.material,
+        productType: (cmd.productType as any) || 'fabric',
+        material: cmd.material || '',
         targetRegions: cmd.targetRegions,
       });
       if (result.success) {
@@ -498,8 +498,8 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
         sellerId: cmd.sellerId || 'demo_vendor_001',
         sellerName: cmd.sellerName || 'Perde.ai Demo Vendor',
         sourceProductId: cmd.sourceProductId || `prod_${Date.now()}`,
-        productNameTR: cmd.productNameTR,
-        basePriceTRY: cmd.basePriceTRY,
+        productNameTR: cmd.productNameTR || '',
+        basePriceTRY: cmd.basePriceTRY || 0,
         imageUrl: cmd.imageUrl || 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af',
         stockQuantity: cmd.stockQuantity || 100
       });
@@ -519,9 +519,9 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
       const result = await executeHeimtexB2BListing({
         manufacturerId: cmd.manufacturerId || 'mfg_demo_100',
         manufacturerName: cmd.manufacturerName || 'Bursa Tex Factory',
-        productName: cmd.productName,
-        rawDescription: cmd.rawDescription,
-        wholesalePriceUSD: cmd.wholesalePriceUSD,
+        productName: cmd.productName || '',
+        rawDescription: cmd.rawDescription || '',
+        wholesalePriceUSD: cmd.wholesalePriceUSD || 0,
         minOrderQuantity: cmd.minOrderQuantity || 1000
       });
       if (result.success) {
@@ -566,7 +566,7 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
 
     // --- LOJİSTİK VE GÜMRÜK (GTIP & KARGO) ---
     case 'logistics.gtip': {
-      const result = await determineGTIP({ materialDescription: cmd.material });
+      const result = await determineGTIP({ materialDescription: cmd.material || '' });
       if (result.success) {
         return {
           success: true,
@@ -579,8 +579,8 @@ export async function executeAlohaTool(cmd: ParsedCommand): Promise<ToolResult> 
 
     case 'logistics.swatch': {
       const result = await createSwatchShipment({
-        buyerName: cmd.buyerName,
-        address: cmd.address,
+        buyerName: cmd.buyerName || '',
+        address: cmd.address || '',
         productId: cmd.productId || 'sample_001',
         fabricName: cmd.fabricName || 'Unknown Fabric'
       });

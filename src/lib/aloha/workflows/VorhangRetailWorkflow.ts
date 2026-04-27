@@ -11,6 +11,7 @@
  */
 
 import { adminDb } from '@/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export interface VorhangListingPayload {
   sellerId: string; // Perde.ai Node ID
@@ -68,7 +69,7 @@ export async function executeVorhangListing(payload: VorhangListingPayload) {
     // 5. Satıcının Perde.ai ERP'sine 'Kanal Entegrasyonu' bilgisini yaz
     await adminDb.collection(`nodes/${payload.sellerId}/integrations`).doc('vorhang').set({
       active: true,
-      listedProductsCount: adminDb.FieldValue ? adminDb.FieldValue.increment(1) : 1,
+      listedProductsCount: FieldValue.increment(1),
       lastSync: new Date().toISOString()
     }, { merge: true });
 

@@ -3,6 +3,15 @@ import { alohaAI } from '@/core/aloha/aiClient';
 
 import { getNode } from "@/lib/sovereign-config";
 
+export interface RoomAnalysis {
+  roomType: string;
+  lightLevel: string;
+  colorPalette: string[];
+  windowType: string;
+  suggestedStyles: string[];
+  suggestedFabrics: { name: string; priceRange: string }[];
+}
+
 export async function analyzeRoom(imageBase64: string, SovereignNodeId: string = 'perde'): Promise<RoomAnalysis> {
     const config = getNode(SovereignNodeId);
     let systemInstruction = "Sen bir iç mimar asistanısın. Gönderilen odayı analiz et ve perde önerisi yap. SADECE JSON formatında Türkçe yanıt ver, hiçbir markdown veya ekstra açıklama olmadan.";

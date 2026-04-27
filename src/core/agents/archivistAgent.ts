@@ -45,7 +45,8 @@ export class ArchivistAgent {
           const prompt = `Lütfen şu B2B metnini SEO uyumlu, arşivlik 3 cümlelik bir özete çevir (Asla bilgi kaybetme, sadece sıkıştır):\n${data.content}`;
           try {
              // Using the Singleton Aloha AI Client
-             summary = await alohaAI.generate(prompt, { temperature: 0.2 }, 'ArchivistAgent');
+             const res = await alohaAI.generate(prompt, { temperature: 0.2 }, 'ArchivistAgent');
+             summary = res.text;
           } catch (e) {
              // fallback to original if AI fails
              summary = data.content.substring(0, 500) + "...";

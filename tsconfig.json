@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,13 +23,43 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@aipyram/types": ["./packages/shared-types/index.ts"],
-      "@aipyram/firebase": ["./packages/shared-firebase/index.ts"],
-      "@aipyram/config": ["./packages/shared-config/index.ts"],
-      "@aipyram/aloha-sdk": ["./packages/aloha-sdk/index.ts"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@aipyram/types": [
+        "./packages/shared-types/index.ts"
+      ],
+      "@aipyram/firebase": [
+        "./packages/shared-firebase/index.ts"
+      ],
+      "@aipyram/config": [
+        "./packages/shared-config/index.ts"
+      ],
+      "@aipyram/aloha-sdk": [
+        "./packages/aloha-sdk/index.ts"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "_ARCHIVE_LEGACY", "aloha-core", "cloud_worker", "_TRTEX_SAFE_BACKUP", "hometex-backup", "tmp_*.tsx", "src/_backup", "src/core/tests", "scripts", "scratch", "*.ts", "*.js"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "_ARCHIVE_LEGACY",
+    "aloha-core",
+    "cloud_worker",
+    "_TRTEX_SAFE_BACKUP",
+    "hometex-backup",
+    "tmp_*.tsx",
+    "src/_backup",
+    "src/core/tests",
+    "scripts",
+    "scratch",
+    "*.ts",
+    "*.js",
+    "_archive"
+  ]
 }

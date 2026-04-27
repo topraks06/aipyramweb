@@ -48,7 +48,7 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
         if (intent === 'FIRSAT') searchKeywords = "hotel contract textile supply problems OR opportunities B2B fabric news";
         if (intent === 'TREND') searchKeywords = "innovations or new colors in home textile international fairs";
 
-        const text = await alohaAI.generate(
+        const { text } = await alohaAI.generate(
             `Search the web for the absolute latest breaking news regarding: "${searchKeywords}". 
 Return ONLY ONE completely unique, highly specific and real B2B intelligence brief (max 2 sentences). 
 Focus on: ${intent} (If ACT/Fırsat, look for supply gaps. If Pazar, look for market data. If Trend, look for design shifts).

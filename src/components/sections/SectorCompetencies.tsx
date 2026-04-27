@@ -7,10 +7,10 @@ export default function SectorCompetencies() {
   const t = useTranslations("SectorComp");
 
   const metrics = [
-    { label: "Otonom Ajan (Düğüm)", value: "60+", icon: Network },
-    { label: "B2B Endüstri Alanı", value: "15", icon: BarChart3 },
-    { label: "Günlük Karar (İşlem)", value: "12M+", icon: Activity },
-    { label: "Global Pazar Kapsamı", value: "85%", icon: PieChart }
+    { label: t("metric_1_label"), value: "60+", icon: Network },
+    { label: t("metric_2_label"), value: "15", icon: BarChart3 },
+    { label: t("metric_3_label"), value: "12M+", icon: Activity },
+    { label: t("metric_4_label"), value: "85%", icon: PieChart }
   ];
 
   return (

@@ -1275,7 +1275,7 @@ KURALLAR:
           let radarTopics: string[] = [];
           try {
             const searchRes = await executeToolCall({ name: 'web_search', args: { query: 'today breaking news global textile market supply chain freight materials' } });
-            const resText = await alohaAI.generate(
+            const { text: resText } = await alohaAI.generate(
                `Asagidaki guncel haber ozetinden TRTEX B2B Radar icin 3 carpici stratejik uyari/haber basligi cikar. Sadece basliklari dondur (her satira bir tane, numarasiz).\n\n${searchRes.substring(0, 3000)}`,
                { complexity: 'routine' },
                'autoRunner.radarTopics'

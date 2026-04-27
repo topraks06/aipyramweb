@@ -11,3 +11,13 @@ export function getBaseUrl() {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return "http://localhost:3000";
 }
+
+export function getNodeUrl(node: "perde" | "trtex" | "hometex" | "vorhang" | "icmimar") {
+  const isLocal = typeof window !== "undefined" 
+    ? window.location.hostname.includes("localhost")
+    : process.env.NODE_ENV === "development";
+
+  if (isLocal) return `http://${node}.localhost:3000`;
+  if (node === "trtex") return "https://trtex.com";
+  return `https://${node}.ai`;
+}

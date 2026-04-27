@@ -6,9 +6,12 @@ import { verifyAdminAccess } from '@/lib/admin-auth';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ success: false, error: 'Demo API is disabled in production' }, { status: 403 });
+  }
+
   const isAdmin = await verifyAdminAccess();
-  // Geçici olarak local geliştirme ortamında yetkiyi baypas edebiliriz veya admin girişi şart koşarız.
-  // if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  if (!isAdmin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
   try {
     if (!adminDb) return NextResponse.json({ success: false, error: 'Firebase Admin is not initialized' }, { status: 500 });

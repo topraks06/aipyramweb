@@ -160,7 +160,7 @@ export default function BoothDetail() {
               
               {/* Dynamic Role Actions */}
               <div className="flex gap-3">
-                {role !== 'consumer' && (
+                {(role as any) !== 'consumer' && (
                   <button 
                     onClick={() => setActiveModal('quote')}
                     className="px-6 py-3 text-[10px] uppercase tracking-[0.3em] font-bold border border-white bg-white text-black hover:bg-zinc-200 transition-colors flex items-center gap-2"
@@ -168,7 +168,7 @@ export default function BoothDetail() {
                     B2B Toptan Teklif İste
                   </button>
                 )}
-                {role === 'consumer' && (
+                {(role as any) === "consumer" && (
                   <button 
                     onClick={handlePerdeAiClick}
                     className="px-6 py-3 text-[10px] uppercase tracking-[0.3em] font-bold border border-white/20 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center gap-2"

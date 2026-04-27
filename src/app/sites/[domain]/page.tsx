@@ -51,7 +51,7 @@ interface SitePageProps {
 // Eski builder (terminalPayloadBuilder) bunu sürekli eski verilerle eziyordu.
 // KÖKTEN ÇÖZÜM: Haberler DAIMA trtex_news'ten okunur (taze, güvenilir).
 // Terminal'den sadece ticker/fuar gibi ek veri alınır - haberler ASLA terminal'den gelmez.
-async function fetchAlohaPayload(projectName: string) {
+async function fetchAlohaPayload(projectName: string, cmsData?: any) {
   try {
     // ═══ ADIM 1: HABERLER — DOĞRUDAN trtex_news'ten (TEK GERÇEK KAYNAK) ═══
     let freshArticles: any[] = [];
@@ -194,6 +194,7 @@ async function fetchAlohaPayload(projectName: string) {
       sysMetrics,
       systemStatus: 'LIVE' as const,
       isOffline: false,
+      cmsData, // Omni-CMS verileri
     };
   } catch (e) {
     console.error('[TRTEX] ❌ fetchAlohaPayload hatası:', e);
@@ -214,9 +215,24 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   if (exactDomain.includes('icmimar')) projectName = 'icmimar';
   const brandName = exactDomain.split('.')[0].toUpperCase();
 
+  // ═══ OMNI-CMS VERİLERİ (sovereign_cms) ═══
+  let cmsData: any = { hero_image: null, hero_text: null, slogan: null };
+  try {
+    const cmsSnap = await adminDb.collection('sovereign_cms')
+      .where('targetNode', 'in', [projectName, 'all'])
+      .where('isActive', '==', true)
+      .get();
+    cmsSnap.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.contentType === 'hero_image') cmsData.hero_image = data;
+      if (data.contentType === 'hero_text') cmsData.hero_text = data;
+      if (data.contentType === 'slogan') cmsData.slogan = data;
+    });
+  } catch (e) { console.warn('[CMS] Fetch error:', e); }
+
   // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
   if (projectName === 'perde') {
-    return <PerdeLandingPage />;
+    return <PerdeLandingPage cmsData={cmsData} />;
   }
   if (projectName === 'icmimar') {
     const IcmimarLandingPage = (await import('@/components/node-icmimar/IcmimarLandingPage')).default;
@@ -265,7 +281,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   };
 
   // DUMB CLIENT: Frontend SADECE bu önceden pişmiş payload'u alır.
-  const payload: any = await fetchAlohaPayload(projectName);
+  const payload: any = await fetchAlohaPayload(projectName, cmsData);
   
   if (!payload) return <div style={{ padding: '4rem', textAlign: 'center', fontFamily: 'monospace' }}>{t('syncing', lang)}</div>;
 

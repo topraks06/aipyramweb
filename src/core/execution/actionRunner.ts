@@ -211,7 +211,7 @@ export class ActionRunner {
   private async writeToCloudStorage(taskId: string, filePath: string, content: string): Promise<string> {
     try {
       console.log(`[🚀 GCS UPLOAD] Dosya Yükleniyor: ${filePath}`);
-      const { getStorage } = require('firebase-admin/storage');
+      const { getStorage } = await import('firebase-admin/storage');
       const bucket = getStorage().bucket();
 
       const file = bucket.file(filePath);

@@ -9,7 +9,7 @@ import { useSovereignAuth } from "@/hooks/useSovereignAuth";
 import { DataCard } from "@/core/aloha/orchestrationLayer";
 import LeadCaptureModal from "@/components/trtex/LeadCaptureModal";
 import { PieChart as VIPieChart, MiniBarChart as VIMiniBarChart, DataCredibility } from "@/components/ui/visual-intelligence";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, getNodeUrl } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════════
    AIPyram Master Concierge — v3 Visual Intelligence Widget
@@ -431,7 +431,7 @@ export default function ConciergeWidget() {
     const accentColor = isPerde ? "text-[#8B7355]" : "text-emerald-500";
 
     const { processQuery, isOrchestrating } = useEcosystemActions();
-    const { role, user } = useSovereignAuth('aipyram');
+    const { role, user } = useSovereignAuth('aipyram' as any);
     const isAdmin = role === 'admin' || (user?.email && user.email.includes('admin'));
     const [sessionId, setSessionId] = useState<string>('');
 
@@ -879,7 +879,7 @@ export default function ConciergeWidget() {
                                                 return (
                                                 <Link
                                                     key={link.href + link.label}
-                                                    href={isVorhang ? `${getBaseUrl()}/sites/vorhang/products` : link.href}
+                                                    href={isVorhang ? `${getNodeUrl('vorhang')}/products` : link.href}
                                                     className={`inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium rounded-lg border transition-all ${isSpecial ? 'bg-red-600/90 hover:bg-red-500 border-red-500 text-white shadow-sm shadow-red-900/50' : 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 hover:text-white border-slate-700/50'}`}
                                                     onClick={(e) => {
                                                         if (isAction) {

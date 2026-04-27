@@ -31,7 +31,7 @@ Kullanıcının ilk tepkisi/mesajı (varsa): ${userMessage || '(Henüz bir şey 
 Lütfen bu kullanıcıya sistemi denettirecek heyecan verici bir karşılama metni yaz.
 \n\n${this.basePrompt}`;
 
-    const text = await alohaAI.generate(prompt, {
+    const { text } = await alohaAI.generate(prompt, {
       model: 'gemini-2.5-flash',
       temperature: 0.8
     }, 'FunnelAgent');

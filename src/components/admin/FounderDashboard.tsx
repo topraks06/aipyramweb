@@ -9,6 +9,8 @@ import {
   Brain, Globe, Bot, Activity, TrendingUp, Users, Zap, ArrowUpRight,
   Radio, BarChart3, Network, ExternalLink, Clock
 } from "lucide-react";
+import { OmniCMSManager } from "./OmniCMSManager";
+import { AlohaErrorBoundary } from "@/components/AlohaErrorBoundary";
 
 /* ═══════════════════════════════════════════════════════
    Kurucu Kontrol Paneli — Founder Dashboard
@@ -194,10 +196,10 @@ export default function FounderDashboard() {
             {[
               { label: 'Kullanıcı Girişi', icon: Users, count: totalVisitors, color: 'text-foreground' },
               { label: 'Aloha Analiz', icon: Brain, count: totalRouted, color: 'text-primary' },
-              { label: 'Perde.ai', icon: Globe, count: platforms.find(p=>p.id==='perde')?.routedByAloha || 0, color: 'text-emerald-500' },
-              { label: 'TRTex.com', icon: BarChart3, count: platforms.find(p=>p.id==='trtex')?.routedByAloha || 0, color: 'text-amber-500' },
-              { label: 'Hometex.ai', icon: Globe, count: platforms.find(p=>p.id==='hometex')?.routedByAloha || 0, color: 'text-blue-500' },
-              { label: 'Vorhang.ai', icon: Globe, count: platforms.find(p=>p.id==='vorhang')?.routedByAloha || 0, color: 'text-violet-500' },
+              { label: 'Perde.ai', icon: Globe, count: platforms.find(p=>(p as any).id==='perde')?.routedByAloha || 0, color: 'text-emerald-500' },
+              { label: 'TRTex.com', icon: BarChart3, count: platforms.find(p=>(p as any).id==='trtex')?.routedByAloha || 0, color: 'text-amber-500' },
+              { label: 'Hometex.ai', icon: Globe, count: platforms.find(p=>(p as any).id==='hometex')?.routedByAloha || 0, color: 'text-blue-500' },
+              { label: 'Vorhang.ai', icon: Globe, count: platforms.find(p=>(p as any).id==='vorhang')?.routedByAloha || 0, color: 'text-violet-500' },
             ].map((node, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="text-center">
@@ -213,6 +215,14 @@ export default function FounderDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* ── OmniCMS Manager ── */}
+      <div className="mt-8">
+        <AlohaErrorBoundary fallbackMessage="OmniCMS paneli yüklenemedi.">
+          <OmniCMSManager />
+        </AlohaErrorBoundary>
+      </div>
+
     </div>
   );
 }

@@ -168,7 +168,7 @@ export class TEDScraper {
   private static async fetchWithGoogleGrounding(): Promise<any[]> {
     console.log('[TED] 🔄 Google Search Grounding ile TED ihaleleri aranıyor...');
     try {
-      let text = await alohaAI.generate(
+      let { text } = await alohaAI.generate(
         `Search the EU TED (Tenders Electronic Daily) website ted.europa.eu for the LATEST active procurement notices related to:
 - Hotel textile procurement (curtains, bed linen, towels)
 - Hospital textile supplies

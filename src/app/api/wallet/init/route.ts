@@ -26,20 +26,22 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Cüzdan zaten mevcut." });
         }
 
-        // Initialize wallet with 10 free credits
+        // Perde ve Icmimar ücretli platformlardır, başlangıç kredisi verilmez. TRTex vb. ücretsiz üyeliklerde 10 kredi tanımlanabilir.
+        const initialCredits = (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') ? 0 : 10;
+
         await walletRef.set({
             ownerId: uid,
             node: SovereignNodeId,
-            agentCredits: 10,
+            agentCredits: initialCredits,
             renderCredits: 0, // Legacy fallback
             totalSpent: 0,
-            tier: 'Starter',
+            tier: initialCredits > 0 ? 'Starter' : 'Pending',
             createdAt: new Date().toISOString(),
             lastRefillAt: new Date().toISOString()
         });
 
-        console.log(`[WalletSystem] ${uid} için başlangıç cüzdanı oluşturuldu (10 Kredi).`);
-        return NextResponse.json({ success: true, message: "Başlangıç cüzdanı tanımlandı.", initialCredits: 10 });
+        console.log(`[WalletSystem] ${uid} için başlangıç cüzdanı oluşturuldu (${initialCredits} Kredi). Node: ${SovereignNodeId}`);
+        return NextResponse.json({ success: true, message: "Başlangıç cüzdanı tanımlandı.", initialCredits });
         
     } catch (e: any) {
         console.error("Wallet init hatası:", e);

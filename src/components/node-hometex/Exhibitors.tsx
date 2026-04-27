@@ -140,7 +140,7 @@ export default function Exhibitors({ exhibitors = [] }: { exhibitors?: any[] }) 
                     {/* Actions */}
                     <div className="col-span-1 md:col-span-3 flex flex-wrap md:justify-end gap-2 mt-4 md:mt-0" onClick={(e) => e.preventDefault()}>
                       
-                      {role === 'consumer' && (
+                      {(role as any) === "consumer" && (
                         <button 
                           onClick={handlePerdeAiClick}
                           className="px-4 py-2 text-[9px] uppercase tracking-[0.2em] font-bold bg-white text-black hover:bg-zinc-200 transition-colors flex items-center gap-2"

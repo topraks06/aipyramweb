@@ -179,8 +179,8 @@
 
 ### ADIM 7: Tam Sistem E2E Testi + Git Commit
 **YAPILACAKLAR:**
-- [ ] `pnpm run build` → Exit code: 0
-- [ ] Tarayıcıda Perde.ai'nin TÜM sayfalarını gez:
+- [x] `pnpm run build` → Exit code: 0
+- [x] Tarayıcıda Perde.ai'nin TÜM sayfalarını gez:
   - `/sites/perde` (Landing) → Açılıyor mu?
   - `/sites/perde/login` → Form var mı?
   - `/sites/perde/studio` → DesignEngine çalışıyor mu?
@@ -188,7 +188,8 @@
   - `/sites/perde/b2b` → Dashboard verisi gerçek mi?
   - `/sites/perde/pricing` → Fiyatlandırma sayfası var mı?
   - `/sites/perde/catalog` → Ürünler listeleniyor mu?
-- [ ] `git add -A && git commit -m "feat(perde): Zero-Mock anahtar teslim — tüm motorlar ALOHA'ya bağlı"`
+- [x] Sprint 1-3 Tamamlandı (Validasyonlar yapıldı)
+- [x] `git add -A && git commit -m "feat(perde): Zero-Mock anahtar teslim — tüm motorlar ALOHA'ya bağlı"`
 
 ---
 

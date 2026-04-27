@@ -67,9 +67,9 @@ export default function VerifyEmail() {
     <AuthWrapper
       title="E-POSTANIZI DOĞRULAYIN"
       subtitle="Güvenliğiniz için kayıtlı e-posta adresinizi onaylamanız gerekmektedir."
-      rightPanelImage="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2000"
-      rightPanelQuote="Tedarik zincirinizi dijitalleştirin. Saniyeler içinde karar alın."
-      rightPanelAuthor="SOVEREIGN AI"
+      
+      
+      
     >
       <div className="flex flex-col items-center justify-center space-y-8 py-8 text-center">
         

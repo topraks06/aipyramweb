@@ -12,7 +12,7 @@ import EcosystemBridge from './EcosystemBridge';
 import PerdeFooter from './PerdeFooter';
 import { PERDE_DICT } from './perde-dictionary';
 
-export default function PerdeLandingPage() {
+export default function PerdeLandingPage({ cmsData }: { cmsData?: any }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const pathname = usePathname() || '';
   const searchParams = useSearchParams();
@@ -22,9 +22,9 @@ export default function PerdeLandingPage() {
 
   const HERO_SLIDES = [
     {
-      image: "/assets/perde.ai/perde.ai (10).jpg",
-      title: T.hero.title,
-      subtitle: T.hero.subtitle
+      image: cmsData?.hero_image?.mediaUrl || "/assets/perde.ai/perde.ai (10).jpg",
+      title: cmsData?.hero_text?.title || T.hero.title,
+      subtitle: cmsData?.hero_text?.content || T.hero.subtitle
     },
     {
       image: "/assets/perde.ai/perde.ai (13).jpg",
@@ -70,7 +70,7 @@ export default function PerdeLandingPage() {
                  <div className="flex items-center gap-4 mb-10">
                    <div className="h-[1px] w-12 bg-[#8B7355]"></div>
                    <span className="text-[#8B7355] uppercase tracking-[0.4em] text-[9px] font-semibold">
-                     {T.howItWorks.tag}
+                     {cmsData?.slogan?.title || T.howItWorks.tag}
                    </span>
                  </div>
 

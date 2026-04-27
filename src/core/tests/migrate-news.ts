@@ -2,10 +2,11 @@
  * TRTEX 79 Haber → Firebase Migrasyon  
  * Çalıştır: npx tsx src/core/tests/migrate-news.ts
  */
-require('dotenv').config({ path: '.env.local' });
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
-const admin = require('firebase-admin');
-const fs = require('fs');
+import * as admin from 'firebase-admin';
+import * as fs from 'fs';
 
 // Env'deki SA key'i kullan (Cloud Run'da çalışan key)
 const saKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;

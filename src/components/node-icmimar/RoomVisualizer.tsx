@@ -1027,7 +1027,7 @@ export default function RoomVisualizer() {
         <LeadCaptureModal
           isOpen={leadModalOpen}
           onClose={() => setLeadModalOpen(false)}
-          context={{ type: 'ICMIMAR_DESIGN', title: 'Yapay Zeka Destekli Icmimar Tasarımı' }}
+          context={{ type: 'ICMIMAR_DESIGN' as any, title: 'Yapay Zeka Destekli Icmimar Tasarımı' }}
           brandName="ICMIMAR.AI"
         />
 
