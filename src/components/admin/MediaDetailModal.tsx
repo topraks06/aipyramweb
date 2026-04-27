@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { X, Download, Tag, Maximize, FileImage, ShieldCheck } from "lucide-react";
 
 export interface MediaAsset {
@@ -44,12 +46,13 @@ export function MediaDetailModal({ isOpen, onClose, asset }: MediaDetailModalPro
             <Maximize className="w-5 h-5" />
           </button>
           
-          <div className="flex-1 relative flex items-center justify-center min-h-[300px]">
-             {/* Using standard img for mock data to avoid Next.js Image domain configs */}
-            <img 
+          <div className="flex-1 relative flex items-center justify-center min-h-[300px] w-full">
+            <Image 
               src={asset.url} 
               alt={asset.title}
-              className="max-w-full max-h-full object-contain rounded-md"
+              fill
+              className="object-contain rounded-md"
+              unoptimized={true}
             />
           </div>
           

@@ -16,12 +16,12 @@ export default function LeadIntelligencePanel() {
         const res = await fetch('/api/leads');
         const data = await res.json();
         if (data.leads) {
-          // Add default status and mock scores if not present for pipeline display
+          // Process leads to ensure they have default structure without hardcoded mocks
           const processedLeads = data.leads.map((l: any) => ({
             ...l,
             status: l.status || 'NEW',
-            context_score: l.context_score || 50, // default if no score
-            matched_supplier: l.status === 'NEW' ? 'Nova Home Textiles' : null
+            context_score: l.context_score || 0,
+            matched_supplier: l.matched_supplier || null
           }));
           setLeads(processedLeads);
         }

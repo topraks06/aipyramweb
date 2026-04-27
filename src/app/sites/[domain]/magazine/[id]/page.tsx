@@ -12,14 +12,9 @@ export default async function MagazineDetailPage({ params }: { params: Promise<{
     const articleDoc = await adminDb.collection('hometex_articles').doc(id).get();
     if (articleDoc.exists) {
       article = { id: articleDoc.id, ...articleDoc.data() };
-    } else {
-      const demoData = await import('@/lib/hometex-demoData');
-      article = demoData.HOMETEX_MAGAZINE_ARTICLES.find(a => a.id === id) || null;
     }
   } catch (error) {
     console.error('Error fetching article detail:', error);
-    const demoData = await import('@/lib/hometex-demoData');
-    article = demoData.HOMETEX_MAGAZINE_ARTICLES.find(a => a.id === id) || null;
   }
 
   if (!article) {

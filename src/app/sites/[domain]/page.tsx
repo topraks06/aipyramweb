@@ -233,19 +233,8 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
       articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       exhibitors = exhibitorsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       halls = hallsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-      
-      if (articles.length === 0 || exhibitors.length === 0 || halls.length === 0) {
-        const demoData = await import('@/lib/hometex-demoData');
-        if (articles.length === 0) articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
-        if (exhibitors.length === 0) exhibitors = demoData.HOMETEX_EXHIBITORS;
-        if (halls.length === 0) halls = demoData.HOMETEX_HALLS;
-      }
     } catch (e) {
       console.warn('[HOMETEX] Firestore fetch error:', e);
-      const demoData = await import('@/lib/hometex-demoData');
-      articles = demoData.HOMETEX_MAGAZINE_ARTICLES;
-      exhibitors = demoData.HOMETEX_EXHIBITORS;
-      halls = demoData.HOMETEX_HALLS;
     }
     return <HometexLandingPage articles={articles} exhibitors={exhibitors} halls={halls} />;
   }

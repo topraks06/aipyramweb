@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ThumbsDown, ThumbsUp, AlertTriangle, Send, Search, Edit2, Check, X, ImageIcon, Trash2, Power, Eye, GitPullRequest } from "lucide-react";
+import { db } from "@/lib/firebase-client";
+import { collection, query, orderBy, limit, getDocs, updateDoc, doc } from "firebase/firestore";
 
 const TAG_OPTIONS = [
   "Çok uzun",
@@ -12,53 +14,53 @@ const TAG_OPTIONS = [
   "Fırsat/Risk eksik"
 ];
 
-// Mock Veri Tabanı
-const INITIAL_DB = [
-  {
-    id: 1,
-    title: "JAB 2026: Akıllı İpliklerin Lüks Konut Pazarındaki Hakimiyeti",
-    summary: "JAB Anstoetz, yeni nesil yangın geciktirici akıllı iplik koleksiyonunu tanıttı. Mimari projeler için Avrupa pazarında %15'lik büyüme bekleniyor.",
-    b2b_analysis: "Bu ne demek? Proje bazlı çalışan toptancı ve mimari stüdyolar için itfaiye/güvenlik standartlarındaki regülasyon baskısı ortadan kalkıyor. JAB'ın yeni akıllı iplik mimarisi ağırlık maliyetini %12 düşürdüğü için navlun avantajı sunuyor.",
-    technical_report: "Yeni iplik liflerinin dokusu, akustik bariyer özelliği taşıyor. Okyanus atıklarından elde edilen geri dönüştürülmüş mikro polyester kullanımı, lüks algısını zedelemeden premium segmente hitap etmesini sağlamaktadır.",
-    opportunity_risk: "AVANTAJ: Akustik lüks sözleşmeli projeler için fiyatlama gücü yüksek. RİSK: Uzakdoğu taklitlerine karşı patent koruması zayıf olduğu için sadece 1. sınıf otel ve villalarda konumlandırılmalıdır.",
-    date: "Bugün 14:30",
-    wordCount: 1450,
-    status: "pending", // pending, published, rejected
-    images: [
-      { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1000", type: "MAKRO" },
-      { url: "https://images.unsplash.com/photo-1618219908412-a29a1bd145d6?auto=format&fit=crop&q=80&w=1000", type: "MEZO" },
-      { url: "https://images.unsplash.com/photo-1606744887165-8ae6de05205b?auto=format&fit=crop&q=80&w=1000", type: "MİKRO" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Vanelli İnovasyon: Akıllı Termal Perde Teknolojileri",
-    summary: "Vanelli, ısı kaybını engelleyen yeni termal Blackout serisini duyurdu.",
-    b2b_analysis: "Enerji krizi Avrupa'da sürerken, bu kumaş doğrudan faturayı düşürüyor.",
-    technical_report: "3 katmanlı gümüş iyon kaplama sayesinde termal izolasyon %30 arttı.",
-    opportunity_risk: "AVANTAJ: Kamu ihaleleri. RİSK: Üretim maliyeti.",
-    date: "Dün 09:15",
-    wordCount: 920,
-    status: "published",
-    images: [] // Görselsiz
-  }
-];
-
 export default function AlohaNewsRating() {
   // Sistem Modu
   const [isAutonomous, setIsAutonomous] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
   // Veri Seti ve Düzenleme Durumları
-  const [newsDb, setNewsDb] = useState(INITIAL_DB);
-  const [activeNewsId, setActiveNewsId] = useState<number>(1);
+  const [newsDb, setNewsDb] = useState<any[]>([]);
+  const [activeNewsId, setActiveNewsId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // CEO Rating Durumları
   const [selectedScore, setSelectedScore] = useState<number | null>(null);
   const [feedbackTags, setFeedbackTags] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        setLoading(true);
+        const q = query(collection(db, 'trtex_news'), orderBy('createdAt', 'desc'), limit(50));
+        const snap = await getDocs(q);
+        const fetched = snap.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title || 'Başlıksız',
+            summary: data.summary || '',
+            b2b_analysis: data.commercial_note || 'B2B analizi bulunamadı.',
+            technical_report: data.content ? data.content.substring(0, 300) + '...' : 'Teknik rapor bulunamadı.',
+            opportunity_risk: data.intent === 'ACT' ? 'AVANTAJ: Ticari fırsat yüksek.' : 'RİSK: Fırsat analizi yapılmamış.',
+            date: new Date(data.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+            status: data.status || 'pending',
+            images: (data.images || []).map((imgUrl: string, i: number) => ({ url: imgUrl, type: i === 0 ? 'MAKRO' : i === 1 ? 'MEZO' : 'MİKRO' }))
+          };
+        });
+        setNewsDb(fetched);
+        if (fetched.length > 0) setActiveNewsId(fetched[0].id);
+      } catch (e) {
+        console.error("Firestore haberleri çekilirken hata oluştu:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, []);
 
   const activeNews = newsDb.find(n => n.id === activeNewsId) || newsDb[0];
 
@@ -70,17 +72,41 @@ export default function AlohaNewsRating() {
     setIsEditing(true);
   };
 
-  const handleSaveEdit = () => {
-    setNewsDb(prev => prev.map(n => n.id === activeNews.id ? editForm : n));
-    setIsEditing(false);
+  const handleSaveEdit = async () => {
+    try {
+      const docRef = doc(db, 'trtex_news', activeNews.id);
+      await updateDoc(docRef, {
+        title: editForm.title,
+        summary: editForm.summary,
+        commercial_note: editForm.b2b_analysis,
+        content: editForm.technical_report,
+        images: editForm.images.map((img: any) => img.url)
+      });
+      setNewsDb(prev => prev.map(n => n.id === activeNews.id ? editForm : n));
+      setIsEditing(false);
+    } catch (e) {
+      console.error("Kaydetme hatası:", e);
+    }
   };
 
-  const handlePublish = () => {
-    setNewsDb(prev => prev.map(n => n.id === activeNews.id ? { ...n, status: "published" } : n));
+  const handlePublish = async () => {
+    try {
+      const docRef = doc(db, 'trtex_news', activeNews.id);
+      await updateDoc(docRef, { status: 'published' });
+      setNewsDb(prev => prev.map(n => n.id === activeNews.id ? { ...n, status: "published" } : n));
+    } catch (e) {
+      console.error("Yayınlama hatası:", e);
+    }
   };
 
-  const handleDelete = () => {
-    setNewsDb(prev => prev.map(n => n.id === activeNews.id ? { ...n, status: "rejected" } : n));
+  const handleDelete = async () => {
+    try {
+      const docRef = doc(db, 'trtex_news', activeNews.id);
+      await updateDoc(docRef, { status: 'rejected' });
+      setNewsDb(prev => prev.map(n => n.id === activeNews.id ? { ...n, status: "rejected" } : n));
+    } catch (e) {
+      console.error("Silme hatası:", e);
+    }
   };
   
   const handleRemoveImage = (index: number) => {
@@ -160,7 +186,9 @@ export default function AlohaNewsRating() {
 
         {/* SAĞ: KANVAS (Düzenleme / Onaylama ve Puanlama) */}
         <div className="w-2/3 bg-[#0f0f18] border border-white/[0.08] rounded-xl flex flex-col overflow-y-auto">
-          {filteredNews.length > 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center h-full text-slate-900/40 text-sm">Haberler yükleniyor...</div>
+          ) : activeNews ? (
             <>
               {/* Başlık ve Düzenleme Barları */}
               <div className="p-6 border-b border-white/[0.04] bg-[#08080d]">

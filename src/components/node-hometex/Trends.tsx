@@ -3,10 +3,9 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Upload, Sparkles, BarChart3, ArrowRight, Camera, CheckCircle2 } from 'lucide-react';
-import { HOMETEX_TRENDS } from '@/lib/hometex-demoData';
 import HometexFooter from './HometexFooter';
 
-export default function Trends({ trends = HOMETEX_TRENDS }: { trends?: any[] }) {
+export default function Trends({ trends = [] }: { trends?: any[] }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
