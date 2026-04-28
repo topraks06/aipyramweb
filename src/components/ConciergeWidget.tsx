@@ -438,7 +438,7 @@ export default function ConciergeWidget() {
     useEffect(() => {
         let id = localStorage.getItem('concierge_session_id');
         if (!id) {
-            id = `sess_${Math.random().toString(36).substring(2, 15)}`;
+            id = `sess_${crypto.randomUUID().replace(/-/g, '').substring(0, 13)}`;
             localStorage.setItem('concierge_session_id', id);
         }
         setSessionId(id);

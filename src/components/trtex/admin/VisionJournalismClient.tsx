@@ -5,9 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, UploadCloud, FileText, Image as ImageIcon, Sparkles, AlertCircle } from 'lucide-react';
-// Not: Firebase client upload fonksiyonunu projeye göre simüle ediyoruz.
-// Gerçekte import { uploadToFirebase } from '@/lib/firebase-client'; olacak
-
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase-client';
 
@@ -32,7 +29,7 @@ export default function VisionJournalismClient() {
     }
   };
 
-  const uploadToFirebaseMock = async (file: File): Promise<string> => {
+  const uploadToStorage = async (file: File): Promise<string> => {
       const fileRef = ref(storage, `vision_journalism/${Date.now()}_${file.name}`);
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
@@ -54,7 +51,7 @@ export default function VisionJournalismClient() {
 
       // 1. Resmi Firebase Storage'a yükle
       if (imageFile) {
-        const uploadedUrl = await uploadToFirebaseMock(imageFile);
+        const uploadedUrl = await uploadToStorage(imageFile);
         imageUrls.push(uploadedUrl);
       }
 

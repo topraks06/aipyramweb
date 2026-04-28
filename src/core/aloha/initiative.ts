@@ -235,7 +235,7 @@ export async function evaluateInitiative(
       'Uzak Doğu tedarik zinciri gelişmeleri',
       'Türk ev tekstili marka yönetimi',
     ];
-    const randomTopic = topicsPool[Math.floor(Math.random() * topicsPool.length)];
+    const randomTopic = topicsPool[new Date().getHours() % topicsPool.length];
     
     actions.push({
       type: 'content_generate',
@@ -281,7 +281,7 @@ export async function evaluateInitiative(
 
     // EĞER GÜNÜN İLK HABERİYSE (Top 50 Firma Radarı)
     if (recentCount === 0 || recentCount === 3) {
-       const watchTarget = masterWatchlist[Math.floor(Math.random() * masterWatchlist.length)];
+       const watchTarget = masterWatchlist[new Date().getMinutes() % masterWatchlist.length];
        targetBrief = `${TODAY}: [ELİT FİRMA RADARI] Dünyaca ünlü B2B sektör devi '${watchTarget}' firmasının son dönemdeki sektörel hamlesi, koleksiyon dili, vizyonu veya üretim kapasitesi üzerine kurumsal inceleme.`;
     } 
     // DİĞER HABERLER (Ana akımda olmayan niş, tasarım, fuar, teknoloji)
@@ -294,7 +294,7 @@ export async function evaluateInitiative(
         "Bölgesel bazda (Doğu Avrupa, Kuzey Afrika) yeni tekstil üretim yatırım fırsatları ve bilinmeyen şirket haberleri",
         `Dünya elit dergilerinde (Vogue Living, AD) öne çıkmaya başlayan yeni kumaş doku tasarımları ve ticari değeri (${CURRENT_YEAR})`
       ];
-      const randomNiche = nicheTopics[Math.floor(Math.random() * nicheTopics.length)];
+      const randomNiche = nicheTopics[(new Date().getHours() + new Date().getMinutes()) % nicheTopics.length];
       targetBrief = `${TODAY}: [ÖZEL İSTİHBARAT] ${randomNiche}. Ana akım küresel basında çok yer almamış, değerli ve niş bir bilgi üret. Sadece ticari etki veya yeni ürün/tasarım odaklı olsun.`;
     }
 

@@ -1,4 +1,4 @@
-﻿import { Schema, Type } from "@google/genai";
+import { Schema, Type } from "@google/genai";
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { getProfileForProject } from "./profiles/index";
@@ -336,7 +336,7 @@ async function generateFallbackNews(state: MasterSystemState): Promise<MasterAge
   // Kullanılmamış bir konu seç
   const usedTopics = new Set((state.topics_used || []).map(t => t.toLowerCase()));
   let chosen = FALLBACK_TOPICS.find(t => !usedTopics.has(t.titleTR.toLowerCase()));
-  if (!chosen) chosen = FALLBACK_TOPICS[Math.floor(Math.random() * FALLBACK_TOPICS.length)];
+  if (!chosen) chosen = FALLBACK_TOPICS[Date.now() % FALLBACK_TOPICS.length];
 
   const slug = slugify(chosen.titleTR, 60);
 

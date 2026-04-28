@@ -11,7 +11,7 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
 
     // removed aiClient
     // Melez Sinyal Mantığı: %70 Google (Spontaneous/Breaking), %30 RSS (Stable/Deep) 
-    const isRssTurn = Math.random() < 0.3;
+    const isRssTurn = (Date.now() % 10) < 3; // Deterministik: ~%30 RSS, döngü bazlı
 
     if (isRssTurn) {
         try {
@@ -25,12 +25,12 @@ export async function getDynamicBrief(intent: string = "TREND"): Promise<string>
                 'https://www.just-style.com/feed/',
                 'https://textilegence.com/feed/' // local example
             ];
-            const targetFeed = feeds[Math.floor(Math.random() * feeds.length)];
+            const targetFeed = feeds[Date.now() % feeds.length];
             
             const feed = await parser.parseURL(targetFeed);
             if (feed.items && feed.items.length > 0) {
                 // En yeni ilk 3 haberden birini seç
-                const item = feed.items[Math.floor(Math.random() * Math.min(3, feed.items.length))];
+                const item = feed.items[Date.now() % Math.min(3, feed.items.length)];
                 console.log(`✅ [SIGNAL COLLECTOR] RSS Sinyali Bulundu: ${item.title}`);
                 return `RSS Kaynağından gerçek veri: "${item.title}". Bu haberi B2B ${intent} (Fırsat/Trend vb) bakış açısıyla küresel vizyonda analiz et: ${item.link || ''}`;
             }
@@ -76,5 +76,5 @@ Format: just the brief text.`,
         `Perde kumaşı ihracatında son durum ve ${intent} analizleri.`,
         `Oteller için kontrat tekstili taleplerinde ${intent} raporu.`
     ];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    return fallbacks[Date.now() % fallbacks.length];
 }

@@ -95,9 +95,9 @@ export function detectVisualCategory(articleTitle: string, articleContent?: stri
   // Sadece fabrika/hammadde kategorileri override edilir.
   // "general" ve "ihracat" haberleri kendi kategorilerinde kalır — rastgele lüks ürüne çevrilmez.
   if (['factory_modern', 'raw_cotton', 'raw_linen', 'yarn'].includes(bestMatch.category)) {
-    if (Math.random() > 0.10) { // %90 ihtimal
+    if ((Date.now() % 10) > 0) { // %90 ihtimal — deterministik
        const luksAlternatifler: Category[] = ['curtain_modern', 'bedding_luxury', 'upholstery', 'decorative_pillow'];
-       bestMatch.category = luksAlternatifler[Math.floor(Math.random() * luksAlternatifler.length)];
+       bestMatch.category = luksAlternatifler[Date.now() % luksAlternatifler.length];
        bestMatch.confidence = 0.99;
     }
   }
@@ -218,22 +218,13 @@ function getRandomScene(): string {
     { type: 'International trade fair stand (Maison&Objet style)', weight: 10 }
   ];
   
-  // Weights array
-  const rand = Math.random() * 100;
-  let sum = 0;
-  let selected = scenes[0].type;
-  
-  for (let s of scenes) {
-    sum += s.weight;
-    if (rand <= sum) {
-      selected = s.type;
-      break;
-    }
-  }
+  // Weights tabanlı deterministik seçim — saate göre döner
+  const hour = new Date().getHours();
+  let selected = scenes[hour % scenes.length].type;
   
   if (selected === lastSceneType) {
-    // Avoid repetition softly
-    selected = scenes.find(s => s.type !== lastSceneType)?.type || selected;
+    // Tekrardan kaçın
+    selected = scenes[(hour + 1) % scenes.length].type;
   }
   
   lastSceneType = selected;
@@ -278,7 +269,7 @@ function buildPrompt(category: string, title: string, contentSnippet: string, in
   
   const entityContext = entityHints.length > 0 ? `\nCONTENT CONTEXT: ${entityHints.join('. ')}.` : '';
   
-  const includeHuman = Math.random() < 0.25; // 25% chance
+  const includeHuman = (new Date().getMinutes() % 4) === 0; // %25 — deterministik
   const humanPrompt = includeHuman 
     ? "Include a single ultra-realistic, natural lifestyle human (e.g. elegant woman adjusting curtain, or candid relaxation). NO posing, no direct eye contact, candid movement like a Netflix interior scene. " 
     : "";
@@ -351,8 +342,8 @@ export async function processMultipleImages(
   // Görsel açılar: 1. Wide (Hero), 2. Medium (Metin içi), 3. Detail (Metin içi)
   const shotPlan: Array<{ rule: string, aspect: '1:1' | '3:4' | '4:3' | '16:9' | '9:16' }> = [
     { rule: 'wide', aspect: '16:9' },
-    { rule: 'medium', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') },
-    { rule: 'detail', aspect: Math.random() < 0.80 ? '16:9' : (Math.random() < 0.5 ? '1:1' : '9:16') },
+    { rule: 'medium', aspect: '16:9' },
+    { rule: 'detail', aspect: '16:9' },
   ];
 
   const { alohaAI } = require('@/core/aloha/aiClient');
@@ -365,7 +356,7 @@ export async function processMultipleImages(
     // KURAL: İnsan faktörüne sadece çok nadir (ara sıra) izin veriyoruz. Yoksa robotik hissettitir diye şikayet geldi.
     // Ancak kullanıcı "sadece ürün göster, manken nadir olsun" diyor.
     // Eğer şans %15 ise, mankenli premium çekime izin ver. Diğer durumlarda insanları negative prompt'a al.
-    const allowHumans = Math.random() < 0.15;
+    const allowHumans = (new Date().getMinutes() % 7) === 0; // ~%15 — deterministik
     if (allowHumans && plan.rule !== 'detail') {
         promptText = promptText.replace('people, humans, models', '');
         promptText += ' Include an elegant, highly realistic human model subtly interacting with the product in a natural, candid B2B environment.';

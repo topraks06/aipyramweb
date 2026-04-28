@@ -112,10 +112,11 @@ const IMAGE_COMPOSITIONS = [
 ];
 
 function buildImagePrompt(category: string, title: string, index: number): string {
-  const mood = IMAGE_MOODS[Math.floor(Math.random() * IMAGE_MOODS.length)];
-  const setting = IMAGE_SETTINGS[Math.floor(Math.random() * IMAGE_SETTINGS.length)];
+  const ts = Date.now();
+  const mood = IMAGE_MOODS[(ts + index) % IMAGE_MOODS.length];
+  const setting = IMAGE_SETTINGS[(ts + index * 3) % IMAGE_SETTINGS.length];
   const subjects = IMAGE_SUBJECTS[category] || IMAGE_SUBJECTS['DEFAULT'];
-  const subject = subjects[Math.floor(Math.random() * subjects.length)];
+  const subject = subjects[(ts + index * 7) % subjects.length];
   const composition = IMAGE_COMPOSITIONS[Math.min(index, IMAGE_COMPOSITIONS.length - 1)];
 
   return `A masterpiece of high-end interior photography: ${composition} of ${setting} featuring ${subject}. ${mood}. Related to: "${title}". Bright, joyful, magazine-quality. Architectural Digest editorial. 16:9, photorealistic, 85mm lens.`.substring(0, 480);
@@ -210,8 +211,8 @@ async function scout(brief: string): Promise<ArticleData> {
   const today = new Date().toISOString().split('T')[0];
   const year = new Date().getFullYear();
 
-  // Rastgele editoryal açı seç
-  const angle = EDITORIAL_ANGLES[Math.floor(Math.random() * EDITORIAL_ANGLES.length)];
+  // Deterministik editoryal açı seç — saate göre döner
+  const angle = EDITORIAL_ANGLES[new Date().getHours() % EDITORIAL_ANGLES.length];
   console.log(`[SCOUT] 🎭 Editoryal Açı: ${angle.id} (${angle.tone}) | ${angle.wordMin}-${angle.wordMax} kelime`);
 
   // Anti-tekrar: son 10 haberi al

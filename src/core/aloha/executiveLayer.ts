@@ -42,7 +42,7 @@ export interface TaskMemoryEntry {
 export async function recordTaskOutcome(entry: Omit<TaskMemoryEntry, 'id'>): Promise<void> {
   if (!adminDb) return;
 
-  const id = `task_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+  const id = `task_${Date.now()}_${crypto.randomUUID().substring(0, 6)}`;
   const fullEntry: TaskMemoryEntry = { ...entry, id };
 
   try {

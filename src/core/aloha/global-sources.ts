@@ -26,13 +26,14 @@ export const GLOBAL_SOURCES = {
 };
 
 /**
- * Rastgele bir kaynak kombinasyonu oluşturur ki `signalCollector`
- * her döngüde farklı bir pazara/bölgeye odaklansın.
+ * Deterministik kaynak kombinasyonu — saate göre döner.
+ * Her döngüde farklı bir pazara/bölgeye odaklanır.
  */
 export function getStrategicFocusCombo(): string {
-    const retail = GLOBAL_SOURCES.RETAIL_AND_WHOLESALE[Math.floor(Math.random() * GLOBAL_SOURCES.RETAIL_AND_WHOLESALE.length)];
-    const continent = GLOBAL_SOURCES.SEVEN_CONTINENTS[Math.floor(Math.random() * GLOBAL_SOURCES.SEVEN_CONTINENTS.length)];
-    const fairRadar = GLOBAL_SOURCES.MAGAZINES_AND_FAIRS[Math.floor(Math.random() * GLOBAL_SOURCES.MAGAZINES_AND_FAIRS.length)];
+    const hour = new Date().getHours();
+    const retail = GLOBAL_SOURCES.RETAIL_AND_WHOLESALE[hour % GLOBAL_SOURCES.RETAIL_AND_WHOLESALE.length];
+    const continent = GLOBAL_SOURCES.SEVEN_CONTINENTS[(hour + 1) % GLOBAL_SOURCES.SEVEN_CONTINENTS.length];
+    const fairRadar = GLOBAL_SOURCES.MAGAZINES_AND_FAIRS[(hour + 2) % GLOBAL_SOURCES.MAGAZINES_AND_FAIRS.length];
     
     return `Investigate global B2B opportunities focusing on ${continent.focus}. Highlight insights related to ${retail.name} (${retail.focus}) to attract retail and wholesale buyers. ALWAYS mention relevant UPCOMING FAIRS, leveraging the insights from ${fairRadar.name} (${fairRadar.focus}). Ensure the output prepares visitors for upcoming B2B networking events.`;
 }
