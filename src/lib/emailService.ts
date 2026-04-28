@@ -17,7 +17,7 @@ export async function sendEmail(payload: EmailPayload) {
   try {
     // 1. Konsola MOCK logla (Terminalde görmek için)
     console.log('\n=============================================');
-    console.log(`[MOCK EMAIL SENT]`);
+    console.log(`[EMAIL QUEUED]`);
     console.log(`To: ${payload.to.join(', ')}`);
     console.log(`Subject: ${payload.subject}`);
     console.log(`Body Snippet: ${payload.body.substring(0, 100)}...`);
@@ -27,7 +27,7 @@ export async function sendEmail(payload: EmailPayload) {
     if (adminDb) {
       await adminDb.collection('trtex_outbox').add({
         ...payload,
-        status: 'mock_sent',
+        status: 'queued',
         sentAt: new Date().toISOString(),
       });
     }

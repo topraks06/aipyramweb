@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     // 2. ROUTING LOGIC (Score > 40 ise e-posta at)
     let matchedSupplierIds: string[] = [];
     if (score > 40 && email) {
-      const suppliers = findSuppliersForLead(query, 5);
+      const suppliers = await findSuppliersForLead(query, 5);
       matchedSupplierIds = suppliers.map(s => s.id);
       
       const supplierEmails = suppliers.map(s => s.email);

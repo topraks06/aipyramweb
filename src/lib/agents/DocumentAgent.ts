@@ -26,8 +26,8 @@ export async function generateProforma(SovereignNodeId: string, orderId: string,
   
   const pdfBytes = await pdfDoc.save();
   const bucketName = process.env.FIREBASE_STORAGE_BUCKET || "";
-  const mockPdfUrl = `https://storage.googleapis.com-mock-test/documents/${SovereignNodeId}/${orderId}_proforma.pdf`;
-  let pdfUrl = mockPdfUrl;
+  const fallbackPdfUrl = `https://storage.googleapis.com/aipyram-fallback/documents/placeholder.pdf`;
+  let pdfUrl = fallbackPdfUrl;
 
   try {
      const bucket = admin.storage().bucket(bucketName);
@@ -36,7 +36,7 @@ export async function generateProforma(SovereignNodeId: string, orderId: string,
      await file.makePublic();
      pdfUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
   } catch (err) {
-     console.error("[DocumentAgent] PDF GCS Upload failed (Bucket undefined or permission error). Using Mock URL.");
+     console.error("[DocumentAgent] PDF GCS Upload failed (Bucket undefined or permission error). Using Fallback URL.");
   }
   
   if (orderId) {

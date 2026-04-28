@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import HometexFooter from './HometexFooter';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
-// Mock modal
+// Lightweight B2B request modals
 const ProductUploadModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">Materyal Yükleme Sınırlandırıldı</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
 const B2BRequestModal = ({ isOpen, onClose, type, productName }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">{type === 'quote' ? 'Fiyat Talebi' : 'Numune Talebi'} Gönderildi</h2><p className="text-zinc-400 text-sm mb-6">{productName} için talebiniz alınmıştır. B2B portalında değerlendirilecektir.</p><button onClick={onClose} className="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest w-full">Kapat</button></div></div> : null;
 

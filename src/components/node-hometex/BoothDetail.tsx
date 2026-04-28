@@ -9,48 +9,23 @@ import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
 type ModalType = 'quote' | 'sample' | 'upload' | null;
 
-export default function BoothDetail() {
-  const params = useParams();
-  const id = params?.boothId as string || 'default';
+export default function BoothDetail({ exhibitor, collections = [] }: { exhibitor: any, collections?: any[] }) {
   const { role } = useSovereignAuth('hometex');
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
-  // Mock data for the exhibitor
-  const exhibitor = {
-    name: id === '1' ? "Sovereign Weavers" : "Aurora Textiles",
-    country: "İtalya, Milano",
-    category: "Döşemelik Kumaş & İpek",
-    desc: "Lüks mobilya markaları için özel dokuma ipek ve kadife koleksiyonları. 1920'den beri Milano'nun kalbinde geleneksel dokuma tekniklerini modern teknolojiyle harmanlıyoruz.",
-    logo: "SW",
-    coverImage: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80",
-    collections: [
-      {
-        name: "Milano Kadifesi 2026",
-        image: "https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80",
-        tags: ["Kadife", "Lüks", "Ağır Gramaj"],
-        specs: { martindale: "45,000 Rubs", gsm: "650 g/m²", fire: "DIN 4102 B1" },
-        price: "12.50 USD / mt",
-        moq: "500 Metre"
-      },
-      {
-        name: "Doğa Dostu İpek Karışımı",
-        image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80",
-        tags: ["İpek", "Sürdürülebilir", "Hafif"],
-        specs: { martindale: "15,000 Rubs", gsm: "180 g/m²", fire: "Standart" },
-        price: "18.00 USD / mt",
-        moq: "100 Metre"
-      },
-      {
-        name: "Akıllı Tam Karartma",
-        image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80",
-        tags: ["Karartma", "Akıllı İplik", "Otel"],
-        specs: { martindale: "60,000 Rubs", gsm: "800 g/m²", fire: "M1 / B1 Sertifikalı" },
-        price: "9.50 USD / mt",
-        moq: "1000 Metre"
-      }
-    ]
-  };
+  if (!exhibitor) {
+    return (
+      <div className="w-full min-h-screen bg-black text-white flex flex-col items-center justify-center">
+        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-6"></div>
+        <h2 className="text-2xl font-serif font-medium uppercase">Katılımcı Yükleniyor...</h2>
+        <p className="text-zinc-500 mt-2 text-sm">Lütfen bekleyin, sanal stant hazırlanıyor.</p>
+        <Link href="../expo" className="mt-8 text-[10px] uppercase tracking-widest border border-white/20 px-6 py-3 hover:bg-white/10 transition-colors">
+          Sanal Fuar'a Dön
+        </Link>
+      </div>
+    );
+  }
 
   const handlePerdeAiClick = () => {
     setIsSimulating(true);
@@ -94,7 +69,7 @@ export default function BoothDetail() {
                       <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">İlgilenilen Koleksiyon</label>
                       <select className="w-full bg-black border border-white/20 p-3 text-sm focus:outline-none focus:border-white transition-colors text-white">
                         <option>Tüm Koleksiyonlar</option>
-                        {exhibitor.collections.map(c => <option key={c.name}>{c.name}</option>)}
+                        {collections.map((c: any) => <option key={c.name}>{c.name}</option>)}
                       </select>
                     </div>
                     <button onClick={closeModal} className="w-full bg-white text-black py-3 text-sm font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 mt-4">
@@ -197,7 +172,7 @@ export default function BoothDetail() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {exhibitor.collections.map((collection, i) => (
+          {collections.map((collection: any, i: number) => (
             <motion.div 
               key={i}
               initial={{ opacity: 0, y: 20 }}
