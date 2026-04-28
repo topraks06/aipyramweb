@@ -6,7 +6,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
 
 export default function HometexContact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', message: '', type: 'visitor' });
   const [status, setStatus] = useState<'idle'|'sending'|'sent'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,12 +21,13 @@ export default function HometexContact() {
           company: form.name,
           role: 'HOMETEX_CONTACT',
           message: form.message,
+          type: form.type,
           source: 'hometex_contact_page',
           createdAt: new Date().toISOString()
         })
       });
       setStatus('sent');
-      setForm({ name: '', email: '', message: '' });
+      setForm({ name: '', email: '', message: '', type: 'visitor' });
     } catch (e) {
       console.error(e);
       setStatus('idle');
@@ -82,7 +83,15 @@ export default function HometexContact() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Ad Soyad</label>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Başvuru Tipi</label>
+                  <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})} className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white mb-6">
+                    <option value="visitor">Ziyaretçi Kayıt / Bilgi</option>
+                    <option value="exhibitor">Katılımcı Başvuru (Stant Talebi)</option>
+                    <option value="other">Diğer İşbirlikleri</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Firma Adı / Ad Soyad</label>
                   <input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} type="text" className="w-full bg-black border border-white/20 p-3 outline-none focus:border-white transition-colors text-white" />
                 </div>
                 <div>
