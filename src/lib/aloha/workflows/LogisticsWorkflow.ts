@@ -57,7 +57,7 @@ export async function createSwatchShipment(payload: SwatchPayload) {
     if (!adminDb) return { success: false, error: 'Database not connected' };
 
     // DHL / FedEx API Simülasyonu
-    const trackingNumber = `DHL-${Math.random().toString().slice(2, 12)}`;
+    const trackingNumber = `DHL-${crypto.randomUUID().split('-')[0]}`;
     const awbLink = `https://dhl.com/track?awb=${trackingNumber}`;
     
     const shipmentRecord = {

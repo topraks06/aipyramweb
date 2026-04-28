@@ -530,15 +530,29 @@ export default function ConciergeWidget() {
             
             // CROSS-NODE IDENTITY STITCHING
             let visitorContext = "";
-            try {
-               const profileStr = localStorage.getItem('aloha_visitor_profiles');
-               if (profileStr) {
-                  const profiles = JSON.parse(profileStr);
-                  if (profiles.trtex && profiles.trtex.lastVisit) {
-                     visitorContext = "TRTEX B2B ağındaki toptan kumaş talepleriniz için burada modelleme yapabiliriz.";
-                  }
-               }
-            } catch(e) {}
+            const localSessionId = localStorage.getItem('concierge_session_id');
+            if (localSessionId) {
+                fetch(`/api/brain/v1/visitor-profile?sessionId=${localSessionId}`)
+                    .then(res => res.json())
+                    .then(profiles => {
+                        if (profiles.trtex && profiles.trtex.lastVisit) {
+                            visitorContext = "TRTEX B2B ağındaki toptan kumaş talepleriniz için burada modelleme yapabiliriz.";
+                            
+                            // Re-render the welcome message with context
+                            const w = welcomeTexts[siteLocale as Language] || welcomeTexts.en;
+                            setMessages(prev => {
+                                const newMessages = [...prev];
+                                if (newMessages.length > 0 && newMessages[0].id === 'welcome') {
+                                    newMessages[0].text = isPerde 
+                                      ? (siteLocale === 'de' ? `Willkommen zurück! ${visitorContext}` : siteLocale === 'en' ? `Welcome back! ${visitorContext} How can I help you frame your projects today?` : `Hoş geldiniz! ${visitorContext} Ayrıca odalara perde uygulamak için fotoğraf yükleyebilirsiniz.`)
+                                      : (siteLocale === 'de' ? `Willkommen! ${visitorContext}` : siteLocale === 'en' ? `Welcome! ${visitorContext}` : `Merhaba! Sizi tanıyorum, ${visitorContext} Size özel asistanınız olarak nasıl yardımcı olabilirim?`);
+                                }
+                                return newMessages;
+                            });
+                        }
+                    })
+                    .catch(() => {});
+            }
             
             if (isPerde) {
                // Perde.ai Welcome

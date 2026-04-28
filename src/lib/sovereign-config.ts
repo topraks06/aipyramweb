@@ -11,7 +11,7 @@
 // TYPES
 // ═══════════════════════════════════════════════════
 
-export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'shtori' | 'parda' | 'donoithat' | 'perabot' | 'heimtex' | 'icmimar';
+export type SovereignNodeId = 'trtex' | 'perde' | 'hometex' | 'vorhang' | 'shtori' | 'parda' | 'donoithat' | 'perabot' | 'heimtex' | 'icmimar' | 'curtaindesign';
 export type UserRole = 'admin' | 'editor' | 'member' | 'viewer';
 
 export interface SovereignNodeFeatures {
@@ -139,12 +139,12 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     roles: ['admin', 'member'],
   },
 
-  // ─── PERDE.AI ────────────────────────────────────
-  // AUTH HAZIR - DEPLOY BEKLİYOR
+  // ─── PERDE.AI (TÜRKİYE B2C SATIŞ MAĞAZASI) ──────
+  // icmimar.ai'de üretilen tasarımların TR pazarına satıldığı vitrin
   perde: {
     id: 'perde',
     domain: 'perde.ai',
-    name: 'Perde.AI B2B Ecosystem',
+    name: 'Perde.AI — Türkiye Online Perde Mağazası',
     shortName: 'PERDE.AI',
     memberCollection: 'perde_members',
     newsCollection: 'perde_news',
@@ -160,13 +160,13 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
       catalog: true,
       news: false,
       autonomous: false,
-      visualizer: true,
+      visualizer: false,     // Tasarım motoru icmimar.ai'de
       expo: false,
       magazine: false,
       salesEngine: true,
       whatsapp: false,
       documents: false,
-      fabricAnalysis: true,
+      fabricAnalysis: false,
       retention: true,
     },
     publicNavLinks: [
@@ -181,12 +181,12 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     roles: ['admin', 'editor', 'member'],
   },
 
-  // ─── HOMETEX.AI ──────────────────────────────────
-  // İSKELET AŞAMASI
+  // ─── HOMETEX.AI (365 GÜN AÇIK B2B SANAL FUAR) ────
+  // SADECE sanal fuar — dergi/magazine Heimtex.ai'ye taşındı
   hometex: {
     id: 'hometex',
     domain: 'hometex.ai',
-    name: 'Hometex AI Trade Intelligence',
+    name: 'Hometex AI — 365 Gün Açık B2B Sanal Fuar',
     shortName: 'HOMETEX',
     memberCollection: 'hometex_members',
     newsCollection: 'hometex_news',
@@ -197,11 +197,11 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     features: {
       b2b: true,
       catalog: false,
-      news: true,
+      news: false,
       autonomous: false,
       visualizer: false,
-      expo: true,
-      magazine: true,
+      expo: true,           // Ana özellik: Sanal Fuar
+      magazine: false,      // Dergi → Heimtex.ai'ye taşındı
       salesEngine: false,
       whatsapp: true,
       documents: true,
@@ -210,7 +210,7 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     },
     publicNavLinks: [
       { name: 'Sanal Fuar', href: '/expo', gated: false },
-      { name: 'Dergi', href: '/magazine', gated: false },
+      { name: 'Katılımcılar', href: '/exhibitors', gated: false },
     ],
     privateNavLinks: [
       { name: 'B2B Toptan', href: '/b2b', gated: true },
@@ -344,25 +344,62 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     roles: ['admin', 'member'],
   },
 
-  // ─── HEIMTEX.AI (Avrupa Sertifika Kalkanı) ────────
+  // ─── HEIMTEX.AI (DİJİTAL VOGUE — TREND & MAGAZİNE HUB) ────
+  // Gelecek yılın renk kodları (Pantone), doku trendleri, moda vizyonu
   heimtex: {
     id: 'heimtex',
     domain: 'heimtex.ai',
-    name: 'Heimtex Certification Shield',
+    name: 'Heimtex AI — Global Trend & Fashion Hub',
     shortName: 'HEIMTEX',
     memberCollection: 'heimtex_members',
     newsCollection: 'heimtex_news',
-    projectCollection: 'heimtex_certifications',
+    projectCollection: 'heimtex_articles',
     walletCollection: 'heimtex_wallets',
     theme: 'dark',
     locale: 'en',
     features: {
-      b2b: true, catalog: false, news: false, autonomous: true,
-      visualizer: false, expo: false, magazine: false, salesEngine: false,
-      whatsapp: true, documents: true, fabricAnalysis: true, retention: false,
+      b2b: false, catalog: false, news: true, autonomous: true,
+      visualizer: false, expo: false, magazine: true, salesEngine: false,
+      whatsapp: false, documents: false, fabricAnalysis: false, retention: false,
     },
-    publicNavLinks: [{ name: 'Verify Cert', href: '/verify', gated: false }],
-    privateNavLinks: [{ name: 'Laboratory', href: '/lab', gated: true }],
+    publicNavLinks: [
+      { name: 'Trends', href: '/trends', gated: false },
+      { name: 'Magazine', href: '/magazine', gated: false },
+      { name: 'Pantone', href: '/pantone', gated: false },
+    ],
+    privateNavLinks: [],
+    roles: ['admin', 'editor'],
+  },
+
+  // ─── CURTAINDESIGN.AI (GLOBAL B2C SATIŞ) ──────────
+  // İngilizce konuşan pazarlar için perakende satış vitrini
+  curtaindesign: {
+    id: 'curtaindesign',
+    domain: 'curtaindesign.ai',
+    name: 'CurtainDesign.AI — Global Online Store',
+    shortName: 'CURTAINDESIGN',
+    memberCollection: 'curtaindesign_members',
+    newsCollection: 'curtaindesign_news',
+    projectCollection: 'curtaindesign_orders',
+    walletCollection: 'curtaindesign_wallets',
+    customerCollection: 'curtaindesign_customers',
+    productCollection: 'curtaindesign_products',
+    theme: 'light',
+    locale: 'en',
+    features: {
+      b2b: false, catalog: true, news: false, autonomous: false,
+      visualizer: false, expo: false, magazine: false, salesEngine: true,
+      whatsapp: false, documents: false, fabricAnalysis: false, retention: true,
+    },
+    publicNavLinks: [
+      { name: 'Collections', href: '/collections', gated: false },
+      { name: 'How It Works', href: '/how-it-works', gated: false },
+      { name: 'Contact', href: '/contact', gated: false },
+    ],
+    privateNavLinks: [
+      { name: 'My Account', href: '/account', gated: true },
+      { name: 'My Orders', href: '/orders', gated: true },
+    ],
     roles: ['admin', 'member'],
   },
 };
@@ -419,4 +456,4 @@ export function nodeHasFeature(SovereignNodeId: string, feature: keyof Sovereign
 // ═══════════════════════════════════════════════════
 // GLOBAL BUDGET CONFIG (CFO Ajan için)
 // ═══════════════════════════════════════════════════
-export const dailyBudget = { trtex: 5, perde: 10, hometex: 2, vorhang: 3, shtori: 2, parda: 2, donoithat: 2, perabot: 2, heimtex: 3 }; // USD
+export const dailyBudget = { trtex: 5, perde: 3, hometex: 2, vorhang: 3, shtori: 2, parda: 2, donoithat: 2, perabot: 2, heimtex: 3, icmimar: 10, curtaindesign: 3 }; // USD

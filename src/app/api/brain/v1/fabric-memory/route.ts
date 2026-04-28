@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     // İleride burası: Gemini Flash ile hızlı bir kez analiz edilecek ve kaydedilecek.
     const newPhysics = {
       type: "auto",
-      gsm: Math.floor(Math.random() * (400 - 150 + 1)) + 150, // 150-400 GSM arası
+      gsm: 0, // Gerçek analiz Gemini Vision ile yapılacak
       drape: "natural",
       light_transmission: "semi-sheer"
     };

@@ -84,6 +84,8 @@ export default async function middleware(req: NextRequest) {
       'perde': 'perde.ai',
       'vorhang': 'vorhang.ai',
       'icmimar': 'icmimar.ai',
+      'heimtex': 'heimtex.ai',
+      'curtaindesign': 'curtaindesign.ai',
     };
     SovereignNodeId = domainMap[sub] || `${sub}.com`;
     console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → node: ${SovereignNodeId}`);
