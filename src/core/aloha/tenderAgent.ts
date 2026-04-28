@@ -202,8 +202,9 @@ DO NOT wrap in markdown. Return ONLY the JSON array.
     let allTenders: any[] = [];
     let batchCount = 0;
 
-    // Shuffle queries for variety across runs
-    const shuffled = [...GLOBAL_HUNT_QUERIES].sort(() => Math.random() - 0.5);
+    // Shuffle queries for variety across runs (Deterministic)
+    const startIndex = new Date().getHours() % GLOBAL_HUNT_QUERIES.length;
+    const shuffled = [...GLOBAL_HUNT_QUERIES.slice(startIndex), ...GLOBAL_HUNT_QUERIES.slice(0, startIndex)];
 
     for (const sq of shuffled) {
       if (batchCount >= maxBatches) {
