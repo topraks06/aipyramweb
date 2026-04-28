@@ -1,4 +1,4 @@
-import { AIPyramEvent, EventCallback, EventType } from './eventTypes';
+import { aipyramEvent, EventCallback, EventType } from './eventTypes';
 
 // ═══════════════════════════════════════════════════
 // GOOGLE-NATIVE EventBus — Upstash/Redis TAMAMEN KALDIRILDI
@@ -6,11 +6,11 @@ import { AIPyramEvent, EventCallback, EventType } from './eventTypes';
 // In-memory pub/sub + Firestore persistence (fallback).
 // ═══════════════════════════════════════════════════
 
-class AIPyramEventBus {
+class aipyramEventBus {
   private listeners: Map<EventType, EventCallback[]> = new Map();
 
   constructor() {
-    console.log('[🧠 AIPyram EventBus] Google-Native v10.0 — Firestore + In-Memory.');
+    console.log('[🧠 aipyram EventBus] Google-Native v10.0 — Firestore + In-Memory.');
   }
 
   public subscribe(eventType: EventType, callback: EventCallback) {
@@ -24,7 +24,7 @@ class AIPyramEventBus {
   /**
    * Event yayınla — önce local callback'ler, sonra Firestore'a kaydet.
    */
-  public async emit(event: AIPyramEvent) {
+  public async emit(event: aipyramEvent) {
     if (!event.id) event.id = crypto.randomUUID();
     if (!event.node_id) event.node_id = "master-nexus";
     event.timestamp = event.timestamp || Date.now();
@@ -50,7 +50,7 @@ class AIPyramEventBus {
     }
   }
 
-  private executeLocally(event: AIPyramEvent) {
+  private executeLocally(event: aipyramEvent) {
     const callbacks = this.listeners.get(event.type);
     if (callbacks && callbacks.length > 0) {
       callbacks.forEach(cb => {
@@ -100,8 +100,8 @@ class AIPyramEventBus {
   }
 }
 
-const globalForEventBus = global as unknown as { eventBus: AIPyramEventBus };
-export const EventBus = globalForEventBus.eventBus || new AIPyramEventBus();
+const globalForEventBus = global as unknown as { eventBus: aipyramEventBus };
+export const EventBus = globalForEventBus.eventBus || new aipyramEventBus();
 if (process.env.NODE_ENV !== 'production') {
   globalForEventBus.eventBus = EventBus;
 }

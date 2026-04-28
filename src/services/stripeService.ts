@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM STRIPE SERVİSİ — Komisyon & Ödeme Altyapısı
+// aipyram STRIPE SERVİSİ — Komisyon & Ödeme Altyapısı
 // Test Mode → Production geçiş Hakan Bey onayıyla yapılır
 // ═══════════════════════════════════════════════════════════════
 
@@ -83,7 +83,7 @@ export async function createCommissionCheckout(
           price_data: {
             currency: "usd",
             product_data: {
-              name: `AIPYRAM Ticaret Komisyonu`,
+              name: `aipyram Ticaret Komisyonu`,
               description: params.description,
               metadata: {
                 dealId: params.dealId,
@@ -208,7 +208,7 @@ export async function createPlanCheckout(
           price_data: {
             currency: "usd",
             product_data: {
-              name: `AIPyram ${params.planId.toUpperCase()} Plan (${params.isYearly ? 'Yıllık' : 'Aylık'})`,
+              name: `aipyram ${params.planId.toUpperCase()} Plan (${params.isYearly ? 'Yıllık' : 'Aylık'})`,
               description: `${params.SovereignNodeId.toUpperCase()} için Sovereign lisans ve kredi.`,
               metadata: {
                 SovereignNodeId: params.SovereignNodeId,

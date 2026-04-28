@@ -26,7 +26,7 @@ export default function HometexAuthWrapper({ children, title, basePath }: AuthWr
         </div>
         
         <div className="text-center mt-6">
-          <span className="text-[9px] text-zinc-700 font-mono">AIPyram Sovereign Ecosystem</span>
+          <span className="text-[9px] text-zinc-700 font-mono">aipyram Sovereign Ecosystem</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { EventBus } from "@/core/events/eventBus";
-import { AIPyramEvent } from "@/core/events/eventTypes";
+import { aipyramEvent } from "@/core/events/eventTypes";
 import { matchSupplierWithRFQ, RFQData, SupplierData } from "@/core/agents/matchmakerAgent";
 import { auditSupplier } from "@/core/agents/auditorAgent";
 import { adminDb } from "@/lib/firebase-admin";
@@ -10,7 +10,7 @@ import { adminDb } from "@/lib/firebase-admin";
  */
 
 // 1. RFQ_SUBMITTED geldiğinde Matchmaker çalışır
-EventBus.subscribe("RFQ_SUBMITTED", async (event: AIPyramEvent) => {
+EventBus.subscribe("RFQ_SUBMITTED", async (event: aipyramEvent) => {
   const rfq = event.payload as RFQData;
   console.log(`[🚀 PIPELINE] RFQ alındı (${rfq.id}). Matchmaker uyanıyor...`);
 
@@ -63,7 +63,7 @@ EventBus.subscribe("RFQ_SUBMITTED", async (event: AIPyramEvent) => {
 });
 
 // 2. SUPPLIER_MATCHED geldiğinde Auditor çalışır ve fabrikanın son durumunu kontrol eder
-EventBus.subscribe("SUPPLIER_MATCHED", async (event: AIPyramEvent) => {
+EventBus.subscribe("SUPPLIER_MATCHED", async (event: aipyramEvent) => {
   const payload = event.payload;
   console.log(`[🕵️ PIPELINE] Eşleşen Fabrika (${payload.companyName}) Auditor tarafından inceleniyor...`);
 

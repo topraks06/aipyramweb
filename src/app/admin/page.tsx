@@ -416,7 +416,7 @@ export default function SovereignCommandCenter() {
           </div>
           {!sidebarCollapsed && (
             <div>
-              <div className="text-sm font-black tracking-[0.1em]">AIPYRAM</div>
+              <div className="text-sm font-black tracking-[0.1em]">aipyram</div>
               <div className="text-[8px] text-blue-400/70 uppercase tracking-[0.25em]">Sovereign OS</div>
             </div>
           )}

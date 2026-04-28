@@ -5,11 +5,11 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
 // MATCHMAKER AGENT — RFQ → Tedarikçi Eşleştirme → Komisyon
-// AIPYRAM Revenue Engine #1
+// aipyram Revenue Engine #1
 // ═══════════════════════════════════════════════════════════════
 
 // Removed raw ai client
-const MATCHMAKER_PROMPT = `Sen AIPYRAM ekosisteminin Matchmaker Ajanısın — global ev tekstili B2B ticaretinin 30 yıllık sektör deneyimine sahip dijital eşleştirme zekası.
+const MATCHMAKER_PROMPT = `Sen aipyram ekosisteminin Matchmaker Ajanısın — global ev tekstili B2B ticaretinin 30 yıllık sektör deneyimine sahip dijital eşleştirme zekası.
 
 🎯 GÖREVİN:
 Gelen RFQ verilerini analiz et, tedarikçi kütüphanesini tara ve eşleştir.

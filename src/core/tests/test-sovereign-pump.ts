@@ -2,7 +2,7 @@ import { saveToGoogleNativeMemory } from '../aloha/publishers/google-native-memo
 
 async function testSovereignPump() {
     console.log("==================================================");
-    console.log("🚀 [AIPYRAM SOVEREIGN PUMP] OTONOM VERİ TESTİ LOKAL (PULL) İÇİN BAŞLIYOR...");
+    console.log("🚀 [aipyram SOVEREIGN PUMP] OTONOM VERİ TESTİ LOKAL (PULL) İÇİN BAŞLIYOR...");
     console.log("==================================================");
 
     try {
@@ -32,10 +32,10 @@ async function testSovereignPump() {
         console.log("\n⚡ [3/3] NEWS Sovereign Kasasına Mühürleniyor...");
         const payload = {
             title: `Türkiye Ev Tekstili İhracatı 2026'da Zirveye Çıktı [${uniqueTS}]`,
-            summary: "AIPyram Analizi: Sektörel raporda büyük sıçrama gözlemlendi.",
+            summary: "aipyram Analizi: Sektörel raporda büyük sıçrama gözlemlendi.",
             content: "Maison&Objet verilerine göre Asya pazarındaki tedarik kırılmaları Türkiye'yi Avrupa'nın ana tedarikçisi yaptı. Kendi hafızamızda doğrulandı.",
             image_url: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop",
-            source: "AIPYRAM GLOBAL SCAN",
+            source: "aipyram GLOBAL SCAN",
             category: "Global Textile",
             translations: {
                 en: { title: `Turkey Home Textile Exports Peak [${uniqueTS}]`, summary: "Huge leap in sector report." },
@@ -46,7 +46,7 @@ async function testSovereignPump() {
         await saveToGoogleNativeMemory("news", payload);
 
         console.log("\n==================================================");
-        console.log("🔥 [AIPYRAM SOVEREIGN PUMP] Otonom Veriler LOKALE KUSURSUZ AKTI (Sıfır Bulut Bağımlılığı)!");
+        console.log("🔥 [aipyram SOVEREIGN PUMP] Otonom Veriler LOKALE KUSURSUZ AKTI (Sıfır Bulut Bağımlılığı)!");
         console.log("TRTEX'in PULL Mimarisine ping ulaştı. TRTEX Ana Sayfasını yenileyin ve Brutalist dizilimin canlandığını görün!");
         console.log("==================================================");
         

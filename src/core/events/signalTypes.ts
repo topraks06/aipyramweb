@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM Master Brain — Ecosystem Signal Types
+// aipyram Master Brain — Ecosystem Signal Types
 // ═══════════════════════════════════════════════════════════════
 
 export type EcosystemSignalType =

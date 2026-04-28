@@ -1,5 +1,5 @@
 // ==========================================
-// AIPYRAM OS - GOOGLE GEN AI LIMITER (THROTTLE)
+// aipyram OS - GOOGLE GEN AI LIMITER (THROTTLE)
 // ==========================================
 // Ajanlar saniyede yüzlerce istek atarsa API limitlerine takılırız.
 // Bu sınıf sistem çapında eşzamanlı LLM çağrılarını kuyruklar.

@@ -16,7 +16,7 @@ export default function AboutEnterprise() {
          <div className="flex items-center gap-4 mb-10">
            <div className="h-[1px] w-12 bg-[#8B7355]"></div>
            <span className="text-[#8B7355] uppercase tracking-[0.4em] text-[9px] font-bold">
-             ABOUT ICMIMAR.AI
+             ABOUT icmimar.ai
            </span>
          </div>
          <h1 className="font-serif text-5xl md:text-7xl text-[#111] mb-12 tracking-tight max-w-4xl whitespace-pre-line">

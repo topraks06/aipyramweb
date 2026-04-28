@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       const memory = globalFabricVectorStore.get(hash);
       return NextResponse.json({
         cached: true,
-        message: "Fabric recognized from AIPyram Brain Memory. Zero API Credit used.",
+        message: "Fabric recognized from aipyram Brain Memory. Zero API Credit used.",
         physics: memory?.physics,
         source: memory?.source_node
       });
@@ -56,12 +56,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       cached: false,
-      message: "New fabric analyzed and stored in AIPyram Brain Memory.",
+      message: "New fabric analyzed and stored in aipyram Brain Memory.",
       physics: newPhysics
     });
 
   } catch (error: any) {
-    console.error("[AIPyram Brain] Fabric Memory Error:", error);
+    console.error("[aipyram Brain] Fabric Memory Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

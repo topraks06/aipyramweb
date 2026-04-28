@@ -164,7 +164,7 @@ export default function SwarmTerminal() {
         <div className="w-full lg:w-2/3 flex flex-col gap-4">
           <div className="bg-zinc-950 border border-zinc-800/80 rounded-xl p-6 min-h-[600px] shadow-inner relative flex flex-col">
             <div className="border-b border-zinc-900 pb-4 mb-4 flex justify-between items-center">
-              <h2 className="text-sm font-semibold tracking-wider text-zinc-500">C:\\AIPYRAM\\GOD_MODE\\EXECUTION_TRACE</h2>
+              <h2 className="text-sm font-semibold tracking-wider text-zinc-500">C:\\aipyram\\GOD_MODE\\EXECUTION_TRACE</h2>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${loading ? 'bg-yellow-500 animate-pulse' : 'bg-emerald-500'}`} />
                 <span className="text-xs text-zinc-500">{loading ? 'PROCESSING' : 'IDLE'}</span>

@@ -6,11 +6,11 @@ import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 
 // ═══════════════════════════════════════════════════════════════
 // AUDITOR AGENT — Sertifika Doğrulama + Trust Score
-// AIPYRAM Trust Layer
+// aipyram Trust Layer
 // ═══════════════════════════════════════════════════════════════
 
 // Removed raw ai client
-const AUDITOR_PROMPT = `Sen AIPYRAM ekosisteminin Auditor (Denetçi) Ajanısın — B2B tedarik zinciri güvenliğinin bekçisi.
+const AUDITOR_PROMPT = `Sen aipyram ekosisteminin Auditor (Denetçi) Ajanısın — B2B tedarik zinciri güvenliğinin bekçisi.
 
 🎯 GÖREVİN:
 1. Tedarikçinin yüklediği sertifikaları doğrula (OEKO-TEX, ISO, GOTS, Trevira CS vb.)

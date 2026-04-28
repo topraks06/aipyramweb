@@ -22,7 +22,7 @@ export function Accounting({ projects }: AccountingProps) {
       date: o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(),
       desc: `[Vorhang İhracat] ${o.customerName || 'Müşteri'}`,
       amount: `+€${o.vendorEarningsEur?.toFixed(2) || '0.00'}`,
-      status: 'AIPyram Havuzunda Bekliyor',
+      status: 'aipyram Havuzunda Bekliyor',
       type: 'income',
       isEur: true
     })),
@@ -43,7 +43,7 @@ export function Accounting({ projects }: AccountingProps) {
         <Wallet className="w-8 h-8 text-blue-400" />
         <div>
           <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Cari & Muhasebe</h2>
-          <p className="text-sm text-zinc-400">AIPyram hakedişleri, ihracat ödemeleri ve cari hesap takibi.</p>
+          <p className="text-sm text-zinc-400">aipyram hakedişleri, ihracat ödemeleri ve cari hesap takibi.</p>
         </div>
       </div>
 
@@ -54,7 +54,7 @@ export function Accounting({ projects }: AccountingProps) {
               <div className="p-3 bg-green-500/10 rounded-lg text-green-400"><Euro className="w-6 h-6" /></div>
               <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 rounded text-white">İHRACAT BİRİKİMİ</span>
             </div>
-            <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">AIPyram Havuzunda (Bekleyen)</p>
+            <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">aipyram Havuzunda (Bekleyen)</p>
             <h3 className="text-4xl font-bold text-white">€{totalEuroEarnings.toFixed(2)}</h3>
             <p className="text-[10px] text-zinc-500 mt-2">Bu tutar ay sonunda veya iş tesliminde banka hesabınıza aktarılır.</p>
           </CardContent>

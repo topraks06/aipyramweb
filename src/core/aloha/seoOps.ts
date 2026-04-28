@@ -106,7 +106,7 @@ interface GeoAnalysis {
 export async function analyzeGeoReadiness(url: string): Promise<{ success: boolean; data?: GeoAnalysis; error?: string }> {
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'AIPyram GEO Analyzer/1.0' },
+      headers: { 'User-Agent': 'aipyram GEO Analyzer/1.0' },
       signal: AbortSignal.timeout(15000),
     });
 
@@ -228,7 +228,7 @@ export async function analyzeCompetitor(competitorUrl: string): Promise<{
 }> {
   try {
     const res = await fetch(competitorUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AIPyram/1.0)' },
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; aipyram/1.0)' },
       signal: AbortSignal.timeout(15000),
     });
 

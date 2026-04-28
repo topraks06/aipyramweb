@@ -1,6 +1,6 @@
 import { Schema, Type } from "@google/genai";
 import { EventBus } from '../events/eventBus';
-import { AIPyramEvent } from '../events/eventTypes';
+import { aipyramEvent } from '../events/eventTypes';
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
@@ -26,7 +26,7 @@ class PerdeAgent {
     console.log('[🛋️✨ Perde.ai Agent] Bayi Satış Ağı (Spatial) EventBus Sinyallerine Bağlandı.');
   }
 
-  private async handleSpatialIntelligence(event: AIPyramEvent) {
+  private async handleSpatialIntelligence(event: aipyramEvent) {
     if (event.source === 'agent' || event.source === 'perde') return;
     console.log(`[🛋️✨ Perde] Render Sinyali Analizi: ${event.payload?.trend}`);
 
@@ -135,8 +135,8 @@ class PerdeAgent {
         { id: "1", nameTr: "Standart Işık Geçirgen", promptTr: "Modern tül perde, gün ışığı", promptEn: "Modern sheer curtain, daylight" },
         { id: "2", nameTr: "Yoğun Karartma", promptTr: "Siyah blackout, lüks otel", promptEn: "Blackout, luxury hotel room" }
       ],
-      salesPitchTr: "AIPyram tarafından otomatik üretilmiş garantili satış senaryosu.",
-      salesPitchEn: "AIPyram guaranteed auto-generated sales pitch."
+      salesPitchTr: "aipyram tarafından otomatik üretilmiş garantili satış senaryosu.",
+      salesPitchEn: "aipyram guaranteed auto-generated sales pitch."
     };
   }
 

@@ -30,7 +30,7 @@ export default function ContactSection() {
             <div className="p-4 bg-white border border-neutral-100 rounded-xl inline-block w-fit mb-6">
               <MapPin className="w-8 h-8 text-red-500" />
             </div>
-            <h4 className="text-2xl font-bold mb-4">AIPyram Merkez</h4>
+            <h4 className="text-2xl font-bold mb-4">aipyram Merkez</h4>
             <p className="text-lg text-neutral-500 font-medium leading-relaxed mb-8">
               Dietikon, {t("country_ch")}
             </p>

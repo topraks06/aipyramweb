@@ -8,7 +8,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase-client';
 
 /**
- * AIPYRAM SOVEREIGN ADMIN LOGIN
+ * aipyram SOVEREIGN ADMIN LOGIN
  * 
  * Master Node'un kendi bağımsız admin login sayfası.
  * Artık /sites/perde/login'e redirect YAPMIYOR.
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
             <Zap className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-3xl font-black uppercase tracking-[0.15em] text-white mb-2">
-            AIPYRAM
+            aipyram
           </h1>
           <p className="text-[10px] uppercase tracking-[0.3em] text-blue-400/80 font-bold">
             Sovereign Command Center

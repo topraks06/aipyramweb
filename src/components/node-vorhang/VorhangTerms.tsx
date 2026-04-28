@@ -11,7 +11,7 @@ export default function VorhangTerms() {
         <h1 className="text-5xl font-serif mb-12 text-black">Allgemeine Geschäftsbedingungen (AGB)</h1>
         <div className="prose prose-lg text-gray-600 max-w-none">
           <p className="mb-6 leading-relaxed">
-            Die nachfolgenden Allgemeinen Geschäftsbedingungen gelten für alle Verträge, die zwischen der AIPyram Technologies GmbH 
+            Die nachfolgenden Allgemeinen Geschäftsbedingungen gelten für alle Verträge, die zwischen der aipyram Technologies GmbH 
             (Betreiber von Vorhang.ai) und unseren Nutzern (Händlern und Käufern) geschlossen werden.
           </p>
           <h2 className="text-2xl font-serif text-black mt-12 mb-4">1. Geltungsbereich</h2>

@@ -4,7 +4,7 @@ import { DEFAULT_BUDGET } from "@/core/agents/types";
 
 // ═══════════════════════════════════════════════════════════════
 // GET /api/rfqs/live — Canlı RFQ Akışı
-// AIPYRAM Revenue Engine — İlk Gelir Kapısı
+// aipyram Revenue Engine — İlk Gelir Kapısı
 // ═══════════════════════════════════════════════════════════════
 
 export const dynamic = "force-dynamic"; // Zero-cache (Anayasa kuralı)

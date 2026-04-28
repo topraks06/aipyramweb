@@ -13,7 +13,7 @@ export async function generateMetadata({ params, searchParams }: any): Promise<M
   const lang = resolvedSearch?.lang || 'tr';
   const brandName = exactDomain?.replace('.com','').toUpperCase() || 'TRTEX';
 
-  // 8 dil canonical dökümü (AIPyram Sovereign Architecture)
+  // 8 dil canonical dökümü (aipyram Sovereign Architecture)
   const alternates: Record<string, string> = {
     'x-default': `https://${exactDomain}/tenders?lang=tr`
   };

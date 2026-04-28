@@ -48,7 +48,7 @@ export async function orchestrateQuery(request: OrchestrationRequest): Promise<O
     const perdeData = "Otel odaları için blackout ve akustik perdelerde yeni 3 tasarımımız mevcut.";
     
     const prompt = `
-    Sen AIPyram'ın "Executive Sektör Beyni"sin (Master Orchestrator).
+    Sen aipyram'ın "Executive Sektör Beyni"sin (Master Orchestrator).
     Kullanıcının sorgusu: "${request.query}"
     Intent (Niyet): "${request.intent}"
     Dil: ${request.user_locale}

@@ -73,9 +73,9 @@ const PROJECT_SITE_MAP: Record<string, ProjectSiteConfig> = {
     configCollection: 'aipyram_site_config',
     componentsCollection: 'aipyram_components',
     newsCollection: 'aipyram_blog',
-    siteName: 'AIPyram',
+    siteName: 'aipyram',
     domain: 'aipyram.com',
-    seoSuffix: 'AIPyram Sovereign AI',
+    seoSuffix: 'aipyram Sovereign AI',
   },
 };
 

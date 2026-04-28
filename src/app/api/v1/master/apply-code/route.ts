@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     if (!isSafe) {
       return NextResponse.json({ 
         success: false, 
-        error: `GÜVENLİK İHLALİ (AntiGravity Sandbox): ${targetPath} dosyasına erişim yasaktır. Sadece AIPyram ve Hometex üzerinde işlem yapılabilir.`
+        error: `GÜVENLİK İHLALİ (AntiGravity Sandbox): ${targetPath} dosyasına erişim yasaktır. Sadece aipyram ve Hometex üzerinde işlem yapılabilir.`
       }, { status: 403 });
     }
 

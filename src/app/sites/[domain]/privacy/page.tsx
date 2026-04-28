@@ -43,6 +43,27 @@ export default async function PrivacyPage({ params, searchParams }: any) {
     return <CurtaindesignPrivacy />;
   }
 
+  if (exactDomain.includes('icmimar')) {
+    const IcmimarNavbar = (await import('@/components/node-icmimar/IcmimarNavbar')).default;
+    const IcmimarFooter = (await import('@/components/node-icmimar/IcmimarFooter')).default;
+    return (
+      <div className="min-h-screen bg-[#F9F9F6] flex flex-col">
+        <IcmimarNavbar theme="light" />
+        <main className="flex-1 pt-32 pb-24 px-6 md:px-12 max-w-4xl mx-auto w-full">
+          <h1 className="font-serif text-5xl text-zinc-900 mb-6">Gizlilik Politikası</h1>
+          <div className="text-zinc-600 space-y-6">
+             <p>İcmimar.ai olarak, kişisel verilerinizin güvenliğine ve gizliliğine büyük önem veriyoruz.</p>
+             <h2 className="font-bold text-lg text-black mt-8">1. Toplanan Veriler</h2>
+             <p>Hizmetlerimizi kullanırken, hesap bilgileri, yüklenen referans görseller ve kullanım verileri toplanmaktadır.</p>
+             <h2 className="font-bold text-lg text-black mt-8">2. Veri Kullanımı</h2>
+             <p>Toplanan veriler, otonom tasarım motorumuzun (Visualizer) size daha iyi sonuçlar üretmesi ve B2B işlemlerin ERP üzerinden sorunsuz yürütülmesi amacıyla kullanılır.</p>
+          </div>
+        </main>
+        <IcmimarFooter />
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', fontFamily: "'Inter', sans-serif" }}>
       <GlobalTicker />

@@ -14,7 +14,7 @@ export default function PerdeTerms() {
          <div className="flex items-center gap-4 mb-10">
            <div className="h-[1px] w-12 bg-[#8B7355]"></div>
            <span className="text-[#8B7355] uppercase tracking-[0.4em] text-[10px] font-bold">
-             AIPYRAM GMBH
+             aipyram GMBH
            </span>
          </div>
          

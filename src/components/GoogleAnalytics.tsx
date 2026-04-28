@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════
- * AIPYRAM MULTI-NODE GA4 ANALYTICS
+ * aipyram MULTI-NODE GA4 ANALYTICS
  * ═══════════════════════════════════════════════════════
  * 
  * Merkezi izleme bileşeni — tüm node siteleri otomatik tanır.
@@ -13,7 +13,7 @@
  * 
  * Mimari:
  *   - Node hostname otomatik detect edilir
- *   - Cross-domain tracking tüm AIPYRAM domainleri arası aktif
+ *   - Cross-domain tracking tüm aipyram domainleri arası aktif
  *   - Tek GA4 mülkü, node_id ile filtreleme
  */
 'use client';
@@ -22,7 +22,7 @@ import Script from 'next/script';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
 
-// AIPYRAM ekosistem domainleri (yeni node eklenince buraya ekle)
+// aipyram ekosistem domainleri (yeni node eklenince buraya ekle)
 const ECOSYSTEM_DOMAINS = [
   'trtex.com',
   'perde.ai',
@@ -58,7 +58,7 @@ export default function GoogleAnalytics() {
               site_speed_sample_rate: 100,
               user_properties: {
                 node_id: currentNode,
-                ecosystem: 'AIPYRAM'
+                ecosystem: 'aipyram'
               },
               linker: {
                 domains: ${JSON.stringify(ECOSYSTEM_DOMAINS)},
@@ -66,12 +66,12 @@ export default function GoogleAnalytics() {
               }
             });
 
-            // AIPYRAM Merkezi Olay Takip Fonksiyonu
+            // aipyram Merkezi Olay Takip Fonksiyonu
             window.trackNodeEvent = function(eventName, params) {
               gtag('event', eventName, Object.assign({
                 event_category: 'Node_Action',
                 node_source: currentNode,
-                ecosystem: 'AIPYRAM'
+                ecosystem: 'aipyram'
               }, params || {}));
             };
           `,

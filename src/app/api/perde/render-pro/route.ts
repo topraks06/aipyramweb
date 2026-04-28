@@ -227,7 +227,7 @@ Bu kumaş fotoğrafından yeni bir şey UYDURMA — gördüğün kumaşın kendi
       // KATMAN 3: Kumaş sonrası kesin rol atama
       let physicsContext = "";
       if (mat.physics && mat.physics !== 'auto') {
-        physicsContext = `\n[AIPYRAM BEYİN] FİZİKSEL ÖZELLİK: Bu kumaşın tipi "${mat.physics}" olarak doğrulanmıştır. `;
+        physicsContext = `\n[aipyram BEYİN] FİZİKSEL ÖZELLİK: Bu kumaşın tipi "${mat.physics}" olarak doğrulanmıştır. `;
         if (mat.physics === 'sheer') physicsContext += "Yarı saydam, ince, uçuşan (tül) yapıda renderla. Arka planı hafifçe göstersin.";
         if (mat.physics === 'heavy') physicsContext += "Kalın, ağır, ışık geçirmeyen (fon) yapıda renderla. Pileleri tok dökülsün.";
         if (mat.physics === 'blackout') physicsContext += "Aşırı kalın, %100 ışık kesen blackout yapıda renderla. Arkasından hiçbir ışık sızmasın.";

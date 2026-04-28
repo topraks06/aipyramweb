@@ -82,8 +82,8 @@ export default async function PremiumReportPage({ params, searchParams }: any) {
              </h2>
              <p style={{ fontSize: '1.1rem', color: '#9CA3AF', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem auto' }}>
                {IS_TR 
-                 ? 'AIPyram B2B Intelligence ağına katılarak rakiplerinizden önce bilgi sahibi olun.'
-                 : 'Join the AIPyram B2B Intelligence network and stay ahead of your competitors.'}
+                 ? 'aipyram B2B Intelligence ağına katılarak rakiplerinizden önce bilgi sahibi olun.'
+                 : 'Join the aipyram B2B Intelligence network and stay ahead of your competitors.'}
              </p>
              <a href={`${basePath}/pricing?lang=${lang}`} style={{ display: 'inline-block', background: '#CC0000', color: '#FFF', padding: '1rem 3rem', fontWeight: 900, textDecoration: 'none', letterSpacing: '1px' }}>
                {IS_TR ? 'PLANLARI İNCELE →' : 'VIEW PLANS →'}

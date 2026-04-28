@@ -12,7 +12,7 @@ import { PieChart as VIPieChart, MiniBarChart as VIMiniBarChart, DataCredibility
 import { getBaseUrl, getNodeUrl } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════════
-   AIPyram Master Concierge — v3 Visual Intelligence Widget
+   aipyram Master Concierge — v3 Visual Intelligence Widget
    ═══════════════════════════════════════════════════════════ */
 
 /* ─── Intent Classification ─── */
@@ -181,7 +181,7 @@ function generateResponse(text: string, siteLocale: Language = "de", platform: s
          }
     }
 
-    // AIPYRAM DEFAULT YANITLARI
+    // aipyram DEFAULT YANITLARI
     const { intent, entities } = classifyIntent(text);
     const visual = generateVisual(intent, entities);
     const links: { label: string; href: string }[] = [];
@@ -398,7 +398,7 @@ function DataCardView({ cards }: { cards: DataCard[] }) {
 export default function ConciergeWidget() {
     const pathname = usePathname();
     
-    // AIPYRAM ALOHA & NODES: Hide Concierge on master AI dashboard and Node sites
+    // aipyram ALOHA & NODES: Hide Concierge on master AI dashboard and Node sites
     if (pathname.includes('/aloha') || pathname.includes('/admin') || pathname.startsWith('/sites/')) {
         return null;
     }
@@ -427,7 +427,7 @@ export default function ConciergeWidget() {
     const isPerde = platform === 'perde';
     const widgetBaseColor = isPerde ? "bg-gradient-to-br from-[#8B7355] to-[#6b5841]" : "bg-gradient-to-br from-red-600 to-red-700";
     const widgetHoverColor = isPerde ? "hover:shadow-[#8B7355]/30" : "hover:shadow-red-500/30";
-    const headerTitle = isPerde ? "Perde.ai Assistant" : "AIPyram Concierge";
+    const headerTitle = isPerde ? "Perde.ai Assistant" : "aipyram Concierge";
     const accentColor = isPerde ? "text-[#8B7355]" : "text-emerald-500";
 
     const { processQuery, isOrchestrating } = useEcosystemActions();
@@ -562,11 +562,11 @@ export default function ConciergeWidget() {
                    tr: { text: visitorContext ? `Hoş geldiniz! ${visitorContext} Ayrıca odalara perde uygulamak için fotoğraf yükleyebilirsiniz.` : "Perde.ai Sanal Stüdyo'ya hoş geldiniz! AI destekli kumaş analizleriniz ve B2B siparişleriniz için buradayım. Odalara perde uygulamak için fotoğraf yükleyebilirsiniz.", links: [] }
                };
             } else {
-               // AIPyram Global Welcome
+               // aipyram Global Welcome
                welcomeTexts = {
-                   de: { text: visitorContext ? `Willkommen! ${visitorContext}` : "Willkommen! Ich bin der AIPyram Concierge. Ich kann Ihnen Informationen über unser Portfolio, unsere Projekte und Investitionsmöglichkeiten geben.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ökosystem →", href: "/ecosystem" }] },
-                   en: { text: visitorContext ? `Welcome! ${visitorContext}` : "Welcome! I'm the AIPyram Concierge. I can provide information about our portfolio, projects, and investment opportunities.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ecosystem →", href: "/ecosystem" }] },
-                   tr: { text: visitorContext ? `Merhaba! Sizi tanıyorum, ${visitorContext} Size özel asistanınız olarak nasıl yardımcı olabilirim?` : "Merhaba! Ben AIPyram Concierge. Size portföyümüz, projelerimiz ve yatırım fırsatlarımız hakkında bilgi verebilirim.", links: [{ label: "Portföy →", href: "/domains" }, { label: "Ekosistem →", href: "/ecosystem" }] },
+                   de: { text: visitorContext ? `Willkommen! ${visitorContext}` : "Willkommen! Ich bin der aipyram Concierge. Ich kann Ihnen Informationen über unser Portfolio, unsere Projekte und Investitionsmöglichkeiten geben.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ökosystem →", href: "/ecosystem" }] },
+                   en: { text: visitorContext ? `Welcome! ${visitorContext}` : "Welcome! I'm the aipyram Concierge. I can provide information about our portfolio, projects, and investment opportunities.", links: [{ label: "Portfolio →", href: "/domains" }, { label: "Ecosystem →", href: "/ecosystem" }] },
+                   tr: { text: visitorContext ? `Merhaba! Sizi tanıyorum, ${visitorContext} Size özel asistanınız olarak nasıl yardımcı olabilirim?` : "Merhaba! Ben aipyram Concierge. Size portföyümüz, projelerimiz ve yatırım fırsatlarımız hakkında bilgi verebilirim.", links: [{ label: "Portföy →", href: "/domains" }, { label: "Ekosistem →", href: "/ecosystem" }] },
                };
             }
 
@@ -977,7 +977,7 @@ export default function ConciergeWidget() {
                             </button>
                         </div>
                         <div className="text-center mt-2 text-[8px] text-slate-600">
-                            AIPyram Concierge · Powered by Neural Protocol v2.1
+                            aipyram Concierge · Powered by Neural Protocol v2.1
                         </div>
                     </div>
                 </div>
@@ -987,7 +987,7 @@ export default function ConciergeWidget() {
                 isOpen={leadModalOpen} 
                 onClose={() => setLeadModalOpen(false)} 
                 context={{ type: "TENDER" }} 
-                brandName="AIPyram Concierge" 
+                brandName="aipyram Concierge" 
             />
         </>
     );

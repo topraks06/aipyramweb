@@ -22,7 +22,7 @@ export async function GET() {
     } catch {
       // Fallback statik liste
       projectNodes = [
-        { name: 'AIPYRAM', status: 'aktif' },
+        { name: 'aipyram', status: 'aktif' },
         { name: 'TRTEX', status: 'aktif' },
         { name: 'PERDE', status: 'aktif' },
         { name: 'HOMETEX', status: 'aktif' },

@@ -7,15 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { ICMIMAR_DICT } from './icmimar-dictionary';
 import dynamic from 'next/dynamic';
 
-// Lazy-load RoomVisualizer only when user clicks "Try Demo"
-const RoomVisualizer = dynamic(() => import('./RoomVisualizer'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[60vh] bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-800">
-      <div className="w-8 h-8 border-2 border-zinc-700 border-t-white animate-spin rounded-full" />
-    </div>
-  ),
-});
+// Removed RoomVisualizer import to avoid rendering complex engine on homepage
 
 export default function WowDemoSection() {
     const searchParams = useSearchParams();
@@ -55,16 +47,17 @@ export default function WowDemoSection() {
                     {T.desc}
                 </p>
 
-                {/* Demo Visualizer OR CTA */}
+                {/* Video Placeholder OR CTA */}
                 {showDemo ? (
-                    <div className="w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl" style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}>
-                        <Suspense fallback={
-                            <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
-                                <div className="w-8 h-8 border-2 border-zinc-700 border-t-white animate-spin rounded-full" />
-                            </div>
-                        }>
-                            <RoomVisualizer />
-                        </Suspense>
+                    <div className="w-full rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl relative bg-zinc-900" style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500">
+                            <Presentation className="w-16 h-16 mb-4 opacity-50" />
+                            <h3 className="text-xl font-bold mb-2 text-white">icmimar.ai Tanıtım Videosu</h3>
+                            <p className="text-sm">B2B Master Design Engine ve ERP'nin nasıl çalıştığını izleyin.</p>
+                            <a href={`/sites/${langKey.toLowerCase() === 'en' ? 'icmimar' : 'icmimar.ai'}/login`} className="mt-8 px-6 py-3 bg-[#8B7355] text-white rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-[#725e45] transition-colors">
+                                Ücretsiz Hesap Oluştur ve Dene
+                            </a>
+                        </div>
                     </div>
                 ) : (
                     <>
@@ -76,7 +69,7 @@ export default function WowDemoSection() {
                             className="w-full max-w-3xl bg-gradient-to-r from-[#8B7355] to-[#725e45] text-white py-8 rounded-2xl text-lg font-bold uppercase tracking-[0.15em] hover:shadow-[0_0_60px_rgba(139,115,85,0.3)] transition-all flex items-center justify-center gap-4 mb-12 border border-[#8B7355]/50"
                         >
                             <Sparkles className="w-6 h-6" />
-                            {T.uploadBtn || 'HEMEN ÜCRETSİZ DENEYİN'}
+                            {T.uploadBtn || 'TANITIM VİDEOSUNU İZLE'}
                             <ArrowRight className="w-6 h-6" />
                         </motion.button>
 

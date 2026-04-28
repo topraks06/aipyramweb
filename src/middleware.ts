@@ -69,7 +69,7 @@ export default async function middleware(req: NextRequest) {
 
   // 🌍 MULTI-NODE DUMB-CLIENT RENDER LAYER
   if (isMainDomain) {
-    // Normal AIPYRAM Master Node (Uses next-intl)
+    // Normal aipyram Master Node (Uses next-intl)
     return intlMiddleware(req);
   }
 

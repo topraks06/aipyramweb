@@ -26,8 +26,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Cüzdan zaten mevcut." });
         }
 
-        // Perde ve Icmimar ücretli platformlardır, başlangıç kredisi verilmez. TRTex vb. ücretsiz üyeliklerde 10 kredi tanımlanabilir.
-        const initialCredits = (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') ? 0 : 10;
+        // Perde ve Icmimar ücretli platformlardır, ancak e-postası onaylanmış (veya Google Login) kullanıcılara 5 hediye verilir.
+        let initialCredits = (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') ? 0 : 10;
+        let welcomeBonusClaimed = false;
+
+        try {
+            const userRecord = await admin.auth().getUser(uid);
+            if (userRecord.emailVerified) {
+                if (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') {
+                    initialCredits = 5;
+                    welcomeBonusClaimed = true;
+                }
+            }
+        } catch (e) {
+            console.warn("Wallet init email kontrolü yapılamadı:", e);
+        }
 
         await walletRef.set({
             ownerId: uid,
@@ -37,7 +50,8 @@ export async function POST(req: NextRequest) {
             totalSpent: 0,
             tier: initialCredits > 0 ? 'Starter' : 'Pending',
             createdAt: new Date().toISOString(),
-            lastRefillAt: new Date().toISOString()
+            lastRefillAt: new Date().toISOString(),
+            welcomeBonusClaimed
         });
 
         console.log(`[WalletSystem] ${uid} için başlangıç cüzdanı oluşturuldu (${initialCredits} Kredi). Node: ${SovereignNodeId}`);

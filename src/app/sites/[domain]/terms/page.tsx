@@ -43,6 +43,27 @@ export default async function TermsPage({ params, searchParams }: any) {
     return <CurtaindesignTerms />;
   }
 
+  if (exactDomain.includes('icmimar')) {
+    const IcmimarNavbar = (await import('@/components/node-icmimar/IcmimarNavbar')).default;
+    const IcmimarFooter = (await import('@/components/node-icmimar/IcmimarFooter')).default;
+    return (
+      <div className="min-h-screen bg-[#F9F9F6] flex flex-col">
+        <IcmimarNavbar theme="light" />
+        <main className="flex-1 pt-32 pb-24 px-6 md:px-12 max-w-4xl mx-auto w-full">
+          <h1 className="font-serif text-5xl text-zinc-900 mb-6">Kullanım Koşulları</h1>
+          <div className="text-zinc-600 space-y-6">
+             <p>İcmimar.ai B2B Master Design Engine kullanım koşulları aşağıda belirtilmiştir.</p>
+             <h2 className="font-bold text-lg text-black mt-8">1. Hizmet Kapsamı</h2>
+             <p>Platformumuz üzerinden sağlanan tasarım araçları (Visualizer) ve ERP özellikleri, yalnızca kurumsal üyelere ve ticari amaçlarla sunulmaktadır.</p>
+             <h2 className="font-bold text-lg text-black mt-8">2. Lisans ve Fikri Mülkiyet</h2>
+             <p>Oluşturulan 3D renderlar ve tasarımlar, sistemimize yüklenen doku verileri üzerinden üretilir. Kullanıcılar yükledikleri içeriklerin lisansından kendileri sorumludur.</p>
+          </div>
+        </main>
+        <IcmimarFooter />
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', fontFamily: "'Inter', sans-serif" }}>
       <GlobalTicker />

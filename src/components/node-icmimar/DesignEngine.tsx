@@ -18,7 +18,7 @@ interface ProductIdea {
 export default function DesignEngine() {
   const [engineMode, setEngineMode] = useState<'Koleksiyon' | 'Editoryal' | 'Fuar'>('Koleksiyon');
   
-  // İcmimar.AI (B2B/B2C Koleksiyon) State
+  // icmimar.ai (B2B/B2C Koleksiyon) State
   const [fabric, setFabric] = useState('DÖKÜMLÜ KETEN VE OPAK KADİFE');
   const [style, setStyle] = useState('İSKANDİNAV MİNİMALİZM');
   const [colorPalette, setColorPalette] = useState('TOPRAK TONLARI, MAT SİYAH');
@@ -37,7 +37,7 @@ export default function DesignEngine() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      // EVENT TETİKLEMESİ (AIPYRAM SİNYAL AĞI)
+      // EVENT TETİKLEMESİ (aipyram SİNYAL AĞI)
       if (typeof window !== 'undefined') {
          window.dispatchEvent(new CustomEvent('design_requested', { detail: { mode: engineMode } }));
       }
@@ -104,7 +104,7 @@ export default function DesignEngine() {
                 onClick={() => setEngineMode('Koleksiyon')}
                 className={`px-6 py-3 text-[10px] uppercase font-bold tracking-[0.2em] transition-all ${engineMode === 'Koleksiyon' ? 'bg-white text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
               >
-                 ICMIMAR.AI (Tasarım)
+                 icmimar.ai (Tasarım)
               </button>
               <button 
                 onClick={() => setEngineMode('Editoryal')}
@@ -209,7 +209,7 @@ export default function DesignEngine() {
                    ) : (
                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 overflow-hidden">
                         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-black to-black"></div>
-                        <span className="text-[90px] font-display font-light text-zinc-800 tracking-tighter opacity-30 select-none">AIPYRAM</span>
+                        <span className="text-[90px] font-display font-light text-zinc-800 tracking-tighter opacity-30 select-none">aipyram</span>
                      </div>
                    )}
                    <div className="absolute top-4 right-4 bg-black/80 backdrop-blur text-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest border border-white/20">

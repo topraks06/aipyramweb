@@ -5,11 +5,11 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
 // POLYGLOT AGENT — 8 Dile Profesyonel B2B Çeviri
-// AIPYRAM Global Reach Engine
+// aipyram Global Reach Engine
 // ═══════════════════════════════════════════════════════════════
 
 // Removed raw ai client
-const POLYGLOT_PROMPT = `Sen AIPYRAM ekosisteminin Polyglot Ajanısın — 8 dilde uzmanlaşmış B2B tekstil çeviri zekası.
+const POLYGLOT_PROMPT = `Sen aipyram ekosisteminin Polyglot Ajanısın — 8 dilde uzmanlaşmış B2B tekstil çeviri zekası.
 
 🎯 GÖREVİN:
 Gelen metinleri B2B profesyonel diliyle 8 dile çevir.

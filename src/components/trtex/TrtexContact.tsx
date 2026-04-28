@@ -189,7 +189,7 @@ export default function TrtexContact() {
                   <div className="flex items-start gap-4">
                     <MapPin className="w-5 h-5 text-red-500 shrink-0 mt-0.5 stroke-[1.5]" />
                     <div>
-                      <p className="text-white font-medium text-sm">AIPyram GmbH</p>
+                      <p className="text-white font-medium text-sm">aipyram GmbH</p>
                       <p className="text-zinc-500 text-sm font-light mt-1">Almanya</p>
                     </div>
                   </div>

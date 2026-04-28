@@ -42,8 +42,8 @@ export default function PerdeFooter() {
                      <span className="text-[#111] font-bold">📞 +41 44 500 82 80</span>
                      <span className="text-[#111] font-bold">📞 +90 555 333 05 11</span>
                   </p>
-                  <p className="hover:text-black cursor-pointer transition-colors">📧 INFO@AIPYRAM.COM</p>
-                  <p className="hover:text-black cursor-pointer transition-colors">🌐 AIPYRAM.COM</p>
+                  <p className="hover:text-black cursor-pointer transition-colors">📧 INFO@aipyram.COM</p>
+                  <p className="hover:text-black cursor-pointer transition-colors">🌐 aipyram.COM</p>
                </div>
             </div>
             
@@ -56,7 +56,7 @@ export default function PerdeFooter() {
           <div className="pt-16 pb-12 border-t border-[#111111]/10 mb-8">
              <div className="flex items-center gap-3 mb-6">
                <span className="text-[14px]">🌍</span>
-               <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[10px]">AIPYRAM GmbH GLOBAL DOMAİN PORTFÖYÜ</h4>
+               <h4 className="text-[#111] font-bold uppercase tracking-[0.2em] text-[10px]">aipyram GmbH GLOBAL DOMAİN PORTFÖYÜ</h4>
              </div>
              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-4 gap-x-8 text-[10px] font-medium text-zinc-500 tracking-[0.1em] uppercase">
                 <p>perde.ai</p>
@@ -86,7 +86,7 @@ export default function PerdeFooter() {
           {/* BOTTOM BAR */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-8 border-t border-[#111111]/10">
             <div className="text-[9px] text-zinc-400 uppercase tracking-[0.3em] font-bold text-center md:text-left leading-relaxed">
-              © {new Date().getFullYear()} AIPYRAM GMBH — TÜM HAKLARI SAKLIDIR.
+              © {new Date().getFullYear()} aipyram GMBH — TÜM HAKLARI SAKLIDIR.
             </div>
             <div className="flex gap-10">
                <Link href="https://linkedin.com/company/aipyram" target="_blank" className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 hover:text-[#111] cursor-pointer transition-colors font-bold">LINKEDIN</Link>

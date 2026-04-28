@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     // Pamuk fiyatı: investing.com veya tradingeconomics'ten
     try {
       const cottonRes = await fetch('https://www.tradingeconomics.com/commodity/cotton', {
-        headers: { 'User-Agent': 'AIPyram Market Bot/1.0' },
+        headers: { 'User-Agent': 'aipyram Market Bot/1.0' },
         signal: AbortSignal.timeout(10000),
       });
       if (cottonRes.ok) {

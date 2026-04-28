@@ -232,7 +232,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     });
   } catch (e) { console.warn('[CMS] Fetch error:', e); }
 
-  // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
+  // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (aipyram ROUTER)
   if (projectName === 'heimtex') {
     const HeimtexLandingPage = (await import('@/components/node-heimtex/HeimtexLandingPage')).default;
     let articles: any[] = [];

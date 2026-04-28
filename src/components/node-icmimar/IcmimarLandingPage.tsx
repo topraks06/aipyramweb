@@ -22,22 +22,22 @@ export default function IcmimarLandingPage() {
 
   const HERO_SLIDES = [
     {
-      image: "/assets/icmimar.ai/icmimar.ai (10).jpg",
+      image: "/assets/perde.ai/perde.ai (10).jpg",
       title: T.hero.title,
       subtitle: T.hero.subtitle
     },
     {
-      image: "/assets/icmimar.ai/icmimar.ai (13).jpg",
+      image: "/assets/perde.ai/perde.ai (13).jpg",
       title: T.gallery.c1_title,
       subtitle: T.gallery.c1_desc
     },
     {
-      image: "/assets/icmimar.ai/icmimar.ai 204.jpg",
+      image: "/assets/perde.ai/perde.ai 204.jpg",
       title: T.gallery.c2_title,
       subtitle: T.gallery.c2_desc
     },
     {
-      image: "/assets/icmimar.ai/icmimar.ai (18).jpg",
+      image: "/assets/perde.ai/perde.ai (18).jpg",
       title: T.gallery.c3_title,
       subtitle: T.gallery.c3_desc
     }
@@ -57,7 +57,7 @@ export default function IcmimarLandingPage() {
       <IcmimarNavbar theme="light" />
 
       {/* 1. LUXURY EDITORIAL HERO */}
-      <section className="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden p-4 md:p-8 pt-20">
+      <section className="relative min-h-[100dvh] w-full flex items-center justify-center pt-32 pb-16 px-4 md:px-8">
         <div className="w-full h-full relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             
             <div className="md:col-span-5 h-full flex flex-col justify-center px-4 md:px-12 z-10 relative bg-[#F9F9F6]/85 backdrop-blur-md md:bg-transparent md:backdrop-blur-none py-12 md:py-0 rounded-2xl md:rounded-none">
@@ -202,7 +202,7 @@ export default function IcmimarLandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                <div className="flex flex-col gap-6 group cursor-pointer">
                   <div className="relative overflow-hidden aspect-[3/4] bg-zinc-200 rounded-lg">
-                     <img src="/assets/icmimar.ai/icmimar.ai (8).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Grid View" />
+                     <img src="/assets/perde.ai/perde.ai (8).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Grid View" />
                      <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1 p-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
                         <div className="bg-white/20 backdrop-blur-sm rounded-sm"></div>
                         <div className="bg-white/20 backdrop-blur-sm rounded-sm"></div>
@@ -218,7 +218,7 @@ export default function IcmimarLandingPage() {
                </div>
                <div className="flex flex-col gap-6 md:translate-y-12 group cursor-pointer mt-8 md:mt-0">
                   <div className="overflow-hidden aspect-[3/4] bg-zinc-200 rounded-lg border border-zinc-200 relative">
-                     <img src="/assets/icmimar.ai/icmimar.ai (9).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Compare Slider" />
+                     <img src="/assets/perde.ai/perde.ai (9).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Compare Slider" />
                      <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_rgba(0,0,0,0.5)] -translate-x-1/2 flex items-center justify-center">
                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg"><span className="text-[8px] tracking-tighter text-zinc-900 font-bold">&lt;&gt;</span></div>
                      </div>
@@ -231,7 +231,7 @@ export default function IcmimarLandingPage() {
                </div>
                <div className="flex flex-col gap-6 group cursor-pointer mt-8 md:mt-0">
                   <div className="overflow-hidden aspect-[3/4] bg-zinc-200 rounded-lg">
-                     <img src="/assets/icmimar.ai/icmimar.ai (20).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Fabric Detail" />
+                     <img src="/assets/perde.ai/perde.ai (20).jpg" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="Fabric Detail" />
                   </div>
                   <div>
                      <span className="text-[9px] uppercase tracking-[0.2em] text-[#8B7355] mb-2 block font-medium">Kusursuz Simülasyon</span>
@@ -249,7 +249,7 @@ export default function IcmimarLandingPage() {
       {/* 7. CALL TO ACTION */}
       <section className="py-40 relative px-6 text-center flex flex-col items-center bg-zinc-900">
          <div className="absolute inset-0 z-0">
-             <img src="/assets/icmimar.ai/icmimar.ai (1).jpg" className="w-full h-full object-cover opacity-30 mix-blend-luminosity filter blur-sm" alt="Background Texture" />
+             <img src="/assets/perde.ai/perde.ai (1).jpg" className="w-full h-full object-cover opacity-30 mix-blend-luminosity filter blur-sm" alt="Background Texture" />
              <div className="absolute inset-0 bg-zinc-900/80"></div>
          </div>
          <div className="relative z-10 max-w-3xl">

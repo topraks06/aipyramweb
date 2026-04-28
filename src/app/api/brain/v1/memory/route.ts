@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         return NextResponse.json(
             { 
                 success: true, 
-                sovereign_node: "AIPYRAM",
+                sovereign_node: "aipyram",
                 collection,
                 count: data.length, 
                 data 

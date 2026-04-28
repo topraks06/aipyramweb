@@ -15,7 +15,7 @@ function getRegisteredProjectPaths(): string[] {
 }
 
 /**
- * AIPYRAM GOD MODE - FILE ACTIONS
+ * aipyram GOD MODE - FILE ACTIONS
  * Vetted and safe file execution pipeline: Plan -> Guard -> Execute
  */
 

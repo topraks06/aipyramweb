@@ -42,7 +42,7 @@ export default function HeimtexFooter({ basePath = '/sites/heimtex.ai' }: { base
           <div className="flex items-start gap-3 text-sm mt-2">
             <Globe className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
             <span className="font-light leading-relaxed text-zinc-400">
-              Part of the AIPyram Sovereign Ecosystem. Connected globally.
+              Part of the aipyram Sovereign Ecosystem. Connected globally.
             </span>
           </div>
         </div>

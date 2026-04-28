@@ -129,7 +129,7 @@ export default function TrtexFooter({ basePath, brandName = 'TRTEX', lang = 'tr'
             © {currentYear} {brandName}. {L.copyright}
           </div>
           <div style={{fontSize:'.7rem',color:'#444',fontWeight:800,letterSpacing:'1px', textTransform:'uppercase'}}>
-            AIPyram Otonom Motor ile Güçlendirilmiştir
+            aipyram Otonom Motor ile Güçlendirilmiştir
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM Master Brain — Core Event (Sinyal) Türleri V2.0
+// aipyram Master Brain — Core Event (Sinyal) Türleri V2.0
 // Revenue-First + Cost Control + Trust Layer
 // ═══════════════════════════════════════════════════════════════
 
@@ -55,7 +55,7 @@ export type EventSource =
   | 'auditor' | 'virtual_rep' | 'domain_master'
   | string;  // Dinamik agent ID'ler için
 
-export interface AIPyramEvent {
+export interface aipyramEvent {
   id?: string;              // UUID for Idempotency (Auto-injected by Bus if missing)
   node_id?: string;       // Mutli-node B2B isolation (Auto-injected by Bus if missing)
   type: EventType;
@@ -66,4 +66,4 @@ export interface AIPyramEvent {
   agentRole?: string;      // Hangi ajan tetikledi
 }
 
-export type EventCallback = (event: AIPyramEvent) => void;
+export type EventCallback = (event: aipyramEvent) => void;

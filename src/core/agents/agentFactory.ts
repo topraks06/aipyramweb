@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { EventBus } from '../events/eventBus';
-import { AIPyramEvent } from '../events/eventTypes';
+import { aipyramEvent } from '../events/eventTypes';
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { learningMatrix } from '../cache/learningMatrix';
@@ -84,7 +84,7 @@ class DynamicAgent {
     console.log(`[🧬 ÇAPRAZ ÖĞRENME] ${this.name} ajanı, mentorü ${mentorName}'den 1500 satırlık beyin kopyası aldı!`);
   }
 
-  private async reactToNetwork(event: AIPyramEvent) {
+  private async reactToNetwork(event: aipyramEvent) {
     if (event.source === this.id) return;
     const signalData = JSON.stringify(event.payload);
 

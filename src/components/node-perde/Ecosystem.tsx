@@ -17,14 +17,14 @@ export default function Ecosystem() {
              <span className="text-[10px] font-bold uppercase tracking-widest text-green-400">Harici Sistem API BaÄŸlantÄ±larÄ± Aktif</span>
           </div>
           <h1 className="font-bold text-4xl md:text-6xl mb-4 text-white uppercase tracking-tighter">
-            AIPYRAM <span className="text-zinc-600">&</span> ALOHA<br/>ENTEGRASYONU
+            aipyram <span className="text-zinc-600">&</span> ALOHA<br/>ENTEGRASYONU
           </h1>
           <h2 className="text-xl md:text-2xl text-zinc-400 font-light mb-6 flex items-center gap-3">
              <Cpu className="w-6 h-6 text-blue-500" />
              Perde.ai "GÃ¶rsel Hizmet AjanÄ±" Durumu
           </h2>
           <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest leading-loose">
-            AIPYRAM (ANA MERKEZ BEYÄ°N) VE ALOHA (GENEL MÃœDÃœR) ÅU ANDA YAYINDA VE AKTÄ°FTÄ°R. TRTEX VE HOMETEX KENDÄ° OTONOM SÄ°STEMLERÄ°NDE Ã‡ALIÅIR. 
+            aipyram (ANA MERKEZ BEYÄ°N) VE ALOHA (GENEL MÃœDÃœR) ÅU ANDA YAYINDA VE AKTÄ°FTÄ°R. TRTEX VE HOMETEX KENDÄ° OTONOM SÄ°STEMLERÄ°NDE Ã‡ALIÅIR. 
             PERDE.AI Ä°SE BU DEVASA EKOSÄ°STEMÄ°N "GÃ–RSEL ÃœRETÄ°M AJANI"DIR. DIÅ SÄ°STEMLER, Ä°HTÄ°YAÃ‡ DUYDUKLARINDA PERDE.AI API'SÄ°NE BAÄLANIR, GÃ–RSELLERÄ°NÄ° ÃœRETÄ°R VE Ã‡EKERLER.
           </p>
         </div>

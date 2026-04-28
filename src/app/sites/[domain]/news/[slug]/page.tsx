@@ -249,7 +249,7 @@ export default async function NewsDetailPage({ params, searchParams }: NewsPageP
     }],
     "publisher": {
         "@type": "Organization",
-        "name": "AIPyram GmbH",
+        "name": "aipyram GmbH",
         "url": "https://aipyram.com"
     },
     // ENTITY GRAPH INJECTION FOR LLMs (Perplexity/SGE)

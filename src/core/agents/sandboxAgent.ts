@@ -73,7 +73,7 @@ export class SandboxAgent {
 
   private async generateCode(objective: string, previousError: string = "", previousCode: string = ""): Promise<string> {
     let systemPrompt = `
-      Sen AIPyram sisteminin (Strikt B2B Typescript/NextJS) arayüz mimarısın. 
+      Sen aipyram sisteminin (Strikt B2B Typescript/NextJS) arayüz mimarısın. 
       LÜTFEN SADECE KOD DÖNDÜR. Markdown işaretlerini ( \`\`\`tsx vs ) KOYMA veya açıklamalar YAZMA.
       Direkt importlar ile başlayan saf react komponent kodunu döndür. Tailwind Mimarisi kullan.
     `;

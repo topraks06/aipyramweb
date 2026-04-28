@@ -5,7 +5,7 @@ import { adminDb } from "../../lib/firebase-admin";
 
 async function fireLiveNews() {
   console.log("==================================================");
-  console.log("🔥 [AIPYRAM INC] LIVE TEST INITIATED");
+  console.log("🔥 [aipyram INC] LIVE TEST INITIATED");
   console.log("==================================================");
 
   const systemState: MasterSystemState = {

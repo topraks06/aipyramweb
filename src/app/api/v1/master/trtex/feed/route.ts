@@ -35,7 +35,7 @@ async function runVisionary(raw: any, mode: string) {
 
   try {
     const prompt = `
-      You are AIPYRAM Visionary Editorial Agent for TRTEX (B2B).
+      You are aipyram Visionary Editorial Agent for TRTEX (B2B).
       Based on this raw signal: ${raw.rawSignal}
       Generate 2 market trends for wholesale textiles and an overarching market outlook style.
       Output pure JSON with no markdown: {"verifiedTrends": [{"id": "tx1", "topic": "Trend Name", "confidence": 0.98}], "creativeStyle": "Outlook Style"}
@@ -69,8 +69,8 @@ function formatForUI(reality: any) {
     hero: {
       titleTr: ['GLOBAL TİCARET', 'B2B AĞI', 'TRTEX'],
       titleEn: ['GLOBAL TRADE', 'B2B NETWORK', 'TRTEX'],
-      subtitleTr: `AIPyram B2B Bot: "${reality.creativeStyle}" odaklı küresel tedarik analizi yürütülüyor.`,
-      subtitleEn: `AIPyram B2B Bot analyzing global supply chain with "${reality.creativeStyle}" focus.`,
+      subtitleTr: `aipyram B2B Bot: "${reality.creativeStyle}" odaklı küresel tedarik analizi yürütülüyor.`,
+      subtitleEn: `aipyram B2B Bot analyzing global supply chain with "${reality.creativeStyle}" focus.`,
       image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1600&q=80'
     },
     trends: {
@@ -111,7 +111,7 @@ function formatForUI(reality: any) {
     },
     fairs: [], 
     showrooms: [ 
-      { id: 's1', name: 'AIPyram B2B Node', location: 'Global', is_featured: true },
+      { id: 's1', name: 'aipyram B2B Node', location: 'Global', is_featured: true },
       { id: 's2', name: 'TRTEX Toptan Merkezi', location: 'Istanbul', is_featured: false }
     ]
   };
@@ -121,7 +121,7 @@ export async function GET(request: Request) {
   // 5. API GUARD
   const apiKey = request.headers.get('x-api-key');
   if (apiKey !== "hometex-neural-secure-token-2026" && apiKey !== process.env.AIPYRAM_SECRET_KEY && process.env.NODE_ENV === "production") {
-    return NextResponse.json({ success: false, error: 'Unauthorized AIPYRAM Nexus Access' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized aipyram Nexus Access' }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -133,7 +133,7 @@ export async function GET(request: Request) {
       success: true,
       data: editorialCache.data,
       meta: {
-        generated_by: 'AIPyram Visionary Agent',
+        generated_by: 'aipyram Visionary Agent',
         mode: mode,
         timestamp: editorialCache.timestamp,
         cached: true
@@ -158,7 +158,7 @@ export async function GET(request: Request) {
     success: true,
     data: editorialFormat,
     meta: {
-      generated_by: 'AIPyram Visionary Agent',
+      generated_by: 'aipyram Visionary Agent',
       mode: mode,
       timestamp: editorialCache.timestamp,
       cached: false

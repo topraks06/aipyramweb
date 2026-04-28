@@ -41,7 +41,7 @@ export async function triggerLeadEngineFromNews(title: string, content: string, 
 
           await adminDb.collection('b2b_opportunities').add({
             title: `[TRTEX Fırsat] ${title}`,
-            customerName: 'AIPyram Sovereign',
+            customerName: 'aipyram Sovereign',
             items: [`İstihbarat: ${category}`],
             grandTotal: estimatedVolume, // Deterministik tahmini hacim
             status: 'opportunity',

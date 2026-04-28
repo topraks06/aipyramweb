@@ -12,7 +12,7 @@ export default function VorhangImpressum() {
         <div className="prose prose-lg text-gray-600 max-w-none">
           <h2 className="text-2xl font-serif text-black mb-4">Angaben gemäß § 5 TMG</h2>
           <p className="mb-6 leading-relaxed">
-            AIPyram Technologies GmbH<br/>
+            aipyram Technologies GmbH<br/>
             Friedrichstraße 123<br/>
             10117 Berlin<br/>
             Deutschland

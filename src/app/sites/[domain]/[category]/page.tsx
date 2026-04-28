@@ -191,6 +191,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   let projectName = 'trtex';
   if (exactDomain.includes('hometex')) projectName = 'hometex';
+  if (exactDomain.includes('icmimar')) {
+    return (
+      <div className="min-h-screen bg-[#F9F9F6] flex flex-col items-center justify-center p-8 text-center">
+        <h1 className="text-6xl font-serif text-zinc-900 mb-4">404</h1>
+        <p className="text-zinc-500 max-w-md">Aradığınız sayfa B2B Master Design Engine sisteminde bulunmuyor.</p>
+        <a href={`/sites/${exactDomain}`} className="mt-8 text-[#8B7355] font-bold uppercase tracking-widest text-[10px] border border-[#8B7355] px-6 py-3 rounded-md hover:bg-[#8B7355] hover:text-white transition-colors">Ana Sayfaya Dön</a>
+      </div>
+    );
+  }
+
   const brandName = exactDomain.split('.')[0].toUpperCase();
   const basePath = `/sites/${exactDomain}`;
 

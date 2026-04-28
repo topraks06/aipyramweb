@@ -53,7 +53,7 @@ export default function AdminSidebar({ activeView, onViewChange, onSwitchToAloha
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-[11px] font-bold text-slate-900 tracking-wider">AIPYRAM</span>
+              <span className="text-[11px] font-bold text-slate-900 tracking-wider">aipyram</span>
               <span className="text-[9px] text-slate-900/40 font-medium">CONTROL CENTER</span>
             </div>
           )}

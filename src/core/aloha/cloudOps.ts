@@ -170,7 +170,7 @@ export async function sendGmail(options: EmailOptions): Promise<{ success: boole
     
     // RFC 2822 formatında e-posta oluştur
     const emailLines = [
-      `From: AIPyram Aloha <${senderEmail}>`,
+      `From: aipyram Aloha <${senderEmail}>`,
       `To: ${options.to}`,
       `Subject: =?UTF-8?B?${Buffer.from(options.subject).toString('base64')}?=`,
       'MIME-Version: 1.0',

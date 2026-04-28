@@ -78,8 +78,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Remove headers() to prevent Next.js from forcing dynamic rendering (cookie/header error fix)
-  // Locale is defaulted to 'de'. Tenant-specific components will be handled dynamically via a client wrapper.
-  const locale = "de";
+  // Locale is defaulted to 'tr'. Tenant-specific components will be handled dynamically via a client wrapper.
+  const locale = "tr";
   const isPerde = false; // We will handle these wrappers dynamically if needed, or rely on the domain layout.
   const isIcmimar = false;
   const jsonLd = {
@@ -156,7 +156,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased bg-background text-foreground">
+      <body className="antialiased bg-background text-foreground" suppressHydrationWarning>
         <AipyramAuthProvider>
           {children}
           <Toaster />

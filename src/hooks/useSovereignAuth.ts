@@ -93,11 +93,20 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
 
         // --- Cüzdan Başlatma ---
         if (node.walletCollection) {
-           fetch('/api/wallet/init', {
+           await fetch('/api/wallet/init', {
              method: 'POST',
              headers: { 'Content-Type': 'application/json' },
              body: JSON.stringify({ uid: user.uid, SovereignNodeId: node.id })
            }).catch(e => console.error("Wallet init failed", e));
+
+           // Eğer email doğrulanmışsa bonus talep et (Daha önce alınmadıysa ekler)
+           if (user.emailVerified) {
+               fetch('/api/wallet/claim-bonus', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ uid: user.uid, SovereignNodeId: node.id })
+               }).catch(e => console.error("Wallet claim bonus failed", e));
+           }
         }
       } catch (err) {
         console.error(`[node_AUTH:${node.id}] Üyelik kontrolü hatası:`, err);

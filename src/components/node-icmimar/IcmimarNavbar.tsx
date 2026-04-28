@@ -76,7 +76,7 @@ export default function IcmimarNavbar({ theme = 'light' }: IcmimarNavbarProps) {
       <header className={`fixed top-0 left-0 w-full z-50 px-6 md:px-12 h-20 flex justify-between items-center transition-colors border-b ${bgClass} ${borderClass} ${textClass}`}>
         <div className="flex items-center gap-6">
           <Link href={`${domainPath}/`} className="font-serif text-2xl tracking-tight font-medium hover:opacity-80 transition-opacity whitespace-nowrap">
-            ICMIMAR.AI
+            icmimar.ai
           </Link>
           {isLicensed && (
             <span className="hidden md:flex items-center gap-1 bg-[#8B7355]/10 text-[#8B7355] text-[9px] px-2 py-0.5 font-bold uppercase tracking-[0.2em] border border-[#8B7355]/20">
@@ -160,7 +160,7 @@ export default function IcmimarNavbar({ theme = 'light' }: IcmimarNavbarProps) {
               className="fixed top-0 right-0 h-full w-[280px] bg-white shadow-2xl z-[100] lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center p-6 border-b border-zinc-100">
-                <span className="font-serif text-xl tracking-tight text-zinc-900">ICMIMAR.AI</span>
+                <span className="font-serif text-xl tracking-tight text-zinc-900">icmimar.ai</span>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-2 bg-zinc-100 text-zinc-600 hover:text-black rounded-full transition-colors"

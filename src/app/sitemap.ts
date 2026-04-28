@@ -25,7 +25,7 @@ const PAGES: { path: string; priority: number; changeFrequency: MetadataRoute.Si
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const entries: MetadataRoute.Sitemap = [];
 
-    // 1. AIPyram Main Corporate Pages
+    // 1. aipyram Main Corporate Pages
     for (const page of PAGES) {
         for (const locale of LOCALES) {
             const url = `${BASE_URL}/${locale}${page.path}`;

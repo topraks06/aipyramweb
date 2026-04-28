@@ -68,7 +68,7 @@ export async function handleSynapseSignal(signal: Omit<NexusSignal, 'id' | 'time
 
     case "SECURITY_THREAT":
       // Bir sisteme saldırı gelirse, Hub Master tüm ajanların UI yetkisini geçici kilitler.
-      reactionLogs.push(`[REACTION] KORUMA PROTOKOLÜ: hub_master (AIPyram Hub). Eylem: Tüm ajanların UI Update mühürleri güvenlik için askıya alındı.`);
+      reactionLogs.push(`[REACTION] KORUMA PROTOKOLÜ: hub_master (aipyram Hub). Eylem: Tüm ajanların UI Update mühürleri güvenlik için askıya alındı.`);
       break;
 
     default:

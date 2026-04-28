@@ -443,7 +443,7 @@ export async function processImageForContent(
 export const COLOR_CONSTITUTION = { negative_colors: ['dark'], promptInjection: 'bright sunlight' };
 
 export function getImageCount(htmlContent: string): number {
-  const imgTags = (htmlContent.match(/<img alt="AIPyram Görsel"/gi) || []).length;
+  const imgTags = (htmlContent.match(/<img alt="aipyram Görsel"/gi) || []).length;
   const brGroups = (htmlContent.match(/<br\s*\/?>\s*<br\s*\/?>/gi) || []).length;
   return Math.max(3, imgTags + Math.floor(brGroups / 2));
 }

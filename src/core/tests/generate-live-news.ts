@@ -44,7 +44,7 @@ async function generateLiveNews() {
             category: data.category || "Gündem",
             tags: data.tags,
             status: "published",
-            source: "AIPYRAM News-Guard",
+            source: "aipyram News-Guard",
             published_at: new Date().toISOString(),
             translations: {
                 en: data.translations.EN,

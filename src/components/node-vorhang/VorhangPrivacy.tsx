@@ -11,7 +11,7 @@ export default function VorhangPrivacy() {
         <h1 className="text-5xl font-serif mb-12 text-black">Datenschutzerklärung</h1>
         <div className="prose prose-lg text-gray-600 max-w-none">
           <p className="mb-6 leading-relaxed">
-            Wir, die AIPyram Technologies GmbH, nehmen den Schutz Ihrer persönlichen Daten sehr ernst. 
+            Wir, die aipyram Technologies GmbH, nehmen den Schutz Ihrer persönlichen Daten sehr ernst. 
             Diese Datenschutzerklärung informiert Sie darüber, wie wir Ihre personenbezogenen Daten erheben, verarbeiten und nutzen.
           </p>
           <h2 className="text-2xl font-serif text-black mt-12 mb-4">1. Datenerhebung auf unserer Website</h2>

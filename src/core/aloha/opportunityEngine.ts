@@ -102,7 +102,7 @@ export async function detectOpportunities(project: string = 'all'): Promise<{
       data: s.data,
     }));
 
-    const analysisPrompt = `Sen AIPyram B2B fırsat analistsin. SERT KURALLAR:
+    const analysisPrompt = `Sen aipyram B2B fırsat analistsin. SERT KURALLAR:
 
 KURAL 1: Sinyalde SOMUT VERİ (sayı, yüzde, tarih, fiyat) VARSA → FIRSAT ZORLA ÜRET
   Örnek sinyal: "Polonya ev tekstili ithalatı %18 arttı"

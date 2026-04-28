@@ -74,7 +74,7 @@ export default function Contact() {
                      Heimstrasse 10<br/> CH-8953 Dietikon, Switzerland 🇨🇭
                   </div>
                   <div className="text-[10px] font-bold">+41 44 500 82 80</div>
-                  <div className="text-[10px] font-bold text-zinc-400">INFO@AIPYRAM.COM</div>
+                  <div className="text-[10px] font-bold text-zinc-400">INFO@aipyram.COM</div>
                </div>
 
                <div className="flex flex-col gap-4">

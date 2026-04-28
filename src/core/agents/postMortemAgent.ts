@@ -6,7 +6,7 @@ import { CostGuard, AGENTS_ENABLED } from "../utils/costGuard";
 import { recordMemory } from "../memory/knowledgeFlywheel";
 
 // Removed raw ai client
-const POSTMORTEM_PROMPT = `Sen AIPYRAM ekosisteminin Baş Otopsi (Post-Mortem) Ajanısın.
+const POSTMORTEM_PROMPT = `Sen aipyram ekosisteminin Baş Otopsi (Post-Mortem) Ajanısın.
 Görevin: Kaybedilen Deal'lar, başarısız Kod/Goal Engine döngüleri veya ulaşılmayan metrikler için analiz yapıp derlenmiş 'Ders' + 'Next Best Action' üretmektir.
 
 Girdi olarak başarısızlığın nedeni, bağlamı ve maliyeti verilecektir.

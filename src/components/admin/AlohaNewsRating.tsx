@@ -121,7 +121,7 @@ export default function AlohaNewsRating() {
       {/* 1. ÜST KONTROL BAR */}
       <div className="bg-[#0f0f18] border border-white/[0.08] p-4 rounded-xl flex items-center justify-between">
         <div className="flex flex-col">
-          <h2 className="text-sm font-bold text-slate-900/90">AIPYRAM Master Intelligence Terminal</h2>
+          <h2 className="text-sm font-bold text-slate-900/90">aipyram Master Intelligence Terminal</h2>
           <p className="text-[10px] text-slate-900/40">Gelecekteki on binlerce veriyi yönetin ve kontrol edin.</p>
         </div>
         

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { resolveNodeFromDomain } from '@/lib/sovereign-config';
 import { db } from '@/lib/firebase-client';
@@ -13,6 +13,13 @@ export default function DashboardPage() {
     const domain = pathname.split('/')[2];
     const node = resolveNodeFromDomain(domain);
     const { user, logout } = useSovereignAuth(node.id);
+    const router = useRouter();
+    
+    useEffect(() => {
+        if (node.id === 'icmimar') {
+            router.push(`/sites/${domain}/yonetim`);
+        }
+    }, [node.id, domain, router]);
     
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -158,7 +165,7 @@ export default function DashboardPage() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="text-white font-medium">{order.customerEmail || order.email || 'Unknown User'}</div>
-                                                    <div className="text-[10px] text-zinc-500 font-mono">{order.sellerId || 'AIPyram Vendor'}</div>
+                                                    <div className="text-[10px] text-zinc-500 font-mono">{order.sellerId || 'aipyram Vendor'}</div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded-sm ${

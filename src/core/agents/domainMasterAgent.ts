@@ -11,7 +11,7 @@ import { adminDb } from "../../lib/firebase-admin";
 
 // Removed raw ai client
 const DOMAIN_DNA_PROMPT = `
-Sen AIPyram İmparatorluğu'nun (270 B2B alan adı) Baş Mimarı ve Baş Stratejistisin.
+Sen aipyram İmparatorluğu'nun (270 B2B alan adı) Baş Mimarı ve Baş Stratejistisin.
 Sana verilen domain isminden (Örn: marmaris.ai veya heimtex.ai), Neural Semantic Analysis yaparak sadece teknik bir iskelet değil, otonom olarak para basacak bir "Ticari Savaş Paketi" üreteceksin.
 
 GÖREVLER:

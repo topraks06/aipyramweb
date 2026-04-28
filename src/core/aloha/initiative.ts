@@ -398,7 +398,7 @@ export async function updateLongTask(taskId: string, updates: Partial<{
  * 
  * Aloha her hafta TÜM Google altyapı güncellemelerini tarar:
  * Gemini, Vertex AI, Firebase, Cloud Run, Imagen, Angular, Flutter, vb.
- * AIPyram ekosistemine faydalı olanları tespit eder ve hafızasına alır.
+ * aipyram ekosistemine faydalı olanları tespit eder ve hafızasına alır.
  * 
  * ⚠️ ONAY MEKANİZMASI: Hiçbir güncelleme otomatik uygulanmaz!
  * Bulgular Firestore'a 'pending_approval' olarak yazılır.
@@ -406,7 +406,7 @@ export async function updateLongTask(taskId: string, updates: Partial<{
  * 
  * AKIŞ:
  *   1. Tüm Google altyapı haberlerini tara (web_search)
- *   2. AIPyram projelerine potansiyel etkiyi AI ile değerlendir
+ *   2. aipyram projelerine potansiyel etkiyi AI ile değerlendir
  *   3. Sonuçları aloha_tech_proposals'a 'pending_approval' olarak yaz
  *   4. Hakan'a özet sun → onay al → uygula
  */
@@ -482,8 +482,8 @@ export async function weeklyGoogleTechScan(): Promise<{
       const combinedFindings = findings.map(f => `[${f.topic}]: ${f.rawResult.substring(0, 500)}`).join('\n\n');
       
       const analysis = await alohaAI.generateJSON(
-        `Sen AIPyram ekosistemi için bir teknoloji danışmanısın.
-AIPyram: Next.js + Firebase + Gemini API + Cloud Run üzerinde çalışan 280+ domainlik B2B platform.
+        `Sen aipyram ekosistemi için bir teknoloji danışmanısın.
+aipyram: Next.js + Firebase + Gemini API + Cloud Run üzerinde çalışan 280+ domainlik B2B platform.
 Aktif projeler: TRTEX (tekstil haberleri), HOMETEX (sanal fuar), PERDE.AI (AI perde tasarımı).
 Mevcut araçlar: Gemini 2.5 Flash (içerik üretimi), Imagen 3 (görsel), Firebase Firestore (DB), Cloud Run (deploy).
 
@@ -492,7 +492,7 @@ Aşağıdaki Google Cloud güncellemelerini analiz et:
 ${combinedFindings}
 
 Her güncelleme için:
-1. AIPyram'a etkisi var mı? (high/medium/low/none)
+1. aipyram'a etkisi var mı? (high/medium/low/none)
 2. Hangi projeyi etkiler?
 3. Somut uygulama önerisi (varsa)
 

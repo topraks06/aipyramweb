@@ -70,7 +70,7 @@ export default function VorhangFooter({ basePath = '', lang = 'de' }: VorhangFoo
             &copy; {new Date().getFullYear()} Vorhang.ai Marketplace. Alle Rechte vorbehalten.
           </p>
           <p className="text-xs text-gray-500">
-            Ein Teil des AIPyram Ökosystems.
+            Ein Teil des aipyram Ökosystems.
           </p>
         </div>
       </div>

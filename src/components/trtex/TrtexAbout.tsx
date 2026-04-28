@@ -134,10 +134,10 @@ export default function TrtexAbout() {
             className="mb-16"
           >
             <h2 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-6 uppercase">
-              AIPyram Ekosistemi
+              aipyram Ekosistemi
             </h2>
             <p className="text-zinc-400 text-lg font-light max-w-2xl">
-              TRTEX, AIPyram GmbH&apos;nin dört bağımsız ama birbirine bağlı platformundan biridir.
+              TRTEX, aipyram GmbH&apos;nin dört bağımsız ama birbirine bağlı platformundan biridir.
             </p>
           </motion.div>
 
@@ -180,7 +180,7 @@ export default function TrtexAbout() {
           >
             <div className="text-[10px] uppercase tracking-[0.3em] text-zinc-600 mb-6 font-medium">Kurucu</div>
             <h3 className="text-3xl sm:text-4xl font-serif font-medium text-white mb-4">
-              AIPyram GmbH
+              aipyram GmbH
             </h3>
             <p className="text-zinc-400 text-lg font-light leading-relaxed mb-8">
               Almanya merkezli, yapay zeka destekli endüstriyel ticaret çözümleri geliştiren teknoloji şirketi.

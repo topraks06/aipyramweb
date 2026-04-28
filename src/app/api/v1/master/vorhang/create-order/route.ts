@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     await adminDb.collection('vorhang_orders').doc(orderId).set(vorhangOrder);
 
     // 3. Pazar Yeri Akıllı Yönlendirme (Order Router)
-    // Siparişi en uygun dükkana atarız ve AIPyram komisyonunu hesaplarız
+    // Siparişi en uygun dükkana atarız ve aipyram komisyonunu hesaplarız
     const routeInfo = await routeOrderToBestVendor(
       customerDetails.country || 'DE',
       totalEur,

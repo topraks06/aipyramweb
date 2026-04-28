@@ -1,8 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LayoutDashboard } from 'lucide-react';
-import RoomVisualizer from '@/components/node-perde/RoomVisualizer';
-import B2BGatekeeper from '@/components/auth/B2BGatekeeper';
 
 export const dynamic = "force-dynamic";
 
@@ -10,12 +8,23 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
   const { domain } = await params;
   
   const exactDomain = decodeURIComponent(domain).split(":")[0];
-  if (!exactDomain.includes('perde')) {
-     return <div className="p-12 text-center text-white bg-black">Access Denied. Only Perde.ai nodes can access the Visualizer.</div>;
+  if (!exactDomain.includes('perde') && !exactDomain.includes('icmimar')) {
+     return <div className="p-12 text-center text-white bg-black">Access Denied. Only perde.ai and icmimar.ai nodes can access the Visualizer.</div>;
+  }
+
+  const isIcmimar = exactDomain.includes('icmimar');
+  let GatekeeperComponent: any;
+  let VisualizerComponent: any;
+  if (isIcmimar) {
+    GatekeeperComponent = (await import('@/components/node-icmimar/auth/IcmimarGatekeeper')).default;
+    VisualizerComponent = (await import('@/components/node-icmimar/RoomVisualizer')).default;
+  } else {
+    GatekeeperComponent = (await import('@/components/auth/B2BGatekeeper')).default;
+    VisualizerComponent = (await import('@/components/node-perde/RoomVisualizer')).default;
   }
 
   return (
-    <B2BGatekeeper>
+    <GatekeeperComponent>
       <div className="flex flex-col h-screen bg-zinc-950 text-white overflow-hidden font-sans">
         
         {/* MINIMALIST TOP HEADER */}
@@ -31,7 +40,7 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
            {/* CENTER LOGO */}
            <div className="absolute left-1/2 -translate-x-1/2">
               <span className="font-serif text-2xl tracking-tight font-medium text-white">
-                PERDE.AI
+                {isIcmimar ? 'icmimar.ai' : 'perde.ai'}
               </span>
            </div>
 
@@ -46,10 +55,10 @@ export default async function VisualizerPage({ params }: { params: Promise<{ dom
 
         <main className="flex-1 overflow-auto p-0 md:p-2 relative">
           <React.Suspense fallback={<div className="text-[10px] text-zinc-500 uppercase tracking-widest text-center mt-20">Stüdyo Yükleniyor...</div>}>
-            <RoomVisualizer />
+            <VisualizerComponent />
           </React.Suspense>
         </main>
       </div>
-    </B2BGatekeeper>
+    </GatekeeperComponent>
   );
 }

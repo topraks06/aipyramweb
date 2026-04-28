@@ -42,14 +42,14 @@ export default function CurtaindesignFooter({ basePath = '/sites/curtaindesign.a
           <h4 className="text-white text-xs uppercase tracking-[0.2em] font-bold mb-4">Connect</h4>
           <div className="flex items-center gap-2 text-sm">
             <Globe className="w-4 h-4" />
-            <span>Part of the AIPyram Sovereign Ecosystem</span>
+            <span>Part of the aipyram Sovereign Ecosystem</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
         <span>© {new Date().getFullYear()} CurtainDesign.AI — All rights reserved.</span>
-        <span className="text-zinc-500">Powered by AIPyram Sovereign OS</span>
+        <span className="text-zinc-500">Powered by aipyram Sovereign OS</span>
       </div>
     </footer>
   );

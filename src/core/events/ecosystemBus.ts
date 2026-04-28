@@ -1,11 +1,11 @@
 import { EcosystemSignal, EcosystemSignalType, SignalSubscription } from './signalTypes';
 
 // ═══════════════════════════════════════════════════
-// AIPYRAM Ecosystem Bus — Cross-Node Event Communication
+// aipyram Ecosystem Bus — Cross-Node Event Communication
 // Google-Native (Firestore + In-Memory)
 // ═══════════════════════════════════════════════════
 
-class AIPyramEcosystemBus {
+class aipyramEcosystemBus {
   private subscribers: Map<EcosystemSignalType, SignalSubscription[]> = new Map();
 
   constructor() {
@@ -109,8 +109,8 @@ class AIPyramEcosystemBus {
   }
 }
 
-const globalForEcosystemBus = global as unknown as { ecosystemBus: AIPyramEcosystemBus };
-export const ecosystemBus = globalForEcosystemBus.ecosystemBus || new AIPyramEcosystemBus();
+const globalForEcosystemBus = global as unknown as { ecosystemBus: aipyramEcosystemBus };
+export const ecosystemBus = globalForEcosystemBus.ecosystemBus || new aipyramEcosystemBus();
 if (process.env.NODE_ENV !== 'production') {
   globalForEcosystemBus.ecosystemBus = ecosystemBus;
 }

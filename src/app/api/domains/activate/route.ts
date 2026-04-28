@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     // 3. ZERO-EXTERNAL DEPENDENCY ÇIKTISI (Başarı)
     return NextResponse.json({ 
-       message: "AIPyram Mühürlendi.",
+       message: "aipyram Mühürlendi.",
        domain,
        note: "Bu domainin kimliği Firestore'a 'node_configs' altına gömülmüştür. Dumb Client ilk ziyarette kimliğini giyecektir." 
     }, { status: 201 });

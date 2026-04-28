@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     } catch(e) {}
 
     const prompt = `
-Sen "Aloha Master", AIPyram Holding'in acımasız B2B CEO'susun. 
+Sen "Aloha Master", aipyram Holding'in acımasız B2B CEO'susun. 
 Müşteri şu "Niyet/Arama Sinyalini" kovan zihnine yolladı: "${query}"
 
 Senin elindeki Holding Startupları (Ajanları) Şunlardır:

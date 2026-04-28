@@ -38,7 +38,7 @@ export default function HometexFooter({ basePath = '', lang = 'tr' }: HometexFoo
             &copy; {new Date().getFullYear()} Hometex.ai. Tüm hakları saklıdır.
           </p>
           <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-600 font-medium flex items-center gap-2">
-            AIPyram Ekosistemi
+            aipyram Ekosistemi
           </p>
         </div>
       </div>

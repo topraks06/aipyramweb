@@ -17,15 +17,15 @@ export default function Ecosystem() {
              <span className="text-[10px] font-bold uppercase tracking-widest text-green-400">Harici Sistem API BaÄŸlantÄ±larÄ± Aktif</span>
           </div>
           <h1 className="font-bold text-4xl md:text-6xl mb-4 text-white uppercase tracking-tighter">
-            AIPYRAM <span className="text-zinc-600">&</span> ALOHA<br/>ENTEGRASYONU
+            aipyram <span className="text-zinc-600">&</span> ALOHA<br/>ENTEGRASYONU
           </h1>
           <h2 className="text-xl md:text-2xl text-zinc-400 font-light mb-6 flex items-center gap-3">
              <Cpu className="w-6 h-6 text-blue-500" />
              İcmimar.ai "GÃ¶rsel Hizmet AjanÄ±" Durumu
           </h2>
           <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest leading-loose">
-            AIPYRAM (ANA MERKEZ BEYÄ°N) VE ALOHA (GENEL MÃœDÃœR) ÅU ANDA YAYINDA VE AKTÄ°FTÄ°R. TRTEX VE HOMETEX KENDÄ° OTONOM SÄ°STEMLERÄ°NDE Ã‡ALIÅIR. 
-            ICMIMAR.AI Ä°SE BU DEVASA EKOSÄ°STEMÄ°N "GÃ–RSEL ÃœRETÄ°M AJANI"DIR. DIÅ SÄ°STEMLER, Ä°HTÄ°YAÃ‡ DUYDUKLARINDA ICMIMAR.AI API'SÄ°NE BAÄLANIR, GÃ–RSELLERÄ°NÄ° ÃœRETÄ°R VE Ã‡EKERLER.
+            aipyram (ANA MERKEZ BEYÄ°N) VE ALOHA (GENEL MÃœDÃœR) ÅU ANDA YAYINDA VE AKTÄ°FTÄ°R. TRTEX VE HOMETEX KENDÄ° OTONOM SÄ°STEMLERÄ°NDE Ã‡ALIÅIR. 
+            icmimar.ai Ä°SE BU DEVASA EKOSÄ°STEMÄ°N "GÃ–RSEL ÃœRETÄ°M AJANI"DIR. DIÅ SÄ°STEMLER, Ä°HTÄ°YAÃ‡ DUYDUKLARINDA icmimar.ai API'SÄ°NE BAÄLANIR, GÃ–RSELLERÄ°NÄ° ÃœRETÄ°R VE Ã‡EKERLER.
           </p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function Ecosystem() {
           </CardContent>
         </Card>
 
-        {/* LOCAL NODE: ICMIMAR.AI */}
+        {/* LOCAL NODE: icmimar.ai */}
         <Card className="bg-zinc-950 border-white/5 overflow-hidden group hover:border-[#8B7355]/50 transition-colors relative">
           <div className="absolute top-4 right-4 animate-pulse">
              <span className="flex h-3 w-3 relative">
@@ -97,7 +97,7 @@ export default function Ecosystem() {
             <div className="w-12 h-12 bg-[#8B7355]/10 rounded-2xl flex items-center justify-center mb-6 text-[#8B7355] group-hover:scale-110 transition-transform">
               <Store className="h-6 w-6" />
             </div>
-            <CardTitle className="text-2xl font-bold tracking-tight uppercase text-white">ICMIMAR.AI</CardTitle>
+            <CardTitle className="text-2xl font-bold tracking-tight uppercase text-white">icmimar.ai</CardTitle>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mt-1 mb-4">GÃ¶rsel Ä°ÅŸleme AjanÄ± (API)</p>
             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
               GeÃ§erli sistem. Hem bayilerin kendi perdelerini simÃ¼le etmesini saÄŸlar (Room Visualizer), hem de arka planda TRTEX ve HOMETEX'in tÃ¼m gÃ¶rsel API sorgularÄ±na yanÄ±t Ã¼retir.

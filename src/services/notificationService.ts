@@ -41,7 +41,7 @@ const BRAND_ROUTER: Record<string, SovereignNodeConfig> = {
   "trtex.com": { logo: "TRTEX B2B", primaryColor: "#10b981", bgHex: "#050505", tone: "Yüksek Yoğunluklu Ticari İstihbarat (Reuters Stili)" },
   "didimemlak.ai": { logo: "DIDIM PREMIUM", primaryColor: "#0ea5e9", bgHex: "#111827", tone: "Premium Yatırım & Güvenilir Escrow" },
   "vorhang.ai": { logo: "VORHANG B2B", primaryColor: "#D4AF37", bgHex: "#ffffff", tone: "Alman Standartları & Şeffaf B2B Ticaret" },
-  "aipyram-core": { logo: "AIPYRAM COMMAND", primaryColor: "#ef4444", bgHex: "#000000", tone: "Askeri Disiplin & Master Node Raporu" }
+  "aipyram-core": { logo: "aipyram COMMAND", primaryColor: "#ef4444", bgHex: "#000000", tone: "Askeri Disiplin & Master Node Raporu" }
 };
 
 export class NotificationService {
@@ -79,7 +79,7 @@ export class NotificationService {
       this.triggerEscalationLadder(payload?.rfqId, ROLES.MASTER.phone, ROLES.MASTER.email, payload?.companyName, magicLink);
 
       // Kademe 1: Kritik WhatsApp Vuruşu
-      const waMsg = `⚠️ [${BRAND_ROUTER[node]?.logo || 'AIPYRAM'}]\n\nMASTER ONAY BEKLENIYOR\nFirma: ${payload?.companyName}\nGüven: ${payload?.trustScore}\n\nTek Tıkla Kaporayı Kilitle (Şifresiz):\n${magicLink}\n\n(Link 15 dk geçerlidir)`;
+      const waMsg = `⚠️ [${BRAND_ROUTER[node]?.logo || 'aipyram'}]\n\nMASTER ONAY BEKLENIYOR\nFirma: ${payload?.companyName}\nGüven: ${payload?.trustScore}\n\nTek Tıkla Kaporayı Kilitle (Şifresiz):\n${magicLink}\n\n(Link 15 dk geçerlidir)`;
       await this.sendWhatsApp(ROLES.MASTER.phone, waMsg, node);
     });
 
@@ -89,7 +89,7 @@ export class NotificationService {
         `<p style="color:red">Otonom sistem, zararlı aktivite veya maliyet aşımı nedeniyle kilitlendi!</p>
          <p>Hata Detayı: ${event.payload?.reason}</p>`
       );
-      await this.sendEmail(ROLES.ENGINEER.email, `🔴 AIPyram Güvenlik Duvarı İhlali`, htmlBody, "critical", "aipyram-core");
+      await this.sendEmail(ROLES.ENGINEER.email, `🔴 aipyram Güvenlik Duvarı İhlali`, htmlBody, "critical", "aipyram-core");
       await this.sendWhatsApp(ROLES.ENGINEER.phone, `🔴 KIRMZII ALARM: Sistem çökmek üzere. Terminale geç.`, "aipyram-core");
     });
 
@@ -180,7 +180,7 @@ export class NotificationService {
   }
 
   static async sendEmail(to: string, subject: string, bodyHtml: string, priority: "normal" | "critical" = "normal", SovereignNodeId = "aipyram-core") {
-    const fromName = `${BRAND_ROUTER[SovereignNodeId]?.logo || 'AIPYRAM'}`;
+    const fromName = `${BRAND_ROUTER[SovereignNodeId]?.logo || 'aipyram'}`;
     const mailSubject = priority === "critical" ? `[ACİL] ${subject}` : subject;
 
     if (this.resend) {

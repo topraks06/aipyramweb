@@ -24,7 +24,7 @@ export default function PerdeOrdersTable() {
             return {
               docId: doc.id,
               id: doc.id.substring(0, 8),
-              customer: raw.customerEmail || raw.email || "AIPyram User",
+              customer: raw.customerEmail || raw.email || "aipyram User",
               amount: raw.amount || raw.total || 0,
               status: raw.status || "s1",
               date: raw.createdAt ? new Date(raw.createdAt).toISOString().split('T')[0] : "N/A"

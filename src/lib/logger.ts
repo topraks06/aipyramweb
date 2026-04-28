@@ -12,7 +12,7 @@ interface LogEntry {
 }
 
 /**
- * AIPyram Centralized Logging System
+ * aipyram Centralized Logging System
  * Ensures observability for the autonomous ecosystem.
  * Errors are persisted to Firestore `system_logs` collection.
  */

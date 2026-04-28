@@ -1,5 +1,5 @@
 import { EventBus } from '../events/eventBus';
-import { AIPyramEvent } from '../events/eventTypes';
+import { aipyramEvent } from '../events/eventTypes';
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
@@ -25,7 +25,7 @@ class HometexAgent {
     console.log('[🛋️ Hometex Agent] EventBus bağlandı. Brand DNA Yüklendi.');
   }
 
-  private async handleNewTrend(event: AIPyramEvent) {
+  private async handleNewTrend(event: aipyramEvent) {
     if (event.source === 'agent' || event.source === 'hometex') return;
     console.log(`[AGENT] Hometex Pipeline Tetiklendi. Konu: ${event.payload?.trend}`);
 
@@ -148,8 +148,8 @@ class HometexAgent {
       hero: {
         titleTr: ['YAPAY ZEKA', 'OTONOM', 'FUAR'],
         titleEn: ['AI DRIVEN', 'AUTONOMOUS', 'FAIR'],
-        subtitleTr: `AIPyram Editorial Bot: Lüks pazar standartlarında "${signal}" teması işleniyor.`,
-        subtitleEn: `AIPyram Editorial Bot curating the "${signal}" theme for luxury markets.`
+        subtitleTr: `aipyram Editorial Bot: Lüks pazar standartlarında "${signal}" teması işleniyor.`,
+        subtitleEn: `aipyram Editorial Bot curating the "${signal}" theme for luxury markets.`
       },
       trends: [
         { id: 't1', topicTr: 'Minimalizm', topicEn: 'Minimalism', descTr: 'Mekansal arınma.', descEn: 'Spatial purification.' },
@@ -212,7 +212,7 @@ class HometexAgent {
       },
       fairs: [],
       showrooms: [ 
-        { id: 's1', name: 'AIPyram SuperNode', location: 'Virtual Hub', is_featured: true },
+        { id: 's1', name: 'aipyram SuperNode', location: 'Virtual Hub', is_featured: true },
         { id: 's2', name: 'Zeka Düğümleri', location: 'Digital', is_featured: false }
       ]
     };

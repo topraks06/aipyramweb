@@ -12,7 +12,7 @@ export default function HometexPrivacy() {
         <div className="prose prose-invert prose-lg max-w-none">
           <p className="text-zinc-400 font-light leading-relaxed mb-6">
             Hometex.ai olarak kişisel ve kurumsal verilerinizin güvenliğine önem veriyoruz. Bu gizlilik politikası, 
-            AIPyram platformu üzerinden toplanan verilerin nasıl işlendiğini açıklar.
+            aipyram platformu üzerinden toplanan verilerin nasıl işlendiğini açıklar.
           </p>
           <h2 className="text-2xl font-serif text-white mt-10 mb-4 uppercase tracking-widest text-sm">Veri Toplama</h2>
           <p className="text-zinc-400 font-light leading-relaxed mb-6">

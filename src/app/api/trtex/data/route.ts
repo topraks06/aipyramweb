@@ -83,7 +83,7 @@ export async function GET(req: Request) {
       live_ticker: recentNews.map(n => ({ category: n.category, text: n.title })),
       daily_insight: {
         headline: recentSignals[0]?.translations?.TR?.title || recentSignals[0]?.title || "Market Analytics",
-        summary: recentSignals[0]?.ai_insight || recentSignals[0]?.translations?.TR?.summary || recentSignals[0]?.summary || "AIPyram analiz verisi bekleniyor."
+        summary: recentSignals[0]?.ai_insight || recentSignals[0]?.translations?.TR?.summary || recentSignals[0]?.summary || "aipyram analiz verisi bekleniyor."
       }
     };
 

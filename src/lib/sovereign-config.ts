@@ -1,5 +1,5 @@
 /**
- * AIPyram Sovereign node Configuration
+ * aipyram Sovereign node Configuration
  * 
  * TEK KAYNAK (SSoT) — Tüm node bilgileri buradan okunur.
  * ALOHA, auth, middleware, UI hepsi bu config'i kullanır.
@@ -63,12 +63,12 @@ export interface SovereignNodeConfig {
 
 export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
 
-  // ─── ICMIMAR.AI (MASTER DESIGN & ERP) ────────────
+  // ─── icmimar.ai (MASTER DESIGN & ERP) ────────────
   icmimar: {
     id: 'icmimar',
     domain: 'icmimar.ai',
-    name: 'İcmimar.AI Master Design Engine & ERP',
-    shortName: 'ICMIMAR.AI',
+    name: 'icmimar.ai Master Design Engine & ERP',
+    shortName: 'icmimar.ai',
     memberCollection: 'icmimar_members',
     newsCollection: 'icmimar_news',
     projectCollection: 'icmimar_orders',

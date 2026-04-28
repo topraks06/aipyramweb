@@ -22,7 +22,7 @@ export default function VorhangContact() {
                 <MapPin className="w-6 h-6 text-[#D4AF37] shrink-0" />
                 <div>
                   <h3 className="font-bold uppercase tracking-widest text-xs mb-1">Hauptsitz</h3>
-                  <p className="text-gray-500 text-sm">AIPyram Technologies GmbH<br/>Friedrichstraße 123<br/>10117 Berlin, Deutschland</p>
+                  <p className="text-gray-500 text-sm">aipyram Technologies GmbH<br/>Friedrichstraße 123<br/>10117 Berlin, Deutschland</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">

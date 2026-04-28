@@ -59,9 +59,9 @@ export default function CurtaindesignAbout({ basePath = '/sites/curtaindesign.ai
           <div className="border-t border-zinc-200 pt-16">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="font-serif text-3xl tracking-tight mb-6">Part of AIPyram Ecosystem</h2>
+                <h2 className="font-serif text-3xl tracking-tight mb-6">Part of aipyram Ecosystem</h2>
                 <p className="text-zinc-500 text-sm font-light leading-relaxed mb-4">
-                  CurtainDesign.ai is a node within the AIPyram Sovereign Ecosystem — a network of AI-powered platforms spanning trade intelligence, design tools, and virtual showrooms.
+                  CurtainDesign.ai is a node within the aipyram Sovereign Ecosystem — a network of AI-powered platforms spanning trade intelligence, design tools, and virtual showrooms.
                 </p>
                 <p className="text-zinc-500 text-sm font-light leading-relaxed">
                   Our sister platforms include Perde.ai (Turkey), Vorhang.ai (DACH), Hometex.ai (Virtual Fair), and Heimtex.ai (Trend Magazine). Together, we represent the most comprehensive textile technology network in the world.

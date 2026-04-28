@@ -73,7 +73,7 @@ export default function LeadIntelligencePanel() {
       <div className="w-full mx-auto">
         <header className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-4">
           <div>
-            <div className="text-[10px] font-mono tracking-[0.3em] uppercase text-red-500 mb-1">AIPyram B2B Deal Engine</div>
+            <div className="text-[10px] font-mono tracking-[0.3em] uppercase text-red-500 mb-1">aipyram B2B Deal Engine</div>
             <h1 className="text-2xl font-black tracking-tighter uppercase">Deal Pipeline</h1>
           </div>
           <div className="flex items-center gap-4 text-[10px] font-mono tracking-widest text-slate-500">

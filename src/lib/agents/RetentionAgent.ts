@@ -64,7 +64,7 @@ export async function triggerFollowUp(SovereignNodeId: string): Promise<{ proces
         `Sizin için hazırladığımız teklifi inceleme fırsatınız oldu mu?`,
         `Sorularınız varsa bize ulaşabilirsiniz.`,
         ``,
-        `AIPyram B2B Takip Sistemi`
+        `aipyram B2B Takip Sistemi`
       ].join('\n');
 
       const waResult = await sendMessage(SovereignNodeId, quote.customerPhone, followUpMessage, quote.id);

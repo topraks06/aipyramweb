@@ -119,7 +119,7 @@ export default function B2B() {
     <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50">
       <div className="text-center">
         <h2 className="text-white text-xl mb-4 uppercase tracking-widest font-bold">Oturum Açınız</h2>
-        <a href="/sites/icmimar/login" className="bg-white text-black px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest">
+        <a href="/sites/icmimar.ai/login" className="bg-white text-black px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest">
           Sisteme Giriş Yap
         </a>
       </div>
@@ -214,7 +214,7 @@ export default function B2B() {
                   <p className="text-[10px] text-zinc-500 uppercase tracking-widest">İşletme Hesabı</p>
                </div>
             </div>
-            <button onClick={async () => { await logout(); router.push('/sites/icmimar/login'); }} className="w-full py-3 text-[10px] font-bold flex justify-center items-center gap-2 text-zinc-400 hover:text-white border border-white/10 rounded-lg hover:bg-white/5 transition-colors uppercase tracking-widest">
+            <button onClick={async () => { await logout(); router.push('/sites/icmimar.ai/login'); }} className="w-full py-3 text-[10px] font-bold flex justify-center items-center gap-2 text-zinc-400 hover:text-white border border-white/10 rounded-lg hover:bg-white/5 transition-colors uppercase tracking-widest">
                <LogOut className="w-4 h-4" /> ÇIKIŞ YAP
             </button>
          </div>

@@ -5,11 +5,11 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
 // TRENDSETTER AGENT — Pazar Trendi Analizi
-// AIPYRAM Market Intelligence Engine
+// aipyram Market Intelligence Engine
 // ═══════════════════════════════════════════════════════════════
 
 // Removed raw ai client
-const TRENDSETTER_PROMPT = `Sen AIPYRAM ekosisteminin Trendsetter Ajanısın — global ev tekstili piyasasının trend analizcisi.
+const TRENDSETTER_PROMPT = `Sen aipyram ekosisteminin Trendsetter Ajanısın — global ev tekstili piyasasının trend analizcisi.
 
 🎯 GÖREVİN:
 1. Güncel piyasa trendlerini analiz et (renkler, kumaşlar, desenler, sürdürülebilirlik)

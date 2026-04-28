@@ -674,7 +674,7 @@ export default function RoomVisualizer() {
                                                   reader.onload = async (re) => {
                                                       const base64 = re.target?.result as string;
 
-                                                      // FAZ 3: AIPyram Brain Zero-Duplication Kumaş Hafızası
+                                                      // FAZ 3: aipyram Brain Zero-Duplication Kumaş Hafızası
                                                       let physicsValue = 'auto';
                                                       try {
                                                           const res = await fetch('/api/brain/v1/fabric-memory', {
@@ -688,7 +688,7 @@ export default function RoomVisualizer() {
                                                             if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache' });
                                                           }
                                                       } catch (e) {
-                                                          console.error('[AIPyram Brain] Bağlantı hatası', e);
+                                                          console.error('[aipyram Brain] Bağlantı hatası', e);
                                                       }
 
                                                       const newAtt = {
@@ -721,7 +721,7 @@ export default function RoomVisualizer() {
                                               reader.onload = async (re) => {
                                                   const base64 = re.target?.result as string;
 
-                                                  // FAZ 3: AIPyram Brain Zero-Duplication Kumaş Hafızası
+                                                  // FAZ 3: aipyram Brain Zero-Duplication Kumaş Hafızası
                                                   let physicsValue = 'auto';
                                                   try {
                                                       const res = await fetch('/api/brain/v1/fabric-memory', {
@@ -735,7 +735,7 @@ export default function RoomVisualizer() {
                                                         if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache_drop' });
                                                       }
                                                   } catch (e) {
-                                                      console.error('[AIPyram Brain] Bağlantı hatası', e);
+                                                      console.error('[aipyram Brain] Bağlantı hatası', e);
                                                   }
 
                                                   const newAtt = {

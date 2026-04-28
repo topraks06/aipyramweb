@@ -16,7 +16,7 @@ export async function generateMetadata({
   const config = getNodeConfig(domain);
 
   if (!config) {
-    return { title: "AIPyram" };
+    return { title: "aipyram" };
   }
 
   return {
@@ -49,7 +49,7 @@ export async function generateMetadata({
  */
 function NodeJsonLd({ domain }: { domain: string }) {
   const config = getNodeConfig(domain);
-  const nodeName = config?.shortName || "AIPyram";
+  const nodeName = config?.shortName || "aipyram";
 
   if (!config) return null;
 
@@ -63,7 +63,7 @@ function NodeJsonLd({ domain }: { domain: string }) {
     logo: "",
     parentOrganization: {
       "@type": "Organization",
-      name: "AIPyram Technologies",
+      name: "aipyram Technologies",
       url: "https://aipyram.com",
     },
   };

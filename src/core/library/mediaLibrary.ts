@@ -1,7 +1,7 @@
 import { adminDb } from '@/lib/firebase-admin';
 
 /**
- * AIPYRAM MERKEZ KÜTÜPHANE (SOVEREIGN MEDIA LIBRARY)
+ * aipyram MERKEZ KÜTÜPHANE (SOVEREIGN MEDIA LIBRARY)
  * 
  * Tüm projelerdeki (TRTEX, Perde.ai, Hometex.ai) görseller ve haberler
  * burada merkezi olarak kaydedilir. HİÇBİR ŞEY SİLİNMEZ.

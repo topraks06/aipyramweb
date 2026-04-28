@@ -11,7 +11,7 @@ export default function HometexTerms() {
         <h1 className="text-5xl font-serif mb-12 uppercase tracking-tighter">Kullanım Koşulları</h1>
         <div className="prose prose-invert prose-lg max-w-none">
           <p className="text-zinc-400 font-light leading-relaxed mb-6">
-            AIPyram ekosisteminin bir parçası olan Hometex.ai platformunu kullanarak aşağıdaki şartları kabul etmiş sayılırsınız.
+            aipyram ekosisteminin bir parçası olan Hometex.ai platformunu kullanarak aşağıdaki şartları kabul etmiş sayılırsınız.
           </p>
           <h2 className="text-2xl font-serif text-white mt-10 mb-4 uppercase tracking-widest text-sm">Hizmet Kullanımı</h2>
           <p className="text-zinc-400 font-light leading-relaxed mb-6">

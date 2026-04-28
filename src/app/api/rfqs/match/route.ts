@@ -5,7 +5,7 @@ import { initializePipeline } from "@/core/aloha/rfq-pipeline";
 
 // ═══════════════════════════════════════════════════════════════
 // POST /api/rfqs/match — RFQ → Tam Otonom Ajan Zinciri (A2A Pipeline)
-// AIPYRAM Revenue Engine — Komisyon Motoru
+// aipyram Revenue Engine — Komisyon Motoru
 // ═══════════════════════════════════════════════════════════════
 
 export const dynamic = "force-dynamic";

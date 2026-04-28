@@ -18,7 +18,7 @@ export default function VorhangAbout() {
             Der digitale Maßstab für <br/><span className="italic text-gray-500">B2B Heimtextilien</span>
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
-            Vorhang.ai, betrieben von der AIPyram GmbH (Dietikon, Schweiz), ist der führende KI-gesteuerte B2B-Marktplatz für Vorhänge und Heimtextilien im deutschsprachigen Raum (DACH). Wir verbinden europäische Einkäufer direkt mit globalen Premium-Herstellern.
+            Vorhang.ai, betrieben von der aipyram GmbH (Dietikon, Schweiz), ist der führende KI-gesteuerte B2B-Marktplatz für Vorhänge und Heimtextilien im deutschsprachigen Raum (DACH). Wir verbinden europäische Einkäufer direkt mit globalen Premium-Herstellern.
           </p>
         </section>
 
@@ -29,14 +29,14 @@ export default function VorhangAbout() {
               <ShieldCheck className="w-8 h-8 text-black mb-6" />
               <h3 className="text-2xl font-serif mb-4">Schweizer Zuverlässigkeit</h3>
               <p className="text-gray-600 leading-relaxed">
-                Als in der Schweiz ansässiges Unternehmen (AIPyram GmbH) garantieren wir höchste Standards bei Datensicherheit, Treuhandzahlungen (Smart Escrow) und transparenter B2B-Vertragsabwicklung für den gesamten DACH-Markt.
+                Als in der Schweiz ansässiges Unternehmen (aipyram GmbH) garantieren wir höchste Standards bei Datensicherheit, Treuhandzahlungen (Smart Escrow) und transparenter B2B-Vertragsabwicklung für den gesamten DACH-Markt.
               </p>
             </div>
             <div className="bg-white p-10 border border-gray-200 shadow-sm rounded-xl">
               <TrendingUp className="w-8 h-8 text-black mb-6" />
               <h3 className="text-2xl font-serif mb-4">KI-Rendering Technologie</h3>
               <p className="text-gray-600 leading-relaxed">
-                Vorhang.ai nutzt die leistungsstarke "Perde.ai Engine" des AIPyram-Ökosystems. Einkäufer können Stoffe in fotorealistischen 3D-Räumen visualisieren, noch bevor ein physisches Muster bestellt wird – das spart Zeit und Ressourcen.
+                Vorhang.ai nutzt die leistungsstarke "Perde.ai Engine" des aipyram-Ökosystems. Einkäufer können Stoffe in fotorealistischen 3D-Räumen visualisieren, noch bevor ein physisches Muster bestellt wird – das spart Zeit und Ressourcen.
               </p>
             </div>
             <div className="bg-white p-10 border border-gray-200 shadow-sm rounded-xl">
@@ -48,9 +48,9 @@ export default function VorhangAbout() {
             </div>
             <div className="bg-white p-10 border border-gray-200 shadow-sm rounded-xl">
               <Target className="w-8 h-8 text-black mb-6" />
-              <h3 className="text-2xl font-serif mb-4">Teil des AIPyram Ökosystems</h3>
+              <h3 className="text-2xl font-serif mb-4">Teil des aipyram Ökosystems</h3>
               <p className="text-gray-600 leading-relaxed">
-                Vorhang.ai ist der dedizierte Knotenpunkt für Deutschland, Österreich und die Schweiz innerhalb des AIPyram Sovereign OS. Unsere Händler profitieren von Markttrends (Heimtex.ai) und dem Zugang zum globalen Lieferantennetzwerk (TRTex.com).
+                Vorhang.ai ist der dedizierte Knotenpunkt für Deutschland, Österreich und die Schweiz innerhalb des aipyram Sovereign OS. Unsere Händler profitieren von Markttrends (Heimtex.ai) und dem Zugang zum globalen Lieferantennetzwerk (TRTex.com).
               </p>
             </div>
           </div>

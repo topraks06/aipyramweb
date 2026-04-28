@@ -5,11 +5,11 @@ export async function GET(request: Request) {
     {
       id: 'AIPYRAM_VENDOR_HQ',
       slug: 'aipyram-textile',
-      name: 'AIPyram Vision',
+      name: 'aipyram Vision',
       category: 'Home Textile',
       hall: 'Hall 3',
       booth: 'B45',
-      companyName: 'AIPyram GmbH',
+      companyName: 'aipyram GmbH',
       country: 'CH',
       isVerified: true,
       avatarUrl: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&q=80',

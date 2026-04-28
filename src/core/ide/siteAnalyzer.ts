@@ -15,7 +15,7 @@ export async function analyzeSite(url: string): Promise<SiteAnalysisResult> {
     const response = await axios.get(url, {
       timeout: 10000,
       headers: {
-        'User-Agent': 'AIPyram-Commander-Bot/1.0'
+        'User-Agent': 'aipyram-Commander-Bot/1.0'
       }
     });
 

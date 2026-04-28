@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
   
   return {
     title: `Yönetim Paneli | ${node.shortName} Ekosistemi`,
-    description: `AIPyram Sovereign B2B Yönetim Merkezi - ${node.name}`,
+    description: `aipyram Sovereign B2B Yönetim Merkezi - ${node.name}`,
   };
 }
 

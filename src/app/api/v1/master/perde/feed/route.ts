@@ -32,7 +32,7 @@ async function runVisionary(raw: any, mode: string) {
 
   try {
     const prompt = `
-      You are AIPYRAM Visionary Editorial Agent for PERDE.AI (3D Rendering Studio).
+      You are aipyram Visionary Editorial Agent for PERDE.AI (3D Rendering Studio).
       Based on this raw signal: ${raw.rawSignal}
       Generate 2 3D rendering design trends for curtains and an overarching aesthetic style.
       Output pure JSON with no markdown: {"verifiedTrends": [{"id": "p1", "topic": "Trend Name", "confidence": 0.99}], "creativeStyle": "Aesthetic Style"}
@@ -66,8 +66,8 @@ function formatForUI(reality: any) {
     hero: {
       titleTr: ['PERDE.AI', 'OTONOM', 'STÜDYO'],
       titleEn: ['PERDE.AI', 'AUTONOMOUS', 'STUDIO'],
-      subtitleTr: `AIPyram Render Bot: "${reality.creativeStyle}" ortamı için sanal numune üretiliyor.`,
-      subtitleEn: `AIPyram Render Bot generating virtual samples for "${reality.creativeStyle}" environment.`,
+      subtitleTr: `aipyram Render Bot: "${reality.creativeStyle}" ortamı için sanal numune üretiliyor.`,
+      subtitleEn: `aipyram Render Bot generating virtual samples for "${reality.creativeStyle}" environment.`,
       image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1600&q=80'
     },
     trends: {
@@ -95,8 +95,8 @@ function formatForUI(reality: any) {
       items: [
         {
           id: 'c1',
-          name_tr: 'AIPyram Minimalist Salon',
-          name_en: 'AIPyram Minimalist Living',
+          name_tr: 'aipyram Minimalist Salon',
+          name_en: 'aipyram Minimalist Living',
           ai_commentary_tr: 'Render süresi: 4.2 saniye. Çok yüksek satış dönüşüm skoru.',
           ai_commentary_en: 'Render time: 4.2 seconds. Very high conversion score.',
           trend_score: 99,
@@ -118,7 +118,7 @@ export async function GET(request: Request) {
   // 5. API GUARD
   const apiKey = request.headers.get('x-api-key');
   if (apiKey !== "hometex-neural-secure-token-2026" && apiKey !== process.env.AIPYRAM_SECRET_KEY && process.env.NODE_ENV === "production") {
-    return NextResponse.json({ success: false, error: 'Unauthorized AIPYRAM Nexus Access' }, { status: 401 });
+    return NextResponse.json({ success: false, error: 'Unauthorized aipyram Nexus Access' }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -130,7 +130,7 @@ export async function GET(request: Request) {
       success: true,
       data: editorialCache.data,
       meta: {
-        generated_by: 'AIPyram Visionary Agent',
+        generated_by: 'aipyram Visionary Agent',
         mode: mode,
         timestamp: editorialCache.timestamp,
         cached: true
@@ -155,7 +155,7 @@ export async function GET(request: Request) {
     success: true,
     data: editorialFormat,
     meta: {
-      generated_by: 'AIPyram Visionary Agent',
+      generated_by: 'aipyram Visionary Agent',
       mode: mode,
       timestamp: editorialCache.timestamp,
       cached: false

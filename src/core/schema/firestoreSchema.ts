@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM FIRESTORE SCHEMA — B2B Revenue Engine Collections
+// aipyram FIRESTORE SCHEMA — B2B Revenue Engine Collections
 // ═══════════════════════════════════════════════════════════════
 //
 // Bu dosya Firestore'daki koleksiyonların yapısını belgeliyor.

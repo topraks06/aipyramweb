@@ -497,7 +497,7 @@ export const alohaAI = {
         config: {
           contents: [{ role: 'user', parts: [{ text: systemInstruction }] }],
           displayName,
-          systemInstruction: 'Sen AIPyram ekosisteminin otonom AI CTO\'susun. Bu bilgi tabanini referans olarak kullan.',
+          systemInstruction: 'Sen aipyram ekosisteminin otonom AI CTO\'susun. Bu bilgi tabanini referans olarak kullan.',
           ttl: '3600s',
         }
       });

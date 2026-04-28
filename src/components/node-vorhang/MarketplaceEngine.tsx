@@ -58,7 +58,7 @@ export default function MarketplaceEngine() {
             </div>
             <h3 className="text-sm font-bold text-slate-800 mb-1">B2B Escrow Aktif</h3>
             <p className="text-xs text-slate-500 max-w-[220px] mb-4">
-              ALOHA "Yemeksepeti" modeli devrede. Para AIPyram havuzuna iner, %10 komisyon kesilip üreticiye hak ediş yazılır.
+              ALOHA "Yemeksepeti" modeli devrede. Para aipyram havuzuna iner, %10 komisyon kesilip üreticiye hak ediş yazılır.
             </p>
             <div className="w-full max-w-[250px] p-3 border border-indigo-100 bg-white rounded-lg shadow-sm flex flex-col gap-2">
               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-left">Hızlı Ödeme Linki Üret</div>

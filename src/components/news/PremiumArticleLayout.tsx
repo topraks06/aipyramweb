@@ -242,7 +242,7 @@ export default function PremiumArticleLayout({
         {executiveSummary && Array.isArray(executiveSummary) && executiveSummary.length > 0 && executiveSummary.some((i: string) => i.trim() !== '') && (
           <div className="ai-insight-box">
              <div style={{ fontSize: '0.75rem', fontWeight: 900, letterSpacing: '2px', marginBottom: '1rem', textTransform: 'uppercase', color: '#6B7280' }}>
-               AIPyram Insight
+               aipyram Insight
              </div>
              <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#111', fontWeight: 500 }}>
                {executiveSummary.map((item: string, i: number) => item.trim() && (
@@ -513,7 +513,7 @@ export default function PremiumArticleLayout({
             ) : (
               <form onSubmit={handleLeadSubmit}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 900, color: '#CC0000', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  AIPyram B2B Network
+                  aipyram B2B Network
                 </div>
                 <h3 style={{ fontSize: '1.4rem', fontFamily: "'Inter', sans-serif", fontWeight: 800, color: '#111', marginBottom: '2rem' }}>
                   {lang === 'tr' ? 'Global Tedarik Ağına Katılın' : 'Join Global Supply Network'}

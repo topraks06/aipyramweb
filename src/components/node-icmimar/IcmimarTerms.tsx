@@ -14,7 +14,7 @@ export default function IcmimarTerms() {
          <div className="flex items-center gap-4 mb-10">
            <div className="h-[1px] w-12 bg-[#8B7355]"></div>
            <span className="text-[#8B7355] uppercase tracking-[0.4em] text-[10px] font-bold">
-             AIPYRAM GMBH
+             aipyram GMBH
            </span>
          </div>
          
@@ -24,7 +24,7 @@ export default function IcmimarTerms() {
 
          <div className="bg-white p-8 md:p-12 border border-[#111]/10 shadow-sm mb-12">
             <p className="text-zinc-500 font-medium leading-relaxed">
-               Bu sözleşme, İcmimar.AI tarafından sunulan Bulut ERP, Smart Visualizer (WebGL Render) ve REST API hizmetlerinin B2B ticari kullanımı için geçerli olan sınırlamaları ve yükümlülükleri belirler. Hizmetlerimizi kullanarak bu şartları şirketiniz adına yasal olarak kabul etmiş sayılırsınız.
+               Bu sözleşme, icmimar.ai tarafından sunulan Bulut ERP, Smart Visualizer (WebGL Render) ve REST API hizmetlerinin B2B ticari kullanımı için geçerli olan sınırlamaları ve yükümlülükleri belirler. Hizmetlerimizi kullanarak bu şartları şirketiniz adına yasal olarak kabul etmiş sayılırsınız.
             </p>
          </div>
 
@@ -35,7 +35,7 @@ export default function IcmimarTerms() {
                <div>
                   <h3 className="font-serif text-2xl text-[#111] mb-3">1. Lisanslama ve Fikri Mülkiyet</h3>
                   <p className="text-zinc-500 font-medium leading-relaxed">
-                     Platform üzerinden oluşturulan 3D Render ve PDF fatura çıktıları, lisans süreniz boyunca firmanızın ticari kullanımına aittir. Ancak &quot;İcmimar.AI&quot; render motoru yapısı, arayüz kodları, yapay zeka ağırlıkları ve &quot;Smart Visualizer&quot; marka hakları tamamen İsviçre merkezli Aipyram GmbH şirketine aittir. Reverse-engineering veya sistemin kopyalanması kesinlikle yasaktır.
+                     Platform üzerinden oluşturulan 3D Render ve PDF fatura çıktıları, lisans süreniz boyunca firmanızın ticari kullanımına aittir. Ancak &quot;icmimar.ai&quot; render motoru yapısı, arayüz kodları, yapay zeka ağırlıkları ve &quot;Smart Visualizer&quot; marka hakları tamamen İsviçre merkezli Aipyram GmbH şirketine aittir. Reverse-engineering veya sistemin kopyalanması kesinlikle yasaktır.
                   </p>
                </div>
             </div>

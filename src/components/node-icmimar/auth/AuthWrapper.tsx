@@ -40,7 +40,7 @@ export default function AuthWrapper({ children, title, subtitle, basePath = '/si
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-semibold">Ana Sayfa</span>
           </Link>
-          <span className="font-serif text-lg tracking-tight text-zinc-900 font-medium">ICMIMAR.AI</span>
+          <span className="font-serif text-lg tracking-tight text-zinc-900 font-medium">icmimar.ai</span>
         </div>
 
         <div className="w-full max-w-[420px] space-y-8">
@@ -58,7 +58,7 @@ export default function AuthWrapper({ children, title, subtitle, basePath = '/si
           {/* Alt Bilgi */}
           <div className="text-center space-y-3">
             <p className="text-[10px] text-zinc-400 uppercase tracking-[0.15em]">
-              İcmimar.ai — AIPyram GmbH Ekosistemi
+              İcmimar.ai — aipyram GmbH Ekosistemi
             </p>
           </div>
         </div>

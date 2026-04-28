@@ -39,7 +39,7 @@ export interface MasterAgentResponse {
 }
 
 const getMasterPrompt = async (projectName: string) => `
-You are the central intelligence system of AIPYRAM.
+You are the central intelligence system of aipyram.
 Your role is to autonomously manage, produce, validate, and distribute content and data for connected platforms.
 You do NOT wait for instructions. You operate continuously based on signals, schedules, and system state.
 
@@ -169,7 +169,7 @@ const responseSchema: Schema = {
 };
 
 /**
- * AIPYRAM MASTER EXECUTION (v2.0 — Retry + Fallback)
+ * aipyram MASTER EXECUTION (v2.0 — Retry + Fallback)
  */
 export async function executeMasterAgent(projectName: string, state: MasterSystemState, externalSignal?: string): Promise<MasterAgentResponse> {
   const currentTime = Date.now();

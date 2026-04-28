@@ -328,7 +328,7 @@ export async function saveToGoogleNativeMemory(collection: string, payload: any)
         ? 'https://trtex.com/api/webhook/aipyram' 
         : `${getBaseUrl()}/api/webhook/aipyram`;
         
-    console.log(`📡 [AIPYRAM PING] Dumb Client (TRTEX) uyarılıyor -> ${webhookUrl}`);
+    console.log(`📡 [aipyram PING] Dumb Client (TRTEX) uyarılıyor -> ${webhookUrl}`);
     
     fetch(webhookUrl, {
         method: 'POST',
@@ -339,9 +339,9 @@ export async function saveToGoogleNativeMemory(collection: string, payload: any)
             secret: process.env.TRTEX_WEBHOOK_SECRET || 'TRTEX_WEBHOOK_SECRET'
         })
     }).then(() => {
-        console.log(`✅ [AIPYRAM PING] TRTEX 'aipyram_brain' Cache'i Sıfır Gecikmeyle Yıkıldı!`);
+        console.log(`✅ [aipyram PING] TRTEX 'aipyram_brain' Cache'i Sıfır Gecikmeyle Yıkıldı!`);
     }).catch(e => {
-        console.warn(`⚠️ [AIPYRAM PING] Webhook Hatası (TRTEX uyuyor olabilir):`, e.message);
+        console.warn(`⚠️ [aipyram PING] Webhook Hatası (TRTEX uyuyor olabilir):`, e.message);
     });
     
     return memoryNode;

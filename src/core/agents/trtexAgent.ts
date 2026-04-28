@@ -1,5 +1,5 @@
 import { EventBus } from '../events/eventBus';
-import { AIPyramEvent } from '../events/eventTypes';
+import { aipyramEvent } from '../events/eventTypes';
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
 import { feedCache } from '../cache/feedCache';
@@ -26,7 +26,7 @@ class TRTEXAgent {
     console.log('[📈 TRTEX Agent] TRTEX Ağı (Toptan Ticaret Hattı) B2B Akışına Bağlandı.');
   }
 
-  private async handleMarketSignal(event: AIPyramEvent) {
+  private async handleMarketSignal(event: aipyramEvent) {
     if (event.source === 'agent' || event.source === 'trtex') return;
     console.log(`[📈 TRTEX] Pazar Sinyali Analiz Ediliyor: ${event.payload?.trend}`);
 

@@ -58,7 +58,7 @@ export default function AuthWrapper({ children, title, subtitle, basePath = '/si
           {/* Alt Bilgi */}
           <div className="text-center space-y-3">
             <p className="text-[10px] text-zinc-400 uppercase tracking-[0.15em]">
-              Perde.ai — AIPyram GmbH Ekosistemi
+              Perde.ai — aipyram GmbH Ekosistemi
             </p>
           </div>
         </div>

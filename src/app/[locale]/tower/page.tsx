@@ -41,7 +41,7 @@ export default async function ControlTower() {
       <header className="border-b border-neutral-800 bg-black pt-12 pb-8 px-8">
         <div className="flex items-center gap-4 mb-2">
            <Zap className="text-red-600 w-8 h-8" />
-           <h1 className="text-4xl font-black text-white uppercase tracking-widest">AIPYRAM TOWER</h1>
+           <h1 className="text-4xl font-black text-white uppercase tracking-widest">aipyram TOWER</h1>
         </div>
         <p className="text-neutral-500 uppercase tracking-widest text-sm font-bold">Autonomous Swarm Control Matrix = 1000-Year Protocol</p>
       </header>

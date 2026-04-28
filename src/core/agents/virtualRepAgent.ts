@@ -4,7 +4,7 @@ import { AgentOutput, AgentBudget, DEFAULT_BUDGET } from "./types";
 
 // ═══════════════════════════════════════════════════════════════
 // VIRTUAL REP AGENT — 7/24 AI Stand Görevlisi
-// AIPYRAM Autonomous Sales Engine
+// aipyram Autonomous Sales Engine
 // ═══════════════════════════════════════════════════════════════
 
 // Removed raw ai client

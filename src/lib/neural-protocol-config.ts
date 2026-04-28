@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM NEURAL PROTOCOL v2.1 — MERKEZ KONFİGÜRASYON
+// aipyram NEURAL PROTOCOL v2.1 — MERKEZ KONFİGÜRASYON
 // Tüm "Üst Akıl" katmanı bu dosyadan beslenir.
 // ═══════════════════════════════════════════════════════════════
 

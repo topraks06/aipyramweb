@@ -18,7 +18,7 @@ function EcosystemNetwork() {
     const [hovered, setHovered] = useState<string | null>(null);
 
     const nodes = [
-        { id: "aipyram", label: "AIPyram", x: 300, y: 150, r: 45, color: "#DC2626", main: true },
+        { id: "aipyram", label: "aipyram", x: 300, y: 150, r: 45, color: "#DC2626", main: true },
         { id: "perde", label: "Perde.ai", x: 120, y: 60, r: 30, color: "#059669", main: false },
         { id: "trtex", label: "TrTex.com", x: 480, y: 60, r: 30, color: "#EA580C", main: false },
         { id: "hometex", label: "Hometex.ai", x: 120, y: 240, r: 25, color: "#2563EB", main: false },

@@ -1,6 +1,6 @@
 /**
  * ╔═══════════════════════════════════════════════════════════╗
- * ║  AIPYRAM GLOBAL SLUG STANDARD                             ║
+ * ║  aipyram GLOBAL SLUG STANDARD                             ║
  * ║  Tüm projeler için URL-safe slug üretimi                  ║
  * ╚═══════════════════════════════════════════════════════════╝
  * 

@@ -14,7 +14,7 @@ export default function IcmimarPrivacy() {
          <div className="flex items-center gap-4 mb-10">
            <div className="h-[1px] w-12 bg-[#8B7355]"></div>
            <span className="text-[#8B7355] uppercase tracking-[0.4em] text-[10px] font-bold">
-             AIPYRAM GMBH
+             aipyram GMBH
            </span>
          </div>
          
@@ -24,7 +24,7 @@ export default function IcmimarPrivacy() {
 
          <div className="bg-white p-8 md:p-12 border border-[#111]/10 shadow-sm mb-12">
             <p className="text-zinc-500 font-medium leading-relaxed mb-6">
-               Aipyram GmbH (CH-8953 Dietikon, İsviçre) olarak, İcmimar.AI B2B ERP ve Studio altyapısı üzerinde işlenen tüm görsel, teknik ve kişisel verilerinizin gizliliğine endüstriyel standartlarda önem veriyoruz. İsviçre Veri Koruma Yasası (FADP) ve Avrupa Birliği Genel Veri Koruma Yönetmeliği (GDPR) normlarına tam uyumlu çalışmaktayız.
+               Aipyram GmbH (CH-8953 Dietikon, İsviçre) olarak, icmimar.ai B2B ERP ve Studio altyapısı üzerinde işlenen tüm görsel, teknik ve kişisel verilerinizin gizliliğine endüstriyel standartlarda önem veriyoruz. İsviçre Veri Koruma Yasası (FADP) ve Avrupa Birliği Genel Veri Koruma Yönetmeliği (GDPR) normlarına tam uyumlu çalışmaktayız.
             </p>
          </div>
 
@@ -60,7 +60,7 @@ export default function IcmimarPrivacy() {
                <div>
                   <h3 className="font-serif text-2xl text-[#111] mb-3">3. Üçüncü Taraflarla Paylaşım</h3>
                   <p className="text-zinc-500 font-medium leading-relaxed">
-                     İcmimar.AI, kurumsal verilerinizi veri komisyoncularına veya reklam ağlarına ASLA satmaz. Verileriniz yalnızca Stripe (Ödeme altyapısı), Google Cloud (Sunucu altyapısı) gibi zorunlu uluslararası hizmet sağlayıcılarımızla güvenli protokoller çerçevesinde paylaşılır.
+                     icmimar.ai, kurumsal verilerinizi veri komisyoncularına veya reklam ağlarına ASLA satmaz. Verileriniz yalnızca Stripe (Ödeme altyapısı), Google Cloud (Sunucu altyapısı) gibi zorunlu uluslararası hizmet sağlayıcılarımızla güvenli protokoller çerçevesinde paylaşılır.
                   </p>
                </div>
             </div>

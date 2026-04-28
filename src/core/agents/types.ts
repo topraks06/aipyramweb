@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// AIPYRAM AGENT TYPE SYSTEM — V2.0 (Revenue-First Architecture)
+// aipyram AGENT TYPE SYSTEM — V2.0 (Revenue-First Architecture)
 // ═══════════════════════════════════════════════════════════════
 
 // Core Brain Agents (Swarm Orchestration Chain)

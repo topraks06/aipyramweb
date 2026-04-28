@@ -452,7 +452,7 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
             { collection: 'perde_news', project: 'PERDE', titleField: 'title_tr', contentField: 'content_tr', summaryField: 'summary_tr' },
             { collection: 'didimemlak_listings', project: 'DIDIMEMLAK', titleField: 'title', contentField: 'description', summaryField: 'summary' },
             { collection: 'fethiye_listings', project: 'FETHIYE', titleField: 'title', contentField: 'description', summaryField: 'summary' },
-            { collection: 'aipyram_blog', project: 'AIPYRAM', titleField: 'title', contentField: 'content', summaryField: 'summary' },
+            { collection: 'aipyram_blog', project: 'aipyram', titleField: 'title', contentField: 'content', summaryField: 'summary' },
           ];
 
           if (adminDb) {
@@ -628,7 +628,7 @@ export async function runAlohaCycle(projectName: string): Promise<CycleResult> {
                 const collMap: Record<string, string> = {
                   'TRTEX': 'trtex_news', 'HOMETEX': 'hometex_news',
                   'PERDE': 'perde_news', 'DIDIMEMLAK': 'didimemlak_listings',
-                  'FETHIYE': 'fethiye_listings', 'AIPYRAM': 'aipyram_blog',
+                  'FETHIYE': 'fethiye_listings', 'aipyram': 'aipyram_blog',
                   'news': 'trtex_news', // eski format uyumluluğu
                 };
                 const coll = collMap[project];

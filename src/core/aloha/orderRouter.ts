@@ -9,7 +9,7 @@ export interface RouteResult {
 }
 
 /**
- * AIPyram Sovereign - Marketplace Order Router (Akıllı Dağıtıcı)
+ * aipyram Sovereign - Marketplace Order Router (Akıllı Dağıtıcı)
  * Vorhang (Avrupa) veya Hometex'ten gelen B2C siparişleri, 
  * ekosistemdeki (Perde.ai) "Dükkan Sahipleri"ne otonom dağıtır.
  */
@@ -18,8 +18,8 @@ export async function routeOrderToBestVendor(
   totalOrderValueEur: number,
   items: any[]
 ): Promise<RouteResult> {
-  // B2B Kuralı: Bütün para AIPyram havuzuna düşer. Yemeksepeti modeli.
-  // AIPyram komisyonu: Örn. %15
+  // B2B Kuralı: Bütün para aipyram havuzuna düşer. Yemeksepeti modeli.
+  // aipyram komisyonu: Örn. %15
   const COMMISSION_RATE = 0.15;
   const aipyramCommissionEur = parseFloat((totalOrderValueEur * COMMISSION_RATE).toFixed(2));
   const vendorEarningsEur = parseFloat((totalOrderValueEur - aipyramCommissionEur).toFixed(2));
@@ -69,7 +69,7 @@ export async function routeOrderToBestVendor(
     const finalVendorName = selectedVendor.name;
 
     console.log(`[ORDER_ROUTER] 🚦 Vorhang siparişi (${destinationCountry}) KESİNLEŞTİ: ${finalVendorName}`);
-    console.log(`[ORDER_ROUTER] 💰 AIPyram Komisyonu: €${aipyramCommissionEur} | Dükkan Hak Edişi: €${vendorEarningsEur}`);
+    console.log(`[ORDER_ROUTER] 💰 aipyram Komisyonu: €${aipyramCommissionEur} | Dükkan Hak Edişi: €${vendorEarningsEur}`);
 
     return {
       vendorId: finalVendorId,
@@ -84,7 +84,7 @@ export async function routeOrderToBestVendor(
     // Hata durumunda merkeze (fallback vendor) at
     return {
       vendorId: 'perde_default_vendor',
-      vendorName: 'AIPyram Merkez Dağıtım',
+      vendorName: 'aipyram Merkez Dağıtım',
       shippingEstimatedDays: 7,
       aipyramCommissionEur,
       vendorEarningsEur

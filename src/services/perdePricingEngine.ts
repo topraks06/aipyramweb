@@ -23,7 +23,7 @@ export const FABRIC_PRICES: Record<string, number> = {
 
 /**
  * Verilen ölçüler ve kumaş türüne göre fiyat hesaplar (USD cinsine çevirmez, TR pazarı varsayılarak TL kalabilir, 
- * ancak B2B ödemeler Stripe'da USD/EUR geçiyor. AIPyram ERP varsayılan olarak USD üzerinden çalışabilir. 
+ * ancak B2B ödemeler Stripe'da USD/EUR geçiyor. aipyram ERP varsayılan olarak USD üzerinden çalışabilir. 
  * Şimdilik base para birimini dönüyoruz).
  */
 export function calculateItemPrice(input: PriceCalcInput): number {

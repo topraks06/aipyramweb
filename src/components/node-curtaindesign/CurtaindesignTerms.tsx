@@ -13,7 +13,7 @@ export default function CurtaindesignTerms() {
         <div className="prose prose-slate max-w-none font-sans text-slate-600">
           <p className="mb-4">Last updated: April 28, 2026</p>
           <p className="mb-6">
-            Welcome to Curtaindesign.ai, a B2B platform provided by AIPyram GmbH ("we", "us", or "our"). 
+            Welcome to Curtaindesign.ai, a B2B platform provided by aipyram GmbH ("we", "us", or "our"). 
             By accessing or using our AI-driven textile design and commerce platform, you agree to be bound by these Terms of Service.
           </p>
           
@@ -33,7 +33,7 @@ export default function CurtaindesignTerms() {
 
           <h2 className="text-2xl font-bold text-slate-900 mt-8 mb-4">3. Global Transactions</h2>
           <p className="mb-6">
-            Orders placed through the AIPyram network are subject to international trade laws. AIPyram GmbH acts as a technology 
+            Orders placed through the aipyram network are subject to international trade laws. aipyram GmbH acts as a technology 
             provider and smart escrow facilitator, but the underlying trade contract remains between the buyer and the manufacturer.
           </p>
         </div>

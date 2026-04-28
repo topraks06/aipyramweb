@@ -1,7 +1,7 @@
 import SwarmTerminal from "@/components/console/SwarmTerminal";
 
 export const metadata = {
-  title: "Console | AIPYRAM God Mode",
+  title: "Console | aipyram God Mode",
   description: "Master Brain Control Panel",
 };
 

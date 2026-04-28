@@ -53,7 +53,7 @@ export function CartSidebar({ basePath = "" }: { basePath?: string }) {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{item.sellerId || "AIPyram"}</p>
+                  <p className="text-xs text-gray-500 mt-1">{item.sellerId || "aipyram"}</p>
                   <div className="mt-auto flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-600">Stk: {item.quantity}</span>
                     <span className="font-bold text-sm">€{item.price.toFixed(2)}</span>

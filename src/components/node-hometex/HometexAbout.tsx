@@ -69,9 +69,9 @@ export default function HometexAbout() {
             </div>
             <div className="bg-zinc-950 p-10 border border-white/5">
               <Users className="w-8 h-8 text-zinc-400 mb-6" />
-              <h3 className="text-2xl font-serif mb-4">AIPyram Ekosistemi</h3>
+              <h3 className="text-2xl font-serif mb-4">aipyram Ekosistemi</h3>
               <p className="text-zinc-500 font-light leading-relaxed">
-                Hometex.ai, AIPyram Sovereign OS'in kalbinde yer alır. Perde.ai, Heimtex.ai ve TRTex platformlarıyla tam entegre çalışarak uçtan uca tekstil çözümü sunar.
+                Hometex.ai, aipyram Sovereign OS'in kalbinde yer alır. Perde.ai, Heimtex.ai ve TRTex platformlarıyla tam entegre çalışarak uçtan uca tekstil çözümü sunar.
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function HometexAbout() {
         <section className="max-w-4xl mx-auto px-6 lg:px-8 mb-16 text-center">
           <h2 className="text-3xl font-serif mb-6">Ekosistemi Keşfedin</h2>
           <p className="text-zinc-400 font-light mb-10 max-w-xl mx-auto">
-            Hometex.ai, dünyanın en kapsamlı otonom tekstil ağı olan AIPyram Sovereign OS'in fuar ayağıdır.
+            Hometex.ai, dünyanın en kapsamlı otonom tekstil ağı olan aipyram Sovereign OS'in fuar ayağıdır.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="https://perde.ai" className="px-6 py-3 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">

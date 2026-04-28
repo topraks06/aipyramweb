@@ -5,8 +5,8 @@ export async function GET(request: Request) {
     hero: {
       titleTr: ['Yapay Zeka Destekli', 'Sanal Fuar'],
       titleEn: ['AI Powered', 'Virtual Fair'],
-      subtitleTr: 'AIPYRAM Master Node üzerinden canlı yayın.',
-      subtitleEn: 'Live broadcast from AIPYRAM Master Node.',
+      subtitleTr: 'aipyram Master Node üzerinden canlı yayın.',
+      subtitleEn: 'Live broadcast from aipyram Master Node.',
       image: 'https://images.unsplash.com/photo-1558222218-b7b54eede3f3?w=800&q=80'
     },
     trends: {

@@ -49,7 +49,7 @@ export function enrichOrderMessage(orderData: any, SovereignNodeId: string): str
     ``,
     `📄 Detaylı teklif belgesine erişmek için panelinizdeki PDF butonunu kullanabilirsiniz.`,
     ``,
-    `Powered by AIPyram — ${config.domain}`
+    `Powered by aipyram — ${config.domain}`
   ].filter(Boolean);
 
   return lines.join('\n');

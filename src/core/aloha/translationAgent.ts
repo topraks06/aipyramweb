@@ -19,7 +19,7 @@ export interface TranslatedContent {
   ZH: TranslationInput;
 }
 
-// Target languages required for TRTEX and AIPyram ecosystem
+// Target languages required for TRTEX and aipyram ecosystem
 const TARGET_LANGUAGES = ['EN', 'DE', 'FR', 'ES', 'AR', 'RU', 'ZH'];
 
 const translationSchema: Schema = {

@@ -97,7 +97,7 @@ export async function GET(request: Request) {
 
         const heroOpp = heroOpportunity || {
           headline: 'KÜRESEL TEKSTİL TİCARETİNDE YENİ FIRSATLAR',
-          opportunity: 'AIPYRAM ticari istihbarat ağı aktif — güncel fırsatlar taranıyor.',
+          opportunity: 'aipyram ticari istihbarat ağı aktif — güncel fırsatlar taranıyor.',
           action: 'DETAYLARI İNCELE',
           country: 'Global',
           flag: '🌍',

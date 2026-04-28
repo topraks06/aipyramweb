@@ -1,7 +1,7 @@
 import { runSwarm } from "../aloha/orchestrator";
 
 async function main() {
-  console.log("============= AIPYRAM AGENT OS TEST STARTED =============");
+  console.log("============= aipyram AGENT OS TEST STARTED =============");
   console.log("Checking environment...");
   if (!process.env.GEMINI_API_KEY) {
     console.error("❌ ERROR: GEMINI_API_KEY is missing in .env.local");

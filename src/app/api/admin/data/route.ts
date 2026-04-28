@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
                 data = [{ id: 1, domain: "trtex.com", status: "Active", health: 100 }];
                 break;
             case "ai_agents":
-                data = [{ id: 1, name: "AIPyram Master Node", role: "Commander", status: "Online" }];
+                data = [{ id: 1, name: "aipyram Master Node", role: "Commander", status: "Online" }];
                 break;
             case "automation_rules":
                 data = [{ id: 1, trigger: "webhook", action: "revalidate", status: "Active" }];

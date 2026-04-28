@@ -6,7 +6,7 @@ import path from 'path';
 const execPromise = util.promisify(exec);
 
 /**
- * AIPYRAM GOD MODE - SYSTEM ACTIONS
+ * aipyram GOD MODE - SYSTEM ACTIONS
  * Vetted shell execution pipeline: Plan -> Guard -> Execute
  * V2: Çapraz proje desteği — projects.json'daki projelerde komut çalıştırabilir
  */
