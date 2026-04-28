@@ -153,7 +153,7 @@ pnpm run build && git commit -am "feat(G10): heimtex domain routing genişletild
 
 | Görev | Durum | Build | Commit |
 |-------|-------|-------|--------|
-| G8. tenderAgent deterministik | ⬜ | ⬜ | ⬜ |
+| G8. tenderAgent deterministik | ✅ | ✅ | ✅ |
 | G7. Hometex role fix | ⬜ | ⬜ | ⬜ |
 | G9. Vorhang boş state | ⬜ | ⬜ | ⬜ |
 | G6. Heimtex tam dönüşüm | ⬜ | ⬜ | ⬜ |

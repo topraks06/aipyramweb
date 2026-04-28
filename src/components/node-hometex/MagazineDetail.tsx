@@ -7,9 +7,11 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowLeft, Clock, Sparkles, ChevronRight, Share2, Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import HometexFooter from './HometexFooter';
+import { usePerdeAuth } from '@/hooks/usePerdeAuth';
 
 export default function MagazineDetail({ article }: { article: any }) {
-  const role = 'consumer';
+  const { user } = usePerdeAuth();
+  const role = user ? 'member' : 'consumer';
   const [relatedExhibitor, setRelatedExhibitor] = useState<any>({ 
     id: '1', 
     name: 'SOVEREIGN MILLS', 
