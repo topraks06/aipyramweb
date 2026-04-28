@@ -59,9 +59,9 @@ export default function VorhangNavbar({ basePath = '/sites/vorhang.ai' }: Vorhan
                 </span>
               )}
             </button>
-            <button className="bg-white text-black px-5 py-2 rounded-sm text-sm font-medium hover:bg-[#D4AF37] hover:text-white transition-all">
+            <Link href={`${basePath}/login`} className="bg-white text-black px-5 py-2 rounded-sm text-sm font-medium hover:bg-[#D4AF37] hover:text-white transition-all">
               Anmelden
-            </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -107,10 +107,10 @@ export default function VorhangNavbar({ basePath = '/sites/vorhang.ai' }: Vorhan
                 <Globe className="w-5 h-5" />
                 <span>Sprache: Deutsch</span>
               </button>
-              <button className="flex items-center gap-3 text-gray-300 p-2">
+              <Link href={`${basePath}/login`} className="flex items-center gap-3 text-gray-300 p-2" onClick={() => setIsOpen(false)}>
                 <User className="w-5 h-5" />
                 <span>Anmelden</span>
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}

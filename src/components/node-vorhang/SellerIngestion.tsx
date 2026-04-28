@@ -44,9 +44,19 @@ export default function SellerIngestion({ basePath = "" }: { basePath?: string }
     setStatus("uploading");
     
     try {
-      await addDoc(collection(db, "vorhang_products"), {
+      // 1. Upload file to Firebase Storage
+      const { ref: storageRef, uploadBytes, getDownloadURL } = await import("firebase/storage");
+      const { storage } = await import("@/lib/firebase-client");
+      
+      const fileRef = storageRef(storage, `vorhang_catalogs/${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
+      const downloadURL = await getDownloadURL(fileRef);
+
+      // 2. Save metadata to Firestore
+      await addDoc(collection(db, "vorhang_catalogs"), {
         filename: file.name,
         size: file.size,
+        fileUrl: downloadURL,
         timestamp: new Date().toISOString(),
         status: "processing"
       });

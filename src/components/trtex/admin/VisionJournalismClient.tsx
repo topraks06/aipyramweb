@@ -8,6 +8,9 @@ import { Loader2, UploadCloud, FileText, Image as ImageIcon, Sparkles, AlertCirc
 // Not: Firebase client upload fonksiyonunu projeye göre simüle ediyoruz.
 // Gerçekte import { uploadToFirebase } from '@/lib/firebase-client'; olacak
 
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '@/lib/firebase-client';
+
 export default function VisionJournalismClient() {
   const [topic, setTopic] = useState('');
   const [category, setCategory] = useState('İstihbarat');
@@ -30,13 +33,10 @@ export default function VisionJournalismClient() {
   };
 
   const uploadToFirebaseMock = async (file: File): Promise<string> => {
-      // Geçici mock yükleme, gerçek sistemde firebase storage kullanılır
-      // Şimdilik imagePreview (base64) göndereceğiz ki API indirebilsin
-      return new Promise(resolve => {
-         const reader = new FileReader();
-         reader.onload = (e) => resolve(e.target?.result as string);
-         reader.readAsDataURL(file);
-      });
+      const fileRef = ref(storage, `vision_journalism/${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+      return url;
   };
 
   const handleGenerate = async () => {
@@ -52,10 +52,8 @@ export default function VisionJournalismClient() {
     try {
       let imageUrls: string[] = [];
 
-      // 1. Resmi Firebase Storage'a yükle veya DataURL al
+      // 1. Resmi Firebase Storage'a yükle
       if (imageFile) {
-        // Not: Gerçekte uploadToFirebase kullanılmalıdır.
-        // API (route.ts) URL bekliyor, dataURL de yollayabiliriz (fetch okuyabilir).
         const uploadedUrl = await uploadToFirebaseMock(imageFile);
         imageUrls.push(uploadedUrl);
       }

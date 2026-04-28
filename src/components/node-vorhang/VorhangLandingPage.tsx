@@ -5,15 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function VorhangLandingPage({ products = [], basePath = '/sites/vorhang.ai' }: { products?: any[]; basePath?: string }) {
-  // Use mock products if empty for development
-  const displayProducts = products.length > 0 ? products : [
-    { id: 1, name: "Premium Blackout Berlin", sellerName: "Weber Textil GmbH", price: 12.50 },
-    { id: 2, name: "Leinen Natur München", sellerName: "EcoFabrics AG", price: 18.90 },
-    { id: 3, name: "Samt Deluxe Wien", sellerName: "Österreich Weberei", price: 24.00 },
-    { id: 4, name: "Akustik Pro Frankfurt", sellerName: "TechTex Solutions", price: 21.50 },
-    { id: 5, name: "Voile Transparent", sellerName: "Weber Textil GmbH", price: 8.90 },
-    { id: 6, name: "Outdoor SunProtect", sellerName: "SonnenSchutz KG", price: 15.00 },
-  ];
+  const displayProducts = products;
 
   return (
     <div className="min-h-screen bg-white text-black selection:bg-[#D4AF37] selection:text-white font-sans">
@@ -137,7 +129,9 @@ export default function VorhangLandingPage({ products = [], basePath = '/sites/v
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {displayProducts.map((item: any, idx: number) => (
+            {displayProducts.length === 0 ? (
+              <p className="text-gray-500 col-span-3 py-10 text-center text-sm">Derzeit sind keine Trendprodukte verfügbar. Bitte prüfen Sie später wieder.</p>
+            ) : displayProducts.map((item: any, idx: number) => (
               <Link href={`${basePath}/products/${item.id}`} key={item.id} className="group cursor-pointer">
                 <div className="relative aspect-[4/5] bg-gray-200 mb-6 overflow-hidden">
                    <img 
