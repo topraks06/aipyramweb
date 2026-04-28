@@ -129,7 +129,7 @@ export async function POST(req: Request) {
     if (mode === "autonomous") {
       console.log(`[API Gateway] Autonomous Queue triggered for ${project}...`);
       
-      const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const jobId = `job_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
       
       // Firestore Queue'ya iş emri (Google-Native).
       await pushToQueue({ jobId, project, task, context: mergedContext });

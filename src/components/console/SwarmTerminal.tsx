@@ -65,7 +65,7 @@ export default function SwarmTerminal() {
               try {
                 const parsed = JSON.parse(line);
                 if (parsed.type === "log") {
-                  logs.push({ id: Math.random().toString(), agent: parsed.agent, message: parsed.message, status: parsed.status, timestamp: tf() });
+                  logs.push({ id: crypto.randomUUID(), agent: parsed.agent, message: parsed.message, status: parsed.status, timestamp: tf() });
                   setActiveStream([...logs]);
                 } else if (parsed.type === "finish") {
                   logs.push({ id: 'fin', agent: 'SUCCESS', message: 'Swarm execution completed. Payload decrypted.', status: 'success', timestamp: tf() });

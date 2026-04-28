@@ -88,7 +88,7 @@ export async function incrementUsage(key: string): Promise<void> {
  * this would use Sharp to resize the buffer and upload to Google Cloud Storage.
  */
 export async function generateMultiResolution(originalDataUrl: string): Promise<{url_1k: string, url_2k: string, url_4k?: string}> {
-    const baseName = `img_res_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const baseName = `img_res_${Date.now()}_${crypto.randomUUID().slice(0, 7)}`;
     try {
         const urls = await uploadMultiResolution(originalDataUrl, baseName);
         return {
