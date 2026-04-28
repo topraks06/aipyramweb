@@ -235,7 +235,17 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
   if (projectName === 'heimtex') {
     const HeimtexLandingPage = (await import('@/components/node-heimtex/HeimtexLandingPage')).default;
-    return <HeimtexLandingPage lang={lang} />;
+    let articles: any[] = [];
+    let trends: any[] = [];
+    try {
+      const articlesSnap = await adminDb.collection('heimtex_articles').orderBy('publishedAt', 'desc').limit(4).get();
+      articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const trendsSnap = await adminDb.collection('heimtex_trends').limit(3).get();
+      trends = trendsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[HEIMTEX] Firestore fetch error:', e);
+    }
+    return <HeimtexLandingPage lang={lang} articles={articles} trends={trends} />;
   }
   if (projectName === 'perde') {
     return <PerdeLandingPage cmsData={cmsData} />;

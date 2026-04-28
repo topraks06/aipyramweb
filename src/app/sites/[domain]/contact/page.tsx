@@ -16,6 +16,10 @@ export default async function ContactPage({ params }: { params: Promise<{ domain
 
   if (d.includes('hometex')) return <HometexContact />;
   if (d.includes('vorhang')) return <VorhangContact />;
+  if (d.includes('heimtex')) {
+    const HeimtexContact = (await import('@/components/node-heimtex/HeimtexContact')).default;
+    return <HeimtexContact basePath={`/sites/${d.split(':')[0]}`} />;
+  }
 
   // Perde.ai default
   return (
