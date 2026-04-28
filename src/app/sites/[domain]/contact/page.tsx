@@ -20,6 +20,10 @@ export default async function ContactPage({ params }: { params: Promise<{ domain
     const HeimtexContact = (await import('@/components/node-heimtex/HeimtexContact')).default;
     return <HeimtexContact basePath={`/sites/${d.split(':')[0]}`} />;
   }
+  if (d.includes('curtaindesign')) {
+    const CurtaindesignContact = (await import('@/components/node-curtaindesign/CurtaindesignContact')).default;
+    return <CurtaindesignContact basePath={`/sites/${d.split(':')[0]}`} />;
+  }
 
   // Perde.ai default
   return (

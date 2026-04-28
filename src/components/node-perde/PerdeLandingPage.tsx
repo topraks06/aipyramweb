@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Sparkles, Upload } from 'lucide-react';
+import { ArrowRight, Sparkles, ShoppingBag, Truck, Shield } from 'lucide-react';
 import PerdeNavbar from './PerdeNavbar';
 import WowDemoSection from './WowDemoSection';
 import UseCasesSection from './UseCasesSection';
@@ -85,22 +85,20 @@ export default function PerdeLandingPage({ cmsData }: { cmsData?: any }) {
                  </p>
                  
                  <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                   <Link href={`${basePath}/visualizer`}>
-                     <button className="h-14 px-8 md:px-10 border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all duration-500 uppercase tracking-[0.2em] text-[10px] font-medium flex items-center gap-4 group">
+                   <Link href={`${basePath}/collections`}>
+                     <button className="h-14 px-8 md:px-10 bg-[#8B7355] text-white hover:bg-[#725e45] transition-all duration-500 uppercase tracking-[0.2em] text-[10px] font-medium flex items-center gap-4 group">
                        {T.hero.start}
                        <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-500" />
                      </button>
                    </Link>
                    
-                   <button 
-                     onClick={() => window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'upload' } }))}
-                     className="h-14 px-8 flex items-center gap-3 text-zinc-600 hover:text-[#8B7355] transition-colors"
+                   <Link
+                     href={`${basePath}/visualizer`}
+                     className="h-14 px-8 flex items-center gap-3 text-zinc-600 hover:text-[#8B7355] transition-colors border border-zinc-200 hover:border-[#8B7355]"
                    >
-                     <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-lg">
-                       <Upload className="w-4 h-4" />
-                     </div>
-                     <span className="text-[11px] font-medium max-w-[120px] leading-tight">{T.hero.upload_hint}</span>
-                   </button>
+                     <Sparkles className="w-4 h-4" />
+                     <span className="text-[11px] font-medium uppercase tracking-widest">AI Tasarım</span>
+                   </Link>
                  </div>
                </motion.div>
             </div>
@@ -243,7 +241,28 @@ export default function PerdeLandingPage({ cmsData }: { cmsData?: any }) {
          </div>
       </section>
 
-      {/* 6. ECOSYSTEM BRIDGE (NEW) */}
+      {/* 6. TRUST BAR — B2C Güvence */}
+      <section className="py-16 px-6 bg-white border-y border-[#EBEBE6]">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+          <div className="flex flex-col items-center gap-3">
+            <Truck className="w-6 h-6 text-[#8B7355]" />
+            <h4 className="font-serif text-lg text-zinc-900">Ücretsiz Kargo</h4>
+            <p className="text-zinc-500 text-sm font-light">500 TL üzeri siparişlerde tüm Türkiye'ye ücretsiz kargo.</p>
+          </div>
+          <div className="flex flex-col items-center gap-3">
+            <Shield className="w-6 h-6 text-[#8B7355]" />
+            <h4 className="font-serif text-lg text-zinc-900">14 Gün İade Garantisi</h4>
+            <p className="text-zinc-500 text-sm font-light">Ürünlerinizi koşulsuz iade edebilirsiniz.</p>
+          </div>
+          <div className="flex flex-col items-center gap-3">
+            <Sparkles className="w-6 h-6 text-[#8B7355]" />
+            <h4 className="font-serif text-lg text-zinc-900">AI Tasarım Desteği</h4>
+            <p className="text-zinc-500 text-sm font-light">Yapay zeka destekli mekan simülasyonu ile önceden görün.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. ECOSYSTEM BRIDGE */}
       <EcosystemBridge />
 
       {/* 7. CALL TO ACTION */}
@@ -259,13 +278,13 @@ export default function PerdeLandingPage({ cmsData }: { cmsData?: any }) {
                 {T.cta.desc}
              </p>
              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                 <Link href={`${basePath}/register`}>
-                    <button className="h-16 px-8 md:px-12 bg-[#8B7355] text-white hover:bg-[#725e45] transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold tracking-wider">
-                       5 ÜCRETSİZ TASARIM DENE
+                 <Link href={`${basePath}/collections`}>
+                    <button className="h-16 px-8 md:px-12 bg-[#8B7355] text-white hover:bg-[#725e45] transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold flex items-center gap-3">
+                       <ShoppingBag className="w-4 h-4" /> KOLEKSİYONLARI KEŞFET
                     </button>
                  </Link>
                  <Link href={`${basePath}/contact`}>
-                    <button className="h-16 px-8 md:px-12 bg-transparent border border-white/20 text-white hover:bg-white/10 transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold tracking-wider">
+                    <button className="h-16 px-8 md:px-12 bg-transparent border border-white/20 text-white hover:bg-white/10 transition-colors duration-500 uppercase tracking-[0.25em] text-[10px] md:text-[11px] font-semibold">
                        {T.cta.button}
                     </button>
                  </Link>

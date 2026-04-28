@@ -16,6 +16,10 @@ export default async function AboutPage({ params }: { params: Promise<{ domain: 
 
   if (d.includes('hometex')) return <HometexAbout />;
   if (d.includes('vorhang')) return <VorhangAbout />;
+  if (d.includes('curtaindesign')) {
+    const CurtaindesignAbout = (await import('@/components/node-curtaindesign/CurtaindesignAbout')).default;
+    return <CurtaindesignAbout basePath={`/sites/${d.split(':')[0]}`} />;
+  }
 
   // Perde.ai default
   return (
