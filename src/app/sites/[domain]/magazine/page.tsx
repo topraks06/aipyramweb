@@ -1,6 +1,4 @@
-import HometexNavbar from '@/components/node-hometex/HometexNavbar';
-import Magazine from '@/components/node-hometex/Magazine';
-import { adminDb } from '@/lib/firebase-admin';
+import { redirect } from 'next/navigation';
 
 export default async function MagazinePage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
@@ -11,21 +9,6 @@ export default async function MagazinePage({ params }: { params: Promise<{ domai
     return <HeimtexMagazine />;
   }
 
-  let articles: any[] = [];
-  try {
-    const articlesSnap = await adminDb.collection('hometex_magazine').orderBy('publishedAt', 'desc').get();
-    articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-  }
-
-  return (
-    <div className="min-h-screen bg-black text-white">
-      <HometexNavbar />
-
-      <main>
-        <Magazine articles={articles} />
-      </main>
-    </div>
-  );
+  // Hometex or other nodes shouldn't access this page anymore
+  redirect(`/sites/${exactDomain}`);
 }

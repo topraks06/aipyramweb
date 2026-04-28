@@ -14,8 +14,7 @@ interface HometexNavbarProps {
 
 const navItems = [
   { name: 'Sanal Fuar', path: '/expo' },
-  { name: 'Sovereign Dergi', path: '/magazine' },
-  { name: 'Trend Alanı', path: '/trends' },
+  { name: 'Sanal Katalog', path: '/catalog' },
   { name: 'İndeks', path: '/exhibitors' },
 ];
 

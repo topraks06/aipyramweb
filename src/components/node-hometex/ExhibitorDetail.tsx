@@ -11,7 +11,7 @@ import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 
 // Mock modal
 const ProductUploadModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">Materyal Yükleme Sınırlandırıldı</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
-const B2BRequestModal = ({ isOpen, onClose }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">B2B Talebi Gönderildi</h2><button onClick={onClose} className="px-4 py-2 bg-white text-black">Kapat</button></div></div> : null;
+const B2BRequestModal = ({ isOpen, onClose, type, productName }: any) => isOpen ? <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"><div className="bg-zinc-900 p-8 text-white"><h2 className="mb-4 text-xl">{type === 'quote' ? 'Fiyat Talebi' : 'Numune Talebi'} Gönderildi</h2><p className="text-zinc-400 text-sm mb-6">{productName} için talebiniz alınmıştır. B2B portalında değerlendirilecektir.</p><button onClick={onClose} className="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest w-full">Kapat</button></div></div> : null;
 
 export default function ExhibitorDetail({ exhibitor, products = [] }: { exhibitor: any, products?: any[] }) {
   const { role } = useSovereignAuth('hometex');
@@ -38,7 +38,7 @@ export default function ExhibitorDetail({ exhibitor, products = [] }: { exhibito
   return (
     <div className="flex flex-col w-full bg-black text-white overflow-hidden min-h-screen">
       <ProductUploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
-      <B2BRequestModal isOpen={b2bModalState.isOpen} onClose={() => setB2bModalState(prev => ({ ...prev, isOpen: false }))} />
+      <B2BRequestModal isOpen={b2bModalState.isOpen} type={b2bModalState.type} productName={b2bModalState.productName} onClose={() => setB2bModalState(prev => ({ ...prev, isOpen: false }))} />
 
       {/* Cinematic Hero Section */}
       <section className="relative h-[70vh] lg:h-[90vh] w-full bg-zinc-900 border-b border-white/10">
@@ -173,9 +173,20 @@ export default function ExhibitorDetail({ exhibitor, products = [] }: { exhibito
                         </p>
                         
                         <div className="mt-auto pt-8 border-t border-white/10 flex gap-4">
-                           <button className="flex-1 border border-white/20 py-4 text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-3">
-                              <Sparkles className="w-4 h-4 stroke-[1.5]" /> Odamda Gör
+                           <button 
+                             onClick={() => setB2bModalState({ isOpen: true, type: 'quote', productName: product.name })}
+                             className="flex-1 border border-white/20 py-4 text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-3"
+                           >
+                              <Calculator className="w-4 h-4 stroke-[1.5]" /> B2B Fiyat İste
                            </button>
+                           {role === 'retailer' || role === 'wholesaler' ? (
+                             <button 
+                               onClick={() => setB2bModalState({ isOpen: true, type: 'sample', productName: product.name })}
+                               className="flex-1 border border-white/20 py-4 text-[10px] uppercase tracking-[0.3em] font-bold hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-3"
+                             >
+                                <Package className="w-4 h-4 stroke-[1.5]" /> Numune Talep Et
+                             </button>
+                           ) : null}
                         </div>
                       </div>
                     </motion.div>
