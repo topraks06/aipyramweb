@@ -18,6 +18,9 @@ export default async function RegisterPage({ params }: { params: Promise<{ domai
   if (node.id === 'perde') Register = RegisterPerde;
   else if (node.id === 'hometex') Register = RegisterHometex;
   else if (node.id === 'icmimar') Register = RegisterIcmimar;
+  else if (exactDomain.includes('heimtex')) {
+    Register = (await import('@/components/node-heimtex/auth/Register')).default;
+  }
 
   if (!Register) {
     return (

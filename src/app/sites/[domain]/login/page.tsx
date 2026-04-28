@@ -14,6 +14,9 @@ export default async function LoginPage({ params }: { params: Promise<{ domain: 
   if (node.id === 'perde') Login = LoginPerde;
   else if (node.id === 'hometex') Login = LoginHometex;
   else if (node.id === 'icmimar') Login = LoginIcmimar;
+  else if (exactDomain.includes('heimtex')) {
+    Login = (await import('@/components/node-heimtex/auth/Login')).default;
+  }
 
   if (!Login) {
     // TRTEX veya tanımsız node → login sayfası yok

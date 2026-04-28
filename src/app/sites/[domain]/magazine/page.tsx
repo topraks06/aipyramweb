@@ -4,6 +4,12 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export default async function MagazinePage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
+  const exactDomain = decodeURIComponent(domain).split(":")[0];
+  
+  if (exactDomain.includes('heimtex')) {
+    const HeimtexMagazine = (await import('@/components/node-heimtex/HeimtexMagazine')).default;
+    return <HeimtexMagazine />;
+  }
 
   let articles: any[] = [];
   try {

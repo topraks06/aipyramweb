@@ -213,6 +213,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   if (exactDomain.includes('perde')) projectName = 'perde';
   if (exactDomain.includes('vorhang')) projectName = 'vorhang';
   if (exactDomain.includes('icmimar')) projectName = 'icmimar';
+  if (exactDomain.includes('heimtex')) projectName = 'heimtex';
   const brandName = exactDomain.split('.')[0].toUpperCase();
 
   // ═══ OMNI-CMS VERİLERİ (sovereign_cms) ═══
@@ -231,6 +232,10 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   } catch (e) { console.warn('[CMS] Fetch error:', e); }
 
   // 🌍 MİMARİ KARAR: DOMAIN RESOLVER (AIPYRAM ROUTER)
+  if (projectName === 'heimtex') {
+    const HeimtexLandingPage = (await import('@/components/node-heimtex/HeimtexLandingPage')).default;
+    return <HeimtexLandingPage lang={lang} />;
+  }
   if (projectName === 'perde') {
     return <PerdeLandingPage cmsData={cmsData} />;
   }

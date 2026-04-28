@@ -4,6 +4,12 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export default async function TrendsPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
+  const exactDomain = decodeURIComponent(domain).split(":")[0];
+  
+  if (exactDomain.includes('heimtex')) {
+    const HeimtexTrends = (await import('@/components/node-heimtex/HeimtexTrends')).default;
+    return <HeimtexTrends />;
+  }
 
   let trends: any[] = [];
   try {
