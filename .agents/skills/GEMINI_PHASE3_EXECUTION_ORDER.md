@@ -114,18 +114,18 @@
 
 | Görev | Kod | Build | Commit |
 |-------|-----|-------|--------|
-| G11. suppliers.ts Firestore | ⬜ | ⬜ | ⬜ |
-| G12. emailService temizlik | ⬜ | ⬜ | ⬜ |
-| G13. DocumentAgent fallback | ⬜ | ⬜ | ⬜ |
-| G14. BoothDetail props | ⬜ | ⬜ | ⬜ |
-| G15. ExhibitorDetail yorum | ⬜ | ⬜ | ⬜ |
-| G16. HometexAbout profesyonel | ⬜ | ⬜ | ⬜ |
-| G17. HometexContact iyileştirme | ⬜ | ⬜ | ⬜ |
-| G18. HometexDashboard kontrol | ⬜ | ⬜ | ⬜ |
-| G19. Curtaindesign Auth | ⬜ | ⬜ | ⬜ |
-| G20. Curtaindesign Privacy/Terms | ⬜ | ⬜ | ⬜ |
-| G21. VorhangAbout profesyonel | ⬜ | ⬜ | ⬜ |
-| G22. notificationService temizlik | ⬜ | ⬜ | ⬜ |
+| G11. suppliers.ts Firestore | ✅ | ✅ | ✅ |
+| G12. emailService temizlik | ✅ | ✅ | ✅ |
+| G13. DocumentAgent fallback | ✅ | ✅ | ✅ |
+| G14. BoothDetail props | ✅ | ✅ | ✅ |
+| G15. ExhibitorDetail yorum | ✅ | ✅ | ✅ |
+| G16. HometexAbout profesyonel | ✅ | ✅ | ✅ |
+| G17. HometexContact iyileştirme | ✅ | ✅ | ✅ |
+| G18. HometexDashboard kontrol | ✅ | ✅ | ✅ |
+| G19. Curtaindesign Auth | ✅ | ✅ | ✅ |
+| G20. Curtaindesign Privacy/Terms | ✅ | ✅ | ✅ |
+| G21. VorhangAbout profesyonel | ✅ | ✅ | ✅ |
+| G22. notificationService temizlik | ✅ | ✅ | ✅ |
 
 ---
 
