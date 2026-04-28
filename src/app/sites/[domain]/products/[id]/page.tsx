@@ -1,12 +1,17 @@
-import { ProductDetail } from "@/components/node-vorhang/ProductDetail";
+import { ProductDetail as VorhangProductDetail } from "@/components/node-vorhang/ProductDetail";
+import MarketplaceProductDetail from "@/components/node-perde/marketplace/MarketplaceProductDetail";
 import { adminDb } from "@/lib/firebase-admin";
-import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ domain: string, id: string }> }) {
-  const { id } = await params;
+  const { domain, id } = await params;
 
+  if (domain === 'perde.ai') {
+    return <MarketplaceProductDetail productId={id} basePath={`/sites/${domain}`} />;
+  }
+
+  // Vorhang Logic
   let product: any = null;
   let seller: any = null;
 
@@ -26,10 +31,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     console.error('Error fetching vorhang product details:', error);
   }
 
-  if (!product) {
-    // We will still render the page so that the mock data in ProductDetail can be shown during dev,
-    // or we can just pass null and let the component handle it.
-  }
-
-  return <ProductDetail id={id} product={product} seller={seller} />;
+  return <VorhangProductDetail id={id} product={product} seller={seller} />;
 }
+

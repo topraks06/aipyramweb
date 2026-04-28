@@ -103,9 +103,9 @@ export default function IcmimarNavbar({ theme = 'light' }: IcmimarNavbarProps) {
            {user ? (
              <div className="flex items-center gap-4">
                {/* ALOHA UZAYI: CÜZDAN */}
-               <Link href={`${domainPath}/pricing`} className="flex items-center bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5 cursor-pointer hover:bg-accent/20 transition-colors" title="Kredi Yükle">
-                   <Sparkles className="w-3.5 h-3.5 text-accent mr-1.5" />
-                   <span className="text-[11px] font-mono text-accent font-bold tracking-widest">{credits}</span>
+               <Link href={`${domainPath}/pricing`} className="flex items-center bg-accent/10 border border-accent/20 rounded-full px-4 py-2 cursor-pointer hover:bg-accent/20 transition-colors" title="Kredi Yükle / Bakiye">
+                   <Sparkles className="w-3.5 h-3.5 text-accent mr-2" />
+                   <span className="text-[11px] font-mono text-accent font-bold tracking-widest uppercase">Kalan Tasarım Hakkı: {credits}</span>
                </Link>
                
                <Link href={`${domainPath}/yonetim`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass} hover:opacity-70`}>

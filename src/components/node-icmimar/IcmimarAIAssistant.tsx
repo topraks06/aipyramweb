@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, X, Minimize2, Maximize2, Send, Paperclip, 
@@ -546,11 +546,28 @@ export default function IcmimarAIAssistant() {
     }
 
     const isRenderIntent = lower.includes('tasarla') || lower.includes('render') || lower.includes('çiz') || lower.includes('dene') || lower.includes('giydir') || lower.includes('uygula');
+    const isCatalogIntent = lower.includes('katalog') || lower.includes('dergi') || lower.includes('sosyal medya') || lower.includes('reklam') || lower.includes('lookbook') || lower.includes('showroom') || lower.includes('foto') || lower.includes('instagram') || lower.includes('pinterest') || lower.includes('magazine') || lower.includes('vitrin');
     const isEditIntent = lower.includes('cila') || lower.includes('düzenle') || lower.includes('değiştir') || lower.includes('bordo') || lower.includes('sıkılaştır') || lower.includes('gevşet') || lower.includes('kaldır') || lower.includes('ekle') || lower.includes('rengi') || lower.includes('tonu') || lower.includes('açık yap') || lower.includes('koyu yap') || lower.includes('küçük') || lower.includes('büyük') || lower.includes('pile') || lower.includes('yığma') || lower.includes('kısa') || lower.includes('uzun') || lower.includes('kat') || lower.includes('fon') || lower.includes('tül') || lower.includes('desen') || lower.includes('olsun') || lower.includes('azalt') || lower.includes('artır') || lower.includes('koyulaştır') || lower.includes('açıklaştır');
     const isAnalysisIntent = lower.includes('analiz') || lower.includes('incele');
     
     // ── CİLA MODU: Render tamamlanmışsa ve yeni attachment yoksa → düzenleme komutu ──
-    const shouldEdit = (isEditIntent || hasCompletedRender.current) && !isRenderIntent && currentAttachments.length === 0 && userMsg.trim().length > 0;
+    // == KATALOG / SOSYAL MEDYA / DERGi MODU: Mekan gorseli olmadan urun + prompt ile render ==
+    if (isCatalogIntent && currentAttachments.length > 0) {
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
+      const catalogPrompt = `KATALOG / SOSYAL MEDYA CEKIMI MODU: ${userMsg}. Profesyonel studyo ortaminda, dergi/sosyal medya kalitesinde fotograf cekimi simulasyonu yap. Urunleri luks bir showroom veya studyo ortaminda sergileyerek fotoger cekci katalog gorseli olustur.`;
+      setInputMsg('');
+      setAttachments([]);
+      hasCompletedRender.current = false;
+      setMessages(prev => [...prev, 
+        { id: 'u-' + uid, role: 'user', content: userMsg, attachments: currentAttachments },
+        { id: 'r-' + uid, role: 'agent', content: 'Katalog / Sosyal Medya tasarimi hazirlaniyor... Urunleriniz profesyonel studyo ortaminda sergilenecek.' }
+      ]);
+      window.dispatchEvent(new CustomEvent('start_autonomous_render', { detail: { attachments: currentAttachments, prompt: catalogPrompt } }));
+      setIsTyping(false);
+      return;
+    }
+
+    const shouldEdit = (isEditIntent || hasCompletedRender.current) && !isRenderIntent && !isCatalogIntent && currentAttachments.length === 0 && userMsg.trim().length > 0;
     if (shouldEdit) {
       const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');

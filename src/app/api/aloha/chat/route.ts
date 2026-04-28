@@ -126,6 +126,23 @@ export async function POST(req: Request) {
       }
     }
 
+    // ═══ SOVEREIGN PUBLISH KOMUTU ═══
+    const publishMatch = (message || '').match(/(satışa sun|fuarda sergile|avrupa pazarı|perde.ai'ye gönder|hometex'e gönder)/i);
+    if (publishMatch) {
+      const intent = publishMatch[1].toLowerCase();
+      let targetNode = 'perde';
+      let nodeName = 'Perde.ai';
+      if (intent.includes('fuar') || intent.includes('hometex')) { targetNode = 'hometex'; nodeName = 'Hometex.ai'; }
+      if (intent.includes('avrupa')) { targetNode = 'vorhang'; nodeName = 'Vorhang.ai'; }
+
+      console.log(`[ALOHA] 🛒 PUBLISH INTENT: "${targetNode}"`);
+      return NextResponse.json({
+        text: `✅ Harika! Tasarımınızı **${nodeName}** üzerinde yayınlamak için her şey hazır. Lütfen tasarım panelindeki **SATIŞA SUN / FUARDA SERGİLE** butonuna tıklayarak işlemi onaylayın.`,
+        iterations: 0,
+        forceTool: true,
+      });
+    }
+
     // ═══ OTONOM DÖNGÜ KOMUTU ═══
     // "döngü başlat" veya "aloha cycle" → tam otonom döngü
     if (lowerMsg.includes('döngü başlat') || lowerMsg.includes('aloha cycle') || lowerMsg.includes('cycle çalıştır')) {

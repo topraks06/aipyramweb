@@ -139,20 +139,22 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     roles: ['admin', 'member'],
   },
 
-  // ─── PERDE.AI (TÜRKİYE B2C SATIŞ MAĞAZASI) ──────
-  // icmimar.ai'de üretilen tasarımların TR pazarına satıldığı vitrin
+  // ─── PERDE.AI (TÜRKİYE B2C MARKETPLACE MAĞAZASI) ──────
+  // icmimar.ai'de üretilen tasarımların + esnaf ürünlerinin TR pazarına satıldığı vitrin
   perde: {
     id: 'perde',
     domain: 'perde.ai',
-    name: 'Perde.AI — Türkiye Online Perde Mağazası',
+    name: 'Perde.AI — Türkiye Ev Tekstili Marketplace',
     shortName: 'PERDE.AI',
     memberCollection: 'perde_members',
     newsCollection: 'perde_news',
     projectCollection: 'perde_orders',
     walletCollection: 'perde_wallets',
     customerCollection: 'perde_customers',
-    productCollection: 'perde_products',
+    productCollection: 'perde_marketplace_products',
     renderCollection: 'perde_renders',
+    orderCollection: 'perde_marketplace_orders',
+    sellerCollection: 'perde_marketplace_sellers',
     theme: 'light',
     locale: 'tr',
     features: {
@@ -160,10 +162,13 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
       catalog: true,
       news: false,
       autonomous: false,
-      visualizer: false,     // Tasarım motoru icmimar.ai'de
+      visualizer: true,      // AI Try-at-Home (evinde dene)
       expo: false,
       magazine: false,
       salesEngine: true,
+      marketplace: true,     // E-ticaret marketplace
+      sellerPanel: true,     // Satıcı/Esnaf paneli
+      tryAtHome: true,       // AI ile evinde dene
       whatsapp: false,
       documents: false,
       fabricAnalysis: false,
@@ -172,13 +177,15 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     publicNavLinks: [
       { name: 'Koleksiyonlar', href: '/collections', gated: false },
       { name: 'Nasıl Çalışır?', href: '/how-it-works', gated: false },
+      { name: 'Satıcı Ol', href: '/seller/register', gated: false },
       { name: 'İletişim', href: '/contact', gated: false },
     ],
     privateNavLinks: [
       { name: 'Hesabım', href: '/hesabim', gated: true },
       { name: 'Siparişlerim', href: '/orders', gated: true },
+      { name: 'Favorilerim', href: '/favorites', gated: true },
     ],
-    roles: ['admin', 'editor', 'member'],
+    roles: ['admin', 'editor', 'seller', 'member'],
   },
 
   // ─── HOMETEX.AI (365 GÜN AÇIK B2B SANAL FUAR) ────

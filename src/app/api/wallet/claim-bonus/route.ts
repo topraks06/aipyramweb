@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
         }
 
         const userRecord = await admin.auth().getUser(uid);
-        if (!userRecord.emailVerified) {
+        const isDev = process.env.NODE_ENV === 'development';
+        
+        if (!userRecord.emailVerified && !isDev) {
             return NextResponse.json({ error: "E-posta adresi henüz doğrulanmamış." }, { status: 403 });
         }
 
@@ -33,9 +35,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Bonus daha önce alınmış.", bonusAdded: false });
         }
 
-        // Eğer perde veya icmimar ise 5 kredi yükle, diğerleri için gerekliyse farklı bir mantık.
+        // Sadece icmimar ise 5 kredi yükle
         let bonusAmount = 0;
-        if (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') {
+        if (SovereignNodeId === 'icmimar') {
             bonusAmount = 5;
         }
 

@@ -26,23 +26,6 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
   const T = PERDE_DICT[langKey] || PERDE_DICT['EN'];
 
   const { user, isLicensed, logout, SovereignNodeId } = usePerdeAuth();
-  const [credits, setCredits] = React.useState<number>(0);
-
-  React.useEffect(() => {
-    if (!user || !SovereignNodeId) return;
-    const config = getNode(SovereignNodeId);
-    
-    // Yalnızca Sovereign Cüzdan Koleksiyonunu dinle
-    const unsub = onSnapshot(doc(db, config.walletCollection, user.uid), (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            // Hem yeni agentCredits hem eski renderCredits desteği
-            setCredits(data?.agentCredits !== undefined ? data.agentCredits : (data?.renderCredits || 0));
-        }
-    });
-
-    return () => unsub();
-  }, [user, SovereignNodeId]);
 
   const isDark = theme === 'dark';
   const bgClass = isDark ? 'bg-[#111111] border-white/10' : 'bg-[#F9F9F6] border-[#111111]/10';
@@ -76,7 +59,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
       <header className={`fixed top-0 left-0 w-full z-50 px-6 md:px-12 h-20 flex justify-between items-center transition-colors border-b ${bgClass} ${borderClass} ${textClass}`}>
         <div className="flex items-center gap-6">
           <Link href={`${domainPath}/`} className="font-serif text-2xl tracking-tight font-medium hover:opacity-80 transition-opacity whitespace-nowrap">
-            PERDE.AI
+            perde.ai
           </Link>
           {isLicensed && (
             <span className="hidden md:flex items-center gap-1 bg-[#8B7355]/10 text-[#8B7355] text-[9px] px-2 py-0.5 font-bold uppercase tracking-[0.2em] border border-[#8B7355]/20">
@@ -102,11 +85,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
 
            {user ? (
              <div className="flex items-center gap-4">
-               {/* ALOHA UZAYI: CÜZDAN */}
-               <Link href={`${domainPath}/pricing`} className="flex items-center bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5 cursor-pointer hover:bg-accent/20 transition-colors" title="Kredi Yükle">
-                   <Sparkles className="w-3.5 h-3.5 text-accent mr-1.5" />
-                   <span className="text-[11px] font-mono text-accent font-bold tracking-widest">{credits}</span>
-               </Link>
+               {/* ALOHA UZAYI: CÜZDAN KALDIRILDI - SADECE SİPARİŞLERİM */}
                
                 <Link href={`${domainPath}/orders`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass} hover:opacity-70`}>
                   Siparişlerim
@@ -160,7 +139,7 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
               className="fixed top-0 right-0 h-full w-[280px] bg-white shadow-2xl z-[100] lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center p-6 border-b border-zinc-100">
-                <span className="font-serif text-xl tracking-tight text-zinc-900">PERDE.AI</span>
+                <span className="font-serif text-xl tracking-tight text-zinc-900">perde.ai</span>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-2 bg-zinc-100 text-zinc-600 hover:text-black rounded-full transition-colors"

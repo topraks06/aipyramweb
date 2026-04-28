@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -48,7 +48,7 @@ export default function RoomVisualizer() {
               setResultImage(data.project.resultImage);
               setActiveOriginalUrl(data.project.originalImage);
               setCanvasAttachments(data.project.fabrics || []);
-              toast.success(`${data.project.customerName} projesi arşividen yüklendi.`, { icon: '🔄' });
+              toast.success(`${data.project.customerName} projesi arşividen yüklendi.`, { icon: 'ğŸ”�?' });
             }
          }).catch(err => console.error(err));
     }
@@ -88,8 +88,12 @@ export default function RoomVisualizer() {
     else setGreeting('İyi Akşamlar');
 
     const handleStartRender = (e: any) => {
-       // Only trigger with existing staged image and user prompt.
        const prompt = e.detail?.prompt;
+       const chatAttachments = e.detail?.attachments;
+       // Chatbox'tan gelen ürün ekleri varsa canvasAttachments'a senkronize et
+       if (chatAttachments && chatAttachments.length > 0) {
+         setCanvasAttachments(chatAttachments);
+       }
        triggerAutonomousRender(undefined, false, prompt);
     };
     const handleSync = (e: any) => {
@@ -105,13 +109,13 @@ export default function RoomVisualizer() {
         }
       }
     };
-    // ── CİLA MODU: render-edit API ile mevcut tasarımı düzenle ──
+    // â”€â”€ CİLA MODU: render-edit API ile mevcut tasarımı düzenle â”€â”€
     const handleRenderEdit = async (e: any) => {
       const editPrompt = e.detail?.editPrompt;
       const currentRender = resultImage;
       if (!editPrompt || !currentRender) {
         window.dispatchEvent(new CustomEvent('agent_message', {
-          detail: { message: '⚠️ Düzenleme için önce bir tasarım oluşturmalısınız.' }
+          detail: { message: 'âš ï¸ Düzenleme için önce bir tasarım oluşturmalısınız.' }
         }));
         return;
       }
@@ -143,16 +147,16 @@ export default function RoomVisualizer() {
           setZoomLevel(1);
           setPanPos({ x: 0, y: 0 });
           window.dispatchEvent(new CustomEvent('agent_message', {
-            detail: { message: `✅ Cila tamamlandı: "${editPrompt}" uygulandı.` }
+            detail: { message: `âœ… Cila tamamlandı: "${editPrompt}" uygulandı.` }
           }));
         } else {
           throw new Error(data.error || 'Düzenleme sonucu alınamadı');
         }
       } catch (err: any) {
         console.error('[RENDER-EDIT] Error:', err);
-        toast.error(`❌ Cila Hatası: ${err.message}`, { duration: 6000 });
+        toast.error(`âŒ Cila Hatası: ${err.message}`, { duration: 6000 });
         window.dispatchEvent(new CustomEvent('agent_message', {
-          detail: { message: `❌ Cila motoru hata verdi: ${err.message}` }
+          detail: { message: `âŒ Cila motoru hata verdi: ${err.message}` }
         }));
       } finally {
         setIsProcessing(false);
@@ -171,7 +175,7 @@ export default function RoomVisualizer() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stagedImage, resultImage, activeOriginalUrl, renderHistory, historyIndex]);
 
-  // ── Görsel Sıkıştırma (API Payload Boyutunu Düşürmek İçin) ──
+  // â”€â”€ Görsel Sıkıştırma (API Payload Boyutunu Düşürmek İçin) â”€â”€
   const compressImage = (base64: string, maxWidth = 1200, quality = 0.8): Promise<string> => {
     return new Promise((resolve) => {
       const img = new window.Image();
@@ -188,7 +192,7 @@ export default function RoomVisualizer() {
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0, w, h);
         const compressed = canvas.toDataURL('image/jpeg', quality);
-        console.log(`[COMPRESS] ${Math.round(base64.length / 1024)}KB → ${Math.round(compressed.length / 1024)}KB (${w}x${h})`);
+        console.log(`[COMPRESS] ${Math.round(base64.length / 1024)}KB â†’ ${Math.round(compressed.length / 1024)}KB (${w}x${h})`);
         resolve(compressed);
       };
       img.onerror = () => resolve(base64); // fallback: return original
@@ -307,7 +311,7 @@ export default function RoomVisualizer() {
     const reader = new FileReader();
     reader.onloadend = async () => {
        const rawBase64 = reader.result as string;
-       // Sıkıştır: 1200px max, %80 kalite → API payload'u düşür
+       // Sıkıştır: 1200px max, %80 kalite â†’ API payload'u düşür
        const compressed = await compressImage(rawBase64, 1200, 0.8);
        setStagedImage({ base64: compressed, mimeType: 'image/jpeg' });
        setResultImage(null);
@@ -354,7 +358,7 @@ export default function RoomVisualizer() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success('Proje Müşteriye Kaydedildi!', { icon: '📁' });
+        toast.success('Proje Müşteriye Kaydedildi!', { icon: 'ğŸ“' });
         setIsSaveModalOpen(false);
         fetchArchives(); // Refresh
       } else {
@@ -374,24 +378,28 @@ export default function RoomVisualizer() {
     setActiveOriginalUrl(proj.originalImage);
     setCanvasAttachments(proj.fabrics || []);
     setIsArchiveOpen(false);
-    toast.success(`${proj.customerName} projesi yüklendi. Kaldığınız yerden devam edebilirsiniz.`, { icon: '🔄' });
+    toast.success(`${proj.customerName} projesi yüklendi. Kaldığınız yerden devam edebilirsiniz.`, { icon: 'ğŸ”�?' });
   };
 
   const triggerAutonomousRender = async (sourceImageBase64?: string, isUpscale: boolean = false, promptOverride?: string) => {
      const targetImage = sourceImageBase64 || stagedImage?.base64;
-     if (!targetImage) return;
+     const hasProducts = canvasAttachments.length > 0;
+     
+     // Mekan görseli yoksa VE ürün/prompt da yoksa â†’ dur
+     if (!targetImage && !hasProducts && !promptOverride) return;
+     
+     // Katalog/Sosyal Medya Modu: Mekan yok, ürün + prompt var
+     const isCatalogMode = !targetImage && (hasProducts || !!promptOverride);
      
      setIsProcessing(true);
-     setLoadingMsg(T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...');
+     setLoadingMsg(isCatalogMode 
+       ? 'KATALOG / SOSYAL MEDYA TASARIMI HAZIRLANIYOR...'
+       : (T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...'));
      
      try {
-       // v4: TÜM renderlar render-pro üzerinden (Dual-Label + model seçim stratejisi)
        const endpoint = '/api/icmimar/render-pro';
 
-       // ── TÜM GÖRSELLERİ SIKIŞTIRIR (API payload boyutunu düşür) ──
-       const compressedTarget = await compressImage(targetImage, 1200, 0.8);
-       const calculatedAR = await getClosestAspectRatio(compressedTarget);
-
+       // â”€â”€ Ürünleri sıkıştır â”€â”€
        const productsObj: Record<string, any> = {};
        for (const [i, a] of canvasAttachments.entries()) {
            const role = a.label || `Ürün ${i+1}`;
@@ -399,20 +407,36 @@ export default function RoomVisualizer() {
            productsObj[role] = { data: compressedProduct, mimeType: 'image/jpeg', physics: a.physics || 'auto' };
        }
 
-       const bodyPayload = {
-           spaceImage: { data: compressedTarget, mimeType: 'image/jpeg' },
+       // â”€â”€ Mekan görseli varsa sıkıştır, yoksa prompt ile çalış â”€â”€
+       let compressedTarget: string | null = null;
+       let calculatedAR = '16:9'; // Katalog modu default
+       if (targetImage) {
+         compressedTarget = await compressImage(targetImage, 1200, 0.8);
+         calculatedAR = await getClosestAspectRatio(compressedTarget);
+       }
+
+       const bodyPayload: any = {
            products: productsObj,
            referenceModel: referenceModel ? { data: await compressImage(referenceModel.base64, 800, 0.7), mimeType: 'image/jpeg' } : undefined,
-           variationCount: 1, // Her zaman 1 (4K)
+           variationCount: 1,
            isUpscale: true,
-           aspectRatio: calculatedAR,   // Mekanın orijinal oranını koru (hesaplanan: 16:9, 4:3 vs)
+           aspectRatio: calculatedAR,
            userPrompt: promptOverride,
            studioSettings: {
-             decorationMode: canvasAttachments.length > 0 ? 'preserve' : 'auto-decor',
-             semanticMasking: true // Phase 1: Otonom Pencere Tespiti Aktif
+             decorationMode: isCatalogMode ? 'auto-decor' : (canvasAttachments.length > 0 ? 'preserve' : 'auto-decor'),
+             semanticMasking: !isCatalogMode
            },
            SovereignNodeId,
        };
+
+       // Mekan görseli varsa spaceImage, yoksa spacePrompt gönder
+       if (compressedTarget) {
+         bodyPayload.spaceImage = { data: compressedTarget, mimeType: 'image/jpeg' };
+       } else if (promptOverride) {
+         bodyPayload.spacePrompt = promptOverride;
+       } else {
+         bodyPayload.spacePrompt = 'Professional interior design studio showroom with elegant modern furniture and natural lighting, magazine quality photo shoot setup';
+       }
 
        const payloadStr = JSON.stringify(bodyPayload);
        console.log(`[RENDER] Sending ${Math.round(payloadStr.length / 1024)}KB to ${endpoint}`);
@@ -428,7 +452,7 @@ export default function RoomVisualizer() {
        }
 
        if (!response.ok) {
-         // Sunucu HTML hata sayfası dönebilir — JSON parse güvenli olmalı
+         // Sunucu HTML hata sayfası dönebilir - JSON parse güvenli olmalı
          let errorMsg = `Sunucu hatası (${response.status})`;
          try {
            const err = await response.json();
@@ -450,11 +474,11 @@ export default function RoomVisualizer() {
          }
          setIsProcessing(false);
          
-         const finalImage = await matchDimensions(targetImage, data.renderUrl);
+          const finalImage = targetImage ? await matchDimensions(targetImage, data.renderUrl) : data.renderUrl;
          setResultImage(finalImage);
-         setActiveOriginalUrl(targetImage);
+          setActiveOriginalUrl(targetImage || null);
          const newHistory = renderHistory.slice(0, historyIndex + 1);
-         newHistory.push({ url: finalImage, originalUrl: targetImage });
+          newHistory.push({ url: finalImage, originalUrl: targetImage || null });
          setRenderHistory(newHistory);
          setHistoryIndex(newHistory.length - 1);
           setStagedImage(null);
@@ -472,12 +496,12 @@ export default function RoomVisualizer() {
         setIsProcessing(false);
         setStagedImage(null);
 
-        // Kullanıcıya GERÇEK hata mesajını göster — sahte resim YASAK
+        // Kullanıcıya GERÇEK hata mesajını göster - sahte resim YASAK
         const errorMsg = err.message || 'Tasarım motoru yanıt vermedi.';
-        toast.error(`❌ Render Hatası: ${errorMsg}`, { duration: 6000 });
+        toast.error(`âŒ Render Hatası: ${errorMsg}`, { duration: 6000 });
 
         window.dispatchEvent(new CustomEvent('agent_message', {
-          detail: { message: `❌ Tasarım motoru hata verdi: ${errorMsg}. Lütfen tekrar deneyin veya farklı bir görsel yükleyin.` }
+          detail: { message: `âŒ Tasarım motoru hata verdi: ${errorMsg}. Lütfen tekrar deneyin veya farklı bir görsel yükleyin.` }
         }));
      }
   };
@@ -510,6 +534,40 @@ export default function RoomVisualizer() {
       setResultImage(renderHistory[nextIndex].url);
       setActiveOriginalUrl(renderHistory[nextIndex].originalUrl);
       setSliderPosition(50);
+    }
+  };
+
+  const handlePublish = async (targetNode: string) => {
+    if (!resultImage) {
+      toast.error("Lütfen önce bir tasarım oluşturun.");
+      return;
+    }
+    
+    const toastId = toast.loading(`${targetNode} ağına aktarılıyor...`);
+    
+    try {
+      const res = await fetch('/api/sovereign/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourceNodeId: 'icmimar',
+          targetNodes: [targetNode],
+          product: {
+            title: crmData.projectName || 'İcmimar Özel Tasarım',
+            description: crmData.notes || 'Sanal İç Mimar AI ile tasarlanmıştır.',
+            images: [activeOriginalUrl].filter(Boolean),
+            aiRenderedImages: [resultImage],
+            price: 0,
+          }
+        })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Yayınlama başarısız');
+      
+      toast.success(data.results[targetNode]?.message || 'Yayınlandı!', { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message, { id: toastId });
     }
   };
 
@@ -580,7 +638,7 @@ export default function RoomVisualizer() {
                   İşlemlere başlamak için buraya <strong className="text-white font-medium">tıklayarak</strong> fotoğraf yükleyebilir veya <strong className="text-white font-medium">sürükleyip bırakabilirsiniz.</strong>
                 </p>
                 <p className="text-zinc-500 text-xs mt-4 text-center max-w-md">
-                  Fotoğrafınız yoksa sağ alt köşedeki <strong className="text-blue-400">Sanal İç Mimar</strong> ile sohbet edin — otonom tasarım yapabilir.
+                  Fotoğrafınız yoksa sağ alt köşedeki <strong className="text-blue-400">Sanal İç Mimar</strong> ile sohbet edin - otonom tasarım yapabilir.
                 </p>
              </div>
           </div>
@@ -685,7 +743,7 @@ export default function RoomVisualizer() {
                                                           if (res.ok) {
                                                             const data = await res.json();
                                                             if (data.physics?.type) physicsValue = data.physics.type;
-                                                            if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache' });
+                                                            if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: 'ğŸ§ ', id: 'brain_cache' });
                                                           }
                                                       } catch (e) {
                                                           console.error('[aipyram Brain] Bağlantı hatası', e);
@@ -732,7 +790,7 @@ export default function RoomVisualizer() {
                                                       if (res.ok) {
                                                         const data = await res.json();
                                                         if (data.physics?.type) physicsValue = data.physics.type;
-                                                        if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: '🧠', id: 'brain_cache_drop' });
+                                                        if (data.cached) toast.success('Kumaş Beyin Hafızasında Bulundu!', { icon: 'ğŸ§ ', id: 'brain_cache_drop' });
                                                       }
                                                   } catch (e) {
                                                       console.error('[aipyram Brain] Bağlantı hatası', e);
@@ -807,7 +865,7 @@ export default function RoomVisualizer() {
                                          onClick={() => triggerAutonomousRender()} 
                                          className="w-full mt-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold tracking-wider py-3 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:from-purple-500 hover:to-blue-500 transition-all flex items-center justify-center gap-2"
                                       >
-                                          <Sparkles className="w-5 h-5"/> {T.startRender || 'TASARIMI BAŞLAT'}
+                                          <Sparkles className="w-5 h-5"/> {T.startRender || 'TASARIMI BAÅ�?LAT'}
                                       </button>
                                       <p className="text-[11px] text-zinc-400 mt-3 text-center px-4 leading-relaxed font-medium">
                                           {canvasAttachments.length} ürün eklendi. Etiketleri yazarak AI&apos;ın doğru yerleştirmesini sağlayın.
@@ -918,6 +976,20 @@ export default function RoomVisualizer() {
                          title="Projeyi Kaydet"
                      >
                          <Save className="w-4 h-4" /> KAYDET
+                     </button>
+                     <button 
+                         onClick={() => handlePublish('perde')}
+                         className="bg-[#8B7355]/90 hover:bg-[#8B7355] border border-[#8B7355]/50 backdrop-blur-xl text-white px-4 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase flex items-center gap-2 shadow-2xl transition-all"
+                         title="Perde.ai'de Satışa Sun"
+                     >
+                         <ShoppingCart className="w-4 h-4" /> SATI�?A SUN
+                     </button>
+                     <button 
+                         onClick={() => handlePublish('hometex')}
+                         className="bg-purple-600/90 hover:bg-purple-600 border border-purple-500/50 backdrop-blur-xl text-white px-4 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase flex items-center gap-2 shadow-2xl transition-all"
+                         title="Hometex.ai Fuarda Sergile"
+                     >
+                         <Tent className="w-4 h-4" /> FUARDA SERGİLE
                      </button>
                      <button 
                          onClick={() => {
@@ -1031,7 +1103,7 @@ export default function RoomVisualizer() {
           brandName="icmimar.ai"
         />
 
-        {/* TASARIM ARŞİVİ — Projeyi Kaydet */}
+        {/* TASARIM ARÅ�?İVİ - Projeyi Kaydet */}
         {isSaveModalOpen && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
@@ -1084,3 +1156,4 @@ export default function RoomVisualizer() {
     </div>
   );
 }
+

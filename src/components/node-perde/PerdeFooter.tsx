@@ -32,7 +32,7 @@ export default function PerdeFooter() {
           {/* MIDDLE BRANDING BLOCK */}
           <div className="flex flex-col md:flex-row justify-between items-start pt-16 border-t border-[#111111]/10 mb-16 gap-12">
             <div className="max-w-md">
-               <span className="font-serif text-3xl text-[#111111] mb-2 block tracking-tight">PERDE.AI</span>
+               <span className="font-serif text-3xl text-[#111111] mb-2 block tracking-tight">perde.ai</span>
                <p className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400 mb-8 leading-relaxed">Yapay zeka ile mekanınızı yeniden tanımlıyoruz.</p>
                
                <div className="text-[11px] font-medium text-zinc-500 space-y-3 uppercase tracking-wider">

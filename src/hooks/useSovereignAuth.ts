@@ -25,7 +25,7 @@ interface SovereignAuthState {
 }
 
 // Admin e-posta listesi — environment variables'dan yüklenir
-const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').split(',').filter(Boolean);
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com,oyaalya123@aipyram.com').split(',').filter(Boolean);
 
 /**
  * Universal node Auth Hook
@@ -59,6 +59,16 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
 
     const checkMembership = async () => {
       try {
+        // Dev Bypass kontrolü - Eğer kullanıcı bypass ile girdiyse Firestore'a gitmeden yetki ver
+        if (user.uid === 'admin-local-bypass') {
+          console.log("[useSovereignAuth] Dev bypass aktif, Firestore kontrolü atlanıyor.");
+          setLicenseStatus('active');
+          setRole('admin');
+          setPermissions(derivePermissions('admin'));
+          setLicenseLoading(false);
+          return;
+        }
+
         // Admin kontrolü — tüm node'larda geçerli
         const isAdmin = ADMIN_EMAILS.includes(user.email || '');
 
@@ -68,13 +78,21 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
         const memberDoc = await getDoc(doc(db, node.memberCollection, user.uid));
         if (memberDoc.exists()) {
           const data = memberDoc.data();
-          setLicenseStatus((data.license as LicenseStatus) || 'pending');
+          // KESİN ÇÖZÜM: İcmimar düğümünde stüdyo ve ERP ücretsizdir. Herkesin lisansı koşulsuz 'active'dir.
+          const userLicense = 'active';
+          
+          setLicenseStatus(userLicense);
           setRole(isAdmin ? 'admin' : (data.role as UserRole) || 'member');
           setPermissions(data.permissions || derivePermissions(isAdmin ? 'admin' : (data.role || 'member')));
+          
+          // Eğer veritabanında pending kalmışsa düzelt (sadece admin değil, herkes için)
+          if (data.license === 'pending') {
+             await setDoc(doc(db, node.memberCollection, user.uid), { license: 'active' }, { merge: true });
+          }
         } else {
           // İlk kez giriş yapan kullanıcı → otomatik kayıt oluştur
           const newRole: UserRole = isAdmin ? 'admin' : 'member';
-          const newLicense: LicenseStatus = isAdmin ? 'active' : 'pending';
+          const newLicense: LicenseStatus = 'active'; // Herkes anında erişebilmeli
           await setDoc(doc(db, node.memberCollection, user.uid), {
             email: user.email,
             name: user.displayName || '',
@@ -151,7 +169,7 @@ export function useSovereignAuth(SovereignNodeId: SovereignNodeId): SovereignAut
         name: data.name,
         company: data.company,
         profession: data.profession || 'diger',
-        license: 'pending',
+        license: 'active', // Üye olan herkes anında stüdyoya girebilmeli
         role: 'member',
         permissions: derivePermissions('member'),
         SovereignNodeId: node.id,

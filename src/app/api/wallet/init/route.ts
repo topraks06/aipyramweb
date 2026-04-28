@@ -26,14 +26,27 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Cüzdan zaten mevcut." });
         }
 
-        // Perde ve Icmimar ücretli platformlardır, ancak e-postası onaylanmış (veya Google Login) kullanıcılara 5 hediye verilir.
-        let initialCredits = (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') ? 0 : 10;
+        // Icmimar B2B tasarım platformudur, e-postası onaylanmış (veya Google Login) kullanıcılara 5 hediye verilir.
+        // Diğer platformlarda (veya ücretsiz olanlarda) 10 kredi olabilir, ancak perde'de kredi sistemi artık yoktur.
+        let initialCredits = (SovereignNodeId === 'icmimar') ? 0 : 10;
+        if (SovereignNodeId === 'perde') initialCredits = 0; // Perde B2C'dir, agent kullanmaz.
+
         let welcomeBonusClaimed = false;
 
         try {
-            const userRecord = await admin.auth().getUser(uid);
-            if (userRecord.emailVerified) {
-                if (SovereignNodeId === 'perde' || SovereignNodeId === 'icmimar') {
+            // LOCALHOST BYPASS KONTROLÜ
+            const isDev = process.env.NODE_ENV === 'development';
+            let isEmailVerified = false;
+
+            if (isDev && (uid === 'admin-local-bypass' || uid.includes('bypass') || uid.includes('mock'))) {
+                isEmailVerified = true;
+            } else {
+                const userRecord = await admin.auth().getUser(uid);
+                isEmailVerified = userRecord.emailVerified || isDev;
+            }
+            
+            if (isEmailVerified) {
+                if (SovereignNodeId === 'icmimar') {
                     initialCredits = 5;
                     welcomeBonusClaimed = true;
                 }
