@@ -139,7 +139,7 @@ export default function PerdeAIAssistant() {
            .then(data => {
                if (data.messages && data.messages.length > 0) {
                    const formatted = data.messages.map((m: any) => ({
-                       id: m.id || Math.random().toString(),
+                       id: m.id || crypto.randomUUID(),
                        role: m.role === 'assistant' ? 'agent' : 'user',
                        content: m.text
                    }));
@@ -235,7 +235,7 @@ export default function PerdeAIAssistant() {
         if(e.detail?.file && e.detail?.base64) {
             setAttachments(prev => {
                 const updated = [...prev, {
-                    id: Math.random().toString(36).substr(2, 9),
+                    id: crypto.randomUUID(),
                     file: e.detail.file,
                     base64: e.detail.base64
                 }];
@@ -478,7 +478,7 @@ export default function PerdeAIAssistant() {
     // ── 1.1 STİL DEĞİŞTİRME: "Bu odayı japandi yap" ──
     const isStyleIntent = !!(matchedStyle || ((lower.includes('tarz') || lower.includes('stil') || lower.includes('style')) && hasCompletedRender.current));
     if (isStyleIntent && hasCompletedRender.current && currentAttachments.length === 0) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       const stylePrompt = matchedStyle 
         ? `Completely redesign this room in ${STYLE_MAP[matchedStyle]}. Keep the room geometry and windows exactly the same.`
         : userMsg;
@@ -497,7 +497,7 @@ export default function PerdeAIAssistant() {
     const FURNITURE_WORDS = ['koltuk', 'kanepe', 'masa', 'sandalye', 'yatak', 'dolap', 'raf', 'avize', 'lamba', 'halı', 'paspas', 'yastık', 'vazo', 'ayna', 'tablo', 'sehpa', 'konsol', 'kitaplık', 'puf', 'berjer', 'tabure', 'komodin', 'gardırop', 'aplik', 'spot', 'abajur'];
     const matchedFurniture = FURNITURE_WORDS.find(f => lower.includes(f));
     if (matchedFurniture && hasCompletedRender.current && currentAttachments.length === 0) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
       setMessages(prev => [...prev,
         { id: 'u-' + uid, role: 'user', content: userMsg },
@@ -511,7 +511,7 @@ export default function PerdeAIAssistant() {
     // ── 1.3 RENK PALETİ ÖNERİSİ: "Bu oda için renk öner" ──
     const isColorAdvice = lower.includes('renk öner') || lower.includes('palet') || lower.includes('renk kombinasyonu') || lower.includes('hangi renk') || lower.includes('ne renk') || lower.includes('renk uyumu');
     if (isColorAdvice) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
       setMessages(prev => [...prev, { id: 'u-' + uid, role: 'user', content: userMsg }]);
       setIsTyping(true);
@@ -530,7 +530,7 @@ export default function PerdeAIAssistant() {
     // ── 1.4 İLHAM / MOODBOARD: "Fikir ver", "ilham" ──
     const isInspirationIntent = lower.includes('ilham') || lower.includes('fikir ver') || lower.includes('moodboard') || lower.includes('nasıl güzel') || lower.includes('ne yapabilirim');
     if (isInspirationIntent && !isNavigating && currentAttachments.length === 0) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
       setMessages(prev => [...prev, { id: 'u-' + uid, role: 'user', content: userMsg }]);
       setIsTyping(true);
@@ -553,7 +553,7 @@ export default function PerdeAIAssistant() {
     // ── CİLA MODU: Render tamamlanmışsa ve yeni attachment yoksa → düzenleme komutu ──
     const shouldEdit = (isEditIntent || hasCompletedRender.current) && !isRenderIntent && currentAttachments.length === 0 && userMsg.trim().length > 0;
     if (shouldEdit) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
       setMessages(prev => [...prev,
         { id: 'u-' + uid, role: 'user', content: userMsg },
@@ -567,7 +567,7 @@ export default function PerdeAIAssistant() {
     // ── YENİ RENDER: Attachment + render komutu ("yap" sadece attachment varken tetiklenir) ──
     const isYapWithAttachment = lower.includes('yap') && currentAttachments.length > 0;
     if (isRenderIntent || isYapWithAttachment || (currentAttachments.length > 0 && !isAnalysisIntent)) {
-      const uid = Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
       setAttachments([]);
       hasCompletedRender.current = false; // Yeni render başlıyor, cila modu sıfırla
@@ -738,7 +738,7 @@ export default function PerdeAIAssistant() {
               const reader = new FileReader();
               reader.onloadend = () => {
                   resolve({
-                      id: Math.random().toString(36).substring(7),
+                      id: crypto.randomUUID(),
                       base64: reader.result as string,
                       file,
                       label: ''

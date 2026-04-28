@@ -692,7 +692,7 @@ export default function RoomVisualizer() {
                                                       }
 
                                                       const newAtt = {
-                                                        id: `att_${Date.now()}_${Math.random().toString(36).substr(2,5)}`,
+                                                        id: `att_${Date.now()}_${crypto.randomUUID().slice(0,5)}`,
                                                         base64,
                                                         label: '',
                                                         physics: physicsValue,
