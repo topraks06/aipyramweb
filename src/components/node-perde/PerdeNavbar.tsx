@@ -86,11 +86,11 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
         </div>
         
         <nav className="hidden lg:flex gap-10 text-[10px] uppercase tracking-[0.2em] font-semibold">
-            <Link href={`${domainPath}/visualizer`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
-              {T.nav.studio}
+            <Link href={`${domainPath}/collections`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
+              Koleksiyonlar
             </Link>
-            <Link href={`${domainPath}/pricing`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
-              {T.nav.pricing}
+            <Link href={`${domainPath}/how-it-works`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
+              Nasıl Çalışır?
             </Link>
             <Link href={`${domainPath}/contact`} className={`transition-colors py-1 ${textMuted} ${hoverClass}`}>
               {T.nav.contact}
@@ -108,9 +108,9 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
                    <span className="text-[11px] font-mono text-accent font-bold tracking-widest">{credits}</span>
                </Link>
                
-               <Link href={`${domainPath}/yonetim`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass} hover:opacity-70`}>
-                 {T.nav.studio_panel}
-               </Link>
+                <Link href={`${domainPath}/orders`} className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors ${textClass} hover:opacity-70`}>
+                  Siparişlerim
+                </Link>
                <button 
                  onClick={() => logout()}
                  className={`text-[10px] uppercase tracking-[0.2em] font-semibold transition-colors ${textMuted} ${hoverClass}`}
@@ -183,15 +183,17 @@ export default function PerdeNavbar({ theme = 'light' }: PerdeNavbarProps) {
              )}
 
               <div className="flex flex-col p-6 gap-6 text-[11px] uppercase tracking-[0.2em] font-bold">
-                <Link href={`${domainPath}/about`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
-                  {T.nav.about}
+                <Link href={`${domainPath}/collections`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
+                  Koleksiyonlar
                 </Link>
-                <Link href={`${domainPath}/visualizer`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
-                  {T.nav.studio}
+                <Link href={`${domainPath}/how-it-works`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
+                  Nasıl Çalışır?
                 </Link>
-                <Link href={`${domainPath}/yonetim`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
-                  {T.nav.erp}
-                </Link>
+                {user && (
+                  <Link href={`${domainPath}/orders`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
+                    Siparişlerim
+                  </Link>
+                )}
                 <Link href={`${domainPath}/contact`} onClick={() => setMobileMenuOpen(false)} className="text-zinc-600 hover:text-black hover:translate-x-2 transition-all">
                   {T.nav.contact}
                 </Link>

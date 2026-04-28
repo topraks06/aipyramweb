@@ -214,6 +214,7 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
   if (exactDomain.includes('vorhang')) projectName = 'vorhang';
   if (exactDomain.includes('icmimar')) projectName = 'icmimar';
   if (exactDomain.includes('heimtex')) projectName = 'heimtex';
+  if (exactDomain.includes('curtaindesign')) projectName = 'curtaindesign';
   const brandName = exactDomain.split('.')[0].toUpperCase();
 
   // ═══ OMNI-CMS VERİLERİ (sovereign_cms) ═══
@@ -268,6 +269,17 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
       console.warn('[VORHANG] Firestore fetch error:', e);
     }
     return <VorhangLandingPage products={products} />;
+  }
+  if (projectName === 'curtaindesign') {
+    const CurtaindesignLandingPage = (await import('@/components/node-curtaindesign/CurtaindesignLandingPage')).default;
+    let products: any[] = [];
+    try {
+      const productsSnap = await adminDb.collection('curtaindesign_products').limit(8).get();
+      products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[CURTAINDESIGN] Firestore fetch error:', e);
+    }
+    return <CurtaindesignLandingPage products={products} />;
   }
 
   // FAZ 1.4: basePath for localhost routing
