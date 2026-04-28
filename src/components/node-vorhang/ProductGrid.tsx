@@ -66,7 +66,13 @@ export function ProductGrid({ products = [] }: { products?: any[] }) {
           </button>
         </div>
 
-        {filteredProducts.length === 0 ? (
+        {products.length === 0 ? (
+          <div className="text-center py-32 text-gray-500 border border-gray-100 flex flex-col items-center justify-center">
+            <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-sm font-medium tracking-widest uppercase">Produkte werden vorbereitet...</p>
+            <p className="text-xs text-gray-400 mt-2">Die KI generiert gerade die neuesten Kollektionen.</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
             Keine Produkte für diese Filter gefunden.
           </div>
