@@ -38,6 +38,11 @@ export default async function PrivacyPage({ params, searchParams }: any) {
     return <VorhangPrivacy />;
   }
 
+  if (exactDomain.includes('curtaindesign')) {
+    const CurtaindesignPrivacy = (await import('@/components/node-curtaindesign/CurtaindesignPrivacy')).default;
+    return <CurtaindesignPrivacy />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', fontFamily: "'Inter', sans-serif" }}>
       <GlobalTicker />

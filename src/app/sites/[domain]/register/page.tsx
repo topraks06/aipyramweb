@@ -21,6 +21,13 @@ export default async function RegisterPage({ params }: { params: Promise<{ domai
   else if (exactDomain.includes('heimtex')) {
     Register = (await import('@/components/node-heimtex/auth/Register')).default;
   }
+  else if (exactDomain.includes('curtaindesign')) {
+    // We reuse the same Auth component for both login and register by passing the mode
+    const AuthComponent = (await import('@/components/node-curtaindesign/CurtaindesignAuth')).default;
+    Register = function CurtaindesignRegisterWrapper(props: any) {
+      return <AuthComponent {...props} mode="register" />;
+    };
+  }
 
   if (!Register) {
     return (

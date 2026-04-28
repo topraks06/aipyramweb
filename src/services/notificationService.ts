@@ -213,7 +213,7 @@ export class NotificationService {
       }
     }
 
-    console.log(`[📧 MOCK EMAIL | ${SovereignNodeId}] To: ${to} | Konu: ${subject}`);
+    console.log(`[📧 EMAIL QUEUED | ${SovereignNodeId}] To: ${to} | Konu: ${subject}`);
   }
 
   static async sendWhatsApp(to: string, message: string, SovereignNodeId = "aipyram-core") {

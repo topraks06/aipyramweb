@@ -38,6 +38,11 @@ export default async function TermsPage({ params, searchParams }: any) {
     return <VorhangTerms />;
   }
 
+  if (exactDomain.includes('curtaindesign')) {
+    const CurtaindesignTerms = (await import('@/components/node-curtaindesign/CurtaindesignTerms')).default;
+    return <CurtaindesignTerms />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', fontFamily: "'Inter', sans-serif" }}>
       <GlobalTicker />
