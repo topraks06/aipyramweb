@@ -111,12 +111,23 @@ const IMAGE_COMPOSITIONS = [
   'Editorial-style vignette with styled accessories',
 ];
 
+function titleHash(title: string): number {
+  let h = 0;
+  for (let i = 0; i < title.length; i++) h = ((h << 5) - h + title.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
 function buildImagePrompt(category: string, title: string, index: number): string {
-  const ts = Date.now();
-  const mood = IMAGE_MOODS[(ts + index) % IMAGE_MOODS.length];
-  const setting = IMAGE_SETTINGS[(ts + index * 3) % IMAGE_SETTINGS.length];
+  // T2 FIX: Başlık hash'i + gün + saat ile benzersiz kombinasyon
+  const hash = titleHash(title);
+  const day = new Date().getDate();
+  const hour = new Date().getHours();
+  const seed = hash + day * 100 + hour + index * 31;
+  
+  const mood = IMAGE_MOODS[seed % IMAGE_MOODS.length];
+  const setting = IMAGE_SETTINGS[(seed * 7) % IMAGE_SETTINGS.length];
   const subjects = IMAGE_SUBJECTS[category] || IMAGE_SUBJECTS['DEFAULT'];
-  const subject = subjects[(ts + index * 7) % subjects.length];
+  const subject = subjects[(seed * 13) % subjects.length];
   const composition = IMAGE_COMPOSITIONS[Math.min(index, IMAGE_COMPOSITIONS.length - 1)];
 
   return `A masterpiece of high-end interior photography: ${composition} of ${setting} featuring ${subject}. ${mood}. Related to: "${title}". Bright, joyful, magazine-quality. Architectural Digest editorial. 16:9, photorealistic, 85mm lens.`.substring(0, 480);
@@ -194,8 +205,9 @@ function relevanceCheck(text: string): { pass: boolean; reason?: string } {
 
 async function getRecentTitles(): Promise<string[]> {
   try {
+    // T3 FIX: Son 10 → 50 haberin başlığını çek — tekrar guard'ını güçlendir
     const snap = await adminDb.collection('trtex_news')
-      .orderBy('createdAt', 'desc').limit(10).get();
+      .orderBy('createdAt', 'desc').limit(50).get();
     return snap.docs.map(d => (d.data().title || '').substring(0, 80));
   } catch {
     return [];
@@ -208,23 +220,31 @@ async function getRecentTitles(): Promise<string[]> {
 // ═══════════════════════════════════════
 
 async function scout(brief: string): Promise<ArticleData> {
-  const today = new Date().toISOString().split('T')[0];
-  const year = new Date().getFullYear();
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const month = monthNames[now.getMonth()];
+  const dayOfWeek = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
+  const season = now.getMonth() < 3 ? 'Kış' : now.getMonth() < 6 ? 'İlkbahar' : now.getMonth() < 9 ? 'Yaz' : 'Sonbahar';
 
-  // Deterministik editoryal açı seç — saate göre döner
-  const angle = EDITORIAL_ANGLES[new Date().getHours() % EDITORIAL_ANGLES.length];
+  // T5 FIX: Açı seçimi = saat + dakika/10 ile daha fazla çeşitlilik
+  const angleIndex = (now.getHours() * 3 + Math.floor(now.getMinutes() / 10)) % EDITORIAL_ANGLES.length;
+  const angle = EDITORIAL_ANGLES[angleIndex];
   console.log(`[SCOUT] 🎭 Editoryal Açı: ${angle.id} (${angle.tone}) | ${angle.wordMin}-${angle.wordMax} kelime`);
 
-  // Anti-tekrar: son 10 haberi al
+  // T3 FIX: Anti-tekrar: son 50 haberi al
   const recentTitles = await getRecentTitles();
   const antiRepeatBlock = recentTitles.length > 0
-    ? `\n⛔ BUNLARA BENZEME — SON HABERLER:\n${recentTitles.map((t, i) => `${i+1}. "${t}"`).join('\n')}\nYukarıdaki başlıklara benzer konu, kelime, yapı KULLANMA. TAMAMEN FARKLI bir açı bul.`
+    ? `\n⛔ BUNLARA BENZEME — SON ${recentTitles.length} HABER:\n${recentTitles.slice(0, 20).map((t, i) => `${i+1}. "${t}"`).join('\n')}\n${recentTitles.length > 20 ? `...ve ${recentTitles.length - 20} haber daha. BUNLARIN HİÇBİRİNE benzeme.` : ''}\nYukarıdaki başlıklara benzer konu, kelime, yapı KULLANMA. TAMAMEN FARKLI bir açı bul.`
     : '';
 
-  const systemPrompt = `🎯 ALOHA NEWS ENGINE v3.0 — ${angle.tone.toUpperCase()}
-BUGÜN = ${today}, YIL = ${year}
+  // T5 FIX: Dinamik tarih, mevsim, takvim bilgisi enjekte et
+  const systemPrompt = `🎯 ALOHA NEWS ENGINE v3.1 — ${angle.tone.toUpperCase()}
+BUGÜN = ${dayOfWeek}, ${now.getDate()} ${month} ${year} | MEVSİM = ${season}
+BRİEF = "${brief}"
 
-Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için haber üretiyorsun.
+Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için BUGÜNE ÖZEL haber üretiyorsun.
 Üslubun: ${angle.style}
 
 🔴 MUTLAK YASAKLAR:
@@ -234,17 +254,23 @@ Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için haber üreti
 - "B2B" kelimesini başlıkta KULLANMA
 - Aşırı jargon → YASAK. Akıcı, okunabilir, keyifli bir dil kullan
 - Her cümlede "tedarik zinciri" veya "ticari" deme
+- DAHA ÖNCE YAZILMIŞ haberleri TEKRARLAMA
 
-✅ İÇERİK ÇERÇEVESİ:
+✅ İÇERİK ÇERÇEVESİ (${month} ${year} GÜNCELİ):
 1. Perde, tül, stor, döşemelik kumaş, otel tekstili, yatak örtüsü
 2. Fuar izlenimleri (Heimtextil, Hometex, Domotex), şehir haberleri (Denizli, Bursa, İstanbul)
 3. Kumaş dokusu, renk trendleri, akustik/FR kumaşlar, sürdürülebilir üretim
 4. Proje haberleri (otel, rezidans, villa, ofis), yeni koleksiyonlar
 5. Hammadde fiyatları (pamuk, polyester, iplik), kurlar, navlun
 6. Akıllı ev sistemleri, motorlu perde, otomasyon
+7. ${season} sezonu koleksiyon lansmanları ve perakende hazırlıkları
+8. Dijital dönüşüm: AI tasarım motorları, 3D showroom, sanal fuar teknolojileri
 ${antiRepeatBlock}
 
-🎯 FARK YARATAN KURAL: Her haber ÖZGÜN olmalı. Klişe kaçın. Okuyucu "bunu bilmiyordum" demeli.`;
+🎯 FARK YARATAN KURALLAR:
+- Her haber ÖZGÜN olmalı. Klişe kaçın. Okuyucu "bunu bilmiyordum" demeli.
+- Bugünün tarihi ${now.getDate()} ${month} — GÜNCEL bir açı bul.
+- Mümkünse belirli bir şehir, firma veya fuar ismi ver — soyut "sektör" kelimesi yerine somut bilgi.`;
 
   // AŞAMA 1: Metadata (title, summary, tags, intent) — küçük JSON, parse güvenli
   const meta = await alohaAI.generateJSON<{
@@ -354,62 +380,68 @@ Kategori çevirisi örnekleri: PERDE→CURTAIN/VORHANG, İSTİHBARAT→INTELLIGE
 // ═══════════════════════════════════════
 
 async function photograph(title: string, category: string): Promise<string[]> {
-  const negative = 'dark, moody, gloomy, shadows, dimly lit, scary, horror, poorly lit, messy, cluttered, cheap, amateur, watermark, text overlay, typography, logos, people, humans, models, faces, hands';
-
+  /**
+   * T1 FIX: PHOTOGRAPHER v3.1 — Gemini 3.1 Flash Image (Nano Banana 2) ile görsel üretim
+   * ESKİ: imagenClient.models.generateImages() → imagen-3.0-generate-002
+   * YENİ: alohaAI.getClient().models.generateContent() → gemini-3.1-flash-image-preview
+   * Fark: 3x hızlı, 4K, 14 referans obje, karakter tutarlılığı
+   */
   const urls: string[] = [];
 
   let bucket: any;
   try {
     bucket = admin.storage().bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'aipyram-web.firebasestorage.app');
   } catch {
-    console.error('[PHOTOGRAPHER] ❌ Storage bucket erişilemedi');
+    console.error('[PHOTOGRAPHER v3.1] ❌ Storage bucket erişilemedi');
     return [];
   }
 
-  let imagenClient: any;
-  try {
-    const { alohaAI } = require('@/core/aloha/aiClient');
-    imagenClient = alohaAI.getClient();
-  } catch (e: any) {
-    console.error('[PHOTOGRAPHER] ❌ Vertex AI client hatası:', e.message);
+  const ai = alohaAI.getClient();
+  if (!ai) {
+    console.error('[PHOTOGRAPHER v3.1] ❌ AI client erişilemedi');
     return [];
   }
 
   for (let i = 0; i < 3; i++) {
-    // v3.0: Dinamik prompt — her görsel benzersiz
-    const prompt = `${buildImagePrompt(category, title, i)}\nNegative: ${negative}`.substring(0, 480);
+    const prompt = buildImagePrompt(category, title, i);
 
     for (let retry = 0; retry < 2; retry++) {
       try {
-        const response = await imagenClient.models.generateImages({
-          model: alohaAI.getImageModel?.() || 'imagen-3.0-generate-002',
-          prompt,
-          config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' },
+        // YENİ: Gemini 3.1 Flash Image — native görsel üretim
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.1-flash-image-preview',
+          contents: {
+            parts: [{ text: `Generate a single high-quality 16:9 photograph:\n\n${prompt}\n\nIMPORTANT: Generate ONLY the image. No text response. Bright, joyful, luxury interior photography. NO dark/moody/gloomy. NO people/faces/hands. NO watermarks/text/logos.` }],
+          },
+          config: {
+            responseModalities: ['IMAGE'],
+          },
         });
 
-        const base64 = response.generatedImages?.[0]?.image?.imageBytes;
-        if (!base64) throw new Error('Boş görsel');
+        const candidate = response.candidates?.[0];
+        const imagePart = candidate?.content?.parts?.find((p: any) => p.inlineData);
+        if (!imagePart?.inlineData?.data) throw new Error('Boş görsel');
 
-        const buffer = Buffer.from(base64, 'base64');
+        const buffer = Buffer.from(imagePart.inlineData.data, 'base64');
         const fileSlug = title.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
         const filename = `trtex-news/${fileSlug}-${Date.now()}-${i + 1}.jpg`;
         const file = bucket.file(filename);
 
         await file.save(buffer, {
-          contentType: 'image/jpeg',
+          contentType: imagePart.inlineData.mimeType || 'image/png',
           metadata: { cacheControl: 'public, max-age=31536000' },
         });
         try { await file.makePublic(); } catch {}
 
         const url = `https://storage.googleapis.com/${bucket.name}/${filename}`;
         urls.push(url);
-        console.log(`[PHOTOGRAPHER] ✅ Görsel ${i + 1}/3 üretildi`);
+        console.log(`[PHOTOGRAPHER v3.1] ✅ Görsel ${i + 1}/3 üretildi (Nano Banana 2)`);
 
-        if (i < 2) await new Promise(r => setTimeout(r, 5000));
+        if (i < 2) await new Promise(r => setTimeout(r, 3000));
         break;
       } catch (err: any) {
-        console.warn(`[PHOTOGRAPHER] ⚠️ Görsel ${i + 1} hata (deneme ${retry + 1}): ${err.message?.substring(0, 60)}`);
-        if (retry === 1) console.warn(`[PHOTOGRAPHER] ⚠️ Görsel ${i + 1} atlandı`);
+        console.warn(`[PHOTOGRAPHER v3.1] ⚠️ Görsel ${i + 1} hata (deneme ${retry + 1}): ${err.message?.substring(0, 80)}`);
+        if (retry === 1) console.warn(`[PHOTOGRAPHER v3.1] ⚠️ Görsel ${i + 1} atlandı`);
         else await new Promise(r => setTimeout(r, 3000));
       }
     }

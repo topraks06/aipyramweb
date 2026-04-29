@@ -109,13 +109,14 @@ export async function POST(req: NextRequest) {
     if (spaceImage && studioSettings?.semanticMasking) {
        try {
          const visionAi = alohaAI.getClient();
-         const preFlightResponse = await visionAi.models.generateContent({
-           model: 'gemini-3.1-flash', // Hızlı analiz modeli
-           contents: [
-             {
-               role: 'user',
-               parts: [
-                 { text: `Sen profesyonel bir iç mimari zekasısın. Bu oda fotoğrafındaki PENCERE (window) alanını tespit et ve mekanın genel ışık yönünü bul.
+         if (visionAi) {
+           const preFlightResponse = await visionAi.models.generateContent({
+             model: 'gemini-3.1-flash', // Hızlı analiz modeli
+             contents: [
+               {
+                 role: 'user',
+                 parts: [
+                   { text: `Sen profesyonel bir iç mimari zekasısın. Bu oda fotoğrafındaki PENCERE (window) alanını tespit et ve mekanın genel ışık yönünü bul.
 Mutlaka şu formatta geçerli bir JSON döndür:
 {
   "window_bbox": [x1, y1, x2, y2],
@@ -123,20 +124,21 @@ Mutlaka şu formatta geçerli bir JSON döndür:
   "light_direction": "left" | "right" | "front" | "top" | "unknown"
 }
 SADECE JSON DÖNÜP BAŞKA HİÇBİR ŞEY YAZMA.` },
-                 { inlineData: { data: cleanBase64(spaceImage.data), mimeType: spaceImage.mimeType || "image/jpeg" } }
-               ]
+                   { inlineData: { data: cleanBase64(spaceImage.data), mimeType: spaceImage.mimeType || "image/jpeg" } }
+                 ]
+               }
+             ],
+             config: {
+               responseMimeType: "application/json",
+               temperature: 0.1
              }
-           ],
-           config: {
-             responseMimeType: "application/json",
-             temperature: 0.1
-           }
-         });
+           });
          
-         const text = preFlightResponse.candidates?.[0]?.content?.parts?.[0]?.text;
-         if (text) {
-           preFlightData = JSON.parse(text);
-           console.log("[PRE-FLIGHT VISION] Otonom Tespit:", preFlightData);
+           const text = preFlightResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+           if (text) {
+             preFlightData = JSON.parse(text);
+             console.log("[PRE-FLIGHT VISION] Otonom Tespit:", preFlightData);
+           }
          }
        } catch (e) {
          console.warn("[PRE-FLIGHT VISION] Otonom tespit başarısız, normal akışla devam ediliyor:", e);
