@@ -15,7 +15,7 @@ async function testSovereignPump() {
             pamuk: "+2.4%",
             iplik: "-0.8%",
             polyester: "+1.1%",
-            pazar_notu: "Bloomberg Terminal Asya pazarında dalgalanma öngörüyor.",
+            pazar_notu: "TRTEX Terminal Asya pazarında dalgalanma öngörüyor.",
             last_scan: new Date().toISOString()
         });
 

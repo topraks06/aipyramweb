@@ -14,7 +14,7 @@ export default async function TerminalPage({ params }: { params: { domain: strin
                 <IntelligenceTicker />
             </div>
 
-            {/* Bloomberg-style Terminal Header */}
+            {/* TRTEX-style Terminal Header */}
             <header className="p-4 border-b border-[#333] flex justify-between items-end bg-[#0a0a0a]">
                 <div>
                     <h1 className="text-2xl font-bold text-[#f5a623] tracking-wider uppercase flex items-center gap-2">

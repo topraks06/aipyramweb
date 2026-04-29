@@ -9,7 +9,7 @@ import { publishToTRTEX } from '../aloha/publishers/universal-publisher';
 const TRTEX_BRAND_DNA = {
   tone: "brutalist, b2b wholesale, hyper-direct, aggressive intelligence",
   avoid: ["fluff", "marketing speak", "emojis", "soft language", "consumer-facing"],
-  style: "Bloomberg Terminal for Turkish Textile Wholesale. High-density data, military precision."
+  style: "TRTEX Intelligence Terminal for Turkish Textile Wholesale. High-density data, military precision."
 };
 
 class TRTEXAgent {

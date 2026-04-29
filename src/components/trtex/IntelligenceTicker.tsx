@@ -198,7 +198,7 @@ export default function IntelligenceTicker({
           WebkitBackdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(255,255,255,0.04)',
           overflow: 'hidden', cursor: 'default',
-          fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace", // Bloomberg Terminal font
+          fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace", // TRTEX Terminal font
           fontVariantNumeric: 'tabular-nums',
           height: '44px', display: 'flex', alignItems: 'center',
         }}

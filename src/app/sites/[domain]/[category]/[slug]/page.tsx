@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 /**
  * TRTEX HABER DETAY SAYFASI — Karar Terminali
  * 
- * 6 BLOK YAPISI (Sade, CEO-uyumlu, Bloomberg stili):
+ * 6 BLOK YAPISI (Sade, CEO-uyumlu, TRTEX stili):
  * 1. HERO — Başlık + Özet + Impact + Büyük Görsel
  * 2. QUICK INTELLIGENCE — Risk | Fırsat | Aksiyon (3 satır)
  * 3. CONTENT — Yazı + 1-2 görsel

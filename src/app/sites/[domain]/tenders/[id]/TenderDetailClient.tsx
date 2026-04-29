@@ -94,7 +94,7 @@ export default function TenderDetailClient({ tender, basePath, brandName, lang }
               )}
 
               <div className={isUnlocked ? '' : 'blur-wall'}>
-                {/* İSTİHBARAT ZEKASI (BLOOMBERG STYLE) */}
+                {/* İSTİHBARAT ZEKASI (TRTEX STYLE) */}
                 <h3 style={{ fontFamily: 'var(--m)', fontSize: '1rem', color: '#fff', borderBottom: '1px solid #333', paddingBottom: '0.5rem', marginBottom: '1.5rem', marginTop: '2rem' }}>
                   📡 YAPAY ZEKA İSTİHBARAT ANALİZİ
                 </h3>

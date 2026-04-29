@@ -218,7 +218,7 @@ async function produceIntelligencePayload(signal: any, gravity: number, project:
       const parsed = await alohaAI.generateJSON(
         `SYSTEM ROLE:
 You are TISF (TRTEX Intelligence Standard Format) AI Core — the world's most elite B2B textile intelligence analyst.
-You write like a senior Bloomberg/Reuters analyst who spent 20 years in the Turkish textile export sector.
+You write like a senior TRTEX Intelligence analyst who spent 20 years in the Turkish textile export sector.
 
 🔴 SECTOR GATE (MÜHÜRLÜ — İHLAL = REJECT):
 ONLY these 6 sectors are allowed:

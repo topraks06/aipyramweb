@@ -3078,33 +3078,33 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const criticals = report.issues.filter((i: any) => i.level === 'critical');
           const warnings = report.issues.filter((i: any) => i.level === 'warning');
           
-          toolResult = `[ğŸ” DERİN SİTE DENETİMİ â€” ${project.toUpperCase()}]\n` +
-            `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n` +
+          toolResult = `[ğŸ”  DERİN SİTE DENETİMİ â€” ${project.toUpperCase()}]\n` +
+            `â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” \n` +
             `ğŸ“Š TOPLAM SKOR: ${report.score}/100\n` +
             `ğŸ“° Toplam Makale: ${report.totalArticles}\n\n` +
             `DETAY SKORLAR:\n` +
-            `  ğŸ“ İçerik: ${report.scores.content}/100\n` +
-            `  ğŸ–¼ï¸ Görsel: ${report.scores.images}/100\n` +
-            `  ğŸ” SEO: ${report.scores.seo}/100\n` +
-            `  ğŸ¨ Ã‡eşitlilik: ${report.scores.diversity}/100\n` +
-            `  â° Tazelik: ${report.scores.freshness}/100\n\n` +
+            `  ğŸ“  İçerik: ${report.scores.content}/100\n` +
+            `  ğŸ–¼ï¸  Görsel: ${report.scores.images}/100\n` +
+            `  ğŸ”  SEO: ${report.scores.seo}/100\n` +
+            `  ğŸŽ¨ Ã‡eşitlilik: ${report.scores.diversity}/100\n` +
+            `  â ° Tazelik: ${report.scores.freshness}/100\n\n` +
             `ğŸš¨ KRİTİK SORUNLAR (${criticals.length}):\n` +
-            criticals.slice(0, 10).map((i: any) => `  âŒ [${i.type}] ${i.detail}`).join('\n') + '\n\n' +
-            `âš ï¸ UYARILAR (${warnings.length}):\n` +
-            warnings.slice(0, 10).map((i: any) => `  âš ï¸ [${i.type}] ${i.detail}`).join('\n') + '\n\n' +
+            criticals.slice(0, 10).map((i: any) => `  â Œ [${i.type}] ${i.detail}`).join('\n') + '\n\n' +
+            `âš ï¸  UYARILAR (${warnings.length}):\n` +
+            warnings.slice(0, 10).map((i: any) => `  âš ï¸  [${i.type}] ${i.detail}`).join('\n') + '\n\n' +
             `ğŸ”§ ONARIM PLANI: ${report.repairPlan.length} aksiyon tespit edildi.\n`;
 
-          // â•â•â• OTONOM ZİNCİR: Kritik sorun varsa DİREKT düzelt â•â•â•
+          // â• â• â•  OTONOM ZİNCİR: Kritik sorun varsa DİREKT düzelt â• â• â• 
           const criticalSlugs = report.repairPlan.filter((r: any) => r.action === 'fix_slug');
           if (criticalSlugs.length > 0) {
             try {
               const { autoRepair } = require('@/core/aloha/autoRepair');
               // Slug fix'leri hemen uygula (en acil sorun)
               const slugResult = await autoRepair(project, criticalSlugs, false, criticalSlugs.length);
-              toolResult += `\nâ›“ï¸ OTONOM SLUG DÃœZELTME: ${slugResult.fixed}/${criticalSlugs.length} slug düzeltildi!\n`;
-              toolResult += slugResult.details.map((d: any) => `  ${d.status === 'fixed' ? 'âœ…' : 'âŒ'} ${d.detail}`).join('\n');
+              toolResult += `\nâ›“ï¸  OTONOM SLUG DÃœZELTME: ${slugResult.fixed}/${criticalSlugs.length} slug düzeltildi!\n`;
+              toolResult += slugResult.details.map((d: any) => `  ${d.status === 'fixed' ? 'âœ…' : 'â Œ'} ${d.detail}`).join('\n');
             } catch (e: any) {
-              toolResult += `\nâš ï¸ Slug auto-fix hatası: ${e.message}`;
+              toolResult += `\nâš ï¸  Slug auto-fix hatası: ${e.message}`;
             }
           }
 
@@ -3116,7 +3116,7 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           
           logAlohaAction('DEEP_SITE_AUDIT', { project, score: report.score, issues: report.issues.length, repairs: report.repairPlan.length, autoFixedSlugs: criticalSlugs.length });
         } catch (e: any) {
-          toolResult = `[âŒ DENETİM HATASI] ${e.message}`;
+          toolResult = `[â Œ DENETİM HATASI] ${e.message}`;
         }
         break;
       }
@@ -3141,21 +3141,21 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const result = await autoRepair(project, report.repairPlan, dryRun, maxActions);
           
           toolResult = `[ğŸ”§ OTOMATİK ONARIM â€” ${project.toUpperCase()} ${dryRun ? '(SİMÃœLASYON)' : '(GERÃ‡EK)'}]\n` +
-            `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n` +
+            `â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” \n` +
             `ğŸ“Š Audit Skor: ${report.score}/100\n` +
             `ğŸ“‹ Toplam Aksiyon: ${result.total}\n` +
             `âœ… Düzeltilen: ${result.fixed}\n` +
-            `â­ï¸ Atlanan: ${result.skipped}\n` +
-            `âŒ Hata: ${result.errors}\n\n` +
+            `â ­ï¸  Atlanan: ${result.skipped}\n` +
+            `â Œ Hata: ${result.errors}\n\n` +
             `DETAYLAR:\n` +
             result.details.slice(0, 15).map((d: any) => 
-              `  ${d.status === 'fixed' ? 'âœ…' : d.status === 'error' ? 'âŒ' : 'â­ï¸'} ${d.action} â†’ ${d.detail}`
+              `  ${d.status === 'fixed' ? 'âœ…' : d.status === 'error' ? 'â Œ' : 'â ­ï¸ '} ${d.action} â†’ ${d.detail}`
             ).join('\n') +
             (dryRun ? '\n\nğŸ‘‰ Gerçek onarım için: auto_repair_project(project="' + project + '", dryRun=false)' : '');
           
           logAlohaAction('AUTO_REPAIR', { project, dryRun, fixed: result.fixed, errors: result.errors });
         } catch (e: any) {
-          toolResult = `[âŒ ONARIM HATASI] ${e.message}`;
+          toolResult = `[â Œ ONARIM HATASI] ${e.message}`;
         }
         break;
       }
@@ -3170,12 +3170,12 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           toolResult = `[ğŸ”¬ SEKTÃ–REL ARAŞTIRMA]\n` +
             `Konu: ${topic}\n` +
             `Kategori: ${category}\n` +
-            `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n` +
+            `â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” \n` +
             research.substring(0, 3000);
           
           logAlohaAction('RESEARCH_INDUSTRY', { topic, category });
         } catch (e: any) {
-          toolResult = `[âŒ ARAŞTIRMA HATASI] ${e.message}`;
+          toolResult = `[â Œ ARAŞTIRMA HATASI] ${e.message}`;
         }
         break;
       }
@@ -3200,10 +3200,10 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const project = (args.project || 'trtex').toLowerCase();
           const { runHealthCheck } = require('./chainExecutor');
           const chainResult = await runHealthCheck(project);
-          toolResult = `[â›“ï¸ HEALTH CHECK]\n${chainResult.plan.summary}`;
+          toolResult = `[â›“ï¸  HEALTH CHECK]\n${chainResult.plan.summary}`;
           logAlohaAction('CHAIN_HEALTH_CHECK', { project, status: chainResult.plan.status });
         } catch (e: any) {
-          toolResult = `[âŒ CHAIN HATASI] ${e.message}`;
+          toolResult = `[â Œ CHAIN HATASI] ${e.message}`;
         }
         break;
       }
@@ -3213,10 +3213,10 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const project = (args.project || 'trtex').toLowerCase();
           const { runContentGeneration } = require('./chainExecutor');
           const chainResult = await runContentGeneration(project);
-          toolResult = `[â›“ï¸ CONTENT GENERATION]\n${chainResult.plan.summary}`;
+          toolResult = `[â›“ï¸  CONTENT GENERATION]\n${chainResult.plan.summary}`;
           logAlohaAction('CHAIN_CONTENT_GEN', { project, status: chainResult.plan.status });
         } catch (e: any) {
-          toolResult = `[âŒ CHAIN HATASI] ${e.message}`;
+          toolResult = `[â Œ CHAIN HATASI] ${e.message}`;
         }
         break;
       }
@@ -3226,10 +3226,10 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const { runFullEcosystemRepair } = require('./chainExecutor');
           const results = await runFullEcosystemRepair();
           const summary = results.map((r: any) => `${r.plan.project}: ${r.plan.status} (${r.plan.stats.done}/${r.plan.stats.total})`).join(' | ');
-          toolResult = `[ğŸŒ ECOSYSTEM REPAIR]\n${summary}\n\nToplam süre: ${Math.round(results.reduce((s: number, r: any) => s + r.duration, 0) / 1000)}s`;
+          toolResult = `[ğŸŒ  ECOSYSTEM REPAIR]\n${summary}\n\nToplam süre: ${Math.round(results.reduce((s: number, r: any) => s + r.duration, 0) / 1000)}s`;
           logAlohaAction('CHAIN_ECOSYSTEM_REPAIR', { results: summary });
         } catch (e: any) {
-          toolResult = `[âŒ CHAIN HATASI] ${e.message}`;
+          toolResult = `[â Œ CHAIN HATASI] ${e.message}`;
         }
         break;
       }
@@ -3240,9 +3240,9 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           const scan = await weeklyGoogleTechScan();
           
           let report = `[ğŸ”¬ GOOGLE ALTYAPI TARAMASI]\n`;
-          report += `â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n`;
+          report += `â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” \n`;
           report += `ğŸ“¡ Taranan: ${scan.scanned} konu\n`;
-          report += `ğŸ” İlgili: ${scan.relevant} bulgu\n`;
+          report += `ğŸ”  İlgili: ${scan.relevant} bulgu\n`;
           report += `ğŸ”´ Kritik: ${scan.critical} bulgu\n\n`;
           
           if (scan.findings.length > 0) {
@@ -3251,10 +3251,10 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
               const icon = f.impact === 'high' ? 'ğŸ”´' : 'ğŸŸ¡';
               report += `${icon} [${f.impact.toUpperCase()}] ${f.topic}\n`;
               report += `   ğŸ“‹ ${f.recommendation || 'Değerlendiriliyor'}\n`;
-              report += `   ğŸ¯ Etkilenen: ${(f.affectedProjects || []).join(', ')}\n`;
-              report += `   â±ï¸ Efor: ${f.effort || '?'}\n\n`;
+              report += `   ğŸŽ¯ Etkilenen: ${(f.affectedProjects || []).join(', ')}\n`;
+              report += `   â ±ï¸  Efor: ${f.effort || '?'}\n\n`;
             }
-            report += `\nâš ï¸ TÃœM TEKLİFLER 'aloha_tech_proposals' koleksiyonunda ONAY BEKLİYOR.\n`;
+            report += `\nâš ï¸  TÃœM TEKLİFLER 'aloha_tech_proposals' koleksiyonunda ONAY BEKLİYOR.\n`;
             report += `Hakan'ın onayı olmadan hiçbir güncelleme uygulanmayacak.`;
           } else {
             report += `âœ… Bu hafta aipyram'ı etkileyen yenilik tespit edilmedi.`;
@@ -3263,7 +3263,7 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
           toolResult = report;
           logAlohaAction('TECH_SCAN_COMPLETE', { scanned: scan.scanned, relevant: scan.relevant, critical: scan.critical });
         } catch (e: any) {
-          toolResult = `[âŒ TECH SCAN HATASI] ${e.message}`;
+          toolResult = `[â Œ TECH SCAN HATASI] ${e.message}`;
         }
         break;
       }
@@ -3299,7 +3299,7 @@ export async function executeToolCall(call: { name?: string; args?: Record<strin
 2. Haber Yapısı (Zorunlu):
 - Başlık: Ticari, net ve provokatif. (Ã–rn: "JAB 2026: Akıllı İpliklerin Lüks Konut Pazarındaki Hakimiyeti")
 - Hızlı Ã–zet: Maksimum 3 satırda "Neden şimdi?" sorusuna cevap ver.
-- B2B Analiz (Bu Ne Demek?): Haberin perakendeci veya toptancı için finansal/stratejik anlamını açıkla.
+- B2B Analiz (Bu Ne Demek?): Haberin perakendeci veya toptancı için finansal/stratejik anlamını açıklayacak.
 - Detaylı Rapor: En az 30 satır; iplik kalitesi, doku analizi, sürdürülebilirlik sertifikaları (OEKO-TEX, GRS) ve pazar konumlandırması içeren teknik derinlik.
 - Fırsat/Risk: Somut tavsiye ver. (Ã–rn: "Bu doku Avrupa'da yükselişte, stok planlamasını %20 artırın.")
 
@@ -3318,14 +3318,14 @@ DİL: ${lang === 'tr' ? 'Türkçe' : 'İngilizce'}
 PROJE: ${project}
 KONU: ${topic}
 
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 ğŸš¨ DİNAMİK B2B SÃ–ZLÃœK:
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 Dinamik Sözlük: ${dynamicTerms ? dynamicTerms : "Akıllı tekstiller, Sürdürülebilir lifler"}
 Sektör devleri (Kvadrat, JAB, Vanelli vb.) veya kurum (ITKIB, EURATEX) isimlerini mutlaka hatasız kullan.
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 SEO KURALLARI (ZORUNLU):
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 1. Başlık: 55-65 karakter, ana keyword başta, dikkat çekici
 2. Alt başlıklar: H2 ve H3 kullan, keyword içersin
 3. İlk paragraf: Ana keyword'ü ilk 100 karakterde kullan
@@ -3333,11 +3333,11 @@ SEO KURALLARI (ZORUNLU):
 5. Internal linking: İlgili konulara referans ver
 6. E-E-A-T: Yazar uzmanlığı, kaynak belirt, tarih referans ver
 
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 TRTEX DECISION INFRASTRUCTURE â€” B2B TRADE BRIEF (ZORUNLU):
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-Bu bir "haber" veya "blog" DEĞİL â€” Bloomberg / FT tarzında bir "İSTİHBARAT BRİFİNGİ" ve "KARAR MOTORU"dur.
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
+Bu bir "haber" veya "blog" DEĞİL â€” TRTEX tarzında bir "İSTİHBARAT BRİFİNGİ" ve "KARAR MOTORU"dur.
 Kullanıcı senin içeriğini okuyup, milyonluk ticaret için SİPARİŞ veya İPTAL kararı alacak.
 
 İki katmanlı bir çıktı üreteceksin:
@@ -3358,9 +3358,9 @@ Kullanıcı senin içeriğini okuyup, milyonluk ticaret için SİPARİŞ veya İ
    - 5. Fırsat ve Risk Haritası (h3, h4)
    Uzun paragraflardan kaçın, patron gibi net, vurucu ve ticari konuş.
 
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 ğŸ¤– AI İSTİHBARAT BİRİMİ (HABER ALTI â€” ZORUNLU):
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 Her haberin sonunda aşağıdaki AI analiz katmanlarını AYRI AYRI üret:
 
 A) AI IMPACT SCORE (1-10): Bu haber senin ticaretini ne kadar etkiler?
@@ -3395,10 +3395,10 @@ G) NEURAL ROUTING MATRIX (YENİ SİNİR AĞI ZORUNLULUĞU):
    - academy_value: Eğitimsel, kalıcı, rapor, kütüphane bilgisi ise YÃœKSEK.
    - b2b_opportunity: Somut para kazanma fırsatı, firma alım satım talebiyse YÃœKSEK.
 
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
 TON & STİL:
-â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
-- Bloomberg terminali tonu â€” kısa, keskin, veri odaklı
+â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” â” 
+- TRTEX terminali tonu â€” kısa, keskin, veri odaklı
 - Clickbait YASAK, "şok", "inanılmaz" kelimeler YASAK
 - Sektör profesyonellerine hitap et â€” 35 yıllık tecrübe hissettir
 - Türk tekstil/ev tekstili sektörüne özel perspektif

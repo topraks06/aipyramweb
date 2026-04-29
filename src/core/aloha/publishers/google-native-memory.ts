@@ -164,7 +164,7 @@ export async function saveToGoogleNativeMemory(collection: string, payload: any)
                         ...(memoryNode.seo_matrix?.local_keys?.DE || [])
                     ].filter(Boolean).slice(0, 15),
                     
-                    // 7. COMMERCIAL NOTE — AI Bloomberg Analiz
+                    // 7. COMMERCIAL NOTE — AI TRTEX Analiz
                     commercial_note: memoryNode.ai_commentary || memoryNode.insight?.explanation || '',
                     
                     // 8. BUSINESS OPPORTUNITIES — B2B Fırsat Listesi

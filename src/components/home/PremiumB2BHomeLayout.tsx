@@ -599,7 +599,7 @@ export default function PremiumB2BHomeLayout({
         .opp-act-title{font-weight:700;margin-bottom:.3rem;color:var(--bs)}
         .opp-btn{margin-top:1.5rem;width:100%;padding:.7rem;background:var(--bs);color:var(--w);text-align:center;font-weight:700;font-size:.8rem;text-transform:uppercase;cursor:pointer;border:none}
 
-        /* TRADING FLOOR CSS (Alibaba + Bloomberg Melezi) */
+        /* TRADING FLOOR CSS (TRTEX Intelligence Terminal) */
         .tf-sec { background: linear-gradient(180deg, #111 0%, #0B0D0F 150px, #0B0D0F 100%); border-top: 1px solid #2A2A2A; border-bottom: 3px solid var(--t); padding: 4rem 0 2rem; }
         .tf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #1a1a1a; }
         .tf-col { background: #0F1114; padding: 1.5rem; display: flex; flex-direction: column; min-height: 400px; }
@@ -796,7 +796,7 @@ export default function PremiumB2BHomeLayout({
 
       </div></section>
 
-      {/* ZONE 1.5: THE TRADING FLOOR — CANLI VERİ (Bloomberg/Alibaba Hybrid) */}
+      {/* ZONE 1.5: THE TRADING FLOOR — CANLI VERİ (TRTEX Intelligence Terminal) */}
       <section className="tf-sec">
         <div className="tc">
           <div className="z2h" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '1.5rem' }}>

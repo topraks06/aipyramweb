@@ -77,7 +77,7 @@ export default function SupplyClient({ basePath, brandName, lang }: any) {
           <div style={{ background: 'rgba(22, 163, 74, 0.05)', border: '1px solid #16A34A', padding: '4rem 2rem', textAlign: 'center', borderRadius: '8px' }}>
             <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
             <h2 style={{ fontFamily: 'var(--sf)', fontSize: '2rem', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>Verileriniz İşleniyor!</h2>
-            <p style={{ color: '#aaa', fontSize: '1rem', lineHeight: 1.6 }}>TRTex Otonom Zekası girdiğiniz verileri şu an analiz ediyor. Bloomberg terminal stilinde optimize edilip "Sıcak Fırsat" olarak dünyaya yayınlanacaktır.</p>
+            <p style={{ color: '#aaa', fontSize: '1rem', lineHeight: 1.6 }}>TRTex Otonom Zekası girdiğiniz verileri şu an analiz ediyor. TRTEX Intelligence terminal stilinde optimize edilip "Sıcak Fırsat" olarak dünyaya yayınlanacaktır.</p>
             <button onClick={() => setSubmitted(false)} className="s-btn" style={{ marginTop: '2rem', background: '#16A34A', color: '#fff' }}>YENİ İLAN GİR</button>
           </div>
         ) : (

@@ -50,7 +50,7 @@ If there is no clear B2B commercial value → REJECT.
 🏗️ STRUCTURE:
 - Write in Turkish, but analyze GLOBAL markets.
 - Maximum 300 words. Executive Brief style.
-- Bloomberg terminal tone but with deep appreciation for design and product textures.
+- TRTEX Intelligence terminal tone but with deep appreciation for design and product textures.
 - First sentence = most important fact.
 - Include real company names, real numbers, real cities.
 - Last paragraph = actionable trade recommendation for Wholesalers/Retailers.
@@ -250,7 +250,7 @@ async function runPublisherAgent(cleanContent: string) {
             },
             ai_commentary: {
                 type: Type.STRING,
-                description: "ZORUNLU: Bloomberg Terminal stili AI analiz yorumu. 50-80 kelime. Piyasa ne diyor, ne anlama geliyor."
+                description: "ZORUNLU: TRTEX İstihbarat stili AI analiz yorumu. 50-80 kelime. Piyasa ne diyor, ne anlama geliyor."
             },
 
         },
@@ -275,7 +275,7 @@ CRITICAL RULE FOR 'business_opportunities' & 'commercial_cta':
 - You MUST identify the target (manufacturer, wholesaler, or retailer) and generate a compelling 'commercial_cta' that drives sales (Monetization). For wholesalers, offer "Request 2026 Collection Swatches". For retailers, "Download Luxury Trend Report".
 
 CRITICAL RULE FOR 'ai_commentary' (CORPORATE AUTHORITY TONE):
-- Write 100-200 word Bloomberg/McKinsey style analysis.
+- Write 100-200 word TRTEX/McKinsey style analysis.
 - The tone MUST be highly corporate, positive, confidence-inspiring and actionable. B2B buyers must feel trust and opportunity. Avoid catastrophic doom scenarios.
 
 CRITICAL RULE FOR 'seo_matrix.local_keys':

@@ -246,7 +246,7 @@ export async function buildTerminalPayload(): Promise<TerminalPayload> {
   const remainingAfterHero = uniqueNews.filter(a => a.id !== heroArticle?.id);
   const gridArticles = remainingAfterHero.slice(0, 12);
 
-  // ═══ DYNAMIC THRESHOLD LOCK (FAZ 3 - BLOOMBERG MODE YASASI) ═══
+  // ═══ DYNAMIC THRESHOLD LOCK (FAZ 3 - TRTEX MODE YASASI) ═══
   const MIN_NEWS_VOLUME = 30; // Beklenen havuz
   const dailyVolumeFactor = Math.max(0, MIN_NEWS_VOLUME - uniqueNews.length);
   // B2B Güveni için eşikler ASLA çok düşürülmez.

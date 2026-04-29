@@ -56,7 +56,7 @@ export default function PremiumArticleLayout({
   // Business Opportunities — eğitim dokümanından
   const businessOpps = article.business_opportunities || [];
   
-  // AI Commentary — Bloomberg stili analiz
+  // AI Commentary — TRTEX İstihbarat stili analiz
   const aiCommentary = article.commercial_note || article.ai_commentary || '';
 
   // Commercial CTA - Lead Engine Yakıtı
@@ -320,12 +320,12 @@ export default function PremiumArticleLayout({
           </figure>
         )}
 
-        {/* ═══ AI BLOOMBERG YORUMU ═══ */}
+        {/* ═══ AI TRTEX İSTİHBARAT YORUMU ═══ */}
         {aiCommentary && aiCommentary.length > 30 && (
           <div style={{ marginTop: '3rem', padding: '2rem', background: '#111', color: '#FFF', fontFamily: "'Inter', sans-serif" }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
               <span style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '2px', color: '#CC0000', textTransform: 'uppercase' }}>TRTEX AI</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#666', letterSpacing: '1px' }}>BLOOMBERG-STYLE ANALYSIS</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#666', letterSpacing: '1px' }}>TRTEX INTELLIGENCE ANALYSIS</span>
             </div>
             <p style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#E5E7EB', margin: 0 }}>{aiCommentary}</p>
             {aiImpactScore > 0 && (

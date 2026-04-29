@@ -181,7 +181,7 @@ export interface WatchLayerNode {
 export interface InsightNode {
   market_impact_score: number;
   direction: "risk" | "opportunity" | "neutral";
-  explanation: string; // Bloomberg Aklı
+  explanation: string; // TRTEX Aklı
 }
 
 export interface ActionNode {

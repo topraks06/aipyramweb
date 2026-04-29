@@ -8,7 +8,7 @@ import { feedCache } from '../cache/feedCache';
 const BRAND_DNA = {
   tone: "luxury, minimal, editorial, visionary",
   avoid: ["cheap", "discount", "fast fashion", "sale", "clickbait", "emoji", "exclamation marks"],
-  style: "Maison & Objet meets Bloomberg Intelligence. High-end architectural vocabulary."
+  style: "Maison & Objet meets TRTEX Intelligence. High-end architectural vocabulary."
 };
 
 class HometexAgent {
