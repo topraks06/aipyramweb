@@ -26,6 +26,7 @@ function g(key: string, lang: string): string {
 export default function StickyCtaBar({ lang = 'tr' }: { lang?: string }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState(false);
   const [query, setQuery] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,8 +34,9 @@ export default function StickyCtaBar({ lang = 'tr' }: { lang?: string }) {
   const handleSubmit = async () => {
     if (!query.trim()) return;
     setLoading(true);
+    setError(false);
     try {
-      await fetch('/api/lead', {
+      const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -46,8 +48,12 @@ export default function StickyCtaBar({ lang = 'tr' }: { lang?: string }) {
           timestamp: new Date().toISOString(),
         }),
       });
-    } catch {}
-    setSent(true);
+      if (!res.ok) throw new Error('API error');
+      setSent(true);
+    } catch {
+      console.error('[StickyCtaBar] Lead gönderimi başarısız');
+      setError(true);
+    }
     setLoading(false);
   };
 
@@ -83,6 +89,11 @@ export default function StickyCtaBar({ lang = 'tr' }: { lang?: string }) {
               placeholder={g('email', lang)}
               style={{ width: '100%', padding: '0.8rem', border: '1px solid #E5E7EB', borderRadius: '4px', fontSize: '0.9rem', fontFamily: 'inherit', marginBottom: '1.5rem' }}
             />
+            {error && (
+              <div style={{ padding: '0.6rem', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '4px', marginBottom: '0.5rem', fontSize: '0.8rem', color: '#DC2626', fontWeight: 600, textAlign: 'center' }}>
+                ⚠️ Gönderim başarısız. Lütfen tekrar deneyin.
+              </div>
+            )}
             <button
               onClick={handleSubmit}
               disabled={loading || !query.trim()}

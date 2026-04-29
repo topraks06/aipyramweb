@@ -6,12 +6,8 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
 import SovereignLiveConcierge from '@/components/home/SovereignLiveConcierge';
 
-const FALLBACK_TENDERS = [
-  { id: 'fb-t1', type: 'TENDER', location: '🇩🇪 Almanya', title: '5.000m Blackout Perde', score: 88 },
-  { id: 'fb-t2', type: 'TENDER', location: '🇦🇪 BAE', title: 'Otel Havlu Seti', score: 92 },
-  { id: 'fb-s1', type: 'HOT_STOCK', location: '🇹🇷 Bursa', title: '12.000m Şönil', score: 85 },
-  { id: 'fb-c1', type: 'CAPACITY', location: '🇹🇷 Denizli', title: '30.000m Üretim Boş', score: 76 },
-];
+// Zero-Mock: Sahte tender verileri KALDIRILDI (Hakan Bey kuralı)
+// Firestore'da veri yoksa bilgilendirme mesajı gösterilecek.
 
 export default function PremiumB2BHomeLayout({ 
   payload, lang, exactDomain, basePath, brandName, L, 
@@ -19,12 +15,13 @@ export default function PremiumB2BHomeLayout({
 }: any) {
   const { 
     heroArticle, gridArticles = [], tickerItems = [], haftaninFirsatlari = [],
-    academyArticles = [], activeTenders: rawTenders = []
+    academyArticles = [], activeTenders: rawTenders = [], radarStream
   } = payload || {};
   
   const [leadModal, setLeadModal] = useState<{ open: boolean; context: any }>({ open: false, context: { type: 'GENERAL' as const } });
   const activeFairs = fairsWithCountdown || payload?.fairsWithCountdown || [];
-  const liveTenders = Array.isArray(rawTenders) && rawTenders.length > 0 ? rawTenders : FALLBACK_TENDERS;
+  const liveTenders = Array.isArray(rawTenders) ? rawTenders : [];
+  const hasTenders = liveTenders.length > 0;
   const safeLang = lang || 'tr';
   const targetLang = safeLang.toUpperCase();
   
@@ -130,20 +127,21 @@ export default function PremiumB2BHomeLayout({
               {/* Piyasa Verileri */}
               <div className="card" style={{ padding: '1.25rem' }}>
                 <div style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.1em', marginBottom: '1rem' }}>📊 PİYASA VERİLERİ</div>
-                {[
-                  { n: 'Pamuk İplik (30/1)', v: '$2.90', d: '+0.05', c: 'var(--go)' },
-                  { n: 'PES FDY (150/48)', v: '$1.15', d: '-0.02', c: 'var(--re)' },
-                  { n: 'Asya Navlun', v: 'Riskli', d: '⚠', c: 'var(--wa)' },
-                  { n: 'USD/TRY', v: '₺32.40', d: '+0.10', c: 'var(--go)' },
-                ].map((p, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < 3 ? '1px solid #F3F4F6' : 'none' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#374151' }}>{p.n}</span>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontFamily: 'var(--m)' }}>
-                      <span style={{ fontSize: '0.7rem', color: p.c }}>{p.d}</span>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#111827' }}>{p.v}</span>
+                {tickerItems.length > 0 ? tickerItems.filter((t: any) => !t.isBreaking && !t.isCountdown).slice(0, 4).map((t: any, i: number) => {
+                  const dirColor = t.direction === 'up' ? 'var(--go)' : t.direction === 'down' ? 'var(--re)' : 'var(--wa)';
+                  const arrow = t.direction === 'up' ? '△' : t.direction === 'down' ? '▽' : '–';
+                  return (
+                    <div key={t.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < 3 ? '1px solid #F3F4F6' : 'none' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#374151' }}>{t.label}</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontFamily: 'var(--m)' }}>
+                        {t.change !== undefined && <span style={{ fontSize: '0.7rem', color: dirColor }}>{arrow}{Math.abs(t.change).toFixed(1)}%</span>}
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#111827' }}>{typeof t.value === 'number' ? t.value.toLocaleString('en-US') : t.value}{t.unit ? ` ${t.unit}` : ''}</span>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                }) : (
+                  <div style={{ fontSize: '0.8rem', color: '#9CA3AF', textAlign: 'center', padding: '1rem 0' }}>Piyasa verileri yükleniyor...</div>
+                )}
               </div>
 
               {/* Trend Haberler */}
@@ -246,17 +244,17 @@ export default function PremiumB2BHomeLayout({
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
             {[
-              { icon: '⚠️', label: 'RİSK ANALİZİ', desc: 'Hammadde fiyat dalgalanmaları, jeopolitik riskler ve tedarik zinciri aksaklıkları', color: '#DC2626', bg: '#FEF2F2' },
-              { icon: '💡', label: 'FIRSAT RADARI', desc: 'Yeni pazarlar, büyüyen segmentler ve stratejik yatırım alanları', color: '#16A34A', bg: '#F0FDF4' },
-              { icon: '📡', label: 'PİYASA SİNYALLERİ', desc: 'Uzak Doğu, MENA ve Avrupa pazarlarından canlı ticari sinyaller', color: '#2563EB', bg: '#EFF6FF' },
-              { icon: '📈', label: 'TREND TAHMİNLERİ', desc: '2026/2027 sezon trendleri, renk kodları ve tüketici davranışı analizi', color: '#7C3AED', bg: '#F5F3FF' },
+              { icon: '⚠️', label: 'RİSK ANALİZİ', desc: radarStream?.risk ? (getTitle(radarStream.risk) || radarStream.risk.summary || 'Hammadde fiyat dalgalanmaları ve tedarik zinciri riskleri') : 'Hammadde fiyat dalgalanmaları ve tedarik zinciri riskleri', color: '#DC2626', link: radarStream?.risk?.slug },
+              { icon: '💡', label: 'FIRSAT RADARI', desc: radarStream?.opportunity ? (getTitle(radarStream.opportunity) || radarStream.opportunity.summary || 'Yeni pazarlar ve büyüyen segmentler') : 'Yeni pazarlar ve büyüyen segmentler', color: '#16A34A', link: radarStream?.opportunity?.slug },
+              { icon: '📡', label: 'PİYASA SİNYALLERİ', desc: radarStream?.signal ? (getTitle(radarStream.signal) || radarStream.signal.summary || 'Küresel pazarlardan canlı ticari sinyaller') : 'Küresel pazarlardan canlı ticari sinyaller', color: '#2563EB', link: radarStream?.signal?.slug },
+              { icon: '📈', label: 'TREND TAHMİNLERİ', desc: uzakDoguRadari ? (getTitle(uzakDoguRadari) || uzakDoguRadari.summary || '2026/2027 sezon trendleri ve tüketici davranışı analizi') : '2026/2027 sezon trendleri ve tüketici davranışı analizi', color: '#7C3AED', link: uzakDoguRadari?.slug },
             ].map((item, i) => (
-              <a href={getLink('radar')} key={i} className="card" style={{ padding: '1.5rem', textDecoration: 'none', color: 'inherit', borderLeft: `3px solid ${item.color}` }}>
+              <a href={item.link ? getLink('news', item.link) : getLink('radar')} key={i} className="card" style={{ padding: '1.5rem', textDecoration: 'none', color: 'inherit', borderLeft: `3px solid ${item.color}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                   <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
                   <span style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', fontWeight: 800, color: item.color, letterSpacing: '0.1em' }}>{item.label}</span>
                 </div>
-                <p style={{ fontSize: '0.85rem', color: '#6B7280', lineHeight: 1.6 }}>{item.desc}</p>
+                <p style={{ fontSize: '0.85rem', color: '#6B7280', lineHeight: 1.6 }}>{typeof item.desc === 'string' && item.desc.length > 120 ? item.desc.substring(0, 120) + '…' : item.desc}</p>
               </a>
             ))}
           </div>
