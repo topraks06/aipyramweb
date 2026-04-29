@@ -24,6 +24,17 @@
 
 import { GoogleGenAI } from '@google/genai';
 import { adminDb } from '@/lib/firebase-admin';
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+
+// ═══════════════════════════════════════
+//  GENKIT (AGENTIC FRAMEWORK) BAŞLATMA
+// ═══════════════════════════════════════
+// Q2 2026: Eski agentBus yapısı yerine resmi Firebase Genkit altyapısı.
+export const aiGenkit = genkit({
+  plugins: [googleAI({ apiKey: process.env.GEMINI_API_KEY || 'dummy' })],
+});
+
 
 // ═══════════════════════════════════════
 //  KONFİGÜRASYON
@@ -40,7 +51,7 @@ import { adminDb } from '@/lib/firebase-admin';
 // MALİYET SAVUNMASI (CFO GUARD):
 // Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
 // en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
-const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash / Yüksek Hız, Düşük Maliyet)
+const DEFAULT_MODEL = 'gemini-3.1-flash'; // (Flash / Yüksek Hız, Düşük Maliyet - 2M Context Destekli)
 const DEEP_MODEL = 'gemini-3.1-pro'; // (Pro / Kompleks İşlemler - Deep Research Max)
 const IMAGE_MODEL = 'gemini-3.1-flash-image-preview';   // Q2 2026: Nano Banana 2 (3x hızlı, 4K, referans obje)
 const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback: eski stabil model
@@ -268,7 +279,8 @@ async function generateWithRetry(
         config.tools = options.tools;
       } else if (options.complexity === 'complex') {
         // Deep Research Max (Aşama 1 Upgrade): Kompleks işlemlerde otonom Google Search yetkisi ver
-        config.tools = [{ googleSearch: {} }];
+        // B2B Hesap Makinesi (Aşama 2 Upgrade): Code Execution (Kum havuzunda Python kodu çalıştırma)
+        config.tools = [{ googleSearch: {} }, { codeExecution: {} }];
       }
       
       if ((options as any).responseSchema) config.responseSchema = (options as any).responseSchema;

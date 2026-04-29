@@ -1,6 +1,7 @@
 import { adminDb } from '@/lib/firebase-admin';
-import { alohaAI } from './aiClient';
+import { alohaAI, aiGenkit } from './aiClient';
 import crypto from 'crypto';
+import { z } from 'zod';
 
 /**
  * ALOHA AGENT BUS — A2A Protocol Uyumlu Ajan İletişim Sistemi
@@ -150,12 +151,20 @@ export function getTrace(traceId: string): ExecutionTrace | undefined {
 }
 
 // ═══════════════════════════════════════
-// AJAN İŞLEMCİLERİ — Her ajanın "düşünme" kapasitesi
+// AJAN İŞLEMCİLERİ — Her ajanın "düşünme" kapasitesi (GENKIT FLOW)
 // ═══════════════════════════════════════
+// Q2 2026: Artık standart bir fonksiyon değil, Genkit Flow'u.
+// Bu sayede Genkit UI üzerinden (localhost:4000) tüm ajan düşünme süreçleri görselleştirilir.
 
-type AgentHandler = (payload: Record<string, any>) => Promise<AgentResponse>;
-
-async function simulateAgentWithGemini(agentId: string, payload: Record<string, any>): Promise<AgentResponse> {
+export const simulateAgentFlow = aiGenkit.defineFlow({
+  name: 'simulateAgentFlow',
+  inputSchema: z.object({
+    agentId: z.string(),
+    payload: z.any()
+  }),
+  outputSchema: z.any()
+}, async (input) => {
+  const { agentId, payload } = input;
   try {
     const agentPrompts: Record<string, string> = {
       research_agent: `Sen bir ARAŞTIRMA AJANISIN. Verilen konuyu analiz et, veri topla, sonuç üret.`,
@@ -173,14 +182,14 @@ async function simulateAgentWithGemini(agentId: string, payload: Record<string, 
     const result = await alohaAI.generateJSON<AgentResponse>(
       `${systemPrompt}\n\nGÖREV: ${JSON.stringify(payload)}\n\nJSON formatında cevap ver:\n{\n  "success": true/false,\n  "data": { ... analiz sonuçları ... },\n  "reasoning": "kısa açıklama",\n  "confidence": 0.0-1.0,\n  "suggestedNextAction": "sonraki adım önerisi"\n}`,
       { complexity: 'routine', temperature: 0.4 },
-      `agentbus_${agentId}`
+      `genkit_${agentId}`
     );
 
     return result || { success: false, data: null, reasoning: 'AI response boş' };
   } catch (e: any) {
-    return { success: false, data: null, reasoning: `Ajan simülasyonu hatası: ${e.message}` };
+    return { success: false, data: null, reasoning: `Genkit Ajan simülasyonu hatası: ${e.message}` };
   }
-}
+});
 
 // ═══════════════════════════════════════
 // SEND AND WAIT — Ana İletişim Fonksiyonu
@@ -237,9 +246,9 @@ export async function sendAndWait(
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Timeout ile çalıştır
+      // Timeout ile çalıştır - Genkit Flow'u tetikle
       const result = await Promise.race([
-        simulateAgentWithGemini(to, payload),
+        simulateAgentFlow({ agentId: to, payload }),
         new Promise<AgentResponse>((_, reject) =>
           setTimeout(() => reject(new Error('TIMEOUT')), timeoutMs)
         ),
