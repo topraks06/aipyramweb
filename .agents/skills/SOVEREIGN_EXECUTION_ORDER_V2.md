@@ -263,6 +263,7 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 | 4. Vorhang | 16-19 | ✅ | — | — |
 | 5. Admin | 20-22 | ✅ | — | — |
 | 6. Otonom | 23-24 | ✅ | — | — |
+| 7. SSO Golden Pass & Anti-Anchoring | Extra | ✅ | feat(sovereign): implement TRTex Golden Pass | Başarılı |
 
 **Her aşama bitince bu tabloyu güncelle: ⬜ → ✅**
 
