@@ -15,350 +15,213 @@ const LANG_OPTIONS = [
 ];
 
 // ═══ NAV ETİKETLERİ (8 DİL) ═══
-const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string; about: string; collections: string }> = {
-  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt', about: 'HAKKIMIZDA', collections: 'KOLEKSİYONLAR' },
-  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up', about: 'ABOUT US', collections: 'COLLECTIONS' },
-  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren', about: 'ÜBER UNS', collections: 'KOLLEKTIONEN' },
-  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация', about: 'О НАС', collections: 'КОЛЛЕКЦИИ' },
-  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册', about: '关于我们', collections: '系列' },
-  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني', about: 'من نحن', collections: 'مجموعات' },
-  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis', about: 'SOBRE NOSOTROS', collections: 'COLECCIONES' },
-  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite', about: 'À PROPOS', collections: 'COLLECTIONS' },
+const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string; about: string; trends: string; fairs: string }> = {
+  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt', about: 'HAKKIMIZDA', trends: 'TRENDLER', fairs: 'FUAR TAKVİMİ' },
+  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up', about: 'ABOUT US', trends: 'TRENDS', fairs: 'FAIR CALENDAR' },
+  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren', about: 'ÜBER UNS', trends: 'TRENDS', fairs: 'MESSEKALENDER' },
+  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация', about: 'О НАС', trends: 'ТРЕНДЫ', fairs: 'КАЛЕНДАРЬ ВЫСТАВОК' },
+  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册', about: '关于我们', trends: '趋势', fairs: '展会日历' },
+  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني', about: 'من نحن', trends: 'اتجاهات', fairs: 'تقويم المعارض' },
+  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis', about: 'SOBRE NOSOTROS', trends: 'TENDENCIAS', fairs: 'CALENDARIO DE FERIAS' },
+  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite', about: 'À PROPOS', trends: 'TENDANCES', fairs: 'CALENDRIER DES SALONS' },
 };
-
-// ═══ ALT MENÜ ETİKETLERİ (8 DİL) ═══
-const subLabels: Record<string, Record<string, string>> = {
-  TR: { latest: 'Son Haberler', radar: 'Dünya Radarı', analysis: 'Pazar Analizi', live: 'Canlı İhaleler', stock: 'Stok Fırsatları', capacity: 'Boş Kapasite', opportunities: 'Ticari Fırsatlar', supply: 'Tedarik Rehberi', training: 'Sektör Eğitimi', fairs: 'Fuar Takvimi' },
-  EN: { latest: 'Latest News', radar: 'World Radar', analysis: 'Market Analysis', live: 'Live Tenders', stock: 'Stock Deals', capacity: 'Available Capacity', opportunities: 'Trade Opportunities', supply: 'Supplier Guide', training: 'Industry Training', fairs: 'Fair Calendar' },
-  DE: { latest: 'Aktuelle Nachrichten', radar: 'Welt-Radar', analysis: 'Marktanalyse', live: 'Aktive Ausschreibungen', stock: 'Lagerangebote', capacity: 'Freie Kapazitäten', opportunities: 'Handelschancen', supply: 'Lieferantenführer', training: 'Branchenausbildung', fairs: 'Messekalender' },
-  RU: { latest: 'Последние Новости', radar: 'Мировой Радар', analysis: 'Анализ Рынка', live: 'Активные Тендеры', stock: 'Складские Предложения', capacity: 'Свободные Мощности', opportunities: 'Торговые Возможности', supply: 'Справочник Поставщиков', training: 'Отраслевое Обучение', fairs: 'Календарь Выставок' },
-  ZH: { latest: '最新新闻', radar: '世界雷达', analysis: '市场分析', live: '活跃招标', stock: '库存优惠', capacity: '闲置产能', opportunities: '贸易机会', supply: '供应商指南', training: '行业培训', fairs: '展会日历' },
-  AR: { latest: 'آخر الأخبار', radar: 'رادار عالمي', analysis: 'تحليل السوق', live: 'مناقصات نشطة', stock: 'عروض المخزون', capacity: 'طاقة متاحة', opportunities: 'فرص تجارية', supply: 'دليل الموردين', training: 'تدريب القطاع', fairs: 'تقويم المعارض' },
-  ES: { latest: 'Últimas Noticias', radar: 'Radar Mundial', analysis: 'Análisis de Mercado', live: 'Licitaciones Activas', stock: 'Ofertas de Stock', capacity: 'Capacidad Disponible', opportunities: 'Oportunidades', supply: 'Guía de Proveedores', training: 'Formación Sectorial', fairs: 'Calendario de Ferias' },
-  FR: { latest: 'Dernières Nouvelles', radar: 'Radar Mondial', analysis: 'Analyse de Marché', live: 'Appels Actifs', stock: 'Offres de Stock', capacity: 'Capacité Disponible', opportunities: 'Opportunités', supply: 'Guide Fournisseurs', training: 'Formation Sectorielle', fairs: 'Calendrier des Salons' },
-};
-
-type NavTheme = 'light' | 'dark';
 
 interface TrtexNavbarProps {
   basePath: string;
   brandName?: string;
   lang?: string;
-  activePage?: 'home' | 'news' | 'tenders' | 'trade' | 'academy' | 'fairs' | 'index';
-  theme?: NavTheme;
+  activePage?: string;
+  theme?: 'light' | 'dark';
 }
 
 /**
  * TRTEX Ortak Navbar — Tüm sayfalar bu bileşeni kullanır.
- * Menü sırası: HABERLER ▾ | İHALELER ▾ | TİCARET ▾ | AKADEMİ ▾ | 🌐 DİL | ÜCRETSİZ KAYIT
- * Her menü kendi sayfasına gider + hover dropdown alt menüler.
+ * REFERANS: /ihaleler sayfasının karakter rengi ve stili.
+ * Tüm sayfalarda BİREBİR AYNI görünür. Sıfırdan yazıldı.
  */
 export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr', activePage, theme = 'light' }: TrtexNavbarProps) {
   const { user, logout } = useAuth();
-  const [langOpen, setLangOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const targetLang = lang.toUpperCase();
-  const labels = navLabels[targetLang] || navLabels.TR;
-  const subs = subLabels[targetLang] || subLabels.TR;
-
-  // SABİT KURUMSAL TEMA (Aydınlık B2B)
-  const bgColor = '#FFFFFF';
-  const textColor = '#111827';
-  const activeColor = '#CC0000';
-  const borderColor = '#E5E7EB';
-  const dropBg = '#FFFFFF';
-  const dropBorder = '#E5E7EB';
-  const dropHover = '#F3F4F6';
-
-  const getUrl = (key: string, hash: string = '', query: string = '') => {
-    if (lang === 'tr') {
-      const map: Record<string, string> = {
-        about: 'hakkimizda',
-        news: 'haberler',
-        tenders: 'ihaleler',
-        collections: 'koleksiyonlar',
-        academy: 'akademi',
-        fairs: 'fuar-takvimi',
-        trade: 'ticaret'
-      };
-      return `${basePath}/${map[key] || key}${query ? `?${query}` : ''}${hash}`;
-    }
-    return `${basePath}/${key}?lang=${lang}${query ? `&${query}` : ''}${hash}`;
-  };
-
-  // ═══ MENÜ YAPIISI — Sadece gerçek içeriği olan sayfalar ═══
-  const menuItems = [
-    {
-      key: 'about', label: labels.about, href: getUrl('about'), subs: []
-    },
-    {
-      key: 'news', label: labels.news, href: getUrl('news'),
-      subs: [
-        { label: subs.latest, href: getUrl('news') },
-        { label: subs.analysis, href: getUrl('news', '#news-grid') },
-      ]
-    },
-    {
-      key: 'tenders', label: labels.tenders, href: getUrl('tenders'), accent: true,
-      subs: [
-        { label: subs.live, href: getUrl('tenders') },
-        { label: subs.stock, href: getUrl('tenders', '', 'filter=HOT_STOCK') },
-        { label: subs.capacity, href: getUrl('tenders', '', 'filter=CAPACITY') },
-      ]
-    },
-    {
-      key: 'collections', label: labels.collections, href: getUrl('collections'), subs: []
-    },
-    {
-      key: 'academy', label: labels.academy, href: getUrl('academy'),
-      subs: [
-        { label: subs.fairs, href: getUrl('fairs') },
-        { label: subs.training, href: getUrl('academy') },
-      ]
-    },
-  ];
-
-  const currentLangObj = LANG_OPTIONS.find(l => l.code === lang) || LANG_OPTIONS[0];
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const [langDropOpen, setLangDropOpen] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', h);
+    return () => window.removeEventListener('scroll', h);
+  }, []);
+
+  const safeLang = lang || 'tr';
+  const targetLang = safeLang.toUpperCase();
+  const L = navLabels[targetLang] || navLabels.TR;
+  const currentLangObj = LANG_OPTIONS.find(l => l.code === safeLang) || LANG_OPTIONS[0];
+
+  const getUrl = (key: string) => {
+    const bp = basePath || '';
+    if (safeLang === 'tr') {
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'radar', academy: 'akademi', fairs: 'fuar-takvimi', trade: 'ticaret', about: 'hakkimizda' };
+      return `${bp}/${map[key] || key}`;
+    }
+    return `${bp}/${key}?lang=${safeLang}`;
+  };
+
+  const menuItems = [
+    { key: 'news',        label: L.news },
+    { key: 'tenders',     label: L.tenders },
+    { key: 'trade',       label: L.trade },
+    { key: 'trends',      label: L.trends },
+    { key: 'fairs',       label: L.fairs },
+    { key: 'academy',     label: L.academy },
+  ];
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
-        .trtex-nav-link { position: relative; }
-        .trtex-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: ${activeColor}; transition: all 0.3s ease; transform: translateX(-50%); }
-        .trtex-menu-group:hover .trtex-nav-link::after { width: 100%; }
-        .trtex-menu-group:hover .trtex-dropdown { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; }
-        .trtex-dropdown { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .trtex-dropdown a:hover { background: #F8FAFC !important; color: #020617 !important; padding-left: 1.25rem !important; }
-        .trtex-lang-drop { display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); z-index: 100; overflow:hidden;}
-        .trtex-lang-trigger:hover .trtex-lang-drop, .trtex-lang-drop:hover { display: block !important; }
-        .trtex-lang-drop a:hover { background: #F8FAFC !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        .trtex-nav { position: sticky; top: 0; z-index: 100; width: 100%; background: #FFFFFF; border-bottom: 1px solid #E5E7EB; transition: box-shadow 0.3s; }
+        .trtex-nav.scrolled { box-shadow: 0 4px 20px -5px rgba(0,0,0,0.06); }
+        .trtex-nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; height: 72px; }
+        .trtex-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 900; color: #111827; text-decoration: none; letter-spacing: -0.02em; }
+        .trtex-logo .dot { color: #CC0000; }
+        .trtex-menu { display: none; align-items: center; gap: 0; }
+        @media (min-width: 1024px) { .trtex-menu { display: flex; } }
+        .trtex-menu-link { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; color: #4B5563; text-decoration: none; padding: 0 1rem; height: 72px; display: flex; align-items: center; transition: color 0.2s; letter-spacing: 0.02em; border-bottom: 2px solid transparent; }
+        .trtex-menu-link:hover { color: #111827; }
+        .trtex-menu-link.active { color: #111827; font-weight: 700; border-bottom-color: #CC0000; }
+        .trtex-lang-wrap { position: relative; cursor: pointer; }
+        .trtex-lang-btn { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #4B5563; padding: 0 0.75rem; height: 72px; display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer; }
+        .trtex-lang-btn:hover { color: #111827; }
+        .trtex-lang-dd { display: none; position: absolute; right: 0; top: 100%; min-width: 200px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; box-shadow: 0 12px 40px -10px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; padding: 0.5rem 0; }
+        .trtex-lang-wrap:hover .trtex-lang-dd { display: block; }
+        .trtex-lang-dd a { display: flex; align-items: center; gap: 10px; padding: 0.65rem 1.25rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; color: #374151; text-decoration: none; transition: background 0.15s; }
+        .trtex-lang-dd a:hover { background: #F3F4F6; }
+        .trtex-lang-dd a.selected { background: #CC0000; color: #FFFFFF; font-weight: 700; }
+        .trtex-register { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 700; color: #FFFFFF; background: #CC0000; padding: 0.6rem 1.5rem; border-radius: 8px; text-decoration: none; margin-left: 1rem; transition: all 0.2s; border: none; cursor: pointer; white-space: nowrap; }
+        .trtex-register:hover { background: #B91C1C; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(204,0,0,0.3); }
+        .trtex-user-wrap { position: relative; cursor: pointer; margin-left: 1rem; }
+        .trtex-user-btn { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #374151; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 6px; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 8px; cursor: pointer; }
+        .trtex-user-btn:hover { background: #E5E7EB; }
+        .trtex-user-dd { display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 220px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; box-shadow: 0 12px 40px -10px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; }
+        .trtex-user-wrap:hover .trtex-user-dd { display: block; }
+        .trtex-hamburger { display: flex; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+        @media (min-width: 1024px) { .trtex-hamburger { display: none; } }
+        .trtex-hamburger span { display: block; width: 22px; height: 2px; background: #374151; transition: all 0.3s; }
+        .trtex-mobile { position: fixed; inset: 0; z-index: 150; background: #FFFFFF; padding-top: 80px; overflow-y: auto; }
+        .trtex-mobile-link { display: block; padding: 1rem 2rem; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; color: #374151; text-decoration: none; border-bottom: 1px solid #F3F4F6; }
+        .trtex-mobile-link:hover, .trtex-mobile-link.active { color: #CC0000; background: #FEF2F2; }
       `}} />
-      <nav 
-        className="sticky top-0 z-[100] w-full transition-all duration-300" 
-        style={{ 
-          background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent', 
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid ' + borderColor : '1px solid transparent',
-          boxShadow: scrolled ? '0 4px 20px -5px rgba(0,0,0,0.05)' : 'none'
-        }}
-      >
-        <div className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-[70px] lg:h-[80px]">
+
+      <nav className={`trtex-nav ${scrolled ? 'scrolled' : ''}`}>
+        <div className="trtex-nav-inner">
           {/* LOGO */}
-          <a href={basePath} className="no-underline font-serif text-xl lg:text-2xl font-black tracking-tight" style={{ color: '#111' }}>
-            {brandName === 'TRTEX' ? (
-              <>Trtex<span style={{ color: activeColor }}>.</span>com</>
-            ) : (
-              <>{brandName}<span style={{ color: activeColor }}>.</span>com</>
-            )}
+          <a href={basePath} className="trtex-logo">
+            Trtex<span className="dot">.</span>com
           </a>
 
           {/* DESKTOP MENU */}
-          <div className="hidden lg:flex items-center gap-2">
-            {menuItems.map(item => {
-              const isActive = activePage === item.key;
-              return (
-                <div key={item.key} className="trtex-menu-group relative pb-2 pt-2 h-[80px] flex items-center">
-                  <a
-                    href={item.href}
-                    className="trtex-nav-link no-underline font-sans text-[0.85rem] flex items-center gap-1 transition-all px-4"
-                    style={{
-                      fontWeight: isActive ? 800 : 600,
-                      letterSpacing: '0.5px',
-                      color: isActive ? activeColor : (item as any).accent ? activeColor : '#334155',
-                      height: '100%',
-                    }}
-                  >
-                    {item.label}
-                    {item.subs.length > 0 && <span className="text-[0.6rem] opacity-40 ml-1 mt-[2px]">▾</span>}
-                  </a>
-
-                  {/* DESKTOP DROPDOWN (Mega Menu Style) */}
-                  {item.subs.length > 0 && (
-                    <div className="trtex-dropdown absolute left-0 top-full pt-4 pb-2 z-[100] w-64">
-                      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden" style={{boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08)'}}>
-                        {item.subs.map((sub, idx) => (
-                          <a
-                            key={idx}
-                            href={sub.href}
-                            className="block px-5 py-3 font-sans text-[0.8rem] font-semibold no-underline transition-all duration-200"
-                            style={{ color: '#475569', borderBottom: idx !== item.subs.length -1 ? '1px solid #F1F5F9' : 'none' }}
-                          >
-                            {sub.label}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* TEK DİL SEÇİCİ — 8 Dil Dropdown */}
-            <div className="trtex-lang-trigger relative flex items-center ml-4" style={{ cursor: 'pointer' }}>
-              <div
-                className="flex items-center gap-2 px-3 py-1.5 font-sans text-[0.85rem] font-bold transition-colors rounded-full"
-                style={{ border: '1px solid #E2E8F0', color: '#334155', background: scrolled ? '#F8FAFC' : '#FFFFFF' }}
+          <div className="trtex-menu">
+            {menuItems.map(item => (
+              <a
+                key={item.key}
+                href={getUrl(item.key)}
+                className={`trtex-menu-link ${activePage === item.key ? 'active' : ''}`}
               >
-                <span className="text-[1.1rem]">{currentLangObj.flag}</span>
-                <span>{currentLangObj.code.toUpperCase()}</span>
-                <span className="text-[0.6rem] opacity-40 ml-1">▾</span>
-              </div>
-              <div className="trtex-lang-drop mt-2">
+                {item.label}
+              </a>
+            ))}
+
+            {/* DİL SEÇİCİ */}
+            <div className="trtex-lang-wrap">
+              <button className="trtex-lang-btn">
+                {currentLangObj.flag} {currentLangObj.code.toUpperCase()} <span style={{ fontSize: '0.6rem', opacity: 0.5 }}>▾</span>
+              </button>
+              <div className="trtex-lang-dd">
                 {LANG_OPTIONS.map(opt => (
                   <a
                     key={opt.code}
-                    href={`${basePath}?lang=${opt.code}`}
-                    className="flex items-center gap-3 px-4 py-3 font-mono text-[0.75rem] font-semibold no-underline transition-colors"
-                    style={{
-                      color: opt.code === lang ? '#fff' : '#ccc',
-                      background: opt.code === lang ? activeColor : 'transparent',
-                      borderBottom: `1px solid #222`,
-                    }}
+                    href={`${basePath || ''}?lang=${opt.code}`}
+                    className={opt.code === lang ? 'selected' : ''}
                   >
-                    <span style={{ fontSize: '1rem' }}>{opt.flag}</span>
+                    <span style={{ fontSize: '1.1rem' }}>{opt.flag}</span>
                     <span>{opt.name}</span>
                   </a>
                 ))}
               </div>
             </div>
 
-            {/* SSO / KULLANICI PROFİLİ */}
+            {/* SSO / ÜYELİK */}
             {user ? (
-              <div className="trtex-lang-trigger relative flex items-center ml-4 cursor-pointer">
-                <div className="flex items-center gap-2 px-4 py-1.5 font-sans text-[0.85rem] font-bold transition-colors rounded-full" style={{ border: `1px solid #BFDBFE`, color: '#1D4ED8', background: '#EFF6FF' }}>
-                  <span>{user.displayName?.split(' ')[0] || 'ÜYE'}</span>
-                  <span className="text-[0.6rem] opacity-40 ml-1 mt-[2px]">▾</span>
-                </div>
-                <div className="trtex-lang-drop mt-2" style={{minWidth:'200px'}}>
-                  <div className="px-5 py-3 font-sans text-[0.75rem] text-slate-500 border-b border-slate-100 font-medium">
+              <div className="trtex-user-wrap">
+                <button className="trtex-user-btn">
+                  {user.displayName?.split(' ')[0] || 'ÜYE'} <span style={{ fontSize: '0.6rem', opacity: 0.5 }}>▾</span>
+                </button>
+                <div className="trtex-user-dd">
+                  <div style={{ padding: '0.75rem 1.25rem', fontSize: '0.8rem', color: '#6B7280', borderBottom: '1px solid #F3F4F6' }}>
                     {user.email}
                   </div>
-                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block px-5 py-3 font-sans text-[0.8rem] font-bold text-slate-700 hover:text-blue-600 no-underline transition-colors">
+                  <a href={`${basePath}/dashboard?lang=${lang}`} style={{ display: 'block', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#374151', textDecoration: 'none' }}>
                     Terminal Dashboard
                   </a>
-                  <button onClick={logout} className="w-full text-left px-5 py-3 font-sans text-[0.8rem] font-bold text-red-600 hover:bg-red-50 transition-colors border-t border-slate-100">
+                  <button onClick={logout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#DC2626', background: 'none', border: 'none', borderTop: '1px solid #F3F4F6', cursor: 'pointer' }}>
                     Çıkış Yap
                   </button>
                 </div>
               </div>
             ) : (
-              <a href={`${basePath}/login?lang=${lang}`} className="ml-4 px-5 py-2 font-sans text-[0.85rem] font-bold transition-all no-underline rounded-full hover:-translate-y-[1px]" style={{ background: '#0F172A', color: '#FFFFFF', boxShadow:'0 4px 10px rgba(0,0,0,0.1)' }}>
-                {labels.register}
+              <a href={`${basePath}/login?lang=${lang}`} className="trtex-register">
+                {L.register}
               </a>
             )}
-
-            {/* aipyram CONCIERGE (DESKTOP) */}
-            <button 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'concierge' } }))}
-              className="ml-4 px-4 py-2 font-mono text-[0.75rem] font-bold uppercase tracking-widest transition-all"
-              style={{ background: '#D4AF37', color: '#000', border: 'none', cursor: 'pointer' }}
-            >
-              aipyram Concierge
-            </button>
           </div>
 
-          {/* MOBILE HAMBURGER BUTTON */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 flex flex-col justify-center items-center gap-1 cursor-pointer bg-transparent border-0"
-              aria-label="Menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              <span className={`block w-6 h-[2px] transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} style={{ background: textColor }} />
-              <span className={`block w-6 h-[2px] transition-opacity ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`} style={{ background: textColor }} />
-              <span className={`block w-6 h-[2px] transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`} style={{ background: textColor }} />
-            </button>
-          </div>
+          {/* MOBILE HAMBURGER */}
+          <button className="trtex-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+            <span style={mobileMenuOpen ? { transform: 'rotate(45deg) translate(5px, 5px)' } : {}} />
+            <span style={mobileMenuOpen ? { opacity: 0 } : {}} />
+            <span style={mobileMenuOpen ? { transform: 'rotate(-45deg) translate(5px, -5px)' } : {}} />
+          </button>
         </div>
       </nav>
 
-      {/* MOBILE FULLSCREEN MENU */}
+      {/* MOBILE MENU */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] pt-[100px] overflow-y-auto" style={{ background: bgColor }}>
-          <div className="flex flex-col px-6 pb-20">
-            {menuItems.map(item => (
-              <div key={item.key} className="mb-6">
-                <div className="font-mono text-sm font-extrabold uppercase tracking-widest mb-3" style={{ color: activeColor }}>
-                  {item.label}
-                </div>
-                <div className="flex flex-col gap-3 pl-4 border-l-2" style={{ borderColor: borderColor }}>
-                  {item.subs.map((sub, idx) => (
-                    <a
-                      key={idx}
-                      href={sub.href}
-                      className="font-mono text-xs font-semibold no-underline py-1"
-                      style={{ color: textColor }}
-                    >
-                      {sub.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
-            
-            {/* MOBILE 8-DİL SEÇİCİ */}
-            <div className="mt-8 pt-8 border-t" style={{ borderColor: borderColor }}>
-              <div className="font-mono text-sm font-extrabold uppercase tracking-widest mb-3" style={{ color: '#888' }}>🌐 DİL / LANGUAGE</div>
-              <div className="grid grid-cols-2 gap-2">
-                {LANG_OPTIONS.map(opt => (
-                  <a
-                    key={opt.code}
-                    href={`${basePath}?lang=${opt.code}`}
-                    className="flex items-center gap-2 p-3 font-mono text-sm font-bold no-underline"
-                    style={{
-                      background: opt.code === lang ? activeColor : 'transparent',
-                      color: opt.code === lang ? '#fff' : textColor,
-                      border: `1px solid ${borderColor}`,
-                    }}
-                  >
-                    <span>{opt.flag}</span> {opt.name}
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* MOBILE SSO / KULLANICI PROFİLİ */}
-            <div className="mt-6">
-              {user ? (
-                <>
-                  <div className="font-mono text-sm font-extrabold uppercase tracking-widest mb-3" style={{ color: activeColor }}>{user.displayName || 'ÜYE'}</div>
-                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block w-full p-4 mb-2 font-mono text-sm font-bold text-center border no-underline" style={{ borderColor: borderColor, color: textColor }}>Terminal Dashboard</a>
-                  <button onClick={logout} className="w-full p-4 font-mono text-sm font-bold text-center border" style={{ borderColor: '#CC0000', color: '#CC0000', background: 'transparent' }}>Çıkış Yap</button>
-                </>
-              ) : (
-                <a href={`${basePath}/login?lang=${lang}`} className="block w-full p-4 font-mono text-sm font-bold uppercase tracking-widest text-center border no-underline" style={{ borderColor: activeColor, color: activeColor }}>
-                  {labels.register}
+        <div className="trtex-mobile">
+          {menuItems.map(item => (
+            <a key={item.key} href={getUrl(item.key)} className={`trtex-mobile-link ${activePage === item.key ? 'active' : ''}`}>
+              {item.label}
+            </a>
+          ))}
+          <div style={{ padding: '1rem 2rem', borderTop: '1px solid #E5E7EB' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9CA3AF', marginBottom: '0.75rem', letterSpacing: '0.1em' }}>🌐 DİL / LANGUAGE</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              {LANG_OPTIONS.map(opt => (
+                <a
+                  key={opt.code}
+                  href={`${basePath}?lang=${opt.code}`}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '0.75rem',
+                    background: opt.code === lang ? '#CC0000' : '#F9FAFB',
+                    color: opt.code === lang ? '#FFFFFF' : '#374151',
+                    border: '1px solid ' + (opt.code === lang ? '#CC0000' : '#E5E7EB'),
+                    borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none',
+                  }}
+                >
+                  {opt.flag} {opt.name}
                 </a>
-              )}
+              ))}
             </div>
-
-            {/* aipyram CONCIERGE (MOBILE) */}
-            <div className="mt-6">
-              <button 
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'concierge' } }));
-                }}
-                className="w-full p-4 font-mono text-sm font-bold uppercase tracking-widest text-center"
-                style={{ background: '#D4AF37', color: '#000', border: 'none', cursor: 'pointer' }}
-              >
-                aipyram Concierge
-              </button>
-            </div>
+          </div>
+          <div style={{ padding: '1rem 2rem' }}>
+            {user ? (
+              <>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#CC0000', marginBottom: '0.5rem' }}>{user.displayName || 'ÜYE'}</div>
+                <a href={`${basePath}/dashboard?lang=${lang}`} style={{ display: 'block', padding: '0.75rem', textAlign: 'center', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: '#374151', textDecoration: 'none' }}>Terminal Dashboard</a>
+                <button onClick={logout} style={{ display: 'block', width: '100%', padding: '0.75rem', textAlign: 'center', border: '1px solid #DC2626', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, color: '#DC2626', background: 'none', cursor: 'pointer' }}>Çıkış Yap</button>
+              </>
+            ) : (
+              <a href={`${basePath}/login?lang=${lang}`} style={{ display: 'block', padding: '0.75rem', textAlign: 'center', background: '#CC0000', color: '#FFFFFF', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
+                {L.register}
+              </a>
+            )}
           </div>
         </div>
       )}

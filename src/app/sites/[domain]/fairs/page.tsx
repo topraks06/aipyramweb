@@ -28,13 +28,20 @@ export default async function FairsPage({ params, searchParams }: any) {
 
   let fairsNews: any[] = [];
   try {
+    // Geniş filtre — intent bazlı boş kalmasın
     const snap = await adminDb.collection(`${projectName}_news`)
       .where("status", "==", "published")
-      .where("intent", "==", "DISCOVER")
       .orderBy("createdAt", "desc")
       .limit(30)
       .get();
-    fairsNews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const allNews = snap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+    const fairFiltered = allNews.filter((a: any) => {
+      const intent = (a.intent || '').toUpperCase();
+      const cat = (a.category || '').toUpperCase();
+      return intent === 'DISCOVER' || cat.includes('FUAR') || cat.includes('EXPO') || cat.includes('FAIR')
+        || (a.entity_data?.places && a.entity_data.places.length > 0);
+    });
+    fairsNews = fairFiltered.length > 0 ? fairFiltered : allNews.slice(0, 12);
   } catch (err) {
     console.error("[FAIRS] Fetch Error:", err);
   }
@@ -44,7 +51,7 @@ export default async function FairsPage({ params, searchParams }: any) {
       <GlobalTicker />
       <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="fairs" theme="light" />
       
-      <main style={{ flex: 1, maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '4rem 2rem' }}>
+      <main style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '4rem 2rem' }}>
          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <h1 style={{ fontSize: '3rem', fontWeight: 900, fontFamily: "'Playfair Display', serif", color: '#111', textTransform: 'uppercase' }}>
               {t('globalFairs', lang)}

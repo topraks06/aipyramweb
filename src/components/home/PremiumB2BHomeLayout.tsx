@@ -1,1206 +1,295 @@
 'use client';
 import React, { useState } from 'react';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
+import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
-import OpportunityRadarWidget from '@/components/trtex/OpportunityRadarWidget';
 import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
 import SovereignLiveConcierge from '@/components/home/SovereignLiveConcierge';
 
-// ═══ REGION CLASSIFIER (Frontend keyword matching — Aloha data stays untouched) ═══
-const REGION_KEYWORDS: Record<string, string[]> = {
-  ASIA: ['çin', 'china', 'shanghai', 'vietnam', 'hindistan', 'india', 'bangladesh', 'pakistan', 'asya', 'asia', 'uzakdoğu', 'far east', 'tayland', 'endonezya', 'japan', 'korea'],
-  EUROPE: ['almanya', 'germany', 'fransa', 'france', 'italya', 'italy', 'ispanya', 'spain', 'avrupa', 'europe', 'polonya', 'poland', 'belçika', 'hollanda', 'ingiltere', 'uk', 'heimtextil'],
-  AMERICAS: ['abd', 'usa', 'amerika', 'america', 'kanada', 'canada', 'brezilya', 'brazil', 'meksika', 'mexico'],
-  MENA: ['suudi', 'saudi', 'dubai', 'uae', 'bae', 'mısır', 'egypt', 'katar', 'qatar', 'körfez', 'gulf', 'ortadoğu', 'middle east', 'afrika', 'africa'],
-};
-
-// ═══ TRADING FLOOR FALLBACK DATA — Sadece payload yoksa kullanılır ═══
 const FALLBACK_TENDERS = [
-  { id: 'fb-t1', type: 'TENDER', location: '🇩🇪 Almanya / Otel Projesi', title: '5.000m Blackout Perde Tedariki', detail_key: 'Son Teklif:', detail_value: '30 Mayıs 2026', score: 88, action_text: '→ İHALEYİ İNCELE' },
-  { id: 'fb-t2', type: 'TENDER', location: '🇦🇪 BAE / NEOM İnşaat', title: 'Otel Tipi Havlu Seti (x20.000)', detail_key: 'Sertifika:', detail_value: 'ISO 9001 + OEKO-TEX', score: 92, action_text: '→ TEKLİF VER' },
-  { id: 'fb-t3', type: 'TENDER', location: '🇵🇱 Polonya / Hastane Projesi', title: 'FR Sertifikalı Boj Perde', detail_key: 'Miktar:', detail_value: '2.500m²', score: 78, action_text: '→ İHALEYİ İNCELE' },
-  { id: 'fb-s1', type: 'HOT_STOCK', location: '🇹🇷 Bursa / İhracat Fazlası', title: '12.000m Şönil Kumaş', detail_key: 'Fiyat Avantajı:', detail_value: '-18% Piyasa Altı', score: 85, action_text: '→ FİRMADAN SATIN AL' },
-  { id: 'fb-s2', type: 'HOT_STOCK', location: '🇨🇳 Şanghay / Spot Yükleme', title: '40 Ton 30/1 Penye İplik', detail_key: 'Durum:', detail_value: 'Liman Teslim (Spot)', score: 80, action_text: '→ SATIN AL' },
-  { id: 'fb-s3', type: 'HOT_STOCK', location: '🇹🇷 Denizli / Stok Fazlası', title: '8.000 Adet Jakarlı Havlu', detail_key: 'Kalite:', detail_value: 'A-Grade, Export Paketli', score: 82, action_text: '→ FİRMADAN SATIN AL' },
-  { id: 'fb-c1', type: 'CAPACITY', location: '🇹🇷 Denizli / Havlu Grubu', title: 'Aylık 30.000m Üretim Boş', detail_key: 'Hazır Makine:', detail_value: 'Armürlü Dokuma', score: 76, action_text: '→ ORTAKLIK KUR' },
-  { id: 'fb-c2', type: 'CAPACITY', location: '🇪🇸 İspanya / Valencia', title: 'Aylık 10.000m Dijital Baskı', detail_key: 'Minimum Sipariş:', detail_value: '500m', score: 72, action_text: '→ FASON ÜRETİM' },
-  { id: 'fb-c3', type: 'CAPACITY', location: '🇧🇩 Bangladeş / Dakka', title: 'Aylık 50.000 Adet T-Shirt', detail_key: 'Min. Sipariş:', detail_value: '5.000 adet', score: 70, action_text: '→ ORTAKLIK KUR' },
+  { id: 'fb-t1', type: 'TENDER', location: '🇩🇪 Almanya', title: '5.000m Blackout Perde', score: 88 },
+  { id: 'fb-t2', type: 'TENDER', location: '🇦🇪 BAE', title: 'Otel Havlu Seti', score: 92 },
+  { id: 'fb-s1', type: 'HOT_STOCK', location: '🇹🇷 Bursa', title: '12.000m Şönil', score: 85 },
+  { id: 'fb-c1', type: 'CAPACITY', location: '🇹🇷 Denizli', title: '30.000m Üretim Boş', score: 76 },
 ];
-
-// ═══ DİL SEÇENEKLERİ ═══
-const LANG_OPTIONS = [
-  { code: 'tr', flag: '🇹🇷', name: 'Türkçe' },
-  { code: 'en', flag: '🇬🇧', name: 'English' },
-  { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
-  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
-  { code: 'zh', flag: '🇨🇳', name: '中文' },
-  { code: 'ar', flag: '🇸🇦', name: 'العربية' },
-  { code: 'es', flag: '🇪🇸', name: 'Español' },
-  { code: 'fr', flag: '🇫🇷', name: 'Français' },
-];
-
-// ═══ NAV ETİKETLERİ (8 DİL) ═══
-const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string }> = {
-  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt' },
-  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up' },
-  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren' },
-  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация' },
-  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册' },
-  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني' },
-  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis' },
-  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite' },
-};
-
-// ═══ ANA SAYFA UI ETİKETLERİ (8 DİL OTONOM) ═══
-const homeLabels: Record<string, {
-  awaitingSignal: string; fxPower: string; supplyFreight: string;
-  sectorNetwork: string; b2bPlatform: string; liveData: string;
-  headline: string; allNews: string;
-  tradingFloor: string; tradingActive: string; activeDeal: string; ceoBriefing: string;
-  tenderFlow: string; hotStock: string; freeCapacity: string;
-  seeAll: string; filter: string;
-  oppEngine: string; actionCards: string; actionPlan: string; reviewIntel: string; getOffer: string;
-  fairLayer: string; signalMap: string; activeSignals: string;
-  academyLayer: string;
-  scanningTender: string; scanningStock: string;
-  emptyCapTitle: string; emptyCapDesc: string; emptyCapBtn: string;
-  asiaIndex: string;
-  targetAudience: string; priorityLabel: string; priorityHigh: string; priorityNormal: string;
-  oppSignal: string; riskSignal: string; tradeSignal: string; neutralLabel: string; defaultAction: string;
-  marketRegime: string; riskOn: string; riskOff: string; neutralRegime: string;
-  regionAsia: string; regionEurope: string; regionAmericas: string; regionMena: string;
-  fairPassed: string; fairToday: string; fairDays: string;
-  activeMonitoring: string; signalsLabel: string;
-  tenders: string; stockOpp: string; capacity: string;
-  marketDirection: string; aiImpactScore: string;
-  dirRisk: string; dirOpp: string; dirNeutral: string;
-  imageGenerating: string; imageProcessing: string;
-  ceoBriefLabel: string;
-}> = {
-  TR: {
-    awaitingSignal: 'Piyasa Analizi Okunuyor...', fxPower: 'FX POWER (İNDEKS)', supplyFreight: 'TEDARİK & LOJİSTİK',
-    sectorNetwork: 'SEKTÖREL VERİ AĞI', b2bPlatform: 'B2B EV TEKSTİLİ TİCARET PLATFORMU', liveData: 'CANLI VERİ AKIŞI',
-    headline: 'GÜNÜN MANŞETİ', allNews: 'TÜM HABERLER →',
-    tradingFloor: 'B2B TİCARET TERMİNALİ', tradingActive: 'TRTEX TİCARET AĞI DEVREDE', activeDeal: 'AKTİF FIRSAT', ceoBriefing: 'CEO BRİFİNG AL',
-    tenderFlow: 'İHALE AKIŞI', hotStock: 'SICAK STOK', freeCapacity: 'BOŞ KAPASİTE',
-    seeAll: 'TÜM İHALE VE FIRSATLARI GÖR →', filter: 'Filtreleme • Sıralama • Detaylı Analiz',
-    oppEngine: 'FIRSAT MOTORU', actionCards: 'AKSİYON KARTLARI', actionPlan: 'Aksiyon Planı', reviewIntel: 'İstihbaratı İncele', getOffer: 'TEKLİF AL',
-    fairLayer: 'ETKİNLİK KATMANI: SEKTÖR FUAR TAKVİMİ', signalMap: 'GLOBAL SİNYAL HARİTASI', activeSignals: 'AKTİF SİNYALLER',
-    academyLayer: 'BİLGİ KATMANI: AKADEMİ',
-    scanningTender: 'İhale verisi taranıyor... TRTEX tekrar arayacak.', scanningStock: 'Stok fırsatları taranıyor...',
-    emptyCapTitle: 'Boş Kapasiteniz mi Var?', emptyCapDesc: 'Şu an yayınlanan açık üretim kapasitesi yok. Fabrikanızdaki boş dokuma veya konfeksiyon hatlarını, gizliliğinizi koruyarak 10.000 global B2B alıcısına anonim olarak saniyeler içinde duyurun.',
-    emptyCapBtn: '→ ÜCRETSİZ KAPASİTE BİLDİR',
-    asiaIndex: 'ASYA PİYASA İNDEKSİ',
-    targetAudience: 'Hedef Kitle', priorityLabel: 'Öncelik', priorityHigh: 'YÜKSEK', priorityNormal: 'NORMAL',
-    oppSignal: 'FIRSAT SİNYALİ', riskSignal: 'RİSK SİNYALİ', tradeSignal: 'TİCARİ SİNYAL', neutralLabel: 'NÖTR', defaultAction: 'Analiz raporunu detaylı inceleyin ve tedarikçi eşleştirmesini başlatın.',
-    marketRegime: 'PİYASA REJİMİ', riskOn: 'RİSK ALGISI YÜKSEK', riskOff: 'RİSKTEN KAÇIŞ', neutralRegime: 'NÖTR',
-    regionAsia: 'ASYA', regionEurope: 'AVRUPA', regionAmericas: 'AMERİKA', regionMena: 'ORTA DOĞU',
-    fairPassed: 'GEÇTİ', fairToday: 'BUGÜN', fairDays: 'GÜN',
-    activeMonitoring: 'AKTİF İZLEME', signalsLabel: 'SİNYAL',
-    tenders: 'İhale', stockOpp: 'Stok Fırsatı', capacity: 'Boş Kapasite',
-    marketDirection: 'PİYASA YÖNÜ', aiImpactScore: 'YAPAY ZEKA ETKİ SKORU',
-    dirRisk: 'RİSKLİ', dirOpp: 'FIRSAT', dirNeutral: 'NÖTR',
-    imageGenerating: 'GÖRSELLER OLUŞTURULUYOR', imageProcessing: 'TISF AĞINDA ARKA PLAN İŞLEMİ DEVAM EDİYOR...',
-    ceoBriefLabel: 'TRTEX İSTİHBARAT ÇIKARIMI (Otonom Analiz)',
-  },
-  EN: {
-    awaitingSignal: 'Awaiting Market Signal...', fxPower: 'FX POWER INDEX', supplyFreight: 'SUPPLY & FREIGHT',
-    sectorNetwork: 'SECTOR DATA NETWORK', b2bPlatform: 'B2B HOME TEXTILE TRADE PLATFORM', liveData: 'LIVE DATA FEED',
-    headline: 'TODAY\'S HEADLINE', allNews: 'ALL NEWS →',
-    tradingFloor: 'B2B TRADING TERMINAL', tradingActive: 'TRTEX TRADING NETWORK ACTIVE', activeDeal: 'ACTIVE DEAL', ceoBriefing: 'GET CEO BRIEFING',
-    tenderFlow: 'TENDER FLOW', hotStock: 'HOT STOCK', freeCapacity: 'AVAILABLE CAPACITY',
-    seeAll: 'VIEW ALL TENDERS & OPPORTUNITIES →', filter: 'Filter • Sort • Detailed Analysis',
-    oppEngine: 'OPPORTUNITY ENGINE', actionCards: 'ACTION CARDS', actionPlan: 'Action Plan', reviewIntel: 'Review Intelligence', getOffer: 'GET OFFER',
-    fairLayer: 'EVENT LAYER: INDUSTRY FAIR CALENDAR', signalMap: 'GLOBAL SIGNAL MAP', activeSignals: 'ACTIVE SIGNALS',
-    academyLayer: 'KNOWLEDGE LAYER: ACADEMY',
-    scanningTender: 'Scanning tender data... TRTEX will search again.', scanningStock: 'Scanning stock opportunities...',
-    emptyCapTitle: 'Have Available Capacity?', emptyCapDesc: 'No open production capacity currently published. Announce your idle weaving or confection lines anonymously to 10,000+ global B2B buyers in seconds.',
-    emptyCapBtn: '→ REPORT FREE CAPACITY',
-    asiaIndex: 'ASIA MARKET INDEX',
-    targetAudience: 'Target Audience', priorityLabel: 'Priority', priorityHigh: 'HIGH', priorityNormal: 'NORMAL',
-    oppSignal: 'OPPORTUNITY SIGNAL', riskSignal: 'RISK SIGNAL', tradeSignal: 'TRADE SIGNAL', neutralLabel: 'NEUTRAL', defaultAction: 'Review the analysis report in detail and initiate supplier matching.',
-    marketRegime: 'MARKET REGIME', riskOn: 'RISK PERCEPTION HIGH', riskOff: 'RISK AVERSION', neutralRegime: 'NEUTRAL',
-    regionAsia: 'ASIA', regionEurope: 'EUROPE', regionAmericas: 'AMERICAS', regionMena: 'MIDDLE EAST',
-    fairPassed: 'PASSED', fairToday: 'TODAY', fairDays: 'DAYS',
-    activeMonitoring: 'ACTIVE MONITORING', signalsLabel: 'SIGNAL',
-    tenders: 'Tenders', stockOpp: 'Stock Deals', capacity: 'Capacity',
-    marketDirection: 'MARKET DIRECTION', aiImpactScore: 'AI IMPACT SCORE',
-    dirRisk: 'RISKY', dirOpp: 'OPPORTUNITY', dirNeutral: 'NEUTRAL',
-    imageGenerating: 'GENERATING VISUALS', imageProcessing: 'TISF NETWORK BACKGROUND PROCESSING...',
-    ceoBriefLabel: 'TRTEX INTELLIGENCE EXTRACT (Autonomous Analysis)',
-  },
-  DE: {
-    awaitingSignal: 'Marktsignal wird gelesen...', fxPower: 'FX POWER INDEX', supplyFreight: 'LIEFERKETTE & FRACHT',
-    sectorNetwork: 'BRANCHENDATENNETZ', b2bPlatform: 'B2B HEIMTEXTIL-HANDELSPLATTFORM', liveData: 'LIVE DATENFEED',
-    headline: 'SCHLAGZEILE DES TAGES', allNews: 'ALLE NACHRICHTEN →',
-    tradingFloor: 'B2B HANDELSTERMINAL', tradingActive: 'TRTEX HANDELSNETZ AKTIV', activeDeal: 'AKTIVES ANGEBOT', ceoBriefing: 'CEO-BRIEFING ERHALTEN',
-    tenderFlow: 'AUSSCHREIBUNGEN', hotStock: 'HEISSES LAGER', freeCapacity: 'FREIE KAPAZITÄT',
-    seeAll: 'ALLE AUSSCHREIBUNGEN ANZEIGEN →', filter: 'Filtern • Sortieren • Detailanalyse',
-    oppEngine: 'CHANCEN-ENGINE', actionCards: 'AKTIONSKARTEN', actionPlan: 'Aktionsplan', reviewIntel: 'Intelligence prüfen', getOffer: 'ANGEBOT ERHALTEN',
-    fairLayer: 'EVENT-EBENE: MESSEKALENDER', signalMap: 'GLOBALE SIGNALKARTE', activeSignals: 'AKTIVE SIGNALE',
-    academyLayer: 'WISSENSEBENE: AKADEMIE',
-    scanningTender: 'Ausschreibungsdaten werden gescannt...', scanningStock: 'Lagerangebote werden gescannt...',
-    emptyCapTitle: 'Haben Sie freie Kapazitäten?', emptyCapDesc: 'Melden Sie Ihre freien Produktionskapazitäten anonym 10.000+ globalen B2B-Käufern.',
-    emptyCapBtn: '→ FREIE KAPAZITÄT MELDEN',
-    asiaIndex: 'ASIEN MARKTINDEX',
-    targetAudience: 'Zielgruppe', priorityLabel: 'Priorität', priorityHigh: 'HOCH', priorityNormal: 'NORMAL',
-    oppSignal: 'CHANCENSIGNAL', riskSignal: 'RISIKOSIGNAL', tradeSignal: 'HANDELSSIGNAL', neutralLabel: 'NEUTRAL', defaultAction: 'Prüfen Sie den Analysebericht im Detail und starten Sie das Lieferantenmatching.',
-    marketRegime: 'MARKTREGIME', riskOn: 'RISIKOWAHRNEHMUNG HOCH', riskOff: 'RISIKOVERMEIDUNG', neutralRegime: 'NEUTRAL',
-    regionAsia: 'ASIEN', regionEurope: 'EUROPA', regionAmericas: 'AMERIKA', regionMena: 'NAHER OSTEN',
-    fairPassed: 'VORBEI', fairToday: 'HEUTE', fairDays: 'TAGE',
-    activeMonitoring: 'AKTIVE ÜBERWACHUNG', signalsLabel: 'SIGNAL',
-    tenders: 'Ausschreibungen', stockOpp: 'Lagerangebote', capacity: 'Kapazität',
-    marketDirection: 'MARKTRICHTUNG', aiImpactScore: 'KI-WIRKUNGSWERT',
-    dirRisk: 'RISKANT', dirOpp: 'CHANCE', dirNeutral: 'NEUTRAL',
-    imageGenerating: 'BILDER WERDEN ERSTELLT', imageProcessing: 'TISF-NETZWERK HINTERGRUNDVERARBEITUNG...',
-    ceoBriefLabel: 'TRTEX INTELLIGENCE-EXTRAKT (Autonome Analyse)',
-  },
-  RU: {
-    awaitingSignal: 'Чтение рыночного сигнала...', fxPower: 'FX POWER ИНДЕКС', supplyFreight: 'ПОСТАВКИ И ФРАХТ',
-    sectorNetwork: 'ОТРАСЛЕВАЯ СЕТЬ ДАННЫХ', b2bPlatform: 'B2B ПЛАТФОРМА ДОМАШНЕГО ТЕКСТИЛЯ', liveData: 'ПОТОК ДАННЫХ',
-    headline: 'ЗАГОЛОВОК ДНЯ', allNews: 'ВСЕ НОВОСТИ →',
-    tradingFloor: 'B2B ТОРГОВЫЙ ТЕРМИНАЛ', tradingActive: 'ТОРГОВАЯ СЕТЬ TRTEX АКТИВНА', activeDeal: 'АКТИВНАЯ СДЕЛКА', ceoBriefing: 'ПОЛУЧИТЬ БРИФИНГ',
-    tenderFlow: 'ТЕНДЕРЫ', hotStock: 'ГОРЯЧИЙ СКЛАД', freeCapacity: 'СВОБОДНЫЕ МОЩНОСТИ',
-    seeAll: 'СМОТРЕТЬ ВСЕ ТЕНДЕРЫ →', filter: 'Фильтр • Сортировка • Детальный анализ',
-    oppEngine: 'ДВИГАТЕЛЬ ВОЗМОЖНОСТЕЙ', actionCards: 'КАРТОЧКИ ДЕЙСТВИЙ', actionPlan: 'План действий', reviewIntel: 'Изучить разведку', getOffer: 'ПОЛУЧИТЬ ПРЕДЛОЖЕНИЕ',
-    fairLayer: 'СЛОЙ СОБЫТИЙ: КАЛЕНДАРЬ ВЫСТАВОК', signalMap: 'ГЛОБАЛЬНАЯ КАРТА СИГНАЛОВ', activeSignals: 'АКТИВНЫЕ СИГНАЛЫ',
-    academyLayer: 'УРОВЕНЬ ЗНАНИЙ: АКАДЕМИЯ',
-    scanningTender: 'Сканирование тендерных данных...', scanningStock: 'Сканирование складских предложений...',
-    emptyCapTitle: 'Есть свободные мощности?', emptyCapDesc: 'Объявите о своих свободных мощностях анонимно 10 000+ B2B покупателям.',
-    emptyCapBtn: '→ СООБЩИТЬ О МОЩНОСТИ',
-    asiaIndex: 'ИНДЕКС РЫНКА АЗИИ',
-    targetAudience: 'Целевая аудитория', priorityLabel: 'Приоритет', priorityHigh: 'ВЫСОКИЙ', priorityNormal: 'ОБЫЧНЫЙ',
-    oppSignal: 'СИГНАЛ ВОЗМОЖНОСТИ', riskSignal: 'СИГНАЛ РИСКА', tradeSignal: 'ТОРГОВЫЙ СИГНАЛ', neutralLabel: 'НЕЙТРАЛЬНО', defaultAction: 'Изучите аналитический отчёт и начните подбор поставщиков.',
-    marketRegime: 'РЫНОЧНЫЙ РЕЖИМ', riskOn: 'ВЫСОКОЕ ВОСПРИЯТИЕ РИСКА', riskOff: 'УКЛОНЕНИЕ ОТ РИСКА', neutralRegime: 'НЕЙТРАЛЬНЫЙ',
-    regionAsia: 'АЗИЯ', regionEurope: 'ЕВРОПА', regionAmericas: 'АМЕРИКА', regionMena: 'БЛИЖНИЙ ВОСТОК',
-    fairPassed: 'ПРОШЛО', fairToday: 'СЕГОДНЯ', fairDays: 'ДНЕЙ',
-    activeMonitoring: 'АКТИВНЫЙ МОНИТОРИНГ', signalsLabel: 'СИГНАЛ',
-    tenders: 'Тендеры', stockOpp: 'Складские предложения', capacity: 'Мощности',
-    marketDirection: 'НАПРАВЛЕНИЕ РЫНКА', aiImpactScore: 'ОЦЕНКА ВЛИЯНИЯ ИИ',
-    dirRisk: 'РИСКОВАННО', dirOpp: 'ВОЗМОЖНОСТЬ', dirNeutral: 'НЕЙТРАЛЬНО',
-    imageGenerating: 'ИЗОБРАЖЕНИЯ СОЗДАЮТСЯ', imageProcessing: 'ОБРАБОТКА В СЕТИ TISF...',
-    ceoBriefLabel: 'АНАЛИТИКА TRTEX (Автономный анализ)',
-  },
-  ZH: {
-    awaitingSignal: '正在读取市场信号...', fxPower: 'FX 能量指数', supplyFreight: '供应链与运费',
-    sectorNetwork: '行业数据网络', b2bPlatform: 'B2B家纺贸易平台', liveData: '实时数据',
-    headline: '今日头条', allNews: '所有新闻 →',
-    tradingFloor: 'B2B交易终端', tradingActive: 'TRTEX交易网络活跃', activeDeal: '活跃交易', ceoBriefing: '获取CEO简报',
-    tenderFlow: '招标流', hotStock: '热门库存', freeCapacity: '空闲产能',
-    seeAll: '查看所有招标和机会 →', filter: '筛选 • 排序 • 详细分析',
-    oppEngine: '机会引擎', actionCards: '行动卡', actionPlan: '行动计划', reviewIntel: '查看情报', getOffer: '获取报价',
-    fairLayer: '活动层：行业展会日历', signalMap: '全球信号地图', activeSignals: '活跃信号',
-    academyLayer: '知识层：学院',
-    scanningTender: '正在扫描招标数据...', scanningStock: '正在扫描库存机会...',
-    emptyCapTitle: '有空闲产能？', emptyCapDesc: '向10,000+全球B2B买家匿名发布您的空闲产能。',
-    emptyCapBtn: '→ 报告空闲产能',
-    asiaIndex: '亚洲市场指数',
-    targetAudience: '目标受众', priorityLabel: '优先级', priorityHigh: '高', priorityNormal: '普通',
-    oppSignal: '机会信号', riskSignal: '风险信号', tradeSignal: '贸易信号', neutralLabel: '中性', defaultAction: '详细查看分析报告并启动供应商匹配。',
-    marketRegime: '市场体制', riskOn: '高风险感知', riskOff: '风险规避', neutralRegime: '中性',
-    regionAsia: '亚洲', regionEurope: '欧洲', regionAmericas: '美洲', regionMena: '中东',
-    fairPassed: '已过', fairToday: '今天', fairDays: '天',
-    activeMonitoring: '活跃监控', signalsLabel: '信号',
-    tenders: '招标', stockOpp: '库存机会', capacity: '产能',
-    marketDirection: '市场方向', aiImpactScore: 'AI影响评分',
-    dirRisk: '风险', dirOpp: '机会', dirNeutral: '中性',
-    imageGenerating: '生成图像中', imageProcessing: 'TISF网络后台处理中...',
-    ceoBriefLabel: 'TRTEX情报摘要（自主分析）',
-  },
-  AR: {
-    awaitingSignal: 'جاري قراءة إشارة السوق...', fxPower: 'مؤشر FX POWER', supplyFreight: 'التوريد والشحن',
-    sectorNetwork: 'شبكة بيانات القطاع', b2bPlatform: 'منصة تجارة المنسوجات المنزلية B2B', liveData: 'تدفق البيانات المباشر',
-    headline: 'عنوان اليوم', allNews: 'جميع الأخبار →',
-    tradingFloor: 'محطة تداول B2B', tradingActive: 'شبكة تداول TRTEX نشطة', activeDeal: 'صفقة نشطة', ceoBriefing: 'احصل على إحاطة CEO',
-    tenderFlow: 'تدفق المناقصات', hotStock: 'مخزون ساخن', freeCapacity: 'طاقة متاحة',
-    seeAll: 'عرض جميع المناقصات والفرص →', filter: 'تصفية • ترتيب • تحليل مفصل',
-    oppEngine: 'محرك الفرص', actionCards: 'بطاقات الإجراء', actionPlan: 'خطة العمل', reviewIntel: 'مراجعة الاستخبارات', getOffer: 'احصل على عرض',
-    fairLayer: 'طبقة الأحداث: تقويم المعارض', signalMap: 'خريطة الإشارات العالمية', activeSignals: 'إشارات نشطة',
-    academyLayer: 'طبقة المعرفة: الأكاديمية',
-    scanningTender: 'جاري مسح بيانات المناقصات...', scanningStock: 'جاري مسح فرص المخزون...',
-    emptyCapTitle: 'هل لديك طاقة متاحة؟', emptyCapDesc: 'أعلن عن طاقتك الإنتاجية المتاحة بشكل مجهول لأكثر من 10,000 مشتري B2B.',
-    emptyCapBtn: '→ الإبلاغ عن الطاقة المتاحة',
-    asiaIndex: 'مؤشر سوق آسيا',
-    targetAudience: 'الجمهور المستهدف', priorityLabel: 'الأولوية', priorityHigh: 'عالية', priorityNormal: 'عادية',
-    oppSignal: 'إشارة فرصة', riskSignal: 'إشارة خطر', tradeSignal: 'إشارة تجارية', neutralLabel: 'محايد', defaultAction: 'راجع تقرير التحليل بالتفصيل وابدأ مطابقة الموردين.',
-    marketRegime: 'نظام السوق', riskOn: 'إدراك عالي للمخاطر', riskOff: 'تجنب المخاطر', neutralRegime: 'محايد',
-    regionAsia: 'آسيا', regionEurope: 'أوروبا', regionAmericas: 'الأمريكتان', regionMena: 'الشرق الأوسط',
-    fairPassed: 'انتهى', fairToday: 'اليوم', fairDays: 'يوم',
-    activeMonitoring: 'مراقبة نشطة', signalsLabel: 'إشارة',
-    tenders: 'مناقصات', stockOpp: 'فرص مخزون', capacity: 'طاقة',
-    marketDirection: 'اتجاه السوق', aiImpactScore: 'نقاط تأثير الذكاء الاصطناعي',
-    dirRisk: 'خطر', dirOpp: 'فرصة', dirNeutral: 'محايد',
-    imageGenerating: 'جاري إنشاء الصور', imageProcessing: 'معالجة خلفية في شبكة TISF...',
-    ceoBriefLabel: 'استخراج معلومات TRTEX (تحليل ذاتي)',
-  },
-  ES: {
-    awaitingSignal: 'Leyendo señal del mercado...', fxPower: 'FX POWER INDEX', supplyFreight: 'SUMINISTRO Y FLETE',
-    sectorNetwork: 'RED DE DATOS SECTORIAL', b2bPlatform: 'PLATAFORMA DE COMERCIO B2B TEXTIL HOGAR', liveData: 'DATOS EN VIVO',
-    headline: 'TITULAR DEL DÍA', allNews: 'TODAS LAS NOTICIAS →',
-    tradingFloor: 'TERMINAL DE COMERCIO B2B', tradingActive: 'RED DE COMERCIO TRTEX ACTIVA', activeDeal: 'OFERTA ACTIVA', ceoBriefing: 'OBTENER BRIEFING CEO',
-    tenderFlow: 'FLUJO DE LICITACIONES', hotStock: 'STOCK CALIENTE', freeCapacity: 'CAPACIDAD DISPONIBLE',
-    seeAll: 'VER TODAS LAS LICITACIONES →', filter: 'Filtrar • Ordenar • Análisis Detallado',
-    oppEngine: 'MOTOR DE OPORTUNIDADES', actionCards: 'TARJETAS DE ACCIÓN', actionPlan: 'Plan de Acción', reviewIntel: 'Revisar Inteligencia', getOffer: 'OBTENER OFERTA',
-    fairLayer: 'CAPA DE EVENTOS: CALENDARIO DE FERIAS', signalMap: 'MAPA DE SEÑALES GLOBALES', activeSignals: 'SEÑALES ACTIVAS',
-    academyLayer: 'CAPA DE CONOCIMIENTO: ACADEMIA',
-    scanningTender: 'Escaneando datos de licitaciones...', scanningStock: 'Escaneando ofertas de stock...',
-    emptyCapTitle: '¿Tiene capacidad disponible?', emptyCapDesc: 'Anuncie su capacidad productiva de forma anónima a más de 10.000 compradores B2B.',
-    emptyCapBtn: '→ REPORTAR CAPACIDAD LIBRE',
-    asiaIndex: 'ÍNDICE DE MERCADO ASIÁTICO',
-    targetAudience: 'Público Objetivo', priorityLabel: 'Prioridad', priorityHigh: 'ALTA', priorityNormal: 'NORMAL',
-    oppSignal: 'SEÑAL DE OPORTUNIDAD', riskSignal: 'SEÑAL DE RIESGO', tradeSignal: 'SEÑAL COMERCIAL', neutralLabel: 'NEUTRAL', defaultAction: 'Revise el informe de análisis e inicie la búsqueda de proveedores.',
-    marketRegime: 'RÉGIMEN DE MERCADO', riskOn: 'PERCEPCIÓN DE RIESGO ALTA', riskOff: 'AVERSIÓN AL RIESGO', neutralRegime: 'NEUTRAL',
-    regionAsia: 'ASIA', regionEurope: 'EUROPA', regionAmericas: 'AMÉRICAS', regionMena: 'ORIENTE MEDIO',
-    fairPassed: 'PASADO', fairToday: 'HOY', fairDays: 'DÍAS',
-    activeMonitoring: 'MONITOREO ACTIVO', signalsLabel: 'SEÑAL',
-    tenders: 'Licitaciones', stockOpp: 'Ofertas de Stock', capacity: 'Capacidad',
-    marketDirection: 'DIRECCIÓN DEL MERCADO', aiImpactScore: 'PUNTUACIÓN DE IMPACTO IA',
-    dirRisk: 'RIESGOSO', dirOpp: 'OPORTUNIDAD', dirNeutral: 'NEUTRAL',
-    imageGenerating: 'GENERANDO IMÁGENES', imageProcessing: 'PROCESAMIENTO EN RED TISF...',
-    ceoBriefLabel: 'EXTRACTO DE INTELIGENCIA TRTEX (Análisis Autónomo)',
-  },
-  FR: {
-    awaitingSignal: 'Lecture du signal de marché...', fxPower: 'FX POWER INDEX', supplyFreight: 'APPROVISIONNEMENT & FRET',
-    sectorNetwork: 'RÉSEAU DE DONNÉES SECTORIEL', b2bPlatform: 'PLATEFORME DE COMMERCE B2B TEXTILE MAISON', liveData: 'FLUX DE DONNÉES EN DIRECT',
-    headline: 'TITRE DU JOUR', allNews: 'TOUTES LES ACTUALITÉS →',
-    tradingFloor: 'TERMINAL DE COMMERCE B2B', tradingActive: 'RÉSEAU DE COMMERCE TRTEX ACTIF', activeDeal: 'OFFRE ACTIVE', ceoBriefing: 'OBTENIR BRIEFING CEO',
-    tenderFlow: "FLUX D'APPELS D'OFFRES", hotStock: 'STOCK CHAUD', freeCapacity: 'CAPACITÉ DISPONIBLE',
-    seeAll: "VOIR TOUS LES APPELS D'OFFRES →", filter: 'Filtrer • Trier • Analyse Détaillée',
-    oppEngine: 'MOTEUR D\'OPPORTUNITÉS', actionCards: 'CARTES D\'ACTION', actionPlan: 'Plan d\'Action', reviewIntel: 'Examiner Intelligence', getOffer: 'OBTENIR UNE OFFRE',
-    fairLayer: 'COUCHE ÉVÉNEMENTS : CALENDRIER DES SALONS', signalMap: 'CARTE DES SIGNAUX MONDIAUX', activeSignals: 'SIGNAUX ACTIFS',
-    academyLayer: 'COUCHE CONNAISSANCE : ACADÉMIE',
-    scanningTender: 'Scan des données d\'appels d\'offres...', scanningStock: 'Scan des offres de stock...',
-    emptyCapTitle: 'Capacité disponible ?', emptyCapDesc: 'Annoncez vos capacités de production inutilisées de manière anonyme à plus de 10 000 acheteurs B2B.',
-    emptyCapBtn: '→ SIGNALER CAPACITÉ LIBRE',
-    asiaIndex: 'INDICE DU MARCHÉ ASIATIQUE',
-    targetAudience: 'Public Cible', priorityLabel: 'Priorité', priorityHigh: 'HAUTE', priorityNormal: 'NORMALE',
-    oppSignal: 'SIGNAL D\'OPPORTUNITÉ', riskSignal: 'SIGNAL DE RISQUE', tradeSignal: 'SIGNAL COMMERCIAL', neutralLabel: 'NEUTRE', defaultAction: 'Examinez le rapport d\'analyse et lancez le matching fournisseurs.',
-    marketRegime: 'RÉGIME DE MARCHÉ', riskOn: 'PERCEPTION DU RISQUE ÉLEVÉE', riskOff: 'AVERSION AU RISQUE', neutralRegime: 'NEUTRE',
-    regionAsia: 'ASIE', regionEurope: 'EUROPE', regionAmericas: 'AMÉRIQUES', regionMena: 'MOYEN-ORIENT',
-    fairPassed: 'PASSÉ', fairToday: 'AUJOURD\'HUI', fairDays: 'JOURS',
-    activeMonitoring: 'SURVEILLANCE ACTIVE', signalsLabel: 'SIGNAL',
-    tenders: 'Appels d\'offres', stockOpp: 'Offres de stock', capacity: 'Capacité',
-    marketDirection: 'DIRECTION DU MARCHÉ', aiImpactScore: 'SCORE D\'IMPACT IA',
-    dirRisk: 'RISQUÉ', dirOpp: 'OPPORTUNITÉ', dirNeutral: 'NEUTRE',
-    imageGenerating: 'GÉNÉRATION D\'IMAGES', imageProcessing: 'TRAITEMENT EN ARRIÈRE-PLAN TISF...',
-    ceoBriefLabel: 'EXTRAIT D\'INTELLIGENCE TRTEX (Analyse Autonome)',
-  },
-};
-
-// ═══ OTONOM KATEGORİ ÇEVİRİ HARİTASI (Firestore'dan gelen TR kategori → 8 Dil) ═══
-const CATEGORY_MAP: Record<string, Record<string, string>> = {
-  'İSTİHBARAT': { TR: 'İSTİHBARAT', EN: 'INTELLIGENCE', DE: 'INTELLIGENCE', FR: 'RENSEIGNEMENT', ES: 'INTELIGENCIA', RU: 'РАЗВЕДКА', ZH: '情报', AR: 'استخبارات' },
-  'YENİ TEKNOLOJİ': { TR: 'YENİ TEKNOLOJİ', EN: 'NEW TECH', DE: 'NEUE TECHNOLOGIE', FR: 'NOUVELLE TECHNOLOGIE', ES: 'NUEVA TECNOLOGÍA', RU: 'НОВЫЕ ТЕХНОЛОГИИ', ZH: '新技术', AR: 'تكنولوجيا جديدة' },
-  'MİMARİ & TREND': { TR: 'MİMARİ & TREND', EN: 'ARCHITECTURE & TREND', DE: 'ARCHITEKTUR & TREND', FR: 'ARCHITECTURE & TENDANCE', ES: 'ARQUITECTURA & TENDENCIA', RU: 'АРХИТЕКТУРА И ТРЕНД', ZH: '建筑与趋势', AR: 'عمارة واتجاهات' },
-  'PERDE': { TR: 'PERDE', EN: 'CURTAIN', DE: 'VORHANG', FR: 'RIDEAU', ES: 'CORTINA', RU: 'ШТОРЫ', ZH: '窗帘', AR: 'ستائر' },
-  'EV TEKSTİLİ': { TR: 'EV TEKSTİLİ', EN: 'HOME TEXTILE', DE: 'HEIMTEXTIL', FR: 'TEXTILE MAISON', ES: 'TEXTIL HOGAR', RU: 'ДОМАШНИЙ ТЕКСТИЛЬ', ZH: '家纺', AR: 'منسوجات منزلية' },
-  'DÖŞEMELİK': { TR: 'DÖŞEMELİK', EN: 'UPHOLSTERY', DE: 'POLSTERSTOFF', FR: 'AMEUBLEMENT', ES: 'TAPICERÍA', RU: 'ОБИВКА', ZH: '装饰面料', AR: 'تنجيد' },
-  'PAZAR': { TR: 'PAZAR', EN: 'MARKET', DE: 'MARKT', FR: 'MARCHÉ', ES: 'MERCADO', RU: 'РЫНОК', ZH: '市场', AR: 'سوق' },
-  'MARKET': { TR: 'PAZAR', EN: 'MARKET', DE: 'MARKT', FR: 'MARCHÉ', ES: 'MERCADO', RU: 'РЫНОК', ZH: '市场', AR: 'سوق' },
-  'FIRSAT': { TR: 'FIRSAT', EN: 'OPPORTUNITY', DE: 'CHANCE', FR: 'OPPORTUNITÉ', ES: 'OPORTUNIDAD', RU: 'ВОЗМОЖНОСТЬ', ZH: '机会', AR: 'فرصة' },
-  'OPPORTUNITY': { TR: 'FIRSAT', EN: 'OPPORTUNITY', DE: 'CHANCE', FR: 'OPPORTUNITÉ', ES: 'OPORTUNIDAD', RU: 'ВОЗМОЖНОСТЬ', ZH: '机会', AR: 'فرصة' },
-  'GÜNDEM': { TR: 'GÜNDEM', EN: 'AGENDA', DE: 'AGENDA', FR: 'AGENDA', ES: 'AGENDA', RU: 'ПОВЕСТКА', ZH: '议程', AR: 'جدول أعمال' },
-  'HABER': { TR: 'HABER', EN: 'NEWS', DE: 'NACHRICHTEN', FR: 'ACTUALITÉS', ES: 'NOTICIAS', RU: 'НОВОСТИ', ZH: '新闻', AR: 'أخبار' },
-  'NEWS': { TR: 'HABER', EN: 'NEWS', DE: 'NACHRICHTEN', FR: 'ACTUALITÉS', ES: 'NOTICIAS', RU: 'НОВОСТИ', ZH: '新闻', AR: 'أخبار' },
-  'ANALİZ': { TR: 'ANALİZ', EN: 'ANALYSIS', DE: 'ANALYSE', FR: 'ANALYSE', ES: 'ANÁLISIS', RU: 'АНАЛИЗ', ZH: '分析', AR: 'تحليل' },
-  'ANALYSIS': { TR: 'ANALİZ', EN: 'ANALYSIS', DE: 'ANALYSE', FR: 'ANALYSE', ES: 'ANÁLISIS', RU: 'АНАЛИЗ', ZH: '分析', AR: 'تحليل' },
-  'BÖLGE': { TR: 'BÖLGE', EN: 'REGION', DE: 'REGION', FR: 'RÉGION', ES: 'REGIÓN', RU: 'РЕГИОН', ZH: '地区', AR: 'منطقة' },
-  'REGION': { TR: 'BÖLGE', EN: 'REGION', DE: 'REGION', FR: 'RÉGION', ES: 'REGIÓN', RU: 'РЕГИОН', ZH: '地区', AR: 'منطقة' },
-  'TREND': { TR: 'TREND', EN: 'TREND', DE: 'TREND', FR: 'TENDANCE', ES: 'TENDENCIA', RU: 'ТРЕНД', ZH: '趋势', AR: 'اتجاه' },
-  'DEKORASYON': { TR: 'DEKORASYON', EN: 'DECORATION', DE: 'DEKORATION', FR: 'DÉCORATION', ES: 'DECORACIÓN', RU: 'ДЕКОР', ZH: '装饰', AR: 'ديكور' },
-  'HAMMADDE': { TR: 'HAMMADDE', EN: 'RAW MATERIAL', DE: 'ROHSTOFF', FR: 'MATIÈRE PREMIÈRE', ES: 'MATERIA PRIMA', RU: 'СЫРЬЁ', ZH: '原材料', AR: 'مواد خام' },
-  'İPLİK': { TR: 'İPLİK', EN: 'YARN', DE: 'GARN', FR: 'FIL', ES: 'HILO', RU: 'ПРЯЖА', ZH: '纱线', AR: 'خيوط' },
-};
-
-function classifyRegion(article: any): string {
-  const text = `${article.title || ''} ${article.summary || ''} ${article.category || ''} ${article.commercial_note || ''}`.toLowerCase();
-  for (const [region, keywords] of Object.entries(REGION_KEYWORDS)) {
-    if (keywords.some(k => text.includes(k))) return region;
-  }
-  return 'GLOBAL';
-}
 
 export default function PremiumB2BHomeLayout({ 
   payload, lang, exactDomain, basePath, brandName, L, 
   uzakDoguRadari, priorityEngine, fairsWithCountdown, ui 
 }: any) {
-  
   const { 
-    heroArticle, gridArticles = [], todayInsight, radarStream,
-    tickerItems = [], haftaninFirsatlari = [], academyArticles = [], menuConfig = [],
-    hasPremiumReport, decision_engine, payloadConfidence, sysMetrics, 
-    systemStatus, intelligenceScore
+    heroArticle, gridArticles = [], tickerItems = [], haftaninFirsatlari = [],
+    academyArticles = [], activeTenders: rawTenders = []
   } = payload || {};
   
-  // ═══ LEAD CAPTURE MODAL STATE ═══
-  const [leadModal, setLeadModal] = useState<{ open: boolean; context: any }>({
-    open: false,
-    context: { type: 'GENERAL' as const }
-  });
-  // ═══ DİL DROPDOWN STATE ═══
-  const [langOpen, setLangOpen] = useState(false);
-
-  // Prop olarak gelmezse payload içinden fallback yap:
-  const activePriorityEngine = priorityEngine || payload?.priorityEngine || {};
+  const [leadModal, setLeadModal] = useState<{ open: boolean; context: any }>({ open: false, context: { type: 'GENERAL' as const } });
   const activeFairs = fairsWithCountdown || payload?.fairsWithCountdown || [];
-  const activeUzakDogu = uzakDoguRadari || payload?.uzakDoguRadari || {};
-  
-  // ═══ TRADING FLOOR: Canlı veri veya fallback ═══
-  const rawTenders = payload?.activeTenders || [];
   const liveTenders = Array.isArray(rawTenders) && rawTenders.length > 0 ? rawTenders : FALLBACK_TENDERS;
-  const tenderItems = liveTenders.filter((t: any) => t.type === 'TENDER');
-  const stockItems = liveTenders.filter((t: any) => t.type === 'HOT_STOCK');
-  const capacityItems = liveTenders.filter((t: any) => t.type === 'CAPACITY');
+  const safeLang = lang || 'tr';
+  const targetLang = safeLang.toUpperCase();
+  
+  const pool = [...(Array.isArray(haftaninFirsatlari)?haftaninFirsatlari:[]), ...(Array.isArray(gridArticles)?gridArticles:[])];
+  const uniquePool = Array.from(new Map(pool.filter(item => item && item.id).map(item => [item.id, item])).values());
 
-  const targetLang = lang.toUpperCase();
-
-  const hero = heroArticle;
-  const safeHaftaninFirsatlari = Array.isArray(haftaninFirsatlari) ? haftaninFirsatlari : [];
-  const safeGridArticles = Array.isArray(gridArticles) ? gridArticles : [];
-  const HL = homeLabels[targetLang] || homeLabels.EN || homeLabels.TR;
-  const allArticles = [...safeHaftaninFirsatlari, ...safeGridArticles];
-  const uniqueMap = new Map();
-  allArticles.forEach(a => { if (a?.id && !uniqueMap.has(a.id) && a.id !== hero?.id) uniqueMap.set(a.id, a); });
-  const pool = Array.from(uniqueMap.values());
-
-  const getLocalizedLink = (path: string, slug?: string, query?: string) => {
-    if (lang === 'tr') {
-      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', academy: 'akademi', trade: 'ticaret', fairs: 'fuar-takvimi', collections: 'koleksiyonlar', about: 'hakkimizda' };
-      const localPath = map[path] || path;
-      return `${basePath}/${localPath}${slug ? `/${slug}` : ''}${query ? `?${query}` : ''}`;
+  const getLink = (path: string, slug?: string) => {
+    const bp = basePath || '';
+    if (safeLang === 'tr') {
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', academy: 'akademi', trade: 'ticaret', fairs: 'fuar-takvimi', radar: 'radar' };
+      return `${bp}/${map[path] || path}${slug ? `/${slug}` : ''}`;
     }
-    return `${basePath}/${path}${slug ? `/${slug}` : ''}?lang=${lang}${query ? `&${query}` : ''}`;
+    return `${bp}/${path}${slug ? `/${slug}` : ''}?lang=${safeLang}`;
   };
 
-  const z0Headlines = [
-    { text: activePriorityEngine?.top_signal || HL.awaitingSignal, href: null },
-    ...pool.slice(0, 4).map(a => ({
-      text: a?.translations?.[targetLang]?.title || a?.title,
-      href: getLocalizedLink('news', a?.slug || a?.id)
-    }))
-  ].filter(h => h.text);
+  const getImg = (a: any) => a?.images?.[0] || a?.image_url || 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=400&auto=format&fit=crop';
+  const getTitle = (a: any) => a?.translations?.[targetLang]?.title || a?.title || '';
 
-  const [headlineIndex, setHeadlineIndex] = React.useState(0);
-  React.useEffect(() => {
-    if (z0Headlines.length <= 1) return;
-    const int = setInterval(() => {
-      setHeadlineIndex(prev => (prev + 1) % z0Headlines.length);
-    }, 5000);
-    return () => clearInterval(int);
-  }, [z0Headlines.length]);
-
-  // REGIONAL CLASSIFICATION (Zone 4)
-  const regionArticles: Record<string, any[]> = { ASIA: [], EUROPE: [], AMERICAS: [], MENA: [], GLOBAL: [] };
-  pool.forEach(a => {
-    // TISF Sinyal Ağından gelen Mühürlü Veri
-    if (a.trtex_payload_core?.geo?.trade_zone && regionArticles[a.trtex_payload_core.geo.trade_zone.toUpperCase()]) {
-      regionArticles[a.trtex_payload_core.geo.trade_zone.toUpperCase()].push(a);
-    } else {
-      // Geriye Dönük Uyumluluk (Eski Haberler İçin Fallback)
-      const r = classifyRegion(a);
-      regionArticles[r]?.push(a);
-    }
-  });
-  const regionKeys = ['ASIA', 'EUROPE', 'AMERICAS', 'MENA'];
-  regionKeys.forEach((k, idx) => {
-    if (regionArticles[k].length < 3) {
-      const start = idx * 3;
-      const fillCandidates = pool.slice(start, start + 3);
-      regionArticles[k] = fillCandidates.length > 0 ? fillCandidates : pool.slice(0, 3);
-    }
-  });
-
-  const getImg = (a: any) => {
-    const direct = a?.images?.[0] || a?.image_url;
-    if (direct && direct.startsWith('http')) return direct;
-    
-    // SOVEREIGN VISUAL VAULT (100% No-Blank Image Policy)
-    const fallbacks = [
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=800&auto=format&fit=crop', // Textile Texture
-      'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80&w=800&auto=format&fit=crop', // Yarns
-      'https://images.unsplash.com/photo-1618220179428-22790b46a0eb?q=80&w=800&auto=format&fit=crop', // Interior Design
-      'https://images.unsplash.com/photo-1550133730-695473e544be?q=80&w=800&auto=format&fit=crop', // Industrial
-      'https://images.unsplash.com/photo-1580828369019-22204eb32145?q=80&w=800&auto=format&fit=crop'  // Weaving Factory
-    ];
-    
-    const sum = String(a?.id || a?.slug || 'fallback-id').split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-    return fallbacks[sum % fallbacks.length];
-  };
-  const getTitle = (a: any) => a?.translations?.[targetLang]?.title || a?.title;
-  const getCat = (a: any) => {
-    const translated = a?.translations?.[targetLang]?.category;
-    if (translated) return translated;
-    const raw = a?.category || 'MARKET';
-    const mapped = CATEGORY_MAP[raw.toUpperCase()];
-    if (mapped && mapped[targetLang]) return mapped[targetLang];
-    return raw;
-  };
-  const getSummary = (a: any) => a?.translations?.[targetLang]?.summary || a?.summary || '';
-  const getLink = (a: any) => getLocalizedLink('news', a?.slug || a?.id);
-  const statusColor = systemStatus === 'LIVE' ? '#22C55E' : systemStatus === 'DEGRADED' ? '#F59E0B' : '#EF4444';
-
-  const safeTickerItems = Array.isArray(tickerItems) ? tickerItems : [];
-  
-  // ZONE 1: DERIVED SIGNALS (MARKET INTELLIGENCE)
-  const tkNewsOnly = safeTickerItems.filter((t:any) => t.isBreaking || t.type === 'news_event');
-  
-  const fxItems = safeTickerItems.filter((t:any) => t.id === 'usdtry' || t.id === 'eurtry');
-  const matItems = safeTickerItems.filter((t:any) => t.id === 'brent' || t.id === 'cotton' || t.id === 'pta' || t.id === 'meg' || t.id === 'shf' || t.id === 'poy' || t.id === 'dye');
-  
-  const avgFxChange = fxItems.length ? fxItems.reduce((acc:number, c:any) => acc + (c.change || 0), 0) / fxItems.length : 0;
-  const avgMatChange = matItems.length ? matItems.reduce((acc:number, c:any) => acc + (c.change || 0), 0) / matItems.length : 0;
-
-  const regimeStyle = activePriorityEngine?.market_regime === 'RISK_ON' ? 'var(--go)' : activePriorityEngine?.market_regime === 'RISK_OFF' ? 'var(--re)' : '#3B82F6';
-
-  const fxImpact = Math.abs(avgFxChange) > 1.0 ? 'HIGH' : Math.abs(avgFxChange) > 0.4 ? 'MEDIUM' : 'LOW';
-  const matImpact = Math.abs(avgMatChange) > 1.5 ? 'HIGH' : Math.abs(avgMatChange) > 0.5 ? 'MEDIUM' : 'LOW';
-
-  const syntheticFxTicker = {
-    id: 'fx_power_synthetic',
-    type: 'macro',
-    label: HL.fxPower,
-    value: Number(84.2 + avgFxChange).toFixed(1),
-    unit: 'PTS',
-    change: avgFxChange,
-    direction: avgFxChange > 0 ? 'up' : avgFxChange < 0 ? 'down' : 'stable',
-    severity: fxImpact === 'HIGH' ? 'crisis' : fxImpact === 'MEDIUM' ? 'attention' : 'normal',
-    timestamp: Date.now()
-  };
-
-  const syntheticMatTicker = {
-    id: 'mat_power_synthetic',
-    type: 'macro',
-    label: HL.supplyFreight,
-    value: Number(78.6 + avgMatChange).toFixed(1),
-    unit: 'PTS',
-    change: avgMatChange,
-    direction: avgMatChange > 0 ? 'up' : avgMatChange < 0 ? 'down' : 'stable',
-    severity: matImpact === 'HIGH' ? 'crisis' : matImpact === 'MEDIUM' ? 'attention' : 'normal',
-    timestamp: Date.now()
-  };
-
-  const finalTickerItems = [
-    syntheticFxTicker, 
-    ...fxItems, 
-    syntheticMatTicker, 
-    ...matItems, 
-    ...tkNewsOnly.slice(0, 3) // Haberi sınırla ki veriler ezilmesin
-  ];
-
-  // OTONOM SİNİR AĞI BAĞLANTISI (TISF Zone Classifier Entegrasyonu)
-  // Eski veri ve yeni TISF verisi (trtex_payload_core) birlikte harmanlanır.
-  const tradeOpportunities = pool.filter(a => {
-    if (a.trtex_payload_core?.zone === 'TRADE') return true; // TISF Kesin Sinyali
-    const cScore = a.commercial_score || a.scoring?.commercial_score || 0;
-    return cScore >= 75 || safeHaftaninFirsatlari.find((h:any)=>h.id===a.id);
-  }).slice(0, 6);
-
-  // BREAKING & INSIGHT Kategorisi (Zone 2)
-  const newsGridRaw = pool.filter(a => {
-    if (a.trtex_payload_core?.zone === 'BREAKING') return true; // TISF Kesin Sinyali
-    if (a.trtex_payload_core?.zone === 'RADAR' || a.trtex_payload_core?.zone === 'LIVE_STREAM') return false;
-    return !tradeOpportunities.includes(a);
-  });
-  
-  const newsGridWithImages = newsGridRaw.filter(a => getImg(a));
-  let newsGrid = (newsGridWithImages.length >= 6 ? newsGridWithImages : newsGridRaw).slice(0, 12);
-  // 6 HABER GARANTİSİ: Yeterli haber yoksa pool'dan tamamla
-  if (newsGrid.length < 6) {
-    const existing = new Set(newsGrid.map((a:any) => a.id));
-    const backfill = pool.filter((a:any) => !existing.has(a.id) && a.id !== hero?.id);
-    newsGrid = [...newsGrid, ...backfill].slice(0, 6);
-  }
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "name": brandName ? `${brandName}.com` : 'TRTEX',
-        "url": `https://${exactDomain}`,
-        "description": "Kurumsal Ticaret İstihbarat Terminali",
-        "publisher": { "@id": `https://${exactDomain}/#organization` }
-      },
-      {
-        "@type": "Organization",
-        "@id": `https://${exactDomain}/#organization`,
-        "name": brandName || 'TRTEX',
-        "url": `https://${exactDomain}`,
-        "logo": `https://${exactDomain}/logo.png`
-      }
-    ]
-  };
+  const totalTenders = liveTenders.filter((t:any) => t.type === 'TENDER').length;
+  const totalStock = liveTenders.filter((t:any) => t.type === 'HOT_STOCK').length;
+  const totalCapacity = liveTenders.filter((t:any) => t.type === 'CAPACITY').length;
 
   return (
-    <div className="trtex-root">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <div style={{ minHeight: '100vh', background: '#FAFAFA', color: '#111827', fontFamily: "'Inter',-apple-system,sans-serif" }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto+Mono:wght@400;500;600;700&display=swap');
-        :root{--w:#ffffff;--c:#F9FAFB;--g:#F3F4F6;--b:#E5E7EB;--bs:#111827;--t:#111827;--ts:#4B5563;--a:#2563EB;--s:'Inter',-apple-system,sans-serif;--sf:'Inter',sans-serif;--m:'Roboto Mono',monospace; --go:#16A34A; --re:#DC2626; --wa:#D97706;}
-        @keyframes pulse-live { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
-        @keyframes radar-sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--go); border-radius: 50%; margin-right: 8px; animation: pulse-live 2s infinite; }
-        
-        .radar-box { position: relative; overflow: hidden; width: 100%; height: 100%; background: #080A0A; color: var(--go); display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--m); border: 1px solid #1A1F1F; }
-        .radar-box::before { content: ""; position: absolute; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent 70%, rgba(34,197,94,0.3) 100%); animation: radar-sweep 4s linear infinite; border-radius: 50%; }
-        .radar-box::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle, transparent 20%, #080A0A 90%); }
-        .radar-content { position: relative; z-index: 10; text-align: center; }
-
-        .trtex-root{min-height:100vh;background:var(--w);color:var(--t);font-family:var(--s);-webkit-font-smoothing:antialiased}
-        .trtex-root a{text-decoration:none;color:inherit}.trtex-root *{box-sizing:border-box;margin:0;padding:0}
-        .tc{max-width:1400px;margin:0 auto;padding:0 1.5rem}
-        .ml{font-family:var(--m);font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ts)}
-        .ma{color:var(--a)}
-        
-        /* NAV & HEADER */
-        .nav{position:relative;z-index:100;background:var(--w);border-bottom:1px solid var(--b)}
-        .nav-i{display:flex;justify-content:space-between;align-items:center;height:50px}
-        .nav-b{font-family:var(--sf);font-size:1.4rem;font-weight:900;display:flex;align-items:center;gap:.5rem}
-        .nav-l{display:flex;gap:1.5rem;align-items:center}
-        
-        /* ZONE 1: DUAL SIGNAL SYSTEM */
-        .z1{background:#F9FAFB;color:var(--bs);display:flex;flex-direction:column;border-bottom:1px solid var(--b)}
-        .z1 .tk{border-bottom:1px solid var(--b);background:#FFFFFF}
-        .z1 .tk div, .z1 .tk span{font-family:var(--s)!important;font-size:.7rem!important;color:#475569!important}
-        
-        .ds-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b);border-bottom:1px solid var(--b)}
-        .ds-card{background:#FFFFFF;padding:3rem 2rem;display:flex;flex-direction:column;position:relative}
-        .ds-head{font-family:var(--s);font-size:.85rem;font-weight:600;letter-spacing:.05em;color:#64748B;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center}
-        .ds-val{font-family:var(--s);font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:.5rem;color:#0F172A;display:flex;align-items:flex-end;gap:.5rem;letter-spacing:-0.02em}
-        .ds-unit{font-size:1.2rem;color:#64748B;padding-bottom:.5rem;font-weight:500}
-        .ds-desc{font-size:.95rem;color:#475569;line-height:1.6;max-width:85%}
-        .ds-pill{font-size:.7rem;font-weight:700;padding:6px 12px;border-radius:99px;color:var(--a);background:#EFF6FF;font-family:var(--s)}
-        .ds-raw{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid #F1F5F9;display:flex;gap:1.5rem;font-family:var(--m);font-size:.75rem;color:#64748B}
-        .ds-raw-item{display:flex;gap:.5rem;align-items:center}
-        .ds-raw-val{color:#0F172A;font-weight:600}
-        
-        /* ZONE 2: BREAKING INTELLIGENCE */
-        .z2{padding:8rem 0 6rem;background:#FFFFFF;border-bottom:1px solid var(--b)}
-        .z2h{margin-bottom:4rem;padding-bottom:1.5rem;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:flex-end}
-        .z2t{font-family:var(--s);font-weight:900;font-size:3rem;line-height:1.1;color:#020617;letter-spacing:-0.04em}
-        
-        .hsg{display:grid;grid-template-columns:1.5fr 1fr;gap:4rem;margin-bottom:5rem}
-        .hiw img{width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:24px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.06)}
-        .htl{font-family:var(--s);font-size:clamp(1.8rem,3vw,3rem);font-weight:900;line-height:1.15;margin:.5rem 0 1.5rem 0;color:#020617;letter-spacing:-0.03em}
-        .hsum{font-size:1.1rem;line-height:1.8;color:#334155}
-        .hceo{margin-top:2rem;padding:2rem;background:#F8FAFC;border-radius:16px;box-shadow: 0 4px 20px rgba(0,0,0,0.02);position:relative;border:1px solid #F1F5F9}
-        .hceo::before{content:"CEO BRİFİNGİ";position:absolute;top:-12px;left:20px;background:var(--a);color:#fff;font-family:var(--s);font-size:0.7rem;padding:4px 12px;border-radius:99px;letter-spacing:0.5px;font-weight:700;}
-        .hceo ul{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:12px}
-        .hceo li{font-size:.95rem;display:flex;gap:.75rem;color:#334155;line-height:1.5}
-        .hceo li::before{content:"→";color:var(--a);font-weight:900}
-        
-        .ngg{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
-        .ngi{display:flex;flex-direction:column;gap:1rem;background:transparent;border:none;transition:all .4s ease;}
-        .ngi:hover{transform:translateY(-8px);}
-        .ngi img{border-radius:24px; box-shadow:0 10px 30px rgba(0,0,0,0.05); transition:all 0.4s;}
-        .ngi:hover img{box-shadow:0 20px 40px rgba(0,0,0,0.1);}
-        .ngt{font-weight:900;font-size:1.4rem;line-height:1.3;color:#020617;letter-spacing:-0.02em}
-
-        /* TRADING FLOOR CSS (Insight Cards instead of basic tables) */
-        .tf-sec { background: #F8FAFC; padding: 8rem 0 8rem; }
-        .tf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; background: transparent; }
-        .tf-col { background: transparent; display: flex; flex-direction: column; min-height: 400px;}
-        .tf-item { padding: 2.5rem; border: none; border-radius:32px; margin-bottom: 2rem; font-family: var(--s); display:flex; flex-direction:column; gap:1rem; position:relative; background:#FFFFFF; transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 4px 30px rgba(0,0,0,0.03)}
-        .tf-item:hover { transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,0.08); }
-        .tf-loc { font-family: var(--s); font-weight:600; font-size: 0.85rem; color: #64748B; display:flex; align-items:center; gap:0.5rem; }
-        .tf-title { font-weight: 900; font-size: 1.25rem; line-height: 1.35; color: #020617; }
-        .tf-data-row { font-family: var(--m); font-size: 0.85rem; color: #334155; display: flex; justify-content: space-between; background: #F8FAFC; padding: 1rem 1.25rem; border-radius:12px; font-weight:500;}
-        .tf-score { position:absolute; top:1.2rem; right:1.2rem; background: #E0E7FF; color: #3730A3; font-family:var(--s); font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:99px;}
-        .tf-see-all { display: block; text-align: center; padding: 1rem; margin-top: auto; font-family: var(--s); font-size: .85rem; font-weight: 700; color: #475569; border-radius:12px; border: 1px solid #E2E8F0; background: #FFFFFF; cursor: pointer; transition: all .2s; }
-        .tf-see-all:hover { background: #F1F5F9; color: #0F172A; }
-        .tf-header { display: flex; align-items: center; justify-content: space-between; font-family: var(--s); font-weight: 800; font-size: 1.2rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #E2E8F0; text-transform: uppercase; letter-spacing: 0.5px;}
-        .tf-header.red { color: var(--re); }
-        .tf-header.green { color: var(--go); }
-        .tf-header.yellow { color: var(--wa); }
-        .tf-header span:first-child { font-size: 1rem; }
-
-        .tf-btn { margin-top: 1rem; width: 100%; padding: 0.8rem; border-radius:8px; border: none; background: #F1F5F9; color: #475569; font-family: var(--s); font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
-        .tf-btn.red { background: #FEF2F2; color: #DC2626; }
-        .tf-btn.red:hover { background: #DC2626; color: #FFFFFF; }
-        .tf-btn.green { background: #F0FDF4; color: #16A34A; }
-        .tf-btn.green:hover { background: #16A34A; color: #FFFFFF; }
-        .tf-btn.yellow { background: #FFFBEB; color: #D97706; }
-        .tf-btn.yellow:hover { background: #D97706; color: #FFFFFF; }
-        .opp-btn:hover{background:var(--a)}
-
-        /* ZONE 4: GLOBAL RADAR MAP */
-        .z4{padding:6rem 0 6rem;background:#F8FAFC;color:#0F172A; border-top: 1px solid #F1F5F9;}
-        .rm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;background:transparent;border:none}
-        .rm-cell{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:2.5rem;border-radius:24px;box-shadow:0 4px 20px -5px rgba(0,0,0,0.02);border:1px solid rgba(226,232,240,0.8);transition:all 0.4s}
-        .rm-cell:hover{box-shadow:0 20px 40px -10px rgba(0,0,0,0.06);transform:translateY(-4px)}
-        .rm-head{font-family:var(--s);font-size:.9rem;font-weight:700;letter-spacing:.05em;border-bottom:1px solid #F1F5F9;padding-bottom:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;color:#020617}
-        .rm-signal{display:flex;gap:.75rem;margin-bottom:1rem;align-items:flex-start}
-        .rm-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
-        .rm-text{font-size:.9rem;line-height:1.5;color:#475569}
-        .rm-cat{font-family:var(--s);font-size:.65rem;color:#94A3B8;margin-bottom:.3rem;text-transform:uppercase;font-weight:600}
-
-        /* ZONE 0: MARKET REGIME BANNER */
-        .z0-banner{background:#EEF2FF;color:#3730A3;padding:.8rem 1rem;font-family:var(--s);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:1.5rem;border-bottom:1px solid #E0E7FF}
-        .z0-banner.neutral{background:#F1F5F9;color:#475569;border-bottom-color:#E2E8F0}
-        .z0-banner.risk_on{background:#F0FDF4;color:#166534;border-bottom-color:#DCFCE7}
-
-        /* LAYERS (OVERLAYS) */
-        .layer-title{font-family:var(--s);font-weight:800;font-size:1.1rem;letter-spacing:.05em;border-bottom:2px solid #E2E8F0;padding-bottom:1rem;margin-bottom:2rem;margin-top:4rem;text-transform:uppercase;color:#0F172A}
-        
-        @keyframes fadeCycle { 0% { opacity: 0; transform: translateY(3px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-3px); } }
-        .z0-headline { animation: fadeCycle 5s infinite; display: inline-block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75vw; vertical-align: bottom; }
-        .z0-banner { display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; white-space: nowrap; }
-        
-        .layer-fairs{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:1.5rem}
-        .layer-fairs-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:2rem;display:flex;flex-direction:column;box-shadow:0 4px 6px -1px rgba(0,0,0,0.02)}
-        .layer-fairs-card-days{font-family:var(--s);font-size:2.5rem;font-weight:900;color:var(--a);margin-bottom:.5rem;line-height:1;letter-spacing:-0.03em}
-        
-        .layer-academy{display:grid;grid-template-columns:repeat(2,1fr);gap:2.5rem;margin-top:1.5rem}
-        .layer-academy-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:2.5rem;box-shadow:0 4px 20px -5px rgba(0,0,0,0.03)}
-        .layer-academy-card h3{font-family:var(--s);font-weight:800;font-size:1.6rem;margin:.5rem 0 1rem;line-height:1.3;color:#0F172A;letter-spacing:-0.02em}
-
-        /* EXTRA */
-        .fr{padding:2rem 0;background:var(--c);border-top:1px solid var(--b)}
-        .ft{padding:2rem 0;background:var(--w);text-align:center;border-top:1px solid var(--b)}
-        
-        @media(max-width:1024px){.hsg{grid-template-columns:1fr}.opp-grid{grid-template-columns:repeat(2,1fr)}.rm-grid,.layer-fairs{grid-template-columns:repeat(2,1fr)}.layer-academy{grid-template-columns:1fr;}.tf-grid{grid-template-columns:1fr!important}}
-        @media(max-width:768px){.ngg,.opp-grid,.rm-grid,.ds-grid,.layer-fairs{grid-template-columns:1fr}.tf-grid{grid-template-columns:1fr!important}}
-        
-        /* B2B STICKINESS FEATURES */
-        .b2b-board { padding:4rem 0; background:#FAFAF8; border-bottom:1px solid var(--b); }
-        .b2b-board-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
-        .b2b-prices { background:#fff; border:1px solid var(--b); padding:2rem; box-shadow:0 10px 30px rgba(0,0,0,0.02); }
-        .b2b-prices h3 { font-family:var(--sf); font-size:1.5rem; font-weight:900; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:flex-end; }
-        .b2b-price-item { display:flex; justify-content:space-between; padding:1rem 0; border-bottom:1px solid #f0f0f0; font-family:var(--m); font-size:0.85rem; }
-        .b2b-price-item:last-child { border-bottom:none; }
-        .b2b-matchmaker { background:linear-gradient(135deg, #101112 0%, #1A1A1A 100%); color:#fff; padding:2.5rem; position:relative; overflow:hidden; }
-        .b2b-matchmaker h3 { font-family:var(--sf); font-size:2rem; font-weight:900; margin-bottom:1rem; color:#F5A623; }
-        .b2b-mm-input { width:100%; padding:1rem; margin-bottom:1rem; background:rgba(255,255,255,0.05); border:1px solid #333; color:#fff; font-family:var(--s); font-size:0.9rem; }
-        .b2b-mm-btn { background:#F5A623; color:#000; font-family:var(--m); font-weight:900; text-transform:uppercase; border:none; padding:1rem; width:100%; cursor:pointer; letter-spacing:1px; }
-        
-        .b2b-suppliers { padding:4rem 0; background:#fff; border-bottom:1px solid var(--b); }
-        .b2b-sup-table { width:100%; border-collapse:collapse; margin-top:2rem; }
-        .b2b-sup-table th { text-align:left; padding:1rem; background:#F5F5F0; font-family:var(--m); font-size:0.7rem; color:var(--ts); letter-spacing:1px; text-transform:uppercase; }
-        .b2b-sup-table td { padding:1rem; border-bottom:1px solid #f0f0f0; font-size:0.9rem; font-weight:500; }
-        .b2b-sup-badge { background:#E8F5E9; color:#2E7D32; font-family:var(--m); font-size:0.6rem; padding:3px 6px; font-weight:800; border-radius:2px; display:inline-block; margin-left:10px; }
-        @media(max-width:1024px){.b2b-board-grid{grid-template-columns:1fr;}}
-        @media(max-width:768px){.b2b-sup-table{display:block; overflow-x:auto;}}
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        :root { --sf: 'Playfair Display',Georgia,serif; --s: 'Inter',-apple-system,sans-serif; --m: 'JetBrains Mono',monospace; --re: #DC2626; --go: #16A34A; --wa: #EAB308; --accent: #CC0000; }
+        .tc { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        .section-title { font-family: var(--sf); font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 900; color: #111827; margin-bottom: 0.25rem; }
+        .section-sub { font-family: var(--m); font-size: 0.7rem; color: #9CA3AF; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; transition: all 0.2s; }
+        .card:hover { border-color: #D1D5DB; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .link-arrow { font-family: var(--m); font-size: 0.8rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        .link-arrow:hover { text-decoration: underline; }
+        .stat-badge { font-family: var(--m); font-size: 0.75rem; font-weight: 800; padding: 0.4rem 0.8rem; color: #FFF; border-radius: 6px; }
       `}} />
 
+      {/* TICKER */}
+      {tickerItems && tickerItems.length > 0 && <IntelligenceTicker items={tickerItems} />}
 
-      {/* NAV — ORTAK BAĞLANTI */}
-      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="news" theme="light" />
+      {/* NAVBAR */}
+      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="home" />
 
-      {/* ZONE 0: MARKET REGIME BANNER */}
-      {activePriorityEngine?.market_regime && (
-        <div className={`z0-banner ${String(activePriorityEngine.market_regime).toLowerCase()}`}>
-          <span style={{background:'#FFFFFF',color:'inherit',padding:'4px 10px',borderRadius:'99px',marginRight:'10px', flexShrink: 0, boxShadow:'0 2px 4px rgba(0,0,0,0.05)'}}>{HL.marketRegime}: {String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_ON' ? HL.riskOn : String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_OFF' ? HL.riskOff : HL.neutralRegime}</span>
-          {z0Headlines[headlineIndex]?.href ? (
-            <a href={z0Headlines[headlineIndex].href} key={headlineIndex} className="z0-headline" style={{color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px'}}>
-              {z0Headlines[headlineIndex].text}
-            </a>
-          ) : (
-            <span key={headlineIndex} className="z0-headline">{z0Headlines[headlineIndex]?.text}</span>
-          )}
+      {/* ═══ SECTION 1: FEATURED STORY (Kompakt Manşet) ═══ */}
+      <section style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
+        <div className="tc" style={{ padding: '3rem 2rem', display: 'flex', gap: '3rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 55%', minWidth: '300px' }}>
+            {heroArticle && (
+              <>
+                <div style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 800, letterSpacing: '0.15em', marginBottom: '0.75rem' }}>
+                  🔴 {heroArticle.category?.toUpperCase() || 'SON DAKİKA'}
+                </div>
+                <h1 style={{ fontFamily: 'var(--sf)', fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', fontWeight: 900, lineHeight: 1.15, color: '#111827', marginBottom: '1rem' }}>
+                  {getTitle(heroArticle)}
+                </h1>
+                <p style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#4B5563', marginBottom: '1.5rem', maxWidth: '90%' }}>
+                  {heroArticle.summary}
+                </p>
+                <a href={getLink('news', heroArticle.slug || heroArticle.id)} style={{ display: 'inline-block', padding: '0.7rem 1.8rem', background: '#111827', color: '#FFF', fontWeight: 700, fontSize: '0.85rem', borderRadius: '6px', textDecoration: 'none' }}>
+                  {safeLang === 'tr' ? 'Haberi Oku →' : 'Read Article →'}
+                </a>
+              </>
+            )}
+          </div>
+          <div style={{ flex: '1 1 35%', minWidth: '280px', maxHeight: '320px' }}>
+            {heroArticle && (
+              <img src={getImg(heroArticle)} alt="" style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '12px', border: '1px solid #E5E7EB' }} />
+            )}
+          </div>
         </div>
+      </section>
+
+      {/* ═══ SECTION 2: HABERLER GRID + SIDEBAR ═══ */}
+      <section style={{ padding: '3rem 0' }}>
+        <div className="tc">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+            <div>
+              <div className="section-sub">📰 GÜNCEL İSTİHBARAT</div>
+              <h2 className="section-title">Son Haberler</h2>
+            </div>
+            <a href={getLink('news')} className="link-arrow">Tüm Haberler →</a>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+            {/* SOL: Haber Kartları */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {uniquePool.slice(0, 6).map((a: any) => (
+                <a href={getLink('news', a.slug || a.id)} key={a.id} className="card" style={{ display: 'flex', gap: '1rem', padding: '1rem', textDecoration: 'none', color: 'inherit' }}>
+                  <img src={getImg(a)} alt="" style={{ width: '140px', height: '100px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '0.3rem' }}>
+                      {a.category?.toUpperCase() || 'SEKTÖREL'}
+                    </div>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, lineHeight: 1.3, marginBottom: '0.3rem', color: '#111827' }}>{getTitle(a)}</h3>
+                    <p style={{ fontSize: '0.85rem', color: '#6B7280', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, overflow: 'hidden' }}>{a.summary}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            {/* SAĞ: Sidebar */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {/* Piyasa Verileri */}
+              <div className="card" style={{ padding: '1.25rem' }}>
+                <div style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.1em', marginBottom: '1rem' }}>📊 PİYASA VERİLERİ</div>
+                {[
+                  { n: 'Pamuk İplik (30/1)', v: '$2.90', d: '+0.05', c: 'var(--go)' },
+                  { n: 'PES FDY (150/48)', v: '$1.15', d: '-0.02', c: 'var(--re)' },
+                  { n: 'Asya Navlun', v: 'Riskli', d: '⚠', c: 'var(--wa)' },
+                  { n: 'USD/TRY', v: '₺32.40', d: '+0.10', c: 'var(--go)' },
+                ].map((p, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: i < 3 ? '1px solid #F3F4F6' : 'none' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#374151' }}>{p.n}</span>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontFamily: 'var(--m)' }}>
+                      <span style={{ fontSize: '0.7rem', color: p.c }}>{p.d}</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#111827' }}>{p.v}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Trend Haberler */}
+              <div className="card" style={{ padding: '1.25rem' }}>
+                <div style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.1em', marginBottom: '1rem' }}>🔥 TREND</div>
+                {uniquePool.slice(6, 11).map((a: any, i: number) => (
+                  <a href={getLink('news', a.slug || a.id)} key={a.id} style={{ display: 'block', padding: '0.5rem 0', borderBottom: i < 4 ? '1px solid #F3F4F6' : 'none', textDecoration: 'none' }}>
+                    <span style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', color: '#D1D5DB', marginRight: '0.5rem' }}>0{i+1}</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#374151', lineHeight: 1.4 }}>{getTitle(a)}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SECTION 3: İHALE & TİCARET ═══ */}
+      <section style={{ background: '#FFFFFF', borderTop: '1px solid #E5E7EB', borderBottom: '1px solid #E5E7EB', padding: '3rem 0' }}>
+        <div className="tc">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+            <div>
+              <div className="section-sub">🔴 CANLI TİCARET FIRSATLARI</div>
+              <h2 className="section-title">İhaleler & Ticaret</h2>
+            </div>
+            <a href={getLink('tenders')} className="link-arrow">Tüm İhaleler →</a>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            {/* İhaleler */}
+            <div className="card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span className="stat-badge" style={{ background: 'var(--re)' }}>🔴 {totalTenders} İHALE</span>
+                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>CANLI</span>
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Küresel İhaleler</h3>
+              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Avrupa, Ortadoğu ve Asya'daki otel, hastane projelerine anında teklif verin.</p>
+              <a href={getLink('tenders')} style={{ display: 'block', textAlign: 'center', padding: '0.7rem', border: '1px solid #E5E7EB', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#111827', textDecoration: 'none' }}>İhaleleri Görüntüle →</a>
+            </div>
+
+            {/* Sıcak Stok */}
+            <div className="card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span className="stat-badge" style={{ background: 'var(--go)' }}>🟢 {totalStock} STOK</span>
+                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>GÜNCEL</span>
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Sıcak Stok Fırsatları</h3>
+              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Depodaki hazır kumaş ve ürün lotlarını hemen satın alın veya fiyat isteyin.</p>
+              <a href={getLink('tenders')} style={{ display: 'block', textAlign: 'center', padding: '0.7rem', border: '1px solid #E5E7EB', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#111827', textDecoration: 'none' }}>Stokları İncele →</a>
+            </div>
+
+            {/* Boş Kapasite */}
+            <div className="card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span className="stat-badge" style={{ background: 'var(--wa)', color: '#000' }}>🟡 {totalCapacity} KAPASİTE</span>
+                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>AÇIK</span>
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Boş Kapasite Bildirin</h3>
+              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Dokuma veya konfeksiyon boşluklarınızı global alıcılara anonim duyurun.</p>
+              <button onClick={() => setLeadModal({ open: true, context: { type: 'CAPACITY' } })} style={{ display: 'block', width: '100%', textAlign: 'center', padding: '0.7rem', background: 'var(--wa)', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#000', cursor: 'pointer' }}>Hemen İlan Ver →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SECTION 4: FUAR TAKVİMİ ═══ */}
+      {activeFairs && activeFairs.length > 0 && (
+        <section style={{ padding: '3rem 0' }}>
+          <div className="tc">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+              <div>
+                <div className="section-sub">📅 YAKLAŞAN ETKINLIKLER</div>
+                <h2 className="section-title">Fuar Takvimi</h2>
+              </div>
+              <a href={getLink('fairs')} className="link-arrow">Tüm Fuarlar →</a>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+              {activeFairs.slice(0, 6).map((f: any, i: number) => (
+                <div key={i} className="card" style={{ minWidth: '250px', padding: '1.25rem', flexShrink: 0 }}>
+                  <div style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 800, marginBottom: '0.5rem' }}>{f.date || f.startDate || '2026'}</div>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.3rem', lineHeight: 1.3 }}>{f.name || f.title}</h4>
+                  <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>{f.location || f.city || ''}</p>
+                  {f.daysLeft != null && <div style={{ fontFamily: 'var(--m)', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 700, marginTop: '0.5rem' }}>{f.daysLeft} gün kaldı</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
-      {/* ZONE 2: BREAKING INTELLIGENCE */}
-      {/* ═══ 2027 PRODUCT HERO SECTION ═══ */}
-      <section className="z2" style={{ paddingTop: '8rem', paddingBottom: '8rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh' }}>
-        <div className="tc" style={{ maxWidth: '900px', margin: '0 auto' }}>
-          
-          <div style={{ display: 'inline-flex', alignItems: 'center', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 1.2rem', borderRadius: '99px', marginBottom: '2.5rem', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#16A34A', boxShadow: '0 0 8px #16A34A', marginRight: '10px', animation: 'pulse-live 2s infinite' }}></span>
-            <span style={{ fontFamily: 'var(--s)', fontSize: '0.8rem', fontWeight: 700, color: '#475569', letterSpacing: '0.5px' }}>
-              {HL.liveData} • <span suppressHydrationWarning>{new Date().toISOString().split('T')[0]}</span>
-            </span>
-          </div>
-
-          <h1 style={{ fontFamily: 'var(--s)', fontSize: 'clamp(3rem, 5vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#020617', letterSpacing: '-0.04em', marginBottom: '1.5rem' }}>
-            {payload?.cmsData?.hero_text?.title || "Küresel Tekstil B2B Veritabanı."}
-          </h1>
-
-          <p style={{ fontFamily: 'var(--m)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', lineHeight: 1.6, color: '#475569', marginBottom: '3.5rem', maxWidth: '700px', margin: '0 auto 3.5rem auto' }}>
-            {payload?.cmsData?.slogan?.title || "İhalelere katılın, boş kapasiteyi değerlendirin ve dünyanın dört bir yanındaki üreticilerle güvenli ticaret yapın."}
-          </p>
-
-          <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', alignItems: 'center' }}>
-            <a href={getLocalizedLink('login')} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '1.2rem 3rem', background: '#020617', color: '#FFFFFF', fontFamily: 'var(--s)', fontSize: '1rem', fontWeight: 800, textDecoration: 'none', borderRadius: '99px', letterSpacing: '0.5px', boxShadow: '0 10px 30px -5px rgba(2, 6, 23, 0.3)', transition: 'all 0.3s' }}
-               onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 15px 40px -5px rgba(2, 6, 23, 0.4)'; }}
-               onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 30px -5px rgba(2, 6, 23, 0.3)'; }}
-            >
-              {targetLang === 'TR' ? 'ÜCRETSİZ BAŞLA →' : 'START FOR FREE →'}
-            </a>
-            
-            <a href={getLocalizedLink('tenders')} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '1.2rem 3rem', background: '#FFFFFF', color: '#0F172A', fontFamily: 'var(--s)', fontSize: '1rem', fontWeight: 700, textDecoration: 'none', borderRadius: '99px', border: '1px solid #E2E8F0', transition: 'all 0.3s' }}
-               onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = '#F8FAFC'; }}
-               onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; }}
-            >
-              {targetLang === 'TR' ? 'İhaleleri İncele' : 'Browse Tenders'}
-            </a>
-          </div>
-
-          {/* ═══ BENTO BOX CARDS (Below Hero) ═══ */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '5rem', textAlign: 'left' }}>
-            
-            {/* Bento 1: Live Tender Map Preview */}
-            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>🗺️</span>
-                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'Global İhale Radarı' : 'Global Tender Radar'}</h3>
-              </div>
-              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                {targetLang === 'TR' ? 'Avrupa ve MENA bölgesindeki canlı ev tekstili ihalelerini harita üzerinden otonom takip edin.' : 'Track live home textile tenders across Europe and MENA autonomously on the map.'}
-              </p>
-              <a href={getLocalizedLink('tenders')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Haritayı Aç →' : 'Open Map →'}</a>
-            </div>
-
-            {/* Bento 2: AI Sentiment / Matchmaker */}
-            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>🧠</span>
-                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'AI Fırsat Motoru' : 'AI Opportunity Engine'}</h3>
-              </div>
-              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                {targetLang === 'TR' ? 'Haberlerin ve piyasa verilerinin duygu (sentiment) analizini yaparak risk/fırsat skorlarınızı hesaplayın.' : 'Calculate your risk/opportunity scores by performing sentiment analysis on news and market data.'}
-              </p>
-              <a href={getLocalizedLink('news')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Analizleri İncele →' : 'View Analytics →'}</a>
-            </div>
-
-            {/* Bento 3: Market Simulator */}
-            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>⚖️</span>
-                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'Pazar Simülatörü' : 'Market Simulator'}</h3>
-              </div>
-              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                {targetLang === 'TR' ? 'Ürettiğiniz veya satmak istediğiniz kumaşın küresel piyasadaki değerini ve alıcı eşleşmelerini simüle edin.' : 'Simulate the global market value and buyer matches for the fabric you produce or want to sell.'}
-              </p>
-              <a href={getLocalizedLink('collections')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Simülatörü Başlat →' : 'Start Simulator →'}</a>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ INSIGHT GRID (NEWS) ═══ */}
-      <section className="z2" style={{ paddingTop: '2rem', paddingBottom: '6rem', background: '#FFFFFF', borderBottom: '1px solid var(--b)' }}><div className="tc">
-        <div className="z2h" style={{ borderBottom: '1px solid #F1F5F9', paddingBottom: '1rem', marginBottom: '3rem' }}>
-          <h2 style={{ fontFamily: 'var(--s)', fontWeight: 800, fontSize: '1.8rem', color: '#020617', letterSpacing: '-0.02em' }}>
-            {targetLang === 'TR' ? 'Sektörel İçgörüler' : 'Industry Insights'}
-          </h2>
-        </div>
-
-        <div className="ngg">
-          {newsGrid.map((a:any)=>(
-            <a key={a.id} href={getLink(a)} className="ngi">
-              <img src={getImg(a)} alt="" loading="lazy" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover',marginBottom:'.5rem'}}/>
-              <div style={{display:'flex',gap:'.5rem',alignItems:'center'}}>
-                <div className="ml ma">{getCat(a)}</div>
-                {a.insight?.direction && <span className="ds-pill" style={{background: a.insight.direction === 'risk' ? 'var(--re)' : a.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6', fontSize:'.5rem', padding:'2px 5px'}}>{a.insight.direction === 'risk' ? HL.dirRisk : a.insight.direction === 'opportunity' ? HL.dirOpp : '—'}</span>}
-              </div>
-              <div className="ngt">{getTitle(a)}</div>
-              {a.createdAt && <div style={{fontSize:'.85rem',color:'#94A3B8',marginBottom:'0.4rem'}} suppressHydrationWarning>{new Date(a.createdAt).toLocaleDateString(targetLang === 'EN' ? 'en-US' : 'tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</div>}
-              <div style={{fontSize:'.85rem',color:'var(--ts)',lineHeight:1.4}}>{getSummary(a).substring(0,140)}{getSummary(a).length > 140 ? '...' : ''}</div>
-            </a>
-          ))}
-        </div>
-
-        <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-          <a href={getLocalizedLink('news')} style={{ display: 'inline-block', padding: '1.2rem 3.5rem', background: 'var(--a)', color: '#FFF', fontWeight: 800, fontSize: '1rem', textDecoration: 'none', borderRadius: '99px', letterSpacing: '0.5px', boxShadow:'0 10px 25px -5px rgba(37, 99, 235, 0.4)', transition:'all 0.3s' }}
-             onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 15px 35px -5px rgba(37, 99, 235, 0.5)'; }}
-             onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 25px -5px rgba(37, 99, 235, 0.4)'; }}
-          >
-            {targetLang === 'TR' ? 'TÜM HABERLER →' : HL.allNews}
-          </a>
-        </div>
-
-        {/* LAYER: KNOWLEDGE & ACADEMY (Long Form Extension) */}
-        {Array.isArray(academyArticles) && academyArticles.length > 0 && (
-          <div style={{marginTop:'3rem'}}>
-            <div className="layer-title">{HL.academyLayer}</div>
-            <div className="layer-academy">
-              {academyArticles.slice(0, 4).map((a:any, i:number)=>(
-                <div className="layer-academy-card" key={i} style={{ padding: 0, overflow: 'hidden' }}>
-                  {(a.image_url || (a.images && a.images[0])) && (
-                    <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', borderBottom: '1px solid var(--b)' }}>
-                      <img src={a.image_url || a.images[0]} alt={getTitle(a)} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  )}
-                  <div style={{ padding: '1.5rem' }}>
-                    <div className="ml ma">{getCat(a)}</div>
-                    <a href={getLink(a)}><h3 style={{ marginTop: '0.2rem', marginBottom: '0.8rem' }}>{getTitle(a)}</h3></a>
-                    <p style={{fontSize:'.95rem',color:'var(--ts)',lineHeight:1.6}}>{getSummary(a).substring(0, 150)}...</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-      </div></section>
-
-      {/* ZONE 1.5: THE TRADING FLOOR — CANLI VERİ (TRTEX Intelligence Terminal) */}
-      <section className="tf-sec">
+      {/* ═══ SECTION 5: DÜNYA RADARI ═══ */}
+      <section style={{ background: '#FFFFFF', borderTop: '1px solid #E5E7EB', padding: '3rem 0' }}>
         <div className="tc">
-          <div className="z2h" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
             <div>
-              <div className="ml" style={{color:'#64748B', marginBottom:'8px'}}><span className="live-dot" style={{background:'var(--wa)'}}></span> {HL.tradingActive}</div>
-              <div className="z2t" style={{fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', letterSpacing:'-0.03em', color:'#0F172A'}}>{HL.tradingFloor}</div>
+              <div className="section-sub">🌍 KÜRESEL İSTİHBARAT</div>
+              <h2 className="section-title">Dünya Radarı</h2>
             </div>
-            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-              {/* ═══ CANLI İHALE SAYACI ═══ */}
-              <div style={{
-                background: liveTenders.length > 0 ? '#FEF2F2' : '#F1F5F9', 
-                color: liveTenders.length > 0 ? '#DC2626' : '#64748B',
-                padding:'0.6rem 1.5rem', borderRadius:'99px',
-                fontFamily:'var(--s)', fontSize:'0.9rem', fontWeight:800, 
-                letterSpacing:'.02em', border: liveTenders.length > 0 ? '1px solid #FECACA' : '1px solid #E2E8F0',
-                display:'flex', alignItems:'center', gap:'.5rem',
-                animation: liveTenders.length > 0 ? 'pulse-live 2s infinite' : 'none'
-              }}>
-                <span style={{fontSize:'1.3rem', fontWeight:900}}>{liveTenders.length}</span> {HL.activeDeal}
-              </div>
-              <button 
-                onClick={() => setLeadModal({ open: true, context: { type: 'BRIEFING', title: targetLang === 'TR' ? 'Haftalık CEO İstihbarat Brifing' : 'Weekly CEO Intelligence Briefing' } })}
-                style={{background:'#EFF6FF', border:'1px solid #BFDBFE', color:'#1D4ED8', borderRadius:'99px', padding:'0.6rem 1.5rem', fontFamily:'var(--s)', fontSize:'.85rem', fontWeight:700, cursor:'pointer', letterSpacing:'.02em', transition:'all 0.2s'}}
-                onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = '#DBEAFE'; }}
-                onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = '#EFF6FF'; }}
-              >
-                📊 {HL.ceoBriefing}
-              </button>
-            </div>
+            <a href={getLink('radar')} className="link-arrow">Tüm Sinyaller →</a>
           </div>
-
-          {/* ═══ PER-COLUMN COUNTS ═══ */}
-          <div style={{display:'flex', gap:'2rem', marginBottom:'1rem', fontFamily:'var(--m)', fontSize:'.7rem', color:'#666'}}>
-            <span>🔴 {tenderItems.length} {HL.tenders}</span>
-            <span>🟢 {stockItems.length} {HL.stockOpp}</span>
-            <span>🟡 {capacityItems.length} {HL.capacity}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            {[
+              { icon: '⚠️', label: 'RİSK ANALİZİ', desc: 'Hammadde fiyat dalgalanmaları, jeopolitik riskler ve tedarik zinciri aksaklıkları', color: '#DC2626', bg: '#FEF2F2' },
+              { icon: '💡', label: 'FIRSAT RADARI', desc: 'Yeni pazarlar, büyüyen segmentler ve stratejik yatırım alanları', color: '#16A34A', bg: '#F0FDF4' },
+              { icon: '📡', label: 'PİYASA SİNYALLERİ', desc: 'Uzak Doğu, MENA ve Avrupa pazarlarından canlı ticari sinyaller', color: '#2563EB', bg: '#EFF6FF' },
+              { icon: '📈', label: 'TREND TAHMİNLERİ', desc: '2026/2027 sezon trendleri, renk kodları ve tüketici davranışı analizi', color: '#7C3AED', bg: '#F5F3FF' },
+            ].map((item, i) => (
+              <a href={getLink('radar')} key={i} className="card" style={{ padding: '1.5rem', textDecoration: 'none', color: 'inherit', borderLeft: `3px solid ${item.color}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
+                  <span style={{ fontFamily: 'var(--m)', fontSize: '0.7rem', fontWeight: 800, color: item.color, letterSpacing: '0.1em' }}>{item.label}</span>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: '#6B7280', lineHeight: 1.6 }}>{item.desc}</p>
+              </a>
+            ))}
           </div>
-          
-          <div className="tf-grid">
-            {/* COLUMN 1: İHALE AKIŞI — TÜM İHALELER */}
-            <div className="tf-col">
-              <div className="tf-header red">
-                <span>🔴 {HL.tenderFlow} ({tenderItems.length})</span>
-                <span>LIVE</span>
-              </div>
-
-              {tenderItems.slice(0, 4).map((t: any) => (
-                <div className="tf-item" key={t.id}>
-                  {t.score && <div className="tf-score">SKOR: {t.score}</div>}
-                  <div className="tf-loc">{t.location}</div>
-                  <div className="tf-title">{t.title}</div>
-                  <div className="tf-data-row"><span>{t.detail_key || 'Detay:'}</span> <span>{t.detail_value || '—'}</span></div>
-                  <button className="tf-btn red" onClick={() => setLeadModal({ open: true, context: { type: 'TENDER', title: t.title, location: t.location, score: t.score } })}>
-                    {t.action_text || (targetLang === 'TR' ? '→ İHALEYİ İNCELE' : '→ VIEW TENDER')}
-                  </button>
-                </div>
-              ))}
-
-              {tenderItems.length === 0 && (
-                <div style={{padding:'2rem', textAlign:'center', color:'#555', fontFamily:'var(--m)', fontSize:'.75rem'}}>
-                  {HL.scanningTender}
-                </div>
-              )}
-            </div>
-
-            {/* COLUMN 2: SICAK STOK — TÜM STOKLAR */}
-            <div className="tf-col">
-              <div className="tf-header green">
-                <span>🟢 {HL.hotStock} ({stockItems.length})</span>
-                <span>LIVE</span>
-              </div>
-
-              {stockItems.slice(0, 4).map((t: any) => (
-                <div className="tf-item" key={t.id}>
-                  {t.score && <div className="tf-score">SKOR: {t.score}</div>}
-                  <div className="tf-loc">{t.location}</div>
-                  <div className="tf-title">{t.title}</div>
-                  <div className="tf-data-row" style={{borderLeftColor:'var(--go)'}}><span>{t.detail_key || 'Durum:'}</span> <span style={{color:'var(--go)', fontWeight:800}}>{t.detail_value || '—'}</span></div>
-                  <button className="tf-btn green" onClick={() => setLeadModal({ open: true, context: { type: 'HOT_STOCK', title: t.title, location: t.location, score: t.score } })}>
-                    {t.action_text || (targetLang === 'TR' ? '→ SATIN AL' : '→ PURCHASE')}
-                  </button>
-                </div>
-              ))}
-
-              {stockItems.length === 0 && (
-                <div style={{padding:'2rem', textAlign:'center', color:'#555', fontFamily:'var(--m)', fontSize:'.75rem'}}>
-                  {HL.scanningStock}
-                </div>
-              )}
-            </div>
-
-            {/* COLUMN 3: BOŞ KAPASİTE — TÜM KAPASİTELER */}
-            <div className="tf-col">
-              <div className="tf-header yellow">
-                <span>🟡 {HL.freeCapacity} ({capacityItems.length})</span>
-                <span>LIVE</span>
-              </div>
-
-              {capacityItems.slice(0, 4).map((t: any) => (
-                <div className="tf-item" key={t.id}>
-                  {t.score && <div className="tf-score">SKOR: {t.score}</div>}
-                  <div className="tf-loc">{t.location}</div>
-                  <div className="tf-title">{t.title}</div>
-                  <div className="tf-data-row" style={{borderLeftColor:'var(--wa)'}}><span>{t.detail_key || 'Kapasite:'}</span> <span>{t.detail_value || '—'}</span></div>
-                  <button className="tf-btn yellow" onClick={() => setLeadModal({ open: true, context: { type: 'CAPACITY', title: t.title, location: t.location, score: t.score } })}>
-                    {t.action_text || (targetLang === 'TR' ? '→ ORTAKLIK KUR' : '→ COLLABORATE')}
-                  </button>
-                </div>
-              ))}
-
-              {capacityItems.length === 0 && (
-                <div className="tf-item" style={{ background: 'rgba(234, 179, 8, 0.05)', borderColor: 'var(--wa)', display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem 1.5rem', alignItems: 'center', textAlign: 'center' }}>
-                  <div style={{ fontSize: '2rem' }}>🏭</div>
-                  <div style={{ color: '#fff', fontWeight: 900, fontSize: '1.05rem', fontFamily: 'var(--sf)', letterSpacing: '0.5px' }}>{HL.emptyCapTitle}</div>
-                  <div style={{ color: '#aaa', fontSize: '0.8rem', lineHeight: 1.6, fontFamily: 'var(--m)' }}>
-                    {HL.emptyCapDesc}
-                  </div>
-                  <a href={`${basePath}/register?lang=${lang}`} className="tf-btn yellow" style={{ textDecoration: 'none', width: '100%', marginTop: '0.5rem', fontWeight: 900 }}>
-                    {HL.emptyCapBtn}
-                  </a>
-                </div>
-              )}
-            </div>
-            
-          </div>
-
-          {/* ═══ TÜM İHALELERİ GÖR — FULL WIDTH CTA ═══ */}
-          <a href={getLocalizedLink('tenders')} style={{textDecoration:'none'}}>
-            <div style={{
-              marginTop:'2.5rem', padding:'1.5rem', textAlign:'center', borderRadius:'16px',
-              border:'1px solid #E2E8F0', background:'#FFFFFF', boxShadow:'0 4px 10px rgba(0,0,0,0.02)',
-              cursor:'pointer', transition:'all .3s',
-              display:'flex', justifyContent:'center', alignItems:'center', gap:'1rem',
-            }}
-            onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#CBD5E1'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 20px -5px rgba(0,0,0,0.05)'; }}
-            onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#E2E8F0'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 10px rgba(0,0,0,0.02)'; }}
-            >
-              <span style={{fontFamily:'var(--s)', fontSize:'.95rem', fontWeight:800, color:'#0F172A', letterSpacing:'.05em'}}>
-                {HL.seeAll.replace('→', `${liveTenders.length} →`)}
-              </span>
-              <span style={{fontFamily:'var(--s)', fontSize:'.85rem', color:'#64748B', background:'#F1F5F9', padding:'4px 12px', borderRadius:'99px'}}>
-                {HL.filter}
-              </span>
-            </div>
-          </a>
-
         </div>
       </section>
 
-      {/* ═══ LEAD CAPTURE MODAL ═══ */}
-      <LeadCaptureModal
-        isOpen={leadModal.open}
-        onClose={() => setLeadModal({ open: false, context: { type: 'GENERAL' } })}
-        context={leadModal.context}
-        brandName={brandName}
-      />
-      
-
-      {/* ZONE 3: TRADE OPPORTUNITIES */}
-      <section className="z3"><div className="tc">
-        <div className="z2h">
-          <div className="z2t">{HL.oppEngine}</div>
-          <div className="ml">{HL.actionCards}</div>
-        </div>
-        
-        <div className="opp-grid">
-          {tradeOpportunities.map((a:any)=>(
-            <div className="opp-card" key={a.id}>
-              <div className="opp-head">
-                <div className="opp-type">{a.commercial_type?.replace(/_/g,' ') || HL.tradeSignal}</div>
-                <div className="opp-score">{a.commercial_score || a.scoring?.commercial_score || 85}</div>
-              </div>
-              <a href={getLink(a)} className="opp-title">{getTitle(a)}</a>
-              <div className="opp-data">
-                <div><strong>{HL.targetAudience}:</strong> {a.target_audience || a.opportunity_card?.buyer_type || HL.targetAudience}</div>
-                <div><strong>{HL.priorityLabel}:</strong> {a.opportunity_card?.urgency || ((a.insight?.market_impact_score || 0) > 65 ? HL.priorityHigh : HL.priorityNormal)}</div>
-                {a.insight?.direction && <div style={{marginTop:'.3rem'}}><span className="ds-pill" style={{background: a.insight.direction === 'risk' ? 'var(--re)' : a.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6'}}>{a.insight.direction === 'risk' ? HL.riskSignal : a.insight.direction === 'opportunity' ? HL.oppSignal : HL.neutralLabel}</span></div>}
-              </div>
-              <div className="opp-act">
-                <div className="opp-act-title">{HL.actionPlan}:</div>
-                {a.action_layer?.manufacturer || a.action_layer?.retailer || a.opportunity_card?.action || HL.defaultAction}
-              </div>
-              <div style={{display:'flex', gap:'.5rem'}}>
-                <a href={getLink(a)} style={{flex:1}}><button className="opp-btn" style={{width:'100%'}}>{HL.reviewIntel}</button></a>
-                <button className="opp-btn" style={{flex:1, background:'var(--go)', borderColor:'var(--go)'}} onClick={() => setLeadModal({ open: true, context: { type: 'GENERAL', title: getTitle(a), location: a.target_audience || 'Global' } })}>
-                  {HL.getOffer}
-                </button>
-              </div>
+      {/* ═══ SECTION 6: AKADEMİ ═══ */}
+      <section style={{ padding: '3rem 0', borderTop: '1px solid #E5E7EB' }}>
+        <div className="tc">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+            <div>
+              <div className="section-sub">🎓 SEKTÖR EĞİTİMİ</div>
+              <h2 className="section-title">Akademi</h2>
             </div>
-          ))}
-        </div>
-
-        {/* LAYER: INDUSTRY EVENTS (Opportunity Extension) */}
-        {Array.isArray(activeFairs) && activeFairs.length > 0 && (
-          <div style={{marginTop:'3rem'}}>
-            <div className="layer-title">{HL.fairLayer}</div>
-            <div className="layer-fairs">
-              {activeFairs.map((fair:any, i:number)=>(
-                <div className="layer-fairs-card" key={i}>
-                  <div className="layer-fairs-card-days">{fair.daysLeft < 0 ? HL.fairPassed : fair.daysLeft === 0 ? HL.fairToday : `${fair.daysLeft} ${HL.fairDays}`}</div>
-                  <div style={{fontWeight:800, fontSize:'1.1rem', marginBottom:'.5rem'}}>{fair.name}</div>
-                  <div style={{fontSize:'.8rem', color:'var(--ts)', fontFamily:'var(--m)'}}>{fair.location} | {fair.date}</div>
-                </div>
-              ))}
-            </div>
+            <a href={getLink('academy')} className="link-arrow">Akademi'ye Git →</a>
           </div>
-        )}
-
-      </div></section>
-
-      {/* ═══ B2B CORE STICKINESS ZONES (Prices, Matchmaker, Suppliers) ═══ */}
-      <section className="b2b-board"><div className="tc">
-        <div className="b2b-board-grid">
-          
-          {/* COMMODITIES BOARD */}
-          <div className="b2b-prices">
-            <h3>
-              {targetLang === 'TR' ? 'Sektörel Referans Fiyatları' : 'Commodity Reference Prices'}
-              <span style={{fontSize:'0.6rem', fontFamily:'var(--m)', color:'var(--ts)', letterSpacing:'1px', alignSelf:'center', paddingBottom:'5px'}}>LIVE TICKER</span>
-            </h3>
-            <div style={{display:'flex', flexDirection:'column'}}>
-              {[
-                { name: targetLang === 'TR' ? '30/1 Pamuk İplik (Karde)' : '30/1 Cotton Yarn', val: '$2.90', unit: '/ kg', trend: '+0.05', tcolor: 'var(--go)' },
-                { name: targetLang === 'TR' ? '%100 PES FDY 150/48' : '100% PES FDY 150/48', val: '$1.15', unit: '/ kg', trend: '-0.02', tcolor: 'var(--re)' },
-                { name: targetLang === 'TR' ? 'Blackout Perdelik Kumaş (Ham)' : 'Blackout Curtain Fabric (Raw)', val: '$1.65', unit: '/ m', trend: '0.00', tcolor: 'var(--ts)' },
-                { name: targetLang === 'TR' ? 'FR Tül (Alev Almaz)' : 'FR Voile (Flame Retardant)', val: '$2.10', unit: '/ m', trend: '+0.10', tcolor: 'var(--go)' },
-                { name: targetLang === 'TR' ? 'Şönil Döşemelik Kumaş' : 'Chenille Upholstery Fabric', val: '$3.40', unit: '/ m', trend: '-0.05', tcolor: 'var(--re)' },
-              ].map((p, i) => (
-                <div className="b2b-price-item" key={i}>
-                  <div style={{fontWeight:700, color:'var(--t)'}}>{p.name}</div>
-                  <div style={{display:'flex', gap:'1rem'}}>
-                    <span style={{color: p.tcolor}}>{p.trend}</span>
-                    <span style={{fontWeight:900, minWidth:'80px', textAlign:'right'}}>{p.val} <span style={{color:'var(--ts)', fontWeight:400}}>{p.unit}</span></span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button style={{width:'100%', marginTop:'1.5rem', background:'transparent', border:'1px solid var(--b)', padding:'0.8rem', fontFamily:'var(--m)', fontSize:'0.7rem', fontWeight:800, cursor:'pointer', color:'var(--t)'}}>
-              {targetLang === 'TR' ? 'DETAYLI FİYAT ENDEKSİ →' : 'DETAILED PRICE INDEX →'}
-            </button>
-          </div>
-
-          {/* SOURCING MATCHMAKER */}
-          <div className="b2b-matchmaker">
-            <div style={{position:'absolute', right:'-20px', top:'-20px', fontSize:'8rem', opacity:0.05}}>🤝</div>
-            <div className="ml" style={{color:'#888', marginBottom:'10px'}}>{targetLang === 'TR' ? 'GLOBAL ALICI & ÜRETİCİ EŞLEŞTİRME' : 'GLOBAL BUYER & MAKER MATCHING'}</div>
-            <h3>{targetLang === 'TR' ? 'Alım Talebi Bırakın' : 'Submit Sourcing Request'}</h3>
-            <p style={{fontSize:'0.9rem', color:'#aaa', marginBottom:'2rem', lineHeight:1.5}}>
-              {targetLang === 'TR' ? 'Sovereign ekosistemindeki 10.000+ Türk üreticiye anında ulaşın. İhtiyacınız olan kumaş veya hazır ürünü yazın, en iyi teklifi saniyeler içinde alın.' : 'Reach 10,000+ verified manufacturers instantly. Describe the fabric or product you need and get competitive quotes in seconds.'}
-            </p>
-            <form onSubmit={(e) => { e.preventDefault(); setLeadModal({ open: true, context: { type: 'SOURCING', title: targetLang === 'TR' ? 'Alım Talebi Alındı' : 'Sourcing Request Received' } }) }}>
-              <input type="text" placeholder={targetLang === 'TR' ? 'Örn: 10.000m Otel Tipi FR Blackout Kumaş' : 'E.g., 10,000m Hotel Grade FR Blackout Fabric'} className="b2b-mm-input" required />
-              <div style={{display:'flex', gap:'1rem'}}>
-                <input type="text" placeholder={targetLang === 'TR' ? 'Hedef Fiyat ($)' : 'Target Price ($)'} className="b2b-mm-input" />
-                <input type="email" placeholder={targetLang === 'TR' ? 'E-posta Adresiniz' : 'Your Email'} className="b2b-mm-input" required />
-              </div>
-              <button type="submit" className="b2b-mm-btn">{targetLang === 'TR' ? 'TEKLİF TOPLAMAYA BAŞLA' : 'START COLLECTING QUOTES'}</button>
-            </form>
-          </div>
-
-        </div>
-      </div></section>
-
-      {/* VERIFIED SUPPLIERS */}
-      <section className="b2b-suppliers"><div className="tc">
-        <div className="z2h">
-          <div className="z2t">{targetLang === 'TR' ? 'Sovereign Onaylı Tedarikçiler' : 'Sovereign Verified Suppliers'}</div>
-          <div className="ml">{targetLang === 'TR' ? 'FABRİKA REHBERİ' : 'FACTORY DIRECTORY'}</div>
-        </div>
-        <table className="b2b-sup-table">
-          <thead>
-            <tr>
-              <th>{targetLang === 'TR' ? 'Firma / Tesis' : 'Company / Facility'}</th>
-              <th>{targetLang === 'TR' ? 'Lokasyon' : 'Location'}</th>
-              <th>{targetLang === 'TR' ? 'Ana Kategori' : 'Main Category'}</th>
-              <th>{targetLang === 'TR' ? 'Üretim Kapasitesi' : 'Production Capacity'}</th>
-              <th>{targetLang === 'TR' ? 'Aksiyon' : 'Action'}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { id: '1', name: 'Fabrika #TR-041', loc: 'Bursa, TR', cat: targetLang === 'TR' ? 'Jakar Dokuma' : 'Jacquard Weaving', cap: '500.000 m / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
-              { id: '2', name: 'Fabrika #TR-102', loc: 'Denizli, TR', cat: targetLang === 'TR' ? 'Havlu & Bornoz' : 'Towel & Bathrobe', cap: '1.200.000 ' + (targetLang === 'TR' ? 'Adet / Ay' : 'Pcs / Mo') },
-              { id: '3', name: 'Fabrika #TR-088', loc: 'Çorlu, TR', cat: targetLang === 'TR' ? 'Baskı & Boyahane' : 'Dyeing & Printing', cap: '2.000.000 m / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
-              { id: '4', name: 'Fabrika #TR-215', loc: 'Gaziantep, TR', cat: targetLang === 'TR' ? 'PP İplik & Halı' : 'PP Yarn & Carpet', cap: '800 Ton / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
-            ].map(s => (
-              <tr key={s.id}>
-                <td>
-                  <span style={{fontWeight:800}}>{s.name}</span>
-                  <span className="b2b-sup-badge">VERIFIED</span>
-                </td>
-                <td style={{color:'var(--ts)'}}>{s.loc}</td>
-                <td>{s.cat}</td>
-                <td style={{fontFamily:'var(--m)', fontWeight:700}}>{s.cap}</td>
-                <td>
-                  <button onClick={() => setLeadModal({ open: true, context: { type: 'SUPPLIER_CONTACT', title: s.name } })} style={{background:'var(--t)', color:'#fff', border:'none', padding:'8px 16px', fontSize:'0.75rem', fontWeight:800, cursor:'pointer', borderRadius:'4px'}}>
-                    {targetLang === 'TR' ? 'İLETİŞİME GEÇ' : 'CONTACT'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div style={{textAlign:'center', marginTop:'2rem'}}>
-          <button style={{background:'transparent', border:'1px solid var(--t)', padding:'1rem 3rem', fontWeight:800, cursor:'pointer'}}>
-            {targetLang === 'TR' ? 'TÜM ONAYLI FABRİKALARI GÖR ↓' : 'VIEW ALL VERIFIED FACTORIES ↓'}
-          </button>
-        </div>
-      </div></section>
-
-      {/* ZONE 4: GLOBAL RADAR MAP */}
-      <section className="z4"><div className="tc">
-        <div className="z2h" style={{borderColor:'#333'}}>
-          <div className="z2t" style={{color:'#fff'}}>{HL.signalMap}</div>
-          <div className="ml" style={{color:'#888'}}>{HL.activeSignals}</div>
-        </div>
-
-        {activeUzakDogu?.status && (
-          <div style={{background:'#111', border:'1px solid #333', padding:'1rem', marginBottom:'2rem', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-              <span style={{fontSize:'1.5rem'}}>🏮</span>
-              <div>
-                <div style={{fontFamily:'var(--m)', fontSize:'.7rem', color:'#888'}}>{HL.asiaIndex}</div>
-                <div style={{fontWeight:700, fontSize:'1.1rem'}}>{activeUzakDogu.message || 'Hammadde piyasası hareketli'}</div>
-              </div>
-            </div>
-            <div style={{fontFamily:'var(--m)', fontSize:'.8rem', backgroundColor:'var(--re)', padding:'4px 8px', fontWeight:900}}>{activeUzakDogu.status}</div>
-          </div>
-        )}
-        
-        <div className="rm-grid">
-          {regionKeys.map((region, idx) => {
-            const items = regionArticles[region];
-            const emojies = ['🌏','🇪🇺','🌎','🌍'];
-            const regionNames: Record<string, string> = { ASIA: HL.regionAsia, EUROPE: HL.regionEurope, AMERICAS: HL.regionAmericas, MENA: HL.regionMena };
-            return (
-              <div className="rm-cell" key={region}>
-                <div className="rm-head">{emojies[idx]} {regionNames[region] || region}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+            {(academyArticles.length > 0 ? academyArticles : uniquePool.slice(0, 4)).map((a: any) => (
+              <a href={getLink('news', a.slug || a.id)} key={a.id} className="card" style={{ display: 'flex', gap: '1rem', padding: '1rem', textDecoration: 'none', color: 'inherit' }}>
+                <img src={getImg(a)} alt="" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0 }} />
                 <div>
-                  {items.slice(0,4).map((a:any, i:number) => {
-                    const isRisk = a.title?.toLowerCase().includes('risk') || a.commercial_type === 'supply_gap';
-                    const isOpp = a.commercial_score > 75;
-                    const dotColor = isRisk ? 'var(--re)' : isOpp ? 'var(--go)' : 'var(--wa)';
-                    return (
-                      <a href={getLink(a)} className="rm-signal" key={i}>
-                        <div className="rm-dot" style={{background:dotColor}} />
-                        <div>
-                          <div className="rm-cat">{getCat(a)}</div>
-                          <div className="rm-text">{getTitle(a)}</div>
-                        </div>
-                      </a>
-                    );
-                  })}
+                  <div style={{ fontFamily: 'var(--m)', fontSize: '0.6rem', color: 'var(--go)', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '0.25rem' }}>EĞİTİM</div>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, lineHeight: 1.3, color: '#111827' }}>{getTitle(a)}</h4>
                 </div>
-              </div>
-            )
-          })}
+              </a>
+            ))}
+          </div>
         </div>
-      </div></section>
+      </section>
 
-      {/* ORTAK KURUMSAL FOOTER EKLENDİ */}
+      <LeadCaptureModal isOpen={leadModal.open} onClose={() => setLeadModal({ open: false, context: { type: 'GENERAL' } })} context={leadModal.context} brandName={brandName} />
       <TrtexFooter basePath={basePath} brandName={brandName} lang={lang} />
       <SovereignLiveConcierge />
-
     </div>
   );
 }

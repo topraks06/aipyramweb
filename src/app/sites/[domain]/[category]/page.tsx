@@ -222,7 +222,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       />
 
       {/* 3. KATEGORİ HABER AKIŞI (ASİMETRİK TASARIM) */}
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '3rem 2rem' }}>
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '3rem 2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', borderBottom: '4px solid #111', paddingBottom: '0.5rem' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-1px', textTransform: 'uppercase', margin: 0 }}>

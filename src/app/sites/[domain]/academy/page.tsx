@@ -28,13 +28,21 @@ export default async function AcademyPage({ params, searchParams }: any) {
 
   let academyNews: any[] = [];
   try {
+    // Geniş kategori filtresi — Akademi sayfası boş kalmasın
     const snap = await adminDb.collection(`${projectName}_news`)
       .where("status", "==", "published")
-      .where("category", "in", ["ANALİZ", "TREND", "AKADEMİ", "ANALYSIS", "DEKORASYON", "DECORATION", "GÜNDEM"])
       .orderBy("createdAt", "desc")
       .limit(30)
       .get();
-    academyNews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Önce akademi/analiz/trend kategorili olanları filtrele
+    const allNews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const academyFiltered = allNews.filter((a: any) => {
+      const cat = (a.category || '').toUpperCase();
+      return ['ANALİZ', 'TREND', 'AKADEMİ', 'ANALYSIS', 'DEKORASYON', 'DECORATION', 'GÜNDEM', 'İSTİHBARAT', 'PAZAR'].includes(cat)
+        || (a.routing_signals?.academy_value || 0) >= 0.4;
+    });
+    // Akademi filtresi boşsa tüm haberleri göster (boş sayfa olmasın)
+    academyNews = academyFiltered.length > 0 ? academyFiltered : allNews;
   } catch (err) {
     console.error("[ACADEMY] Fetch Error:", err);
   }
@@ -44,7 +52,7 @@ export default async function AcademyPage({ params, searchParams }: any) {
       <GlobalTicker />
       <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="academy" theme="light" />
       
-      <main style={{ flex: 1, maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '4rem 2rem' }}>
+      <main style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '4rem 2rem' }}>
          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <h1 style={{ fontSize: '3rem', fontWeight: 900, fontFamily: "'Playfair Display', serif", color: '#111', textTransform: 'uppercase' }}>
               {t('industryAcademy', lang)}
