@@ -147,6 +147,11 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
       if (result.user) {
         await updateProfile(result.user, { displayName: name });
         await syncSessionCookie(result.user);
+        
+        // 🛂 HAKAN BEY BUG BOUNTY: Race Condition Engelleme
+        // Kullanıcı sayfayı kapatmadan önce pasaportunu (ve TRTex rozetini) hemen cebine koy.
+        const activeDomain = typeof window !== 'undefined' ? window.location.hostname : 'aipyram';
+        await syncSovereignIdentity(result.user, activeDomain);
       }
     } catch (error) {
       console.error("Registration failed:", error);

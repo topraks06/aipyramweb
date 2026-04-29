@@ -140,7 +140,13 @@ export default function TenderDetailClient({ tender, basePath, brandName, lang }
                     <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔒</div>
                     <div style={{ fontSize: '0.8rem', fontFamily: 'var(--m)' }}>Aksiyon alabilmek için giriş yapmalısınız.</div>
                   </div>
-                ) : bidding ? (
+                ) : !user.emailVerified ? (
+                  <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📧</div>
+                    <h4 style={{ color: '#EAB308', marginBottom: '0.5rem' }}>E-posta Onayı Gerekli</h4>
+                    <p style={{ color: '#888', fontSize: '0.85rem' }}>Teklif verebilmek için lütfen e-posta adresinizi doğrulayın. (Spam/Gereksiz kutunuzu kontrol ediniz)</p>
+                  </div>
+                ) : bidding === 'success' ? (
                   <div style={{ textAlign: 'center', padding: '2rem 0' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
                     <h4 style={{ color: '#fff', marginBottom: '0.5rem' }}>Talebiniz İletildi</h4>
@@ -151,24 +157,42 @@ export default function TenderDetailClient({ tender, basePath, brandName, lang }
                     <p style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '2rem', lineHeight: 1.6 }}>
                       Bu fırsat için TRTex aracılığıyla kapalı teklif verebilirsiniz. Bilgileriniz alıcıya doğrudan ve gizli bir şekilde iletilecektir.
                     </p>
+                    
+                    {bidding === 'error' && (
+                      <div style={{ background: '#7f1d1d', color: '#fca5a5', padding: '0.75rem', borderRadius: '4px', marginBottom: '1rem', fontSize: '0.85rem', textAlign: 'center' }}>
+                        Bir hata oluştu. Lütfen tekrar deneyin.
+                      </div>
+                    )}
+                    
                     <button 
-                      onClick={() => {
-                        setBidding(true);
-                        // Burada gerçek bir API call atılabilir
-                        fetch('/api/lead', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            query: `İHALE TEKLİFİ: ${tender.id} - ${tender.title}`,
-                            email: user.email,
-                            timestamp: new Date().toISOString()
-                          })
-                        }).catch(()=>{});
+                      onClick={async () => {
+                        setBidding('loading');
+                        try {
+                          const res = await fetch('/api/leads', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              context_title: `İHALE TEKLİFİ: ${tender.title}`,
+                              context_type: 'TENDER_BID',
+                              company: user.displayName || 'Anonim Firma',
+                              email: user.email,
+                              source: 'trtex_terminal',
+                              timestamp: new Date().toISOString()
+                            })
+                          });
+                          
+                          if (!res.ok) throw new Error('API Error');
+                          setBidding('success');
+                        } catch (e) {
+                          console.error("Bidding error:", e);
+                          setBidding('error');
+                        }
                       }}
+                      disabled={bidding === 'loading'}
                       className={`t-btn ${tender.type === 'TENDER' ? 'red' : 'green'}`} 
-                      style={{ width: '100%', padding: '1.2rem', fontSize: '1rem' }}
+                      style={{ width: '100%', padding: '1.2rem', fontSize: '1rem', opacity: bidding === 'loading' ? 0.5 : 1 }}
                     >
-                      {tender.action_text || 'ŞİMDİ TEKLİF VER'}
+                      {bidding === 'loading' ? 'GÖNDERİLİYOR...' : (tender.action_text || 'ŞİMDİ TEKLİF VER')}
                     </button>
                     <div style={{ textAlign: 'center', marginTop: '1rem', fontFamily: 'var(--m)', fontSize: '0.7rem', color: '#666' }}>
                       🌟 TRTEX_EARLY_BIRD avantajıyla ücretsiz

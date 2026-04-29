@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { db } from '@/integrations/Firebase/client';
+import { db } from '@/lib/firebase-client';
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 export default function ImageQueueAdmin() {

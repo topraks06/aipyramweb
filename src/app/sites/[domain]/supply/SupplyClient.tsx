@@ -15,12 +15,30 @@ export default function SupplyClient({ basePath, brandName, lang }: any) {
     setLoading(true);
     const fd = new FormData(e.currentTarget);
     
-    // We will send this to our /api/lead or to a new firestore doc directly
-    // For now, we mock the submission response for TRTex
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          context_type: type,
+          context_title: `${type === 'HOT_STOCK' ? 'SICAK STOK' : 'KAPASİTE'}: ${fd.get('title')} - ${fd.get('amount')}`,
+          context_location: fd.get('location'),
+          company: user?.displayName || 'Anonim Firma',
+          email: user?.email,
+          message: `Fiyat: ${fd.get('price')} | Detay: ${fd.get('details')}`,
+          source: 'trtex_supply',
+          timestamp: new Date().toISOString()
+        })
+      });
+      
+      if (!res.ok) throw new Error('API Error');
       setSubmitted(true);
-    }, 1500);
+    } catch (err) {
+      console.error('Supply form error:', err);
+      alert("Bir hata oluştu, lütfen tekrar deneyin.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,6 +66,12 @@ export default function SupplyClient({ basePath, brandName, lang }: any) {
             <h2 style={{ fontFamily: 'var(--sf)', fontSize: '1.5rem', fontWeight: 900, marginBottom: '1rem' }}>Sadece Doğrulanmış Üyeler İçin</h2>
             <p style={{ color: '#888', fontSize: '0.9rem', marginBottom: '2rem' }}>Sisteme tedarikçi olarak ilan girmek için giriş yapmanız gerekmektedir. Üstelik 3 aylık test süresince tüm işlemler <strong>ücretsizdir</strong>.</p>
             <a href={`${basePath}/register?lang=${lang}`} className="s-btn" style={{ textDecoration: 'none', display: 'inline-block' }}>Ücretsiz Kayıt Ol</a>
+          </div>
+        ) : !user.emailVerified ? (
+          <div style={{ background: '#2B1B0F', border: '1px solid #EAB308', padding: '3rem', textAlign: 'center', borderRadius: '8px' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📧</div>
+            <h2 style={{ fontFamily: 'var(--sf)', fontSize: '1.5rem', fontWeight: 900, color: '#EAB308', marginBottom: '1rem' }}>E-posta Onayı Gerekli</h2>
+            <p style={{ color: '#aaa', fontSize: '0.9rem' }}>İlan girebilmek için e-posta adresinizi doğrulamanız gerekmektedir. Lütfen gelen kutunuzu (veya Spam klasörünü) kontrol ediniz.</p>
           </div>
         ) : submitted ? (
           <div style={{ background: 'rgba(22, 163, 74, 0.05)', border: '1px solid #16A34A', padding: '4rem 2rem', textAlign: 'center', borderRadius: '8px' }}>
