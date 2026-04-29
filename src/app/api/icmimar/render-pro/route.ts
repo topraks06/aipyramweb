@@ -48,16 +48,18 @@ export async function POST(req: NextRequest) {
     }
 
     // ══════════════════════════════════════════════════════════
-    //  AUTH — Dev bypass + Firebase session
+    //  AUTH — Dev bypass + Firebase session + 👑 SOVEREIGN BYPASS
     // ══════════════════════════════════════════════════════════
+    const SOVEREIGN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
     let uid: string | null = null;
+    let isSovereign = false;
     const isDev = process.env.NODE_ENV === 'development';
 
     const sessionCookie = req.cookies.get("session");
 
     if (isDev) {
-      // Localhost'ta dev-bypass kullanıcısı her zaman geçer
       uid = 'dev-bypass-user';
+      isSovereign = true;
       console.log("[ICMIMAR-RENDER] Dev bypass aktif, auth atlanıyor.");
     } else if (!sessionCookie?.value) {
       return NextResponse.json(
@@ -68,6 +70,13 @@ export async function POST(req: NextRequest) {
       try {
         const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
         uid = decoded.uid;
+        
+        // 👑 SOVEREIGN BYPASS — Kurucu email kontrolü
+        const userRecord = await admin.auth().getUser(uid);
+        isSovereign = SOVEREIGN_EMAILS.includes(userRecord.email?.toLowerCase() || '');
+        if (isSovereign) {
+          console.log(`[ICMIMAR-RENDER] 👑 Sovereign erişim: ${userRecord.email} — tüm engeller atlandı`);
+        }
       } catch (authErr) {
         console.error("[ICMIMAR-RENDER] Auth error:", authErr);
         return NextResponse.json(
@@ -77,8 +86,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Kredi kontrolü (sadece prodüksiyon)
-    if (!isDev && uid && adminDb) {
+    // Kredi kontrolü (sadece normal kullanıcılar, sadece prodüksiyon)
+    if (!isDev && !isSovereign && uid && adminDb) {
       const quotaRef = adminDb.collection('icmimar_render_quota').doc(uid);
       const quotaDoc = await quotaRef.get();
       const usedRenders = quotaDoc.exists ? (quotaDoc.data()?.usedRenders || 0) : 0;
@@ -358,8 +367,8 @@ KRİTİK KURALLAR (İHLAL EDİLEMEZ):
     const duration = Date.now() - startTime;
     console.log(`[ICMIMAR-RENDER v5.0] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
 
-    // ── Kota Sayacı ──
-    if (uid && uid !== 'dev-bypass-user' && adminDb) {
+    // ── Kota Sayacı (👑 Sovereign atlanır) ──
+    if (uid && uid !== 'dev-bypass-user' && !isSovereign && adminDb) {
       const quotaRef = adminDb.collection('icmimar_render_quota').doc(uid);
       const quotaDoc = await quotaRef.get();
       if (quotaDoc.exists) {

@@ -1,5 +1,34 @@
-import { adminDb } from '@/lib/firebase-admin';
+import { adminDb, admin } from '@/lib/firebase-admin';
 import { getNode } from '@/lib/sovereign-config';
+
+// ═══════════════════════════════════════════════════════
+// 🛡️ SOVEREIGN BYPASS — Kurucu ASLA engellenmez
+// Sovereign email'ler: hakantoprak71@gmail.com + env
+// ═══════════════════════════════════════════════════════
+const SOVEREIGN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+
+// Sovereign UID cache (email → uid lookup bir kez yapılır)
+const sovereignUidCache = new Set<string>();
+
+/**
+ * Sovereign (kurucu) kontrolü — UID bazlı
+ * İlk çağrıda Firebase Auth'tan email çekilir, sonra cache'lenir
+ */
+async function isSovereign(uid: string): Promise<boolean> {
+  if (sovereignUidCache.has(uid)) return true;
+  
+  try {
+    const userRecord = await admin.auth().getUser(uid);
+    const email = userRecord.email?.toLowerCase() || '';
+    if (SOVEREIGN_EMAILS.includes(email)) {
+      sovereignUidCache.add(uid);
+      console.log(`[WalletService] 👑 Sovereign tespit edildi: ${email} — sınırsız erişim`);
+      return true;
+    }
+  } catch { /* sessiz */ }
+  
+  return false;
+}
 
 // Define agent credit costs (Sovereign Economics)
 const AGENT_COSTS: Record<string, number> = {
@@ -19,6 +48,11 @@ export async function getAgentCost(agentType: string): Promise<number> {
 }
 
 export async function checkCredits(SovereignNodeId: string, uid: string, agentType: string): Promise<{allowed: boolean, remaining: number}> {
+  // 👑 SOVEREIGN BYPASS — Kurucu her zaman sınırsız
+  if (await isSovereign(uid)) {
+    return { allowed: true, remaining: 99999 };
+  }
+
   const cost = await getAgentCost(agentType);
   if (cost === 0) return { allowed: true, remaining: 999 };
 
@@ -55,6 +89,12 @@ export async function checkCredits(SovereignNodeId: string, uid: string, agentTy
 }
 
 export async function deductCredit(SovereignNodeId: string, uid: string, agentType: string, customAmount?: number): Promise<void> {
+  // 👑 SOVEREIGN BYPASS — Kurucu'dan kredi düşürülmez
+  if (await isSovereign(uid)) {
+    console.log(`[WalletService] 👑 Sovereign ${uid} — kredi düşürme atlandı`);
+    return;
+  }
+
   const cost = customAmount !== undefined ? customAmount : await getAgentCost(agentType);
   if (cost <= 0) return;
 

@@ -51,8 +51,12 @@ export async function POST(req: NextRequest) {
     // ══════════════════════════════════════════════════════════
     //  AUTH GEÇİDİ: Mail onaylı üye zorunlu + 5 ücretsiz render
     // ══════════════════════════════════════════════════════════
+    // ═══ SOVEREIGN EMAILS ═══
+    const SOVEREIGN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+
     const sessionCookie = req.cookies.get("session");
     let uid: string | null = null;
+    let isSovereign = false;
 
     if (!sessionCookie?.value) {
       return NextResponse.json(
@@ -65,29 +69,37 @@ export async function POST(req: NextRequest) {
       const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
       uid = decoded.uid;
 
-      // E-posta doğrulama kontrolü
       const userRecord = await admin.auth().getUser(uid);
-      if (!userRecord.emailVerified) {
-        return NextResponse.json(
-          { error: "Render kullanmak için e-posta adresinizi doğrulamanız gerekiyor. Lütfen gelen kutunuzu kontrol edin." },
-          { status: 403 }
-        );
-      }
+      
+      // 👑 SOVEREIGN BYPASS — Kurucu email kontrolü
+      isSovereign = SOVEREIGN_EMAILS.includes(userRecord.email?.toLowerCase() || '');
+      
+      if (isSovereign) {
+        console.log(`[RENDER-PRO] 👑 Sovereign erişim: ${userRecord.email} — tüm engeller atlandı`);
+      } else {
+        // E-posta doğrulama kontrolü (sadece normal kullanıcılar için)
+        if (!userRecord.emailVerified) {
+          return NextResponse.json(
+            { error: "Render kullanmak için e-posta adresinizi doğrulamanız gerekiyor. Lütfen gelen kutunuzu kontrol edin." },
+            { status: 403 }
+          );
+        }
 
-      // Kredi kontrolü — önce aloha-sdk wallet'ı kontrol et
-      const walletCheck = await checkCredits(SovereignNodeId, uid, "render");
-      if (!walletCheck.allowed) {
-        // Wallet'ta kredi yoksa → ücretsiz kota kontrolü
-        if (adminDb) {
-          const userDoc = await adminDb.collection('perde_render_quota').doc(uid).get();
-          const quota = userDoc.exists ? userDoc.data() : null;
-          const usedRenders = quota?.usedRenders || 0;
+        // Kredi kontrolü — önce aloha-sdk wallet'ı kontrol et (sadece normal kullanıcılar)
+        const walletCheck = await checkCredits(SovereignNodeId, uid, "render");
+        if (!walletCheck.allowed) {
+          // Wallet'ta kredi yoksa → ücretsiz kota kontrolü
+          if (adminDb) {
+            const userDoc = await adminDb.collection('perde_render_quota').doc(uid).get();
+            const quota = userDoc.exists ? userDoc.data() : null;
+            const usedRenders = quota?.usedRenders || 0;
 
-          if (usedRenders >= FREE_RENDER_QUOTA) {
-            return NextResponse.json(
-              { error: `Ücretsiz ${FREE_RENDER_QUOTA} tasarım hakkınız doldu. Devam etmek için kredi satın alın.` },
-              { status: 402 }
-            );
+            if (usedRenders >= FREE_RENDER_QUOTA) {
+              return NextResponse.json(
+                { error: `Ücretsiz ${FREE_RENDER_QUOTA} tasarım hakkınız doldu. Devam etmek için kredi satın alın.` },
+                { status: 402 }
+              );
+            }
           }
         }
       }
@@ -401,8 +413,8 @@ KRİTİK KURALLAR (İHLAL EDİLEMEZ):
     const duration = Date.now() - startTime;
     console.log(`[RENDER-PRO v4.1] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
 
-    // ── Kredi Düşürme + Ücretsiz Kota Sayacı ──
-    if (uid) {
+    // ── Kredi Düşürme + Ücretsiz Kota Sayacı (👑 Sovereign atlanır) ──
+    if (uid && !isSovereign) {
       await deductCredit(SovereignNodeId, uid, "render");
       // Ücretsiz kota sayacını da artır
       if (adminDb) {

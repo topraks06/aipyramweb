@@ -32,19 +32,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── Auth & Kredi ──
+    // ── Auth & Kredi + 👑 SOVEREIGN BYPASS ──
+    const SOVEREIGN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
     const sessionCookie = req.cookies.get("session");
     let uid: string | null = null;
+    let isSovereign = false;
     if (sessionCookie?.value) {
       try {
         const decoded = await admin.auth().verifySessionCookie(sessionCookie.value, true);
         uid = decoded.uid;
-        const walletCheck = await checkCredits(SovereignNodeId, uid, "render");
-        if (!walletCheck.allowed) {
-          return NextResponse.json(
-            { error: "Yeterli render krediniz bulunmuyor." },
-            { status: 402 }
-          );
+        
+        // 👑 SOVEREIGN BYPASS — Kurucu email kontrolü
+        const userRecord = await admin.auth().getUser(uid);
+        isSovereign = SOVEREIGN_EMAILS.includes(userRecord.email?.toLowerCase() || '');
+        
+        if (isSovereign) {
+          console.log(`[RENDER-EDIT] 👑 Sovereign erişim: ${userRecord.email} — kredi kontrolü atlandı`);
+        } else {
+          const walletCheck = await checkCredits(SovereignNodeId, uid, "render");
+          if (!walletCheck.allowed) {
+            return NextResponse.json(
+              { error: "Yeterli render krediniz bulunmuyor." },
+              { status: 402 }
+            );
+          }
         }
       } catch (authErr) {
         console.error("[RENDER-EDIT] Auth error:", authErr);
