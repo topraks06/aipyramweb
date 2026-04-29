@@ -264,6 +264,7 @@ Her sprint = 1 görev grubu. Sırayla yap. Atlama.
 | 5. Admin | 20-22 | ✅ | — | — |
 | 6. Otonom | 23-24 | ✅ | — | — |
 | 7. SSO Golden Pass & Anti-Anchoring | Extra | ✅ | feat(sovereign): implement TRTex Golden Pass | Başarılı |
+| 8. TRTex Zero-Mock Sanitization | Extra | ✅ | 6335d9f — statik veriler kaldırıldı, canlı payload bağlandı, /trade 404 düzeltildi | Exit code: 0 |
 
 **Her aşama bitince bu tabloyu güncelle: ⬜ → ✅**
 
