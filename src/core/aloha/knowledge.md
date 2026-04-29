@@ -235,7 +235,7 @@ TÜM EKOSİSTEM İÇİN GEÇERLİ (TRTEX, HOMETEX, PERDE.AI, DIDIMEMLAK, AIPYRAM
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Diller: TR 🇹🇷 | EN 🇬🇧 | DE 🇩🇪 | FR 🇫🇷 | RU 🇷🇺 | AR 🇸🇦 | ZH 🇨🇳
-Çeviri model: gemini-2.5-flash (GA, hızlı + ekonomik)
+Çeviri model: gemini-3.1-flash (GA, hızlı + ekonomik)
 Admin paneli: YALNIZCA Türkçe
 Teknik terimler (AI, GmbH, GDPR) çevrilmez
 Çeviri başarısızsa haber DRAFT'a düşer, yayınlanmaz
@@ -246,11 +246,11 @@ Teknik terimler (AI, GmbH, GDPR) çevrilmez
 
 | Kullanım | Model |
 |---|---|
-| TRTEX Chat + Haber | gemini-2.5-flash |
-| TRTEX CRON (Aloha autoRunner) | gemini-2.5-flash |
-| 7 Dil Çeviri | gemini-2.5-flash |
-| perde.ai Chat | gemini-2.5-flash |
-| Pro Analiz (gerektiğinde) | gemini-2.5-pro |
+| TRTEX Chat + Haber | gemini-3.1-flash (Genkit Flow) |
+| TRTEX CRON (Aloha autoRunner) | gemini-3.1-flash (Genkit Flow) |
+| 7 Dil Çeviri | gemini-3.1-flash |
+| perde.ai Chat | gemini-3.1-flash |
+| Pro Analiz (gerektiğinde) | gemini-3.1-pro |
 | Görsel Üretim | Imagen 3 (imagen-3.0-generate-001) |
 | ❌ YASAK | gemini-1.5-*, Flux, Dall-E, Unsplash |
 

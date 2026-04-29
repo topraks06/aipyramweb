@@ -21,7 +21,6 @@ export async function analyzeRoom(imageBase64: string, SovereignNodeId: string =
     } else if (SovereignNodeId === 'vorhang') {
         systemInstruction = "Du bist ein europäischer Innenarchitekt. Analysiere den Raum und mache Vorhang-Empfehlungen. Antworte NUR im JSON-Format auf Deutsch.";
     }
-    const model = 'gemini-2.5-flash';
 
     const prompt = `Analiz formatı:
 {

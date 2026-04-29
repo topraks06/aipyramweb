@@ -32,7 +32,7 @@ Lütfen bu kullanıcıya sistemi denettirecek heyecan verici bir karşılama met
 \n\n${this.basePrompt}`;
 
     const { text } = await alohaAI.generate(prompt, {
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash',
       temperature: 0.8
     }, 'FunnelAgent');
 

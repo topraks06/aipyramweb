@@ -1,3 +1,7 @@
+/**
+ * LATEST VERSION - HAKAN BEY ONAYLI. DO NOT REVERT.
+ * [HAKAN BEY KURALI (ANTI-REGRESSION)]: Sistemdeki modeller (gemini-3.1-flash, Genkit) hata verirse, AI ajanları ASLA modeli eski bir sürüme (örn: 2.5-flash) veya eski agentBus yapısına düşüremez. Hata veren kod çözülecek, API limitleri beklenecek ama sürüm düşürülmeyecek!
+ */
 import { adminDb } from '@/lib/firebase-admin';
 import { alohaAI, aiGenkit } from './aiClient';
 import crypto from 'crypto';

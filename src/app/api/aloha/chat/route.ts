@@ -48,7 +48,7 @@ export async function POST(req: Request) {
         const nodes = ['perde.ai', 'trtex.com', 'hometex.ai', 'vorhang.ai', 'icmimar.ai'];
         const tokenUsage = alohaAI.getTokenUsage?.() || { dailyTokensUsed: 0, dailyBudget: 100000, dailyCallCount: 0 };
         return NextResponse.json({
-          text: `## \u{1F4CA} Sovereign OS \u2014 Sistem Durumu\n\n**Tarih:** ${new Date().toLocaleDateString('tr-TR')}\n**Saat:** ${new Date().toLocaleTimeString('tr-TR')}\n\n### \u{1F310} Node Durumlar\u0131\n${nodes.map(n => `\u2022 **${n}** \u2014 \u{1F7E2} Online`).join('\n')}\n\n### \u{1F916} ALOHA Motor\n\u2022 Model: \`gemini-2.5-flash\`\n\u2022 G\u00fcnl\u00fck Token: ${tokenUsage.dailyTokensUsed}/${tokenUsage.dailyBudget}\n\u2022 \u00c7a\u011fr\u0131 Say\u0131s\u0131: ${tokenUsage.dailyCallCount}\n\u2022 CFO Guard: \u{2705} Aktif\n\n### \u{1F527} Servisler\n\u2022 Firebase: \u{2705}\n\u2022 Gemini API: \u{2705}\n\u2022 Firestore: \u{2705}`,
+          text: `## \u{1F4CA} Sovereign OS \u2014 Sistem Durumu\n\n**Tarih:** ${new Date().toLocaleDateString('tr-TR')}\n**Saat:** ${new Date().toLocaleTimeString('tr-TR')}\n\n### \u{1F310} Node Durumlar\u0131\n${nodes.map(n => `\u2022 **${n}** \u2014 \u{1F7E2} Online`).join('\n')}\n\n### \u{1F916} ALOHA Motor\n\u2022 Model: \`gemini-3.1-flash\` (Genkit)\n\u2022 G\u00fcnl\u00fck Token: ${tokenUsage.dailyTokensUsed}/${tokenUsage.dailyBudget}\n\u2022 \u00c7a\u011fr\u0131 Say\u0131s\u0131: ${tokenUsage.dailyCallCount}\n\u2022 CFO Guard: \u{2705} Aktif\n\n### \u{1F527} Servisler\n\u2022 Firebase: \u{2705}\n\u2022 Gemini API: \u{2705}\n\u2022 Firestore: \u{2705}`,
           iterations: 0,
           confidence: 0.95,
           execution_ready: false,
@@ -207,7 +207,7 @@ export async function POST(req: Request) {
 
     // Build Gemini Chat with history support
     const chatConfig = {
-      model: "gemini-2.5-flash",
+      model: "gemini-3.1-flash",
       config: {
         systemInstruction: `${SYSTEM_PROMPT}${knowledgeBase}\nBağlam: ${JSON.stringify(systemContext || {})}${memoryContextString}${lessonsString}`,
         tools: tools,

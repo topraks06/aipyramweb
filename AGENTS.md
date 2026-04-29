@@ -60,6 +60,10 @@ Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncell
 - **Blueprint kurtarma:** `git log --all -- .agents/skills/SOVEREIGN_TURNKEY_BLUEPRINT.md`
 
 ## 1. Askeri Disiplin & Güvenlik (Sandbox Mantığı)
+> [!CAUTION]
+> **HAKAN BEY KURALI (ANTI-REGRESSION - SIFIR TAVİZ):** 
+> Sistemdeki güncel modeller (`gemini-3.1-flash`, `Genkit Flow`) herhangi bir noktada API limiti, timeout veya parse hatası verirse, AI ajanları ASLA modeli eski bir sürüme (örn: `gemini-2.5-flash`) veya eski mimariye (örn: `simulateAgentWithGemini`) düşüremez. Hata veren mantık çözülecek, limitler beklenecek ama "çalışmıyor" diyerek kod eskiye döndürülmeyecek!
+
 - **Güvenli Yürütme (Sandbox Stratejisi):** Projeyi tehlikeye atacak dosya silme veya yapısal değişiklik eylemleri kesinlikle yalıtılmış bir ortam zihniyeti ile uygulanmalıdır. İzin veya yedek olmadan ana dosyalara kalıcı zarar verilmeyecektir.
 - **Hatasız, Tavizsiz Kodlama:** "Unuttum, pardon" yaklaşımı kabul edilemez. Bir özellik veya dosya oluşturulmadan ya da güncellenmeden önce tüm senaryolar %100 test edilecek.
 - **ASLA projeden dosya silinmez** — gereksiz dosyalar `_archive/` altına taşınır.
@@ -88,14 +92,14 @@ Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncell
 4. **GEÇİŞ:** Eski model/API **YEDEK (fallback)** olarak korunur. Yeni ile birlikte çalışır.
 5. **ARŞİVLEME:** İşi biten görev emirleri (tüm checkboxlar ✅) `_archive/skills-completed-q2/` altına taşınır.
 
-### Güncel Model Referansları (29 Nisan 2026)
+### Güncel Model Referansları (29 Nisan 2026 - Q2 GENKIT UPGRADE)
 | Amaç | Model | Dosya | Durum |
 |------|-------|-------|-------|
-| Ana LLM (Rutin) | `gemini-2.5-flash` | `aiClient.ts` | ✅ Stabil |
-| Derin Analiz | `gemini-3.1-pro` | `aiClient.ts` | ✅ Stabil |
+| Ana LLM (Rutin) | `gemini-3.1-flash` (Genkit) | `aiClient.ts` | ✅ Stabil |
+| Derin Analiz | `gemini-3.1-pro` (Genkit) | `aiClient.ts` | ✅ Stabil |
 | Görsel Üretim | `gemini-3.1-flash-image-preview` | `aiClient.ts` | ✅ Q2 YENİ |
 | Embedding | `gemini-embedding-2` (3072-dim) | `aiClient.ts` | ✅ Q2 YENİ |
-| Ajan İletişimi | A2A Protocol + `transfer_to_agent()` | `agentBus.ts` | ✅ Q2 YENİ |
+| Ajan İletişimi | Genkit Flow (`simulateAgentFlow`) | `agentBus.ts` | ✅ Q2 YENİ |
 
 ## 6. 🏥 Yaşayan Ekosistem Sağlık Kuralları (Q2 2026 — YENİ)
 > **KURAL:** Aşağıdaki 11 node her zaman güncel ve tam çalışır durumda olmalıdır.

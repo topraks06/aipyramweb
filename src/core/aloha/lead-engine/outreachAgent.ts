@@ -38,7 +38,7 @@ Lütfen iletişim mesajını oluştur.
 \n\n${this.basePrompt}`;
 
     const { text } = await alohaAI.generate(prompt, {
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash',
       temperature: 0.7
     }, 'OutreachAgent');
 

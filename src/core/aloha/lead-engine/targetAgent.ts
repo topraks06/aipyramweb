@@ -46,7 +46,7 @@ Cevabın kesinlikle geçerli bir JSON olmalıdır.
     const tools = [{ googleSearch: {} }];
 
     const result = await alohaAI.generateJSON<{ leads: GlobalLead[] }>(prompt, {
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash',
       tools,
       temperature: 0.4
     }, 'TargetAgent');
@@ -73,7 +73,7 @@ Cevabın kesinlikle geçerli bir JSON olmalıdır.
     const tools = [{ googleSearch: {} }];
 
     const result = await alohaAI.generateJSON<{ leads: GlobalLead[] }>(prompt, {
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash',
       tools,
       temperature: 0.5
     }, 'TargetAgent_TrtexTrigger');
