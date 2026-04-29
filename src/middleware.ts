@@ -53,7 +53,12 @@ const LOCALIZED_ROUTES: Record<string, Record<string, string>> = {
     '/hesabim': '/profile',
     '/siparislerim': '/orders',
     '/giris': '/login',
-    '/kayit': '/register'
+    '/kayit': '/register',
+    '/fuarlar': '/fairs',
+    '/fuar-takvimi': '/fairs',
+    '/trendler': '/trends',
+    '/ticaret': '/trade',
+    '/hakkimizda': '/about'
   },
   de: {
     '/nachrichten': '/news',

@@ -58,7 +58,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   const getUrl = (key: string) => {
     const bp = basePath || '';
     if (safeLang === 'tr') {
-      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'radar', academy: 'akademi', fairs: 'fuar-takvimi', trade: 'ticaret', about: 'hakkimizda' };
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'trendler', academy: 'akademi', fairs: 'fuarlar', trade: 'ticaret', about: 'hakkimizda' };
       return `${bp}/${map[key] || key}`;
     }
     return `${bp}/${key}?lang=${safeLang}`;

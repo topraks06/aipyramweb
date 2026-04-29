@@ -63,14 +63,27 @@ export default async function AcademyPage({ params, searchParams }: any) {
          </div>
 
          {academyNews.length === 0 ? (
-            <div style={{ padding: '6rem 2rem', textAlign: 'center', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ fontSize: '3.5rem', marginBottom: '1.5rem', opacity: 0.8 }}>🎓</div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#111827', marginBottom: '1rem' }}>
+            <div style={{ padding: '4rem 2rem', textAlign: 'center', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎓</div>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#111827', marginBottom: '0.75rem', fontFamily: "'Playfair Display', serif" }}>
                 Akademi İçerikleri Hazırlanıyor
               </h2>
-              <p style={{ color: '#6B7280', fontSize: '1.1rem', maxWidth: '500px', lineHeight: 1.6 }}>
-                Sektör profesyonelleri, toptancılar ve üreticiler için derinlemesine pazar analizleri, trend raporları ve ticari eğitim dokümanları çok yakında bu ekranda yerini alacak.
+              <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+                Sektör profesyonelleri için derinlemesine pazar analizleri, trend raporları ve ticari eğitim dokümanları çok yakında bu ekranda yerini alacak.
               </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '700px', margin: '0 auto' }}>
+                {[
+                  { icon: '📊', title: 'Pazar Analizi', desc: 'Küresel ev tekstili pazar trendleri' },
+                  { icon: '🧵', title: 'Hammadde Rehberi', desc: 'İplik, kumaş ve aksesuar bilgi bankası' },
+                  { icon: '📈', title: 'Trend Raporları', desc: '2026/2027 sezon öngörüleri' },
+                ].map((item, i) => (
+                  <div key={i} style={{ padding: '1.25rem', border: '1px solid #E5E7EB', borderRadius: '8px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{item.icon}</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#111', marginBottom: '0.25rem' }}>{item.title}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
          ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>

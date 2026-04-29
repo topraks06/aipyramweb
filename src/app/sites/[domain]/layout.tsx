@@ -1,4 +1,4 @@
-import { Schema, Type } from "@google/genai";
+
 import { ReactNode } from "react";
 import { Metadata } from "next";
 import { resolveNodeFromDomain as getNodeConfig } from "@/lib/sovereign-config";
@@ -108,12 +108,13 @@ export default async function DomainLayout({
   
   const isPerde = exactDomain.includes("perde");
   const isIcmimar = exactDomain.includes("icmimar");
+  const isTrtex = exactDomain.includes("trtex");
 
   return (
     <>
       <NodeJsonLd domain={exactDomain} />
       {children}
-      {!isPerde && !isIcmimar && <ConciergeWidget />}
+      {!isPerde && !isIcmimar && !isTrtex && <ConciergeWidget />}
       {isPerde && <PerdeClientWrapper />}
       {isIcmimar && <IcmimarClientWrapper />}
     </>

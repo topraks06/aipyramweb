@@ -6,5 +6,6 @@ export default async function RadarRedirectPage({ params, searchParams }: any) {
   const domain = decodeURIComponent(resolvedParams.domain).split(":")[0];
   const lang = resolvedSearch?.lang || 'tr';
   
-  redirect(`/sites/${domain}/tenders?lang=${lang}`);
+  // Radar → Trends sayfasına yönlendir (Dünya Radarı burada)
+  redirect(`/sites/${domain}/trends?lang=${lang}`);
 }

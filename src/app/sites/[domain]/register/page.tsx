@@ -4,9 +4,8 @@ export const dynamic = "force-dynamic";
 
 import RegisterPerde from '@/components/node-perde/auth/Register';
 import RegisterHometex from '@/components/node-hometex/auth/Register';
-// icmimar için register bileşeni var mı kontrol ediyoruz
-// icmimar için @/components/node-icmimar/auth/Register var.
 import RegisterIcmimar from '@/components/node-icmimar/auth/Register';
+import RegisterTrtex from '@/components/trtex/auth/Register';
 
 export default async function RegisterPage({ params }: { params: Promise<{ domain: string }> }) {
   const { domain } = await params;
@@ -18,6 +17,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ domai
   if (node.id === 'perde') Register = RegisterPerde;
   else if (node.id === 'hometex') Register = RegisterHometex;
   else if (node.id === 'icmimar') Register = RegisterIcmimar;
+  else if (node.id === 'trtex' || exactDomain.includes('trtex')) Register = RegisterTrtex;
   else if (exactDomain.includes('heimtex')) {
     Register = (await import('@/components/node-heimtex/auth/Register')).default;
   }

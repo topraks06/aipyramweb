@@ -62,7 +62,36 @@ export default async function FairsPage({ params, searchParams }: any) {
          </div>
 
          {fairsNews.length === 0 ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: '#6B7280', fontWeight: 600 }}>{t('noFairContent', lang)}</div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ padding: '3rem 2rem', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '2rem' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📅</div>
+                <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#111827', marginBottom: '0.75rem', fontFamily: "'Playfair Display', serif" }}>
+                  Fuar Takvimi
+                </h2>
+                <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+                  Ev tekstili sektörünün önde gelen küresel fuarları — AI destekli katılımcı ve trend analizi ile.
+                </p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                {[
+                  { name: 'Heimtextil Frankfurt', date: 'Ocak 2027', location: 'Frankfurt, Almanya', icon: '🇩🇪' },
+                  { name: 'Domotex Hannover', date: 'Ocak 2027', location: 'Hannover, Almanya', icon: '🇩🇪' },
+                  { name: 'Maison & Objet', date: 'Ocak 2027', location: 'Paris, Fransa', icon: '🇫🇷' },
+                  { name: 'EVTEKS İstanbul', date: 'Mayıs 2026', location: 'İstanbul, Türkiye', icon: '🇹🇷' },
+                  { name: 'Intertextile Shanghai', date: 'Eylül 2026', location: 'Şanghay, Çin', icon: '🇨🇳' },
+                  { name: 'Index Dubai', date: 'Eylül 2026', location: 'Dubai, BAE', icon: '🇦🇪' },
+                ].map((fair, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem', background: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', textAlign: 'left' }}>
+                    <div style={{ fontSize: '2rem', flexShrink: 0 }}>{fair.icon}</div>
+                    <div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111' }}>{fair.name}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#6B7280', marginTop: '0.15rem' }}>{fair.location}</div>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.7rem', fontWeight: 700, color: '#CC0000', marginTop: '0.3rem' }}>{fair.date}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
          ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {fairsNews.map((article: any, index: number) => {
