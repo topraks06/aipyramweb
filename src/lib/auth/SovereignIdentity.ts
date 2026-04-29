@@ -119,6 +119,16 @@ export async function syncSovereignIdentity(user: User, activeNode: string): Pro
     const badges = [...(data.passport?.verifiedBadges || [])];
     if (user.emailVerified && !badges.includes('email')) badges.push('email');
     if (user.providerData?.some(p => p.providerId === 'google.com') && !badges.includes('google')) badges.push('google');
+    // TRTex erken erişimdeyse (3 ay test), eski kullanıcılara da bu hakkı ver
+    const isTrtexNode = activeNode.includes('trtex') || activeNode.includes('localhost');
+    if (isTrtexNode && !badges.includes('TRTEX_EARLY_BIRD')) {
+      badges.push('TRTEX_EARLY_BIRD');
+      // Kredi vermiyoruz, TRTEX_EARLY_BIRD rozeti TRTex içindeki ödeme duvarlarını aşar!
+      // updates.unifiedCredits = 99999; (İPTAL - Diğer projelerde sömürülmesini engeller)
+      updates.tier = 'Gold';
+      if (data.globalRole === 'free') updates.globalRole = 'pro';
+    }
+
     if (badges.length !== (data.passport?.verifiedBadges?.length || 0)) {
       updates['passport.verifiedBadges'] = badges;
     }
@@ -128,12 +138,14 @@ export async function syncSovereignIdentity(user: User, activeNode: string): Pro
     return { ...data, ...updates } as SovereignUser;
   } else {
     // ═══ YENİ KULLANICI ═══
-    const globalRole: SovereignGlobalRole = isSovereign ? 'sovereign' : 'free';
-    const initialCredits = isSovereign ? 99999 : 5; // Yeni üye = 5 başlangıç kredisi
+    const isTrtexSignup = activeNode.includes('trtex') || activeNode.includes('localhost');
+    const globalRole: SovereignGlobalRole = isSovereign ? 'sovereign' : (isTrtexSignup ? 'pro' : 'free');
+    const initialCredits = isSovereign ? 99999 : 5; // TRTex test üyelerine 99999 vermek yasaktır, Icmimar.ai'yi batırır! Sadece rozet verilir.
 
     const badges: string[] = [];
     if (user.emailVerified) badges.push('email');
     if (user.providerData?.some(p => p.providerId === 'google.com')) badges.push('google');
+    if (isTrtexSignup) badges.push('TRTEX_EARLY_BIRD');
 
     const newUser: SovereignUser = {
       uid: user.uid,
@@ -141,7 +153,7 @@ export async function syncSovereignIdentity(user: User, activeNode: string): Pro
       name: user.displayName || '',
       photoURL: user.photoURL || undefined,
       globalRole,
-      tier: isSovereign ? 'Platinum' : (badges.includes('email') ? 'Bronze' : 'Free'),
+      tier: isSovereign ? 'Platinum' : (isTrtexSignup ? 'Gold' : (badges.includes('email') ? 'Bronze' : 'Free')),
       nodes: [activeNode],
       unifiedCredits: initialCredits,
       creditUsage: {},

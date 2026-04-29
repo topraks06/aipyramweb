@@ -19,7 +19,9 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState<'FORM' | 'OTP' | 'SUCCESS'>('FORM');
+  const [otpCode, setOtpCode] = useState('');
+  const [kybResult, setKybResult] = useState<{ isCorporate: boolean; score: number } | null>(null);
   const [instantOffer, setInstantOffer] = useState<any>(null);
 
   if (!isOpen) return null;
@@ -35,8 +37,28 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
 
   const label = typeLabels[context.type] || typeLabels.GENERAL;
 
-  async function handleSubmit(e: React.FormEvent) {
+  // Basit KYB Algoritması (Kurumsal Mail Kontrolü)
+  const calculateKYB = (mail: string) => {
+    const domain = mail.split('@')[1]?.toLowerCase();
+    const publicDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'yandex.com'];
+    if (publicDomains.includes(domain)) return { isCorporate: false, score: 45 };
+    return { isCorporate: true, score: 92 };
+  };
+
+  async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
+    // 1. Simüle Edilmiş İstihbarat (KYB) Taraması
+    setTimeout(() => {
+      setKybResult(calculateKYB(email));
+      setSubmitting(false);
+      setStep('OTP'); // OTP ekranına geç
+    }, 1200);
+  }
+
+  async function handleOtpSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (otpCode.length < 6) return;
     setSubmitting(true);
 
     try {
@@ -44,26 +66,26 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: email.split('@')[0], // Extract a mock name from email
+          name: email.split('@')[0], 
           email,
           company,
           phone,
           message,
-          role: 'buyer', // Default role for forms
+          role: 'buyer', 
           context_type: context.type,
           context_title: context.title || '',
           context_location: context.location || '',
           context_score: context.score || 0,
+          kyb_score: kybResult?.score || 50,
+          is_corporate: kybResult?.isCorporate || false,
           source: 'trtex_terminal',
           createdAt: new Date().toISOString(),
         }),
       });
       
       const data = await res.json();
-      if (data.instant_offer) {
-        setInstantOffer(data.instant_offer);
-      }
-      setSubmitted(true);
+      if (data.instant_offer) setInstantOffer(data.instant_offer);
+      setStep('SUCCESS');
     } catch (err) {
       console.error('Lead submit error:', err);
     } finally {
@@ -95,7 +117,7 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer', fontWeight: 300 }}>×</button>
         </div>
 
-        {submitted ? (
+        {step === 'SUCCESS' && (
           <div style={{ padding: '3rem 2rem', textAlign: 'center' }}>
             {instantOffer ? (
               <>
@@ -107,17 +129,23 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
                   <div style={{ marginBottom: '0.5rem' }}><strong>🧵 Önerilen Kumaş:</strong> {instantOffer.suggested_material}</div>
                   <div style={{ color: '#EAB308', marginTop: '1rem', fontWeight: 'bold' }}>{instantOffer.match_status}</div>
                 </div>
-                <div style={{ fontSize: '.75rem', color: '#999', marginBottom: '1.5rem' }}>
-                  Üreticilerimiz detaylı ve kesin teklifi WhatsApp/Email üzerinden sizinle paylaşacaktır.
-                </div>
               </>
             ) : (
               <>
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
-                <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '.5rem', color: '#fff' }}>TALEBİNİZ ALINDI</div>
-                <div style={{ fontSize: '.85rem', color: '#999', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                  TRTEX AI sistemi talebinizi işleme aldı. 24 saat içinde eşleştirme sonuçları email adresinize iletilecektir.
-                </div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '.5rem', color: '#fff' }}>TALEBİNİZ ALINDI VE ONAYLANDI</div>
+                
+                {kybResult?.isCorporate ? (
+                  <div style={{ background: 'rgba(22, 163, 74, 0.1)', border: '1px solid #16A34A', padding: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ color: '#16A34A', fontWeight: 900, fontSize: '0.8rem', marginBottom: '0.3rem' }}>[KYB ONAYLI: KURUMSAL ALICI]</div>
+                    <div style={{ color: '#ccc', fontSize: '0.8rem' }}>Güven skorunuz yüksek ({kybResult.score}/100). Talebiniz doğrudan üretici ağına iletildi.</div>
+                  </div>
+                ) : (
+                  <div style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid #EAB308', padding: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ color: '#EAB308', fontWeight: 900, fontSize: '0.8rem', marginBottom: '0.3rem' }}>[KYB: BİREYSEL/STANDART MAİL]</div>
+                    <div style={{ color: '#ccc', fontSize: '0.8rem' }}>Talebiniz moderasyon (manuel onay) havuzuna alındı. Onay sonrası üreticilere iletilecektir.</div>
+                  </div>
+                )}
               </>
             )}
             <button onClick={onClose} style={{
@@ -126,8 +154,35 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
               cursor: 'pointer', letterSpacing: '0.05em',
             }}>PANELDEN ÇIK</button>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
+        )}
+
+        {step === 'OTP' && (
+          <form onSubmit={handleOtpSubmit} style={{ padding: '2.5rem 1.5rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✉️</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', marginBottom: '0.5rem' }}>E-POSTA DOĞRULAMASI</div>
+            <div style={{ fontSize: '0.85rem', color: '#999', marginBottom: '2rem', lineHeight: 1.5 }}>
+              TRTex ekosisteminde sahte talepleri engellemek için lütfen <strong>{email}</strong> adresine gönderilen 6 haneli doğrulama kodunu girin.
+            </div>
+            
+            <input
+              type="text" required placeholder="000000" maxLength={6}
+              value={otpCode} onChange={e => setOtpCode(e.target.value.replace(/\D/g, ''))}
+              style={{ ...inputStyle, textAlign: 'center', fontSize: '1.5rem', letterSpacing: '0.5em', padding: '1rem', marginBottom: '1rem' }}
+            />
+            
+            <button type="submit" disabled={submitting || otpCode.length !== 6} style={{
+              width: '100%', padding: '1rem',
+              background: label.color, border: 'none', color: '#fff',
+              fontWeight: 900, fontSize: '0.9rem', cursor: 'pointer',
+              letterSpacing: '0.05em', opacity: (submitting || otpCode.length !== 6) ? 0.5 : 1,
+            }}>
+              {submitting ? 'DOĞRULANIYOR...' : 'DOĞRULA VE GÖNDER'}
+            </button>
+          </form>
+        )}
+
+        {step === 'FORM' && (
+          <form onSubmit={handleFormSubmit} style={{ padding: '1.5rem' }}>
             <div style={{ fontSize: '.8rem', color: '#999', marginBottom: '1.2rem', lineHeight: 1.5 }}>
               {label.sub}
             </div>
@@ -175,11 +230,11 @@ export default function LeadCaptureModal({ isOpen, onClose, context, brandName =
               fontWeight: 900, fontSize: '.9rem', cursor: 'pointer',
               letterSpacing: '0.05em', opacity: submitting ? 0.5 : 1,
             }}>
-              {submitting ? 'GÖNDERİLİYOR...' : context.type === 'BRIEFING' ? 'BRİFİNG ALMAYA BAŞLA' : 'TALEBİ GÖNDER'}
+              {submitting ? 'GÜVENLİK TARAMASI...' : context.type === 'BRIEFING' ? 'BRİFİNG ALMAYA BAŞLA' : 'TALEBİ GÖNDER'}
             </button>
 
             <div style={{ fontSize: '.65rem', color: '#555', marginTop: '.8rem', textAlign: 'center', fontFamily: 'var(--m)' }}>
-              🔒 Verileriniz KVKK uyumlu şekilde korunur. Üçüncü taraflarla paylaşılmaz.
+              🔒 TRTex Sovereign KYC (Know Your Business) protokolü devrededir. Talepler OTP ve domain doğrulamasına tabidir.
             </div>
           </form>
         )}

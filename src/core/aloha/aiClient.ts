@@ -56,6 +56,7 @@ export const aiGenkit = genkit({
 // en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
 const DEFAULT_MODEL = 'gemini-3.1-flash'; // (Flash / Yüksek Hız, Düşük Maliyet - 2M Context Destekli)
 const DEEP_MODEL = 'gemini-3.1-pro'; // (Pro / Kompleks İşlemler - Deep Research Max)
+const MICRO_MODEL = 'gemini-3.1-flash-8b'; // (Micro / Çok düşük maliyetli basit NLP işlemleri)
 const IMAGE_MODEL = 'gemini-3.1-flash-image-preview';   // Q2 2026: Nano Banana 2 (3x hızlı, 4K, referans obje)
 const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback: eski stabil model
 const EMBEDDING_MODEL = 'gemini-embedding-2';             // Q2 2026: GA, 3072-dim, multimodal (metin+görsel+ses)
@@ -223,7 +224,7 @@ interface GenerateOptions {
   maxOutputTokens?: number;
   tools?: any[];
   responseSchema?: any;  // Structured output schema (Google GenAI Schema)
-  complexity?: 'routine' | 'complex' | 'vision'; // Sprint D Model Routing
+  complexity?: 'routine' | 'complex' | 'vision' | 'micro'; // Sprint D Model Routing
 }
 
 interface AICallResult {
@@ -237,12 +238,14 @@ interface AICallResult {
  * Sprint D: Model Yönlendirici (Router)
  * Karmaşıklığa göre en uygun/ucuz modeli seçer.
  */
-function getRouterModel(complexity?: 'routine' | 'complex' | 'vision'): string {
+function getRouterModel(complexity?: 'routine' | 'complex' | 'vision' | 'micro'): string {
   switch (complexity) {
     case 'complex':
       return DEEP_MODEL; // gemini-3.1-pro
     case 'vision':
-      return DEFAULT_MODEL; // gemini-2.5-flash handles vision natively
+      return DEFAULT_MODEL; // gemini-3.1-flash handles vision natively
+    case 'micro':
+      return MICRO_MODEL; // gemini-3.1-flash-8b (en ucuz, basit NLP)
     case 'routine':
     default:
       return DEFAULT_MODEL; // gemini-3.1-flash (cost saving)

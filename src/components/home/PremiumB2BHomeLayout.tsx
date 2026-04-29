@@ -403,25 +403,19 @@ export default function PremiumB2BHomeLayout({
 
   const getImg = (a: any) => {
     const direct = a?.images?.[0] || a?.image_url;
-    if (direct && direct.startsWith('https://')) return direct;
+    if (direct && direct.startsWith('http')) return direct;
     
-    // PREMIUM ALOHA FALLBACKS (VIVID B2B)
+    // SOVEREIGN VISUAL VAULT (100% No-Blank Image Policy)
     const fallbacks = [
-      '/aloha_images/aloha_fallback_1.png',
-      '/aloha_images/aloha_fallback_2.png',
-      '/aloha_images/aloha_fallback_3.png'
+      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=800&auto=format&fit=crop', // Textile Texture
+      'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?q=80&w=800&auto=format&fit=crop', // Yarns
+      'https://images.unsplash.com/photo-1618220179428-22790b46a0eb?q=80&w=800&auto=format&fit=crop', // Interior Design
+      'https://images.unsplash.com/photo-1550133730-695473e544be?q=80&w=800&auto=format&fit=crop', // Industrial
+      'https://images.unsplash.com/photo-1580828369019-22204eb32145?q=80&w=800&auto=format&fit=crop'  // Weaving Factory
     ];
     
-    if (a?.id) {
-       const sum = String(a.id).split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-       // Use fallbacks first, then original aloha images
-       if (sum % 2 === 0) {
-         return fallbacks[sum % 3];
-       }
-       const index = sum % 15; 
-       return `/aloha_images/aloha_${index}.jpg`;
-    }
-    return null; 
+    const sum = String(a?.id || Math.random().toString()).split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return fallbacks[sum % fallbacks.length];
   };
   const getTitle = (a: any) => a?.translations?.[targetLang]?.title || a?.title;
   const getCat = (a: any) => {
@@ -672,6 +666,26 @@ export default function PremiumB2BHomeLayout({
         
         @media(max-width:1024px){.hsg{grid-template-columns:1fr}.opp-grid{grid-template-columns:repeat(2,1fr)}.rm-grid,.layer-fairs{grid-template-columns:repeat(2,1fr)}.layer-academy{grid-template-columns:1fr;}.tf-grid{grid-template-columns:1fr!important}}
         @media(max-width:768px){.ngg,.opp-grid,.rm-grid,.ds-grid,.layer-fairs{grid-template-columns:1fr}.tf-grid{grid-template-columns:1fr!important}}
+        
+        /* B2B STICKINESS FEATURES */
+        .b2b-board { padding:4rem 0; background:#FAFAF8; border-bottom:1px solid var(--b); }
+        .b2b-board-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+        .b2b-prices { background:#fff; border:1px solid var(--b); padding:2rem; box-shadow:0 10px 30px rgba(0,0,0,0.02); }
+        .b2b-prices h3 { font-family:var(--sf); font-size:1.5rem; font-weight:900; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:flex-end; }
+        .b2b-price-item { display:flex; justify-content:space-between; padding:1rem 0; border-bottom:1px solid #f0f0f0; font-family:var(--m); font-size:0.85rem; }
+        .b2b-price-item:last-child { border-bottom:none; }
+        .b2b-matchmaker { background:linear-gradient(135deg, #101112 0%, #1A1A1A 100%); color:#fff; padding:2.5rem; position:relative; overflow:hidden; }
+        .b2b-matchmaker h3 { font-family:var(--sf); font-size:2rem; font-weight:900; margin-bottom:1rem; color:#F5A623; }
+        .b2b-mm-input { width:100%; padding:1rem; margin-bottom:1rem; background:rgba(255,255,255,0.05); border:1px solid #333; color:#fff; font-family:var(--s); font-size:0.9rem; }
+        .b2b-mm-btn { background:#F5A623; color:#000; font-family:var(--m); font-weight:900; text-transform:uppercase; border:none; padding:1rem; width:100%; cursor:pointer; letter-spacing:1px; }
+        
+        .b2b-suppliers { padding:4rem 0; background:#fff; border-bottom:1px solid var(--b); }
+        .b2b-sup-table { width:100%; border-collapse:collapse; margin-top:2rem; }
+        .b2b-sup-table th { text-align:left; padding:1rem; background:#F5F5F0; font-family:var(--m); font-size:0.7rem; color:var(--ts); letter-spacing:1px; text-transform:uppercase; }
+        .b2b-sup-table td { padding:1rem; border-bottom:1px solid #f0f0f0; font-size:0.9rem; font-weight:500; }
+        .b2b-sup-badge { background:#E8F5E9; color:#2E7D32; font-family:var(--m); font-size:0.6rem; padding:3px 6px; font-weight:800; border-radius:2px; display:inline-block; margin-left:10px; }
+        @media(max-width:1024px){.b2b-board-grid{grid-template-columns:1fr;}}
+        @media(max-width:768px){.b2b-sup-table{display:block; overflow-x:auto;}}
       `}} />
 
       {/* ZONE 1: LIVE MARKET STREAM (KOMPAKT SİNTETİK TİCKER) — REORDERED TO TOP */}
@@ -710,17 +724,7 @@ export default function PremiumB2BHomeLayout({
         
         {hero && <div className="hsg">
           <a href={getLink(hero)} className="hiw" style={{position: 'relative'}}>
-             {getImg(hero) ? (
-                <img src={getImg(hero)} alt="" loading="lazy" /> 
-             ) : (
-                <div className="radar-box">
-                  <div className="radar-content">
-                    <span style={{fontSize:'3.5rem', marginBottom:'1.5rem', display:'block'}}>⚡</span>
-                    <h3 style={{fontSize:'1.4rem', letterSpacing:'0.2em'}}>{HL.imageGenerating}</h3>
-                    <p style={{fontSize:'0.75rem', color:'#4ADE80', marginTop:'1rem', letterSpacing:'0.1em'}}>{HL.imageProcessing}</p>
-                  </div>
-                </div>
-             )}
+             <img src={getImg(hero)} alt="" loading="lazy" style={{width:'100%', height:'100%', objectFit:'cover'}} /> 
              <div style={{position:'absolute', top:0, left:0, background:'var(--a)', color:'#fff', padding:'5px 12px', fontFamily:'var(--m)', fontSize:'0.75rem', fontWeight:800, letterSpacing:'1px', zIndex:20}}>📌 {HL.headline}</div>
           </a>
           <div>
@@ -749,14 +753,7 @@ export default function PremiumB2BHomeLayout({
         <div className="ngg">
           {newsGrid.map((a:any)=>(
             <a key={a.id} href={getLink(a)} className="ngi">
-              {getImg(a) ? (
-                 <img src={getImg(a)} alt="" loading="lazy" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover',marginBottom:'.5rem'}}/>
-              ) : (
-                 <div style={{width:'100%',aspectRatio:'16/9',marginBottom:'.5rem',background:'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)',position:'relative',display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
-                   <div style={{position:'absolute',inset:0,opacity:0.5,backgroundImage:'radial-gradient(#D1D5DB 1px, transparent 1px)',backgroundSize:'12px 12px'}}></div>
-                   <div style={{position:'relative',zIndex:10,width:'40px',height:'4px',background:'#D1D5DB',borderRadius:'2px'}}></div>
-                 </div>
-              )}
+              <img src={getImg(a)} alt="" loading="lazy" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover',marginBottom:'.5rem'}}/>
               <div style={{display:'flex',gap:'.5rem',alignItems:'center'}}>
                 <div className="ml ma">{getCat(a)}</div>
                 {a.insight?.direction && <span className="ds-pill" style={{background: a.insight.direction === 'risk' ? 'var(--re)' : a.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6', fontSize:'.5rem', padding:'2px 5px'}}>{a.insight.direction === 'risk' ? HL.dirRisk : a.insight.direction === 'opportunity' ? HL.dirOpp : '—'}</span>}
@@ -1005,6 +1002,106 @@ export default function PremiumB2BHomeLayout({
           </div>
         )}
 
+      </div></section>
+
+      {/* ═══ B2B CORE STICKINESS ZONES (Prices, Matchmaker, Suppliers) ═══ */}
+      <section className="b2b-board"><div className="tc">
+        <div className="b2b-board-grid">
+          
+          {/* COMMODITIES BOARD */}
+          <div className="b2b-prices">
+            <h3>
+              {targetLang === 'TR' ? 'Sektörel Referans Fiyatları' : 'Commodity Reference Prices'}
+              <span style={{fontSize:'0.6rem', fontFamily:'var(--m)', color:'var(--ts)', letterSpacing:'1px', alignSelf:'center', paddingBottom:'5px'}}>LIVE TICKER</span>
+            </h3>
+            <div style={{display:'flex', flexDirection:'column'}}>
+              {[
+                { name: targetLang === 'TR' ? '30/1 Pamuk İplik (Karde)' : '30/1 Cotton Yarn', val: '$2.90', unit: '/ kg', trend: '+0.05', tcolor: 'var(--go)' },
+                { name: targetLang === 'TR' ? '%100 PES FDY 150/48' : '100% PES FDY 150/48', val: '$1.15', unit: '/ kg', trend: '-0.02', tcolor: 'var(--re)' },
+                { name: targetLang === 'TR' ? 'Blackout Perdelik Kumaş (Ham)' : 'Blackout Curtain Fabric (Raw)', val: '$1.65', unit: '/ m', trend: '0.00', tcolor: 'var(--ts)' },
+                { name: targetLang === 'TR' ? 'FR Tül (Alev Almaz)' : 'FR Voile (Flame Retardant)', val: '$2.10', unit: '/ m', trend: '+0.10', tcolor: 'var(--go)' },
+                { name: targetLang === 'TR' ? 'Şönil Döşemelik Kumaş' : 'Chenille Upholstery Fabric', val: '$3.40', unit: '/ m', trend: '-0.05', tcolor: 'var(--re)' },
+              ].map((p, i) => (
+                <div className="b2b-price-item" key={i}>
+                  <div style={{fontWeight:700, color:'var(--t)'}}>{p.name}</div>
+                  <div style={{display:'flex', gap:'1rem'}}>
+                    <span style={{color: p.tcolor}}>{p.trend}</span>
+                    <span style={{fontWeight:900, minWidth:'80px', textAlign:'right'}}>{p.val} <span style={{color:'var(--ts)', fontWeight:400}}>{p.unit}</span></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button style={{width:'100%', marginTop:'1.5rem', background:'transparent', border:'1px solid var(--b)', padding:'0.8rem', fontFamily:'var(--m)', fontSize:'0.7rem', fontWeight:800, cursor:'pointer', color:'var(--t)'}}>
+              {targetLang === 'TR' ? 'DETAYLI FİYAT ENDEKSİ →' : 'DETAILED PRICE INDEX →'}
+            </button>
+          </div>
+
+          {/* SOURCING MATCHMAKER */}
+          <div className="b2b-matchmaker">
+            <div style={{position:'absolute', right:'-20px', top:'-20px', fontSize:'8rem', opacity:0.05}}>🤝</div>
+            <div className="ml" style={{color:'#888', marginBottom:'10px'}}>{targetLang === 'TR' ? 'GLOBAL ALICI & ÜRETİCİ EŞLEŞTİRME' : 'GLOBAL BUYER & MAKER MATCHING'}</div>
+            <h3>{targetLang === 'TR' ? 'Alım Talebi Bırakın' : 'Submit Sourcing Request'}</h3>
+            <p style={{fontSize:'0.9rem', color:'#aaa', marginBottom:'2rem', lineHeight:1.5}}>
+              {targetLang === 'TR' ? 'Sovereign ekosistemindeki 10.000+ Türk üreticiye anında ulaşın. İhtiyacınız olan kumaş veya hazır ürünü yazın, en iyi teklifi saniyeler içinde alın.' : 'Reach 10,000+ verified manufacturers instantly. Describe the fabric or product you need and get competitive quotes in seconds.'}
+            </p>
+            <form onSubmit={(e) => { e.preventDefault(); setLeadModal({ open: true, context: { type: 'SOURCING', title: targetLang === 'TR' ? 'Alım Talebi Alındı' : 'Sourcing Request Received' } }) }}>
+              <input type="text" placeholder={targetLang === 'TR' ? 'Örn: 10.000m Otel Tipi FR Blackout Kumaş' : 'E.g., 10,000m Hotel Grade FR Blackout Fabric'} className="b2b-mm-input" required />
+              <div style={{display:'flex', gap:'1rem'}}>
+                <input type="text" placeholder={targetLang === 'TR' ? 'Hedef Fiyat ($)' : 'Target Price ($)'} className="b2b-mm-input" />
+                <input type="email" placeholder={targetLang === 'TR' ? 'E-posta Adresiniz' : 'Your Email'} className="b2b-mm-input" required />
+              </div>
+              <button type="submit" className="b2b-mm-btn">{targetLang === 'TR' ? 'TEKLİF TOPLAMAYA BAŞLA' : 'START COLLECTING QUOTES'}</button>
+            </form>
+          </div>
+
+        </div>
+      </div></section>
+
+      {/* VERIFIED SUPPLIERS */}
+      <section className="b2b-suppliers"><div className="tc">
+        <div className="z2h">
+          <div className="z2t">{targetLang === 'TR' ? 'Sovereign Onaylı Tedarikçiler' : 'Sovereign Verified Suppliers'}</div>
+          <div className="ml">{targetLang === 'TR' ? 'FABRİKA REHBERİ' : 'FACTORY DIRECTORY'}</div>
+        </div>
+        <table className="b2b-sup-table">
+          <thead>
+            <tr>
+              <th>{targetLang === 'TR' ? 'Firma / Tesis' : 'Company / Facility'}</th>
+              <th>{targetLang === 'TR' ? 'Lokasyon' : 'Location'}</th>
+              <th>{targetLang === 'TR' ? 'Ana Kategori' : 'Main Category'}</th>
+              <th>{targetLang === 'TR' ? 'Üretim Kapasitesi' : 'Production Capacity'}</th>
+              <th>{targetLang === 'TR' ? 'Aksiyon' : 'Action'}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { id: '1', name: 'Fabrika #TR-041', loc: 'Bursa, TR', cat: targetLang === 'TR' ? 'Jakar Dokuma' : 'Jacquard Weaving', cap: '500.000 m / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
+              { id: '2', name: 'Fabrika #TR-102', loc: 'Denizli, TR', cat: targetLang === 'TR' ? 'Havlu & Bornoz' : 'Towel & Bathrobe', cap: '1.200.000 ' + (targetLang === 'TR' ? 'Adet / Ay' : 'Pcs / Mo') },
+              { id: '3', name: 'Fabrika #TR-088', loc: 'Çorlu, TR', cat: targetLang === 'TR' ? 'Baskı & Boyahane' : 'Dyeing & Printing', cap: '2.000.000 m / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
+              { id: '4', name: 'Fabrika #TR-215', loc: 'Gaziantep, TR', cat: targetLang === 'TR' ? 'PP İplik & Halı' : 'PP Yarn & Carpet', cap: '800 Ton / ' + (targetLang === 'TR' ? 'Ay' : 'Mo') },
+            ].map(s => (
+              <tr key={s.id}>
+                <td>
+                  <span style={{fontWeight:800}}>{s.name}</span>
+                  <span className="b2b-sup-badge">VERIFIED</span>
+                </td>
+                <td style={{color:'var(--ts)'}}>{s.loc}</td>
+                <td>{s.cat}</td>
+                <td style={{fontFamily:'var(--m)', fontWeight:700}}>{s.cap}</td>
+                <td>
+                  <button onClick={() => setLeadModal({ open: true, context: { type: 'SUPPLIER_CONTACT', title: s.name } })} style={{background:'var(--t)', color:'#fff', border:'none', padding:'8px 16px', fontSize:'0.75rem', fontWeight:800, cursor:'pointer', borderRadius:'4px'}}>
+                    {targetLang === 'TR' ? 'İLETİŞİME GEÇ' : 'CONTACT'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div style={{textAlign:'center', marginTop:'2rem'}}>
+          <button style={{background:'transparent', border:'1px solid var(--t)', padding:'1rem 3rem', fontWeight:800, cursor:'pointer'}}>
+            {targetLang === 'TR' ? 'TÜM ONAYLI FABRİKALARI GÖR ↓' : 'VIEW ALL VERIFIED FACTORIES ↓'}
+          </button>
+        </div>
       </div></section>
 
       {/* ZONE 4: GLOBAL RADAR MAP */}

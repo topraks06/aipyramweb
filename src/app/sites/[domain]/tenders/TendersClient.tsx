@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
@@ -14,9 +13,7 @@ const TYPE_CONFIG: Record<string, { label: string; color: string; emoji: string 
 export default function TendersClient({ tenders, tickerItems, basePath, brandName, domain, lang }: any) {
   const [filter, setFilter] = useState<string>('ALL');
   const [sortType, setSortType] = useState<string>('score');
-  const [leadModal, setLeadModal] = useState<{ open: boolean; context: any }>({
-    open: false, context: { type: 'GENERAL' as const }
-  });
+  const router = typeof window !== 'undefined' ? require('next/navigation').useRouter() : null;
 
   const filtered = filter === 'ALL' ? [...tenders] : tenders.filter((t: any) => t.type === filter);
   
@@ -122,7 +119,7 @@ export default function TendersClient({ tenders, tickerItems, basePath, brandNam
             const cfg = TYPE_CONFIG[t.type] || TYPE_CONFIG.TENDER;
             const btnClass = t.type === 'TENDER' ? 'red' : t.type === 'HOT_STOCK' ? 'green' : 'yellow';
             return (
-              <div className="t-card" key={t.id} onClick={() => setLeadModal({ open: true, context: { type: t.type, title: t.title, location: t.location, score: t.score } })}>
+              <div className="t-card" key={t.id} onClick={() => router?.push(`${basePath}/tenders/${t.id}?lang=${lang}`)}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <span style={{ fontFamily: 'var(--m)', fontSize: '.65rem', background: cfg.color, color: '#fff', padding: '3px 8px', fontWeight: 800 }}>
                     {cfg.emoji} {cfg.label}
@@ -185,13 +182,6 @@ export default function TendersClient({ tenders, tickerItems, basePath, brandNam
         </div>
       </div>
 
-      {/* LEAD CAPTURE MODAL */}
-      <LeadCaptureModal
-        isOpen={leadModal.open}
-        onClose={() => setLeadModal({ open: false, context: { type: 'GENERAL' } })}
-        context={leadModal.context}
-        brandName={brandName}
-      />
       <TrtexFooter basePath={basePath} brandName={brandName} lang={lang || 'tr'} />
     </div>
   );

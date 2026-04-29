@@ -257,14 +257,7 @@ Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için BUGÜNE ÖZE
 - DAHA ÖNCE YAZILMIŞ haberleri TEKRARLAMA
 
 ✅ İÇERİK ÇERÇEVESİ (${month} ${year} GÜNCELİ):
-1. Perde, tül, stor, döşemelik kumaş, otel tekstili, yatak örtüsü
-2. Fuar izlenimleri (Heimtextil, Hometex, Domotex), şehir haberleri (Denizli, Bursa, İstanbul)
-3. Kumaş dokusu, renk trendleri, akustik/FR kumaşlar, sürdürülebilir üretim
-4. Proje haberleri (otel, rezidans, villa, ofis), yeni koleksiyonlar
-5. Hammadde fiyatları (pamuk, polyester, iplik), kurlar, navlun
-6. Akıllı ev sistemleri, motorlu perde, otomasyon
-7. ${season} sezonu koleksiyon lansmanları ve perakende hazırlıkları
-8. Dijital dönüşüm: AI tasarım motorları, 3D showroom, sanal fuar teknolojileri
+Sınırsız B2B Çeşitliliği! Konu SADECE kumaş olmak zorunda değildir. Ev tekstili, dekorasyon, aksesuarlar, motorlu mekanizmalar, kornişler, akıllı ev sistemleri, otel tekstili, halı, hatta montaj için kullanılan özellikli bir ürün bile B2B/Ticari değer taşıyorsa haber yapılabilir. Pazardaki talebi dinamik olarak analiz et ve sektörün arz/talep dengelerine göre haberin yönünü belirle. Her seferinde B2B ekosisteminin FARKLI bir köşesinden, ASLA TEKRAR ETMEYEN eşsiz bir haber bul ve yaz.
 ${antiRepeatBlock}
 
 🎯 FARK YARATAN KURALLAR:

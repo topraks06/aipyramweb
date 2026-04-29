@@ -70,6 +70,30 @@ export async function findByCategory(category: string, limitCount: number = 10):
     }
 }
 
+export async function findSimilarImage(roomType: string, style: string, color: string): Promise<LibraryImage | null> {
+    try {
+        // Find an image that perfectly matches the requested room, style, and primary color
+        const snapshot = await adminDb.collection(COLLECTION)
+            .where('roomType', '==', roomType)
+            .where('style', '==', style)
+            .where('color', '==', color)
+            .orderBy('createdAt', 'desc')
+            .limit(1)
+            .get();
+            
+        if (!snapshot.empty) {
+            const img = snapshot.docs[0].data() as LibraryImage;
+            // Increment usage automatically
+            await incrementUsage(img.key);
+            return img;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error finding similar image in vault:", error);
+        return null;
+    }
+}
+
 export async function incrementUsage(key: string): Promise<void> {
     try {
         const querySnapshot = await adminDb.collection(COLLECTION).where('key', '==', key).limit(1).get();

@@ -32,6 +32,13 @@ export async function analyzeRoom(imageBase64: string, SovereignNodeId: string =
   "suggestedFabrics": [{"name": "Kumaş Adı", "priceRange": "₺850 - ₺2.400/metre"}]
 }`;
 
+    // 1.8 MALIYET DÜŞÜRME (GÖRSEL SIKIŞTIRMA KONTROLÜ)
+    // Eğer base64 çok büyükse (örneğin 4MB+), Vision modeline gitmeden önce 
+    // frontend'de veya burada küçültülmüş olmalı. Büyük resim = Daha fazla token.
+    if (imageBase64.length > 2000000) {
+        console.log(`[Vision Optimizer] ⚠️ Uyarı: ${SovereignNodeId} düğümünden çok büyük görsel geldi (${Math.round(imageBase64.length/1024)}KB). Token maliyetini artırır. Odanın 800x800 olması yeterlidir.`);
+    }
+
     try {
         const jsonResult = await alohaAI.generateJSON([prompt, { inlineData: { data: imageBase64, mimeType: "image/jpeg" } }], {
             systemInstruction,

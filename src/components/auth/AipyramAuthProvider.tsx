@@ -1,8 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, onAuthStateChanged, signOut, signInWithPopup, signInWithEmailAndPassword, GoogleAuthProvider } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase-client';
+import { syncSovereignIdentity } from '@/lib/auth/SovereignIdentity';
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +11,7 @@ interface AuthContextType {
   isAdmin: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithEmail: (e: string, p: string) => Promise<void>;
+  registerWithEmail: (e: string, p: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -19,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   isAdmin: false,
   loginWithGoogle: async () => {},
   loginWithEmail: async () => {},
+  registerWithEmail: async () => {},
   logout: async () => {}
 });
 
@@ -78,6 +81,14 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
       // 🔐 SESSION BRIDGE — Her auth değişikliğinde cookie'yi senkronize et
       if (currentUser) {
         await syncSessionCookie(currentUser);
+        // 🛂 Sovereign Passport Kaydı/Güncellemesi
+        const activeDomain = typeof window !== 'undefined' ? window.location.hostname : 'aipyram';
+        try {
+          await syncSovereignIdentity(currentUser, activeDomain);
+          console.log('[SSO] 👑 Sovereign Identity senkronize edildi.');
+        } catch (e) {
+          console.error('[SSO] Sovereign Identity hatası:', e);
+        }
       }
     });
     return () => unsubscribe();
@@ -130,6 +141,19 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
     }
   };
 
+  const registerWithEmail = async (e: string, p: string, name: string) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, e.trim().toLowerCase(), p);
+      if (result.user) {
+        await updateProfile(result.user, { displayName: name });
+        await syncSessionCookie(result.user);
+      }
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       if (typeof window !== 'undefined') {
@@ -147,7 +171,7 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
   const isAdmin = user?.email ? ADMIN_EMAILS.includes(user.email) : false;
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, loginWithGoogle, loginWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, loginWithGoogle, loginWithEmail, registerWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

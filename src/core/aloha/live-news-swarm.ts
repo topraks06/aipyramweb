@@ -38,10 +38,10 @@ You ONLY produce high-value, real-world, time-relevant trade intelligence focuse
 - LIMIT CHAIN STORES: Generic news about massive consumer B2C brands (IKEA, Zara Home, H&M Home) should be strictly limited. Give priority to boutique expansions, wholesale network changes, and luxury retail.
 
 ✅ APPROVED FOCUS AREAS (ATTRACTING RETAILERS & WHOLESALERS):
-  1. TRENDS & EDUCATION: Upcoming interior color palettes, fabric textures, smart home tech, curtains, upholstery for retailers.
-  2. B2B SALES CONNECTIONS: Distributors seeking suppliers, new wholesale hubs, trade fair (Heimtextil, Hometex) exhibitor moves.
-  3. HOTEL/CONTRACT PROJECTS: Luxury hospital/hotel/villa projects globally needing premium drape/upholstery supply.
-  4. NEW PRODUCT LAUNCHES: Innovative fabric reviews, eco-friendly textile lines, acoustic/FR fabrics highly demanded by wholesalers.
+  1. EXTREME PRODUCT DIVERSITY: Cover EVERYTHING related to interior decoration and home textiles. Do not limit to just fabric. Include accessories, mechanisms, cornices, smart automation, rustic elements, and even assembly materials if it has B2B value.
+  2. MARKET DEMAND ANALYSIS: You are an expert. Analyze the market interest dynamically and frame the news highlighting actual demand gravity, trends, and profitability without relying on hardcoded examples.
+  3. B2B SALES CONNECTIONS: Distributors seeking suppliers, new wholesale hubs, trade fair (Heimtextil, Hometex) exhibitor moves.
+  4. NEW PRODUCT LAUNCHES: Innovative products, eco-friendly lines, smart mechanisms, and premium hardware highly demanded by wholesalers. Ensure ZERO REPETITION across news cycles.
 
 💰 MANDATORY BUSINESS VALUE CHECK (MIN SCORE: 65):
 Before writing, answer: "How will a Wholesaler or Retailer make money from this information?"
@@ -49,7 +49,7 @@ If there is no clear B2B commercial value → REJECT.
 
 🏗️ STRUCTURE:
 - Write in Turkish, but analyze GLOBAL markets.
-- Minimum 800 words.
+- Maximum 300 words. Executive Brief style.
 - Bloomberg terminal tone but with deep appreciation for design and product textures.
 - First sentence = most important fact.
 - Include real company names, real numbers, real cities.
@@ -91,11 +91,11 @@ async function runRealityGuard(draft: string): Promise<{ status: "APPROVED" | "R
 2. Bağlam veya veriler Son 10 Gün'den daha eskiyse (Eski haberi pişirip sunuyorsa) → REJECT
 3. SEKTÖR DIŞI İÇERİK → REJECT:
    Konfeksiyon, Hazır Giyim, Giyim, Apparel, Tişört, T-shirt, Ayakkabı, Çanta, Elbise, Moda Haftası, Fashion Week, Podyum, Runway yazıyorsa → REJECT
-   SADECE KABUL: Ev Tekstili, Perde, Döşemelik, Otel/Hastane/Yat Tekstili, Tente/Branda, İplik/Elyaf/Üretim
+   SADECE KABUL: Ev Tekstili, Perde, Döşemelik, Mekanizmalar, Korniş, Aksesuar, Montaj Ekipmanları (Vida dahil), Otel/Hastane/Yat Tekstili, Akıllı Ev Sistemleri, İplik/Elyaf. Dekorasyona dair B2B olan her şey SERBESTTİR.
 4. B2C/perakende marka odaklı içerik (English Home, Karaca, Zara Home, IKEA, Madame Coco, H&M Home) → REJECT
 5. Sahte/uydurma şirket isimleri, hayali istatistikler → REJECT
 6. Genel "trendler" haberi olup somut veri/firma/fiyat içermiyorsa → REJECT
-7. Tüketici odaklı dekorasyon/stil/magazin içeriği → REJECT
+7. Tüketici odaklı magazin içeriği → REJECT
 8. Placeholder metinler ([ŞEHİR], [TARİH], [KAYNAK] gibi) → REJECT
 
 ✅ ONAY İÇİN GEREKLİ:
@@ -135,14 +135,14 @@ async function runPublisherAgent(cleanContent: string) {
                     translations: {
                         type: Type.OBJECT,
                         properties: {
-                            TR: { type: Type.OBJECT, properties: { title: { type: Type.STRING, description: "Haber başlığı (50-90 karakter)" }, summary: { type: Type.STRING, description: "2-3 cümlelik özet" }, content: { type: Type.STRING, description: "TAM HTML makale gövdesi. Minimum 800 kelime. H2, p, table, blockquote, ul/li kullanarak profesyonel haber formatında yazılmalı. KISA ÖZET DEĞİL, TAM HABER METNİ." } }, required: ["title", "summary", "content"] },
-                            EN: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words, with H2, tables, blockquotes" } }, required: ["title", "summary", "content"] },
-                            DE: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] },
-                            FR: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] },
-                            ES: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] },
-                            AR: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] },
-                            RU: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] },
-                            ZH: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "FULL HTML article body, min 800 words" } }, required: ["title", "summary", "content"] }
+                            TR: { type: Type.OBJECT, properties: { title: { type: Type.STRING, description: "Haber başlığı (50-90 karakter)" }, summary: { type: Type.STRING, description: "1-2 cümlelik vurucu özet" }, content: { type: Type.STRING, description: "HTML gövde. MAKSİMUM 300 KELİME. Yönetici Özeti (Executive Brief) tarzında. Bol veri ve liste (ul/li) kullanın." } }, required: ["title", "summary", "content"] },
+                            EN: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style with bullet points." } }, required: ["title", "summary", "content"] },
+                            DE: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] },
+                            FR: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] },
+                            ES: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] },
+                            AR: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] },
+                            RU: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] },
+                            ZH: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, summary: { type: Type.STRING }, content: { type: Type.STRING, description: "HTML body, max 300 words. Executive brief style." } }, required: ["title", "summary", "content"] }
                         },
                         required: ["TR", "EN", "DE", "FR", "ES", "AR", "RU", "ZH"]
                     }
@@ -250,7 +250,7 @@ async function runPublisherAgent(cleanContent: string) {
             },
             ai_commentary: {
                 type: Type.STRING,
-                description: "ZORUNLU: Bloomberg Terminal stili AI analiz yorumu. 100-200 kelime. Piyasa ne diyor, ne anlama geliyor, 3 aylık tahmin. Kısa, keskin, veri odaklı. YASAK ifadeler: 'önemli gelişme', 'kritik süreç', 'devrim niteliğinde'."
+                description: "ZORUNLU: Bloomberg Terminal stili AI analiz yorumu. 50-80 kelime. Piyasa ne diyor, ne anlama geliyor."
             },
 
         },
@@ -258,7 +258,31 @@ async function runPublisherAgent(cleanContent: string) {
     };
 
     const parsed = await alohaAI.generateJSON(
-        `Following news is verified as 100% REAL. Format this into appropriate News JSON structure across 8 languages (TR, EN, DE, FR, ES, AR, RU, ZH).\nYou MUST strictly adhere to the Triple Output Format v1.1 (Intelligence, Insight, Action, Watch, Fallback).\n\n🔴 CRITICAL LANGUAGE RULE (ZORUNLU DİL KURALI):\n- The TR translation MUST be 100% pure Turkish. ZERO English words allowed in TR content.\n- ALL H2, H3, H4 section headers in TR MUST be in Turkish.\n- NEVER use English headers like: SITUATION, SO WHAT, NOW WHAT, WHO WINS, WHO LOSES, TRADE BRIEF, EXECUTIVE SUMMARY, ACTION ENGINE\n- Use ONLY these Turkish headers: PAZAR VERİLERİ, TİCARİ ETKİ, AKSIİYON ÖNERİSİ, KAZANANLAR, KAYBEDENLER, YÖNETİCİ ÖZETİ, HİZLI ANALİZ, FIRSAT HARİTASI, RİSK ANALİZİ, NE YAPMALI?\n- EN, DE, FR, ES, AR, RU, ZH translations must EACH be in their own native language.\n- No language mixing within any translation.\n\nCRITICAL RULE FOR 'content' FIELD (MAGAZINE STYLE & INTERNAL LINKS):\nThe 'content' field in EVERY language translation must be a COMPLETE, FULL-LENGTH HTML article body.\n- MINIMUM 800 words per language\n- Use proper HTML tags: <h2>, <p>, <table>, <blockquote>, <ul>, <li>, <strong>\n- Include at least 3 H2 sections with detailed analysis\n- Include at least 1 data table with real market figures\n- Include at least 1 expert blockquote\n- **ART DIRECTOR SUPPORT (CRITICAL):** You MUST write highly descriptive paragraphs explaining the fabric textures, dominant interior colors, lighting conditions, and luxury mood of the textile application discussed. This vivid vocabulary will train our downstream AI Image Generating Agent to produce incredible 'Magazine-Style' luxury photography. Use terms depicting volumetric light, high-end finishing, and spatial aesthetics.\n- **INTERNAL LINKING (MANDATORY):** At the end of the article, include a short section recommending the reader to browse related content. In TR use 'İlgili Fuar & Fırsatlar', in EN use 'Related Fairs & Opportunities', etc.\n- DO NOT write a short summary. Write a FULL investigative B2B magazine-style article.\n\nCRITICAL RANKING METRICS:\n- 'insight.intent': Must be ACT if this is a direct trade opportunity/matchmaking. ANALYZE if trend/academy. DISCOVER if general reading/fairs.\n- 'entity_data': YOU MUST extract exact Organizations (Brands/Companies), Places (Cities/Countries), and Products for our JSON-LD Semantic Engine.\n\nCRITICAL RULE FOR 'business_opportunities' & 'commercial_cta':\n- You MUST identify the target (manufacturer, wholesaler, or retailer) and generate a compelling 'commercial_cta' that drives sales (Monetization). For wholesalers, offer "Request 2026 Collection Swatches". For retailers, "Download Luxury Trend Report".\n\nCRITICAL RULE FOR 'ai_commentary' (CORPORATE AUTHORITY TONE):\n- Write 100-200 word Bloomberg/McKinsey style analysis.\n- The tone MUST be highly corporate, positive, confidence-inspiring and actionable. B2B buyers must feel trust and opportunity. Avoid catastrophic doom scenarios.\n\nCRITICAL RULE FOR 'seo_matrix.local_keys':\n- You MUST generate these SEO keywords explicitly mapped to 8 languages (TR, EN, DE, FR, ES, RU, AR, ZH). The Spanish array must have Spanish tags 'cortinas', German must have 'gardinen', Russian 'шторы', etc.\n\nContent:\n${cleanContent}`,
+        `Following news is verified as 100% REAL. Format this into appropriate News JSON structure across 8 languages (TR, EN, DE, FR, ES, AR, RU, ZH).\nYou MUST strictly adhere to the Triple Output Format v1.1 (Intelligence, Insight, Action, Watch, Fallback).\n\nCRITICAL RULE FOR 'content' FIELD (EXECUTIVE BRIEF STYLE):
+The 'content' field in EVERY language translation must be a FAST-READING Executive Brief.
+- MAXIMUM 300 words per language
+- Use HTML tags heavily to condense information: <ul>, <li>, <strong>
+- Avoid encyclopedic introductions. Get straight to the numbers.
+- **ART DIRECTOR SUPPORT:** Still include one vivid sentence describing textures/colors for the Image AI.
+- **INTERNAL LINKING:** Short related link at the end.
+- Write a short but high-value B2B brief.
+
+CRITICAL RANKING METRICS:
+- 'insight.intent': Must be ACT if this is a direct trade opportunity/matchmaking. ANALYZE if trend/academy. DISCOVER if general reading/fairs.
+- 'entity_data': YOU MUST extract exact Organizations (Brands/Companies), Places (Cities/Countries), and Products for our JSON-LD Semantic Engine.
+
+CRITICAL RULE FOR 'business_opportunities' & 'commercial_cta':
+- You MUST identify the target (manufacturer, wholesaler, or retailer) and generate a compelling 'commercial_cta' that drives sales (Monetization). For wholesalers, offer "Request 2026 Collection Swatches". For retailers, "Download Luxury Trend Report".
+
+CRITICAL RULE FOR 'ai_commentary' (CORPORATE AUTHORITY TONE):
+- Write 100-200 word Bloomberg/McKinsey style analysis.
+- The tone MUST be highly corporate, positive, confidence-inspiring and actionable. B2B buyers must feel trust and opportunity. Avoid catastrophic doom scenarios.
+
+CRITICAL RULE FOR 'seo_matrix.local_keys':
+- You MUST generate these SEO keywords explicitly mapped to 8 languages (TR, EN, DE, FR, ES, RU, AR, ZH). The Spanish array must have Spanish tags 'cortinas', German must have 'gardinen', Russian 'шторы', etc.
+
+Content:
+${cleanContent}`,
         {
             systemInstruction: "You are the premium B2B Publisher Agent. Rules: (1) TR content = 100% TURKISH. All H2/H3 headers in Turkish (PAZAR VERİLERİ, TİCARİ ETKİ, NE YAPMALI? etc). NEVER use English headers in TR. (2) Each language must be pure native — no mixing. (3) HTML article + vivid visual descriptions. (4) 'commercial_cta' = Monetization hook. (5) 'seo_matrix.local_keys' = 8 native languages. (6) 'insight.intent' + 'entity_data' for strict LLM semantic routing. (7) Corporate WGSN tone.",
             responseSchema: schema,

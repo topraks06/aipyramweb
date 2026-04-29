@@ -186,7 +186,14 @@ export async function scanAndGenerateImages(
         } else {
           result.failed++;
           result.details.push({ id, title, status: 'failed', error: 'Hiç görsel üretilemedi' });
-          console.error(`  [❌] Tüm görseller başarısız`);
+          console.error(`  [❌] Tüm görseller başarısız, Admin Paneli (Manual Queue) için işaretleniyor`);
+          
+          // Yapay zeka tamamen çökerse Admin Panel'e düşür (Manuel Yükleme Bekliyor)
+          await adminDb.collection(collection).doc(id).update({
+             needs_manual_image: true,
+             image_status: 'failed',
+             failed_at: new Date().toISOString()
+          });
         }
 
         // Rate limiting: görseller arası 3s bekle (kredi koruması — 3x üretim)

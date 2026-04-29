@@ -238,36 +238,9 @@ function buildPrompt(category: string, title: string, contentSnippet: string, in
   const finalScene = productSceneMatch || getRandomScene();
   
   // ═══ CONTENT ENTITY EXTRACTION ═══
-  // Haber içeriğinden anahtar entityleri çıkar ve prompt'a enjekte et
-  const fullText = `${title} ${contentSnippet}`.toLowerCase();
-  const entityHints: string[] = [];
-  
-  // Ülke/bölge tespiti → sahne detayı
-  const countryMap: Record<string, string> = {
-    'almanya': 'German', 'japonya': 'Japanese', 'italya': 'Italian', 'fransa': 'French',
-    'çin': 'Chinese', 'hindistan': 'Indian', 'amerika': 'American', 'ingiltere': 'British',
-    'avrupa': 'European', 'ortadoğu': 'Middle Eastern', 'mena': 'Middle Eastern',
-    'asya': 'Asian', 'kuzey afrika': 'North African', 'suudi': 'Saudi Arabian',
-    'germany': 'German', 'japan': 'Japanese', 'china': 'Chinese', 'india': 'Indian',
-  };
-  for (const [key, adj] of Object.entries(countryMap)) {
-    if (fullText.includes(key)) { entityHints.push(`${adj}-inspired luxury interior design`); break; }
-  }
-  
-  // Ürün tespiti → odak detayı
-  const productMap: Record<string, string> = {
-    'blackout': 'blackout curtains', 'tül': 'sheer voile curtains', 'döşemelik': 'upholstery fabric',
-    'havlu': 'premium towels', 'nevresim': 'luxury bedding sets', 'halı': 'designer carpet',
-    'perde': 'elegant curtains and drapes', 'branda': 'technical outdoor fabric',
-    'sürdürülebilir': 'eco-friendly sustainable textiles', 'akıllı': 'smart home textiles',
-    'otel': 'luxury hotel textile project', 'villa': 'luxury villa interior',
-    'tedarik': 'premium textile showroom with supply chain display',
-  };
-  for (const [key, desc] of Object.entries(productMap)) {
-    if (fullText.includes(key)) { entityHints.push(`featuring ${desc}`); break; }
-  }
-  
-  const entityContext = entityHints.length > 0 ? `\nCONTENT CONTEXT: ${entityHints.join('. ')}.` : '';
+  // Haber içeriğini doğrudan ajana aktararak sınırları kaldır. 
+  // Eski statik countryMap ve productMap kalıpları ("villa", "otel", "perde") silinmiştir.
+  const entityContext = contentSnippet ? `\nCONTENT CONTEXT: This visual must capture the exact essence of the following context: "${contentSnippet}". Do not rely on predefined templates. Whatever object, product, or location is mentioned here, visualize it creatively and professionally without adding any stereotypical assumptions.` : '';
   
   const includeHuman = (new Date().getMinutes() % 4) === 0; // %25 — deterministik
   const humanPrompt = includeHuman 
@@ -306,9 +279,9 @@ ${humanOverride}
 
 COMPOSITION RULE: ${compositionRule}
 
-STYLE: Modern, minimal, elegant. Soft neutral palette (beige, cream, warm white). Premium and pristine.
+STYLE: Limitless creativity and extreme visual diversity! You have infinite imagination. Derive the entire visual concept, color palette, and atmosphere strictly from the context of the news content. There are absolutely NO constraints on colors, setting, or styling as long as it perfectly visualizes the B2B textile/interior decoration topic at hand. Do not repeat styles. Push the boundaries to a mesmerizing, premium editorial magazine aesthetic (e.g., Architectural Digest, Vogue Living). Make it breathtaking, highly professional, expensive, and completely unique every single time.
 
-LIGHTING: Bright natural daylight, soft diffused sunlight, high exposure, clean whites, commercial photography. Sun-filled luxury showroom at noon.
+LIGHTING: Brilliant dramatic natural daylight, cinematic architectural lighting, highly polished commercial photography. Sun-drenched spaces with vivid reflections.
 
 SHOT TYPE: ${shotType}
 

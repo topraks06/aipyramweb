@@ -165,6 +165,17 @@ Her oturumda, kod değişikliği yapılmadan ÖNCE:
 ### Genişleme Kuralı:
 > Sonradan eklenen her yeni node (Curtaindesign, Shtori, Parda vb.) otomatik olarak Sovereign SSO standardına uyar. `sovereign-config.ts`'e node eklemek yeterlidir.
 
+## 9. 🚀 TRTex Golden Pass & Anti-Anchoring Operasyonu (29 Nisan 2026)
+> **KURAL:** Ajanların hayal gücüne ket vuran hiçbir statik "Örnekleme (Prompt Anchoring)" sistemde barınamaz.
+
+### 1. Kredi Güvenlik Açığı (Loophole) Kapatıldı
+- **Sorun:** TRTex test sürecinde üye olanlara ücretsiz erişim sağlamak için `99.999` kredi atanıyordu. Bu durum, aynı SSO havuzundaki `icmimar.ai` (render motoru) gibi maliyetli node'ların sömürülmesine (exploit) yol açabilirdi.
+- **Çözüm:** TRTex yeni üyelerine standart `0` veya `5` kredi atanır, ancak arka planda `TRTEX_EARLY_BIRD` rozeti verilir. TRTex ödeme duvarı (Blur-Wall) artık krediye değil, bu rozete bakar. `icmimar.ai` kasası güvenceye alındı.
+
+### 2. Ajanlardaki "Örnekleme Önyargısı (Prompt Anchoring)" Temizliği
+Hakan Bey'in tespitiyle, ajanların yaratıcılığını kısıtlayan tüm "Spesifik Örnekler" (dağ evi, tekne, köpek, korniş, blackout perde) sistemden kazındı.
+- **`imageAgent.ts`:** Görsel üretim ajanı artık spesifik örneklere çıpalanmıyor (anchoring bias yok). Renk, mekan ve atmosferi SADECE VE SADECE haber bağlamından analiz ederek okyanuslardan uzay üslerine kadar sonsuz bir B2B varyasyonu üretebiliyor.
+- **`live-news-swarm.ts` & `newsEngine.ts`:** İstihbarat toplayıcı ajanların içindeki (kornişle 3 kişi ilgilenir vs.) örnekler silindi. Ajanlara "Pazardaki arz/talep dengesini dinamik analiz et ve bir montaj vidasından akıllı ev sistemine kadar her B2B konusunu değerlendir" yetkisi verildi. Sınırsız içerik çeşitliliğinin önü açıldı.
 
 # AIPyram Sovereign B2B Template
 

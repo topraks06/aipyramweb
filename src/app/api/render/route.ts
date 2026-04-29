@@ -3,7 +3,7 @@ import { analyzeRoom } from "@/lib/vision-analyzer";
 import { analyzeFabric } from "@/lib/agents/FabricRecognitionAgent";
 import { alohaAI } from '@/core/aloha/aiClient';
 // removed GoogleGenAI import
-import { generateMultiResolution, addImage } from "@/lib/image-library";
+import { generateMultiResolution, addImage, findSimilarImage } from "@/lib/image-library";
 /* ─── Rate Limiter (handled by middleware and firestore) ─── */
 import { adminDb, admin } from "@/lib/firebase-admin";
 import { checkCredits, deductCredit, logSovereignAction } from "@aipyram/aloha-sdk";
@@ -89,71 +89,84 @@ export async function POST(req: NextRequest) {
              baseFabricStyle = "custom specified";
         }
 
-        // 2. Generate render using Imagen 3.0 (or 4.0 depending on availability)
-        const renderPrompt = prompt || `A highly photorealistic interior design render of a ${analysis.roomType} with ${analysis.windowType} windows, featuring ${baseFabricStyle} style curtains matching a ${analysis.colorPalette.join(", ")} color palette.${fabricInjections} Soft, natural ${analysis.lightLevel} lighting. 4K resolution, architectural photography.`;
-
+        // 1.8 VISUAL VAULT INTERCEPT (Maliyet Düşürme: %100)
         let renderUrlUrl = "";
-        try {
-            const res = await ai.models.generateImages({
-                model: alohaAI.getImageModel(),
-                prompt: renderPrompt,
-                config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' }
-            });
+        let usedVault = false;
+        
+        // Eğer kullanıcı özel kumaş (attachment) yüklemediyse, havuzdan getirmeyi dene
+        if (!fabricInjections) {
+            const vaultImage = await findSimilarImage(analysis.roomType, baseFabricStyle, analysis.colorPalette[0] || 'bej');
+            if (vaultImage && vaultImage.url_1k) {
+                renderUrlUrl = vaultImage.url_1k;
+                usedVault = true;
+                console.log("[Visual Vault] Hit! Maliyet: $0");
+            }
+        }
 
-            const base64Output = res.generatedImages?.[0]?.image?.imageBytes;
-            if (base64Output) {
-                renderUrlUrl = `data:image/jpeg;base64,${base64Output}`;
-                
-                // Kredi Düş (Merkezi Servis)
-                if (uid) {
-                    // await deductCredit(SovereignNodeId, uid, 'render');
-                }
+        // 2. Generate render using Imagen 3.0 (If no vault image found)
+        if (!usedVault) {
+            const renderPrompt = prompt || `A highly photorealistic interior design render of a ${analysis.roomType} with ${analysis.windowType} windows, featuring ${baseFabricStyle} style curtains matching a ${analysis.colorPalette.join(", ")} color palette.${fabricInjections} Soft, natural ${analysis.lightLevel} lighting. 4K resolution, architectural photography.`;
 
-                // Add to library
-                /*
-                try {
-                    const multiRes = await generateMultiResolution(renderUrlUrl);
-                    await addImage({
-                        url_1k: multiRes.url_1k,
-                        url_2k: multiRes.url_2k,
-                        url_4k: multiRes.url_4k,
-                        category: "user_render",
-                        tags: [...analysis.colorPalette, analysis.roomType, analysis.windowType, analysis.suggestedStyles[0] || 'modern'],
-                        style: analysis.suggestedStyles[0] || 'modern',
-                        roomType: analysis.roomType,
-                        color: analysis.colorPalette[0] || 'bej',
-                        productType: getNode(SovereignNodeId).shortName.toLowerCase(),
-                        source: 'imagen',
-                        node: SovereignNodeId
-                    });
+            try {
+                const res = await ai.models.generateImages({
+                    model: alohaAI.getImageModel(),
+                    prompt: renderPrompt,
+                    config: { numberOfImages: 1, outputMimeType: 'image/jpeg', aspectRatio: '16:9' }
+                });
+
+                const base64Output = res.generatedImages?.[0]?.image?.imageBytes;
+                if (base64Output) {
+                    renderUrlUrl = `data:image/jpeg;base64,${base64Output}`;
                     
-                    // Sovereign Log
-                    await logSovereignAction({ node: SovereignNodeId, action: 'render', payload: { roomType: analysis.roomType }, result: { success: true } as any, duration: 0, cost: 0 });
-
-                    // Save to node's render collection
+                    // Kredi Düş (Merkezi Servis)
                     if (uid) {
-                        const config = getNode(SovereignNodeId);
-                        if (config.renderCollection) {
-                            await adminDb.collection(config.renderCollection).add({
-                                authorId: uid,
-                                SovereignNodeId,
-                                urls: [multiRes.url_1k, multiRes.url_2k].filter(Boolean),
-                                prompt: renderPrompt,
-                                roomType: analysis.roomType,
-                                style: analysis.suggestedStyles[0] || 'modern',
-                                createdAt: new Date().toISOString()
-                            });
-                        }
+                        // await deductCredit(SovereignNodeId, uid, 'render');
                     }
 
-                } catch (libErr) {
-                    console.error("Library save failed (ignoring for response):", libErr);
-                }
-                */
-            }
+                    // Add to library
+                    try {
+                        const multiRes = await generateMultiResolution(renderUrlUrl);
+                        await addImage({
+                            url_1k: multiRes.url_1k,
+                            url_2k: multiRes.url_2k,
+                            url_4k: multiRes.url_4k,
+                            category: "user_render",
+                            tags: [...analysis.colorPalette, analysis.roomType, analysis.windowType, analysis.suggestedStyles[0] || 'modern'],
+                            style: analysis.suggestedStyles[0] || 'modern',
+                            roomType: analysis.roomType,
+                            color: analysis.colorPalette[0] || 'bej',
+                            productType: getNode(SovereignNodeId)?.shortName?.toLowerCase() || 'render',
+                            source: 'imagen',
+                            node: SovereignNodeId
+                        });
+                        
+                        // Sovereign Log
+                        await logSovereignAction({ node: SovereignNodeId, action: 'render', payload: { roomType: analysis.roomType }, result: { success: true } as any, duration: 0, cost: 0 });
 
-        } catch (imgErr) {
-            console.error("Imagen failed, skipping render:", imgErr);
+                        // Save to node's render collection
+                        if (uid) {
+                            const config = getNode(SovereignNodeId);
+                            if (config && config.renderCollection) {
+                                await adminDb.collection(config.renderCollection).add({
+                                    authorId: uid,
+                                    SovereignNodeId,
+                                    urls: [multiRes.url_1k, multiRes.url_2k].filter(Boolean),
+                                    prompt: renderPrompt,
+                                    roomType: analysis.roomType,
+                                    style: analysis.suggestedStyles[0] || 'modern',
+                                    createdAt: new Date().toISOString()
+                                });
+                            }
+                        }
+
+                    } catch (libErr) {
+                        console.error("Library save failed (ignoring for response):", libErr);
+                    }
+                }
+
+            } catch (imgErr) {
+                console.error("Imagen failed, skipping render:", imgErr);
+            }
         }
 
         return NextResponse.json({

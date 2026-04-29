@@ -198,9 +198,9 @@ export default function IntelligenceTicker({
           WebkitBackdropFilter: 'blur(12px)',
           borderBottom: '1px solid rgba(255,255,255,0.04)',
           overflow: 'hidden', cursor: 'default',
-          fontFamily: "'Inter', 'Manrope', -apple-system, sans-serif",
+          fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace", // Bloomberg Terminal font
           fontVariantNumeric: 'tabular-nums',
-          height: '40px', display: 'flex', alignItems: 'center',
+          height: '44px', display: 'flex', alignItems: 'center',
         }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
@@ -216,8 +216,8 @@ export default function IntelligenceTicker({
             background: '#22c55e', boxShadow: '0 0 6px #22c55e',
             animation: 'tickerPulse 2s ease-in-out infinite',
           }} />
-          <span style={{ fontSize: '0.55rem', letterSpacing: '2px', color: '#475569', fontWeight: 700 }}>
-            CANLI
+          <span style={{ fontSize: '0.60rem', letterSpacing: '2px', color: '#cbd5e1', fontWeight: 800 }}>
+            BB-TRTEX
           </span>
         </div>
 
@@ -505,17 +505,16 @@ function TickerItemCell({ item, onClick }: { item: TickerItem; onClick: () => vo
       {/* Label */}
       <span style={{
         fontSize: '13px', color: '#94a3b8', letterSpacing: '0.3px',
-        fontWeight: 500,
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'JetBrains Mono', monospace",
       }}>
-        {item.label}
+        {item.label.toUpperCase()}
       </span>
 
       {/* Value or Headline */}
       <span style={{
         fontSize: '14px', fontWeight: 600,
         color: item.severity === 'crisis' ? '#fca5a5' : '#E2E8F0',
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: "'JetBrains Mono', monospace",
         fontVariantNumeric: 'tabular-nums',
       }}>
         {item.newsHeadline ? (

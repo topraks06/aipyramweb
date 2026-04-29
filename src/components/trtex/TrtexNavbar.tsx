@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import SearchInput from '@/components/search/SearchInput';
+import { useAuth } from '@/components/auth/AipyramAuthProvider';
 
 // ═══ DİL SEÇENEKLERİ ═══
 const LANG_OPTIONS = [
@@ -54,6 +55,7 @@ interface TrtexNavbarProps {
  * Her menü kendi sayfasına gider + hover dropdown alt menüler.
  */
 export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr', activePage, theme = 'light' }: TrtexNavbarProps) {
+  const { user, logout } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
   const targetLang = lang.toUpperCase();
   const labels = navLabels[targetLang] || navLabels.TR;
@@ -195,6 +197,31 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
               </div>
             </div>
 
+            {/* SSO / KULLANICI PROFİLİ */}
+            {user ? (
+              <div className="trtex-lang-trigger relative flex items-center ml-4 cursor-pointer">
+                <div className="flex items-center gap-2 px-3 py-2 font-mono text-[0.8rem] font-bold transition-colors" style={{ border: `1px solid ${activeColor}`, color: activeColor }}>
+                  <span>{user.displayName?.split(' ')[0] || 'ÜYE'}</span>
+                  <span className="text-[0.6rem] opacity-60 ml-1">▾</span>
+                </div>
+                <div className="trtex-lang-drop">
+                  <div className="px-4 py-3 font-mono text-[0.7rem] text-gray-400 border-b border-gray-800">
+                    {user.email}
+                  </div>
+                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block px-4 py-3 font-mono text-[0.75rem] font-semibold text-white hover:bg-gray-800 no-underline">
+                    Terminal Dashboard
+                  </a>
+                  <button onClick={logout} className="w-full text-left px-4 py-3 font-mono text-[0.75rem] font-semibold text-red-500 hover:bg-gray-800">
+                    Çıkış Yap
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <a href={`${basePath}/login?lang=${lang}`} className="ml-4 px-4 py-2 font-mono text-[0.75rem] font-bold uppercase tracking-widest transition-all no-underline" style={{ border: `1px solid ${borderColor}`, color: textColor }}>
+                {labels.register}
+              </a>
+            )}
+
             {/* aipyram CONCIERGE (DESKTOP) */}
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('open_perde_ai_assistant', { detail: { action: 'concierge' } }))}
@@ -264,6 +291,21 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                   </a>
                 ))}
               </div>
+            </div>
+
+            {/* MOBILE SSO / KULLANICI PROFİLİ */}
+            <div className="mt-6">
+              {user ? (
+                <>
+                  <div className="font-mono text-sm font-extrabold uppercase tracking-widest mb-3" style={{ color: activeColor }}>{user.displayName || 'ÜYE'}</div>
+                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block w-full p-4 mb-2 font-mono text-sm font-bold text-center border no-underline" style={{ borderColor: borderColor, color: textColor }}>Terminal Dashboard</a>
+                  <button onClick={logout} className="w-full p-4 font-mono text-sm font-bold text-center border" style={{ borderColor: '#CC0000', color: '#CC0000', background: 'transparent' }}>Çıkış Yap</button>
+                </>
+              ) : (
+                <a href={`${basePath}/login?lang=${lang}`} className="block w-full p-4 font-mono text-sm font-bold uppercase tracking-widest text-center border no-underline" style={{ borderColor: activeColor, color: activeColor }}>
+                  {labels.register}
+                </a>
+              )}
             </div>
 
             {/* aipyram CONCIERGE (MOBILE) */}
