@@ -1,0 +1,23 @@
+# Data Connect Mutations
+mutation CreateTender($title: String!, $description: String!, $budget: Float!, $deadline: Date!, $authorId: String!) @auth(level: USER) {
+  tender_insert(
+    data: {
+      title: $title
+      description: $description
+      budget: $budget
+      deadline: $deadline
+      authorId: $authorId
+    }
+  )
+}
+
+mutation SubmitBid($tenderId: UUID!, $supplierId: String!, $amount: Float!, $message: String!) @auth(level: USER) {
+  bid_insert(
+    data: {
+      tenderId: $tenderId
+      supplierId: $supplierId
+      amount: $amount
+      message: $message
+    }
+  )
+}

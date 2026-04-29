@@ -1,0 +1,35 @@
+# Sovereign OS PostgreSQL Schema (Firebase Data Connect)
+# Bu şema, B2B işlemlerini (İhale, Tedarik) NoSQL'den ilişkisel yapıya taşır.
+
+type Tender @table {
+  id: UUID! @default(expr: "uuidV4()")
+  title: String!
+  description: String!
+  budget: Float!
+  currency: String! @default(value: "USD")
+  deadline: Date!
+  status: String! @default(value: "OPEN") # OPEN, CLOSED, AWARDED
+  authorId: String! # Firebase Auth UID
+  createdAt: Timestamp! @default(expr: "request.time")
+  
+  # İlişkiler
+  bids: [Bid!]! @relation
+}
+
+type Bid @table {
+  id: UUID! @default(expr: "uuidV4()")
+  tender: Tender! @relation
+  supplierId: String! # Firebase Auth UID
+  amount: Float!
+  message: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type SupplierProfile @table {
+  userId: String! @primaryKey # Firebase Auth UID
+  companyName: String!
+  taxNumber: String!
+  country: String!
+  isVerified: Boolean! @default(value: false)
+  rating: Float! @default(value: 0.0)
+}

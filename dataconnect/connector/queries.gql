@@ -1,0 +1,29 @@
+# Data Connect Queries
+query ListOpenTenders @auth(level: PUBLIC) {
+  tenders(where: { status: { eq: "OPEN" } }, orderBy: [{ createdAt: DESC }]) {
+    id
+    title
+    budget
+    currency
+    deadline
+    authorId
+  }
+}
+
+query GetTenderById($id: UUID!) @auth(level: PUBLIC) {
+  tender(id: $id) {
+    id
+    title
+    description
+    budget
+    currency
+    deadline
+    status
+    authorId
+    bids {
+      id
+      amount
+      supplierId
+    }
+  }
+}

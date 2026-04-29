@@ -5,6 +5,7 @@ import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import OpportunityRadarWidget from '@/components/trtex/OpportunityRadarWidget';
 import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
+import SovereignLiveConcierge from '@/components/home/SovereignLiveConcierge';
 
 // ═══ REGION CLASSIFIER (Frontend keyword matching — Aloha data stays untouched) ═══
 const REGION_KEYWORDS: Record<string, string[]> = {
@@ -1156,6 +1157,7 @@ export default function PremiumB2BHomeLayout({
 
       {/* ORTAK KURUMSAL FOOTER EKLENDİ */}
       <TrtexFooter basePath={basePath} brandName={brandName} lang={lang} />
+      <SovereignLiveConcierge />
 
     </div>
   );
