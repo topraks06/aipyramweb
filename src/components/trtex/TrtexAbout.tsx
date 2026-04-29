@@ -21,8 +21,8 @@ const stats = [
 
 export default function TrtexAbout() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <TrtexNavbar lang="tr" basePath="" />
+    <div className="min-h-screen bg-[#FAFAFA] text-zinc-900">
+      <TrtexNavbar lang="tr" basePath="" theme="light" />
       
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 border-b border-white/10">
@@ -32,14 +32,14 @@ export default function TrtexAbout() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 border border-white/10 text-[9px] uppercase tracking-[0.3em] mb-10 text-zinc-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 border border-zinc-200 text-[9px] uppercase tracking-[0.3em] mb-10 text-zinc-500 bg-white">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
               Sovereign B2B Intelligence
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif font-medium tracking-tighter leading-[0.9] mb-8 uppercase">
               Hakkımızda
             </h1>
-            <p className="text-xl sm:text-2xl text-zinc-400 font-light leading-relaxed max-w-3xl">
+            <p className="text-xl sm:text-2xl text-zinc-600 font-light leading-relaxed max-w-3xl">
               TRTEX, Türkiye ve dünya ev tekstili sektörünün yapay zeka destekli otonom istihbarat platformudur.
               Aipyram GmbH tarafından geliştirilmektedir.
             </p>
@@ -48,7 +48,7 @@ export default function TrtexAbout() {
       </section>
 
       {/* Vizyon */}
-      <section className="py-20 lg:py-32 border-b border-white/10">
+      <section className="py-20 lg:py-32 border-b border-zinc-200 bg-white">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
             <motion.div
@@ -60,12 +60,12 @@ export default function TrtexAbout() {
               <h2 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-8 uppercase">
                 Vizyonumuz
               </h2>
-              <p className="text-zinc-400 text-lg font-light leading-relaxed mb-6">
+              <p className="text-zinc-600 text-lg font-light leading-relaxed mb-6">
                 Ev tekstili sektöründe veri odaklı karar almanın standartını belirlemek. 
                 TRTEX, günde 24 saat otonom çalışan yapay zeka motoruyla pazar sinyallerini analiz eder, 
                 iş fırsatlarını tespit eder ve sektör profesyonellerine gerçek zamanlı istihbarat sunar.
               </p>
-              <p className="text-zinc-400 text-lg font-light leading-relaxed">
+              <p className="text-zinc-600 text-lg font-light leading-relaxed">
                 Geleneksel haber portallarının ötesine geçerek, her haberi ticari fırsat perspektifinden değerlendiren, 
                 tedarik zinciri risklerini önceden tespit eden ve ihale fırsatlarını otomatik eşleştiren 
                 bir &ldquo;Ticari Zeka Terminali&rdquo; inşa ediyoruz.
@@ -87,11 +87,11 @@ export default function TrtexAbout() {
                   { icon: BarChart3, title: 'TRTEX IQ™', desc: 'Firma bazlı ticari zeka skoru. İhracat kapasitesi, sertifikasyon ve pazar erişimi analizi.' },
                   { icon: Shield, title: 'Sovereign Güvenlik', desc: 'Google Cloud altyapısı, Firebase Auth, rate limiting ve tam veri şifreleme.' },
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-5 p-6 border border-white/10 hover:border-white/20 transition-colors">
-                    <item.icon className="w-6 h-6 text-red-500 shrink-0 mt-1 stroke-[1.5]" />
+                  <div key={i} className="flex gap-5 p-6 border border-zinc-200 hover:border-zinc-300 bg-[#FAFAFA] transition-colors rounded-lg">
+                    <item.icon className="w-6 h-6 text-red-600 shrink-0 mt-1 stroke-[1.5]" />
                     <div>
-                      <h3 className="text-white font-medium mb-2 uppercase tracking-wider text-sm">{item.title}</h3>
-                      <p className="text-zinc-500 text-sm font-light leading-relaxed">{item.desc}</p>
+                      <h3 className="text-zinc-900 font-medium mb-2 uppercase tracking-wider text-sm">{item.title}</h3>
+                      <p className="text-zinc-600 text-sm font-light leading-relaxed">{item.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -102,7 +102,7 @@ export default function TrtexAbout() {
       </section>
 
       {/* Rakamlar */}
-      <section className="py-20 lg:py-28 border-b border-white/10 bg-zinc-950">
+      <section className="py-20 lg:py-28 border-b border-zinc-200 bg-[#F9FAFB]">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
             {stats.map((stat, i) => (
@@ -114,8 +114,8 @@ export default function TrtexAbout() {
                 transition={{ duration: 0.8, delay: i * 0.1 }}
                 className="text-center"
               >
-                <stat.icon className="w-6 h-6 text-red-500 mx-auto mb-4 stroke-[1.5]" />
-                <div className="text-4xl sm:text-5xl font-serif font-medium text-white mb-2">{stat.value}</div>
+                <stat.icon className="w-6 h-6 text-red-600 mx-auto mb-4 stroke-[1.5]" />
+                <div className="text-4xl sm:text-5xl font-serif font-medium text-zinc-900 mb-2">{stat.value}</div>
                 <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-500 font-medium">{stat.label}</div>
               </motion.div>
             ))}
@@ -124,7 +124,7 @@ export default function TrtexAbout() {
       </section>
 
       {/* Ekosistem */}
-      <section className="py-20 lg:py-32 border-b border-white/10">
+      <section className="py-20 lg:py-32 border-b border-zinc-200 bg-white">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -136,7 +136,7 @@ export default function TrtexAbout() {
             <h2 className="text-4xl sm:text-5xl font-serif font-medium tracking-tight mb-6 uppercase">
               aipyram Ekosistemi
             </h2>
-            <p className="text-zinc-400 text-lg font-light max-w-2xl">
+            <p className="text-zinc-600 text-lg font-light max-w-2xl">
               TRTEX, aipyram GmbH&apos;nin dört bağımsız ama birbirine bağlı platformundan biridir.
             </p>
           </motion.div>
@@ -152,13 +152,13 @@ export default function TrtexAbout() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: i * 0.15 }}
-                className="group p-8 border border-white/10 hover:border-white/30 transition-all"
+                className="group p-8 border border-zinc-200 bg-[#FAFAFA] hover:border-zinc-300 hover:shadow-sm transition-all rounded-xl"
               >
-                <h3 className="text-2xl font-serif font-medium text-white mb-3 group-hover:text-red-400 transition-colors">
+                <h3 className="text-2xl font-serif font-medium text-zinc-900 mb-3 group-hover:text-red-600 transition-colors">
                   {item.name}
                 </h3>
-                <p className="text-zinc-500 text-sm font-light mb-6">{item.desc}</p>
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-zinc-600 group-hover:text-white transition-colors">
+                <p className="text-zinc-600 text-sm font-light mb-6">{item.desc}</p>
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-zinc-500 group-hover:text-zinc-900 transition-colors">
                   <span>Keşfet</span>
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -179,19 +179,19 @@ export default function TrtexAbout() {
             className="max-w-3xl"
           >
             <div className="text-[10px] uppercase tracking-[0.3em] text-zinc-600 mb-6 font-medium">Kurucu</div>
-            <h3 className="text-3xl sm:text-4xl font-serif font-medium text-white mb-4">
+            <h3 className="text-3xl sm:text-4xl font-serif font-medium text-zinc-900 mb-4">
               aipyram GmbH
             </h3>
-            <p className="text-zinc-400 text-lg font-light leading-relaxed mb-8">
+            <p className="text-zinc-600 text-lg font-light leading-relaxed mb-8">
               Almanya merkezli, yapay zeka destekli endüstriyel ticaret çözümleri geliştiren teknoloji şirketi.
               Ev tekstili, perde ve iç mimari sektörlerinde B2B dijital dönüşümün öncüsü.
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-white font-medium hover:text-red-400 transition-colors"
+              className="inline-flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-zinc-900 font-medium hover:text-red-600 transition-colors"
             >
               <span>İletişime Geç</span>
-              <span className="w-12 h-px bg-white" />
+              <span className="w-12 h-px bg-zinc-900" />
               <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>

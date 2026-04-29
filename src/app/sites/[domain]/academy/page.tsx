@@ -30,7 +30,7 @@ export default async function AcademyPage({ params, searchParams }: any) {
   try {
     const snap = await adminDb.collection(`${projectName}_news`)
       .where("status", "==", "published")
-      .where("intent", "==", "ANALYZE")
+      .where("category", "in", ["ANALİZ", "TREND", "AKADEMİ", "ANALYSIS", "DEKORASYON", "DECORATION", "GÜNDEM"])
       .orderBy("createdAt", "desc")
       .limit(30)
       .get();
@@ -55,7 +55,15 @@ export default async function AcademyPage({ params, searchParams }: any) {
          </div>
 
          {academyNews.length === 0 ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: '#6B7280', fontWeight: 600 }}>{t('noAcademyContent', lang)}</div>
+            <div style={{ padding: '6rem 2rem', textAlign: 'center', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ fontSize: '3.5rem', marginBottom: '1.5rem', opacity: 0.8 }}>🎓</div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#111827', marginBottom: '1rem' }}>
+                Akademi İçerikleri Hazırlanıyor
+              </h2>
+              <p style={{ color: '#6B7280', fontSize: '1.1rem', maxWidth: '500px', lineHeight: 1.6 }}>
+                Sektör profesyonelleri, toptancılar ve üreticiler için derinlemesine pazar analizleri, trend raporları ve ticari eğitim dokümanları çok yakında bu ekranda yerini alacak.
+              </p>
+            </div>
          ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
               {academyNews.map((article: any) => {
@@ -63,9 +71,9 @@ export default async function AcademyPage({ params, searchParams }: any) {
                 const translatedSummary = article.translations?.[targetLang]?.summary || article.commercial_note;
                 return (
                 <a key={article.id} href={`${basePath}/news/${article.slug || article.id}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden', borderRadius: '8px' }}>
-                  {(article.images?.[0] || article.image_url) ? (
+                  {(article.images?.[0] || article.image_url || article.image) ? (
                     <div style={{ width: '100%', height: '180px', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
-                      <img src={article.images?.[0] || article.image_url} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   ) : (
                     <div style={{ width: '100%', height: '180px', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>

@@ -304,9 +304,9 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
                   const translatedSummary = article.translations?.[lang.toUpperCase()]?.summary || article.commercial_note;
                   return (
                   <a key={article.id} href={`${basePath}/${category}/${article.slug || article.id}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden' }}>
-                    {(article.images?.[0] || article.image_url) ? (
+                    {(article.images?.[0] || article.image_url || article.image) ? (
                       <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
-                        <img src={article.images?.[0] || article.image_url} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                     ) : (
                       <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -357,8 +357,8 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
                   }}>
                     <div style={{ width: '100px', height: '60px', flexShrink: 0, overflow: 'hidden', borderRadius: '4px', position: 'relative', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <div style={{ position: 'absolute', inset: 0, opacity: 0.5, backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', backgroundSize: '8px 8px' }}></div>
-                      {(article.images?.[0] || article.image_url) ? (
-                        <img src={article.images?.[0] || article.image_url} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 20 }} />
+                      {(article.images?.[0] || article.image_url || article.image) ? (
+                        <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 20 }} />
                       ) : (
                         <div style={{ position: 'relative', zIndex: 10, width: '20px', height: '3px', background: '#D1D5DB', borderRadius: '2px' }}></div>
                       )}

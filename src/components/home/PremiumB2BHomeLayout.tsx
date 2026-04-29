@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import OpportunityRadarWidget from '@/components/trtex/OpportunityRadarWidget';
@@ -364,11 +363,20 @@ export default function PremiumB2BHomeLayout({
   allArticles.forEach(a => { if (a?.id && !uniqueMap.has(a.id) && a.id !== hero?.id) uniqueMap.set(a.id, a); });
   const pool = Array.from(uniqueMap.values());
 
+  const getLocalizedLink = (path: string, slug?: string, query?: string) => {
+    if (lang === 'tr') {
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', academy: 'akademi', trade: 'ticaret', fairs: 'fuar-takvimi', collections: 'koleksiyonlar', about: 'hakkimizda' };
+      const localPath = map[path] || path;
+      return `${basePath}/${localPath}${slug ? `/${slug}` : ''}${query ? `?${query}` : ''}`;
+    }
+    return `${basePath}/${path}${slug ? `/${slug}` : ''}?lang=${lang}${query ? `&${query}` : ''}`;
+  };
+
   const z0Headlines = [
     { text: activePriorityEngine?.top_signal || HL.awaitingSignal, href: null },
     ...pool.slice(0, 4).map(a => ({
       text: a?.translations?.[targetLang]?.title || a?.title,
-      href: `${basePath}/news/${a?.slug || a?.id}?lang=${lang}`
+      href: getLocalizedLink('news', a?.slug || a?.id)
     }))
   ].filter(h => h.text);
 
@@ -415,7 +423,7 @@ export default function PremiumB2BHomeLayout({
       'https://images.unsplash.com/photo-1580828369019-22204eb32145?q=80&w=800&auto=format&fit=crop'  // Weaving Factory
     ];
     
-    const sum = String(a?.id || Math.random().toString()).split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    const sum = String(a?.id || a?.slug || 'fallback-id').split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
     return fallbacks[sum % fallbacks.length];
   };
   const getTitle = (a: any) => a?.translations?.[targetLang]?.title || a?.title;
@@ -428,7 +436,7 @@ export default function PremiumB2BHomeLayout({
     return raw;
   };
   const getSummary = (a: any) => a?.translations?.[targetLang]?.summary || a?.summary || '';
-  const getLink = (a: any) => `${basePath}/news/${a?.slug || a?.id}?lang=${lang}`;
+  const getLink = (a: any) => getLocalizedLink('news', a?.slug || a?.id);
   const statusColor = systemStatus === 'LIVE' ? '#22C55E' : systemStatus === 'DEGRADED' ? '#F59E0B' : '#EF4444';
 
   const safeTickerItems = Array.isArray(tickerItems) ? tickerItems : [];
@@ -527,8 +535,8 @@ export default function PremiumB2BHomeLayout({
     <div className="trtex-root">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-        :root{--w:#fff;--c:#FAFAF8;--g:#F5F5F0;--b:#E8E8E3;--bs:#101112;--t:#1A1A1A;--ts:#666660;--a:#C41E1E;--s:'Inter',-apple-system,sans-serif;--sf:'Playfair Display',Georgia,serif;--m:'JetBrains Mono',monospace; --go:#22C55E; --re:#EF4444; --wa:#F59E0B;}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto+Mono:wght@400;500;600;700&display=swap');
+        :root{--w:#ffffff;--c:#F9FAFB;--g:#F3F4F6;--b:#E5E7EB;--bs:#111827;--t:#111827;--ts:#4B5563;--a:#2563EB;--s:'Inter',-apple-system,sans-serif;--sf:'Inter',sans-serif;--m:'Roboto Mono',monospace; --go:#16A34A; --re:#DC2626; --wa:#D97706;}
         @keyframes pulse-live { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
         @keyframes radar-sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--go); border-radius: 50%; margin-right: 8px; animation: pulse-live 2s infinite; }
@@ -551,115 +559,100 @@ export default function PremiumB2BHomeLayout({
         .nav-l{display:flex;gap:1.5rem;align-items:center}
         
         /* ZONE 1: DUAL SIGNAL SYSTEM */
-        .z1{background:var(--bs);color:var(--w);display:flex;flex-direction:column}
-        .z1 .tk{border-bottom:1px solid #222}
-        .z1 .tk div, .z1 .tk span{font-family:var(--m)!important;font-size:.6rem!important}
+        .z1{background:#F9FAFB;color:var(--bs);display:flex;flex-direction:column;border-bottom:1px solid var(--b)}
+        .z1 .tk{border-bottom:1px solid var(--b);background:#FFFFFF}
+        .z1 .tk div, .z1 .tk span{font-family:var(--s)!important;font-size:.7rem!important;color:#475569!important}
         
-        .ds-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#333;border-bottom:1px solid #333}
-        .ds-card{background:var(--bs);padding:3rem 2rem;display:flex;flex-direction:column;position:relative}
-        .ds-head{font-family:var(--m);font-size:.8rem;font-weight:700;letter-spacing:.15em;color:#888;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center}
-        .ds-val{font-family:var(--m);font-size:3.5rem;font-weight:900;line-height:1;margin-bottom:.5rem;color:var(--w);display:flex;align-items:flex-end;gap:.5rem}
-        .ds-unit{font-size:1.2rem;color:#555;padding-bottom:.5rem}
-        .ds-desc{font-size:.9rem;color:#aaa;line-height:1.6;max-width:85%}
-        .ds-pill{font-size:.65rem;font-weight:800;padding:4px 8px;border-radius:2px;color:var(--w);background:#333;font-family:var(--m)}
-        .ds-raw{margin-top:2.5rem;padding-top:1.5rem;border-top:1px dashed #222;display:flex;gap:1.5rem;font-family:var(--m);font-size:.7rem;color:#777}
-        .ds-raw-item{display:flex;gap:.5rem}
-        .ds-raw-val{color:#ccc}
+        .ds-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b);border-bottom:1px solid var(--b)}
+        .ds-card{background:#FFFFFF;padding:3rem 2rem;display:flex;flex-direction:column;position:relative}
+        .ds-head{font-family:var(--s);font-size:.85rem;font-weight:600;letter-spacing:.05em;color:#64748B;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center}
+        .ds-val{font-family:var(--s);font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:.5rem;color:#0F172A;display:flex;align-items:flex-end;gap:.5rem;letter-spacing:-0.02em}
+        .ds-unit{font-size:1.2rem;color:#64748B;padding-bottom:.5rem;font-weight:500}
+        .ds-desc{font-size:.95rem;color:#475569;line-height:1.6;max-width:85%}
+        .ds-pill{font-size:.7rem;font-weight:700;padding:6px 12px;border-radius:99px;color:var(--a);background:#EFF6FF;font-family:var(--s)}
+        .ds-raw{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid #F1F5F9;display:flex;gap:1.5rem;font-family:var(--m);font-size:.75rem;color:#64748B}
+        .ds-raw-item{display:flex;gap:.5rem;align-items:center}
+        .ds-raw-val{color:#0F172A;font-weight:600}
         
         /* ZONE 2: BREAKING INTELLIGENCE */
-        .z2{padding:2rem 0;background:var(--w);border-bottom:1px solid var(--b)}
-        .z2h{margin-bottom:2rem;padding-bottom:.5rem;border-bottom:2px solid var(--t);display:flex;justify-content:space-between;align-items:flex-end}
-        .z2t{font-family:var(--sf);font-weight:900;font-size:2rem;line-height:1}
+        .z2{padding:8rem 0 6rem;background:#FFFFFF;border-bottom:1px solid var(--b)}
+        .z2h{margin-bottom:4rem;padding-bottom:1.5rem;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:flex-end}
+        .z2t{font-family:var(--s);font-weight:900;font-size:3rem;line-height:1.1;color:#020617;letter-spacing:-0.04em}
         
-        .hsg{display:grid;grid-template-columns:1.5fr 1fr;gap:3rem;margin-bottom:3rem}
-        .hiw img{width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover}
-        .htl{font-family:var(--sf);font-size:clamp(1.5rem,2.5vw,2.5rem);font-weight:900;line-height:1.1;margin:.5rem 0 1rem 0}
-        .hsum{font-size:1rem;line-height:1.6;color:var(--ts)}
-        .hceo{margin-top:2rem;padding:1.5rem;background:#F9F9F8;border-left:4px solid var(--t);box-shadow: 0 4px 15px rgba(0,0,0,0.03);position:relative;}
-        .hceo::before{content:"[ C-LEVEL BRİFİNG ]";position:absolute;top:-12px;left:10px;background:#101112;color:#fff;font-family:var(--m);font-size:0.6rem;padding:2px 8px;letter-spacing:1px;font-weight:700;}
-        .hceo ul{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:10px}
-        .hceo li{font-size:.85rem;display:flex;gap:.5rem}
-        .hceo li::before{content:"⚡";font-size:.8rem}
+        .hsg{display:grid;grid-template-columns:1.5fr 1fr;gap:4rem;margin-bottom:5rem}
+        .hiw img{width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:24px;box-shadow:0 20px 40px -10px rgba(0,0,0,0.06)}
+        .htl{font-family:var(--s);font-size:clamp(1.8rem,3vw,3rem);font-weight:900;line-height:1.15;margin:.5rem 0 1.5rem 0;color:#020617;letter-spacing:-0.03em}
+        .hsum{font-size:1.1rem;line-height:1.8;color:#334155}
+        .hceo{margin-top:2rem;padding:2rem;background:#F8FAFC;border-radius:16px;box-shadow: 0 4px 20px rgba(0,0,0,0.02);position:relative;border:1px solid #F1F5F9}
+        .hceo::before{content:"CEO BRİFİNGİ";position:absolute;top:-12px;left:20px;background:var(--a);color:#fff;font-family:var(--s);font-size:0.7rem;padding:4px 12px;border-radius:99px;letter-spacing:0.5px;font-weight:700;}
+        .hceo ul{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:12px}
+        .hceo li{font-size:.95rem;display:flex;gap:.75rem;color:#334155;line-height:1.5}
+        .hceo li::before{content:"→";color:var(--a);font-weight:900}
         
-        .ngg{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
-        .ngi{display:flex;flex-direction:column;gap:.6rem;border-top:1px solid var(--b);padding-top:1rem;transition:opacity .2s}
-        .ngi:hover{opacity:.8}
-        .ngt{font-weight:700;font-size:.95rem;line-height:1.3}
+        .ngg{display:grid;grid-template-columns:repeat(3,1fr);gap:3rem}
+        .ngi{display:flex;flex-direction:column;gap:1rem;background:transparent;border:none;transition:all .4s ease;}
+        .ngi:hover{transform:translateY(-8px);}
+        .ngi img{border-radius:24px; box-shadow:0 10px 30px rgba(0,0,0,0.05); transition:all 0.4s;}
+        .ngi:hover img{box-shadow:0 20px 40px rgba(0,0,0,0.1);}
+        .ngt{font-weight:900;font-size:1.4rem;line-height:1.3;color:#020617;letter-spacing:-0.02em}
 
-        /* ZONE 3: TRADE OPPORTUNITIES (Action Cards) */
-        .z3{padding:2rem 0;background:var(--c);border-bottom:1px solid var(--b)}
-        .opp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-        .opp-card{background:var(--w);border:1px solid var(--b);padding:1.5rem;display:flex;flex-direction:column;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s, box-shadow .2s;}
-        .opp-card:hover{transform:translateY(-2px);box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);border-color:var(--ts)}
-        .opp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--b)}
-        .opp-score{font-family:var(--m);font-size:1.4rem;font-weight:700;color:var(--a)}
-        .opp-type{font-family:var(--m);font-size:.6rem;background:var(--bs);color:var(--w);padding:.2rem .5rem;}
-        .opp-title{font-weight:800;font-size:1.1rem;line-height:1.2;margin-bottom:1rem}
-        .opp-data{font-size:.8rem;color:var(--ts);margin-bottom:1.5rem;line-height:1.5}
-        .opp-act{margin-top:auto;background:var(--g);padding:1rem;font-size:.8rem}
-        .opp-act-title{font-weight:700;margin-bottom:.3rem;color:var(--bs)}
-        .opp-btn{margin-top:1.5rem;width:100%;padding:.7rem;background:var(--bs);color:var(--w);text-align:center;font-weight:700;font-size:.8rem;text-transform:uppercase;cursor:pointer;border:none}
+        /* TRADING FLOOR CSS (Insight Cards instead of basic tables) */
+        .tf-sec { background: #F8FAFC; padding: 8rem 0 8rem; }
+        .tf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; background: transparent; }
+        .tf-col { background: transparent; display: flex; flex-direction: column; min-height: 400px;}
+        .tf-item { padding: 2.5rem; border: none; border-radius:32px; margin-bottom: 2rem; font-family: var(--s); display:flex; flex-direction:column; gap:1rem; position:relative; background:#FFFFFF; transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow:0 4px 30px rgba(0,0,0,0.03)}
+        .tf-item:hover { transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,0.08); }
+        .tf-loc { font-family: var(--s); font-weight:600; font-size: 0.85rem; color: #64748B; display:flex; align-items:center; gap:0.5rem; }
+        .tf-title { font-weight: 900; font-size: 1.25rem; line-height: 1.35; color: #020617; }
+        .tf-data-row { font-family: var(--m); font-size: 0.85rem; color: #334155; display: flex; justify-content: space-between; background: #F8FAFC; padding: 1rem 1.25rem; border-radius:12px; font-weight:500;}
+        .tf-score { position:absolute; top:1.2rem; right:1.2rem; background: #E0E7FF; color: #3730A3; font-family:var(--s); font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:99px;}
+        .tf-see-all { display: block; text-align: center; padding: 1rem; margin-top: auto; font-family: var(--s); font-size: .85rem; font-weight: 700; color: #475569; border-radius:12px; border: 1px solid #E2E8F0; background: #FFFFFF; cursor: pointer; transition: all .2s; }
+        .tf-see-all:hover { background: #F1F5F9; color: #0F172A; }
+        .tf-header { display: flex; align-items: center; justify-content: space-between; font-family: var(--s); font-weight: 800; font-size: 1.2rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #E2E8F0; text-transform: uppercase; letter-spacing: 0.5px;}
+        .tf-header.red { color: var(--re); }
+        .tf-header.green { color: var(--go); }
+        .tf-header.yellow { color: var(--wa); }
+        .tf-header span:first-child { font-size: 1rem; }
 
-        /* TRADING FLOOR CSS (TRTEX Intelligence Terminal) */
-        .tf-sec { background: linear-gradient(180deg, #111 0%, #0B0D0F 150px, #0B0D0F 100%); border-top: 1px solid #2A2A2A; border-bottom: 3px solid var(--t); padding: 4rem 0 2rem; }
-        .tf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #1a1a1a; }
-        .tf-col { background: #0F1114; padding: 1.5rem; display: flex; flex-direction: column; min-height: 400px; }
-        .tf-col .tf-item { background: #161920; border-color: #222; }
-        .tf-col .tf-item:hover { background: #1C2029; border-color: #444; }
-        .tf-col .tf-loc { color: #888; }
-        .tf-col .tf-title { color: #E8E8E8; }
-        .tf-col .tf-data-row { background: #0D0F12; color: #aaa; border-left-color: #555; }
-        .tf-col .tf-score { background: #fff; color: #000; }
-        .tf-see-all { display: block; text-align: center; padding: .7rem; margin-top: auto; font-family: var(--m); font-size: .7rem; font-weight: 700; color: #888; letter-spacing: .1em; text-transform: uppercase; border: 1px solid #222; background: transparent; cursor: pointer; transition: all .2s; }
-        .tf-see-all:hover { background: #1a1a1a; color: #fff; border-color: #444; }
-        .tf-header { display: flex; align-items: center; justify-content: space-between; font-family: var(--m); font-weight: 700; font-size: 1rem; margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 2px solid #333; text-transform: uppercase; letter-spacing: 1px;}
-        .tf-header.red { color: var(--re); border-bottom-color: var(--re); }
-        .tf-header.green { color: var(--go); border-bottom-color: var(--go); }
-        .tf-header.yellow { color: var(--wa); border-bottom-color: var(--wa); }
-        .tf-header span:first-child { font-size: .85rem; }
-
-        .tf-item { padding: 1.2rem; border: 1px solid var(--b); margin-bottom: 1rem; font-family: var(--s); display:flex; flex-direction:column; gap:0.6rem; position:relative; background:#FAFAF8; transition:all 0.2s;}
-        .tf-item:hover { border-color: var(--t); background: #fff; transform:translateY(-2px); box-shadow:0 8px 15px rgba(0,0,0,0.05); }
-        .tf-loc { font-family: var(--m); font-size: 0.8rem; color: var(--ts); display:flex; align-items:center; gap:0.5rem; }
-        .tf-title { font-weight: 900; font-size: 1.25rem; line-height: 1.2; color: var(--t); }
-        .tf-data-row { font-family: var(--m); font-size: 0.85rem; color: var(--t); display: flex; justify-content: space-between; background: var(--g); padding: 0.6rem; border-left:3px solid var(--ts);}
-        .tf-score { position:absolute; top:1.2rem; right:1.2rem; background: var(--t); color: var(--w); font-family:var(--m); font-size:0.8rem; font-weight:700; padding:3px 8px; }
-        .tf-btn { margin-top: .8rem; width: 100%; padding: 0.6rem; border: 1px solid #333; background: transparent; color: #ccc; font-family: var(--m); font-weight: 800; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; letter-spacing:1px;}
-        .tf-btn:hover { background: var(--t); color: var(--w); }
-        .tf-btn.red:hover { background: var(--re); border-color:var(--re); }
-        .tf-btn.green:hover { background: var(--go); border-color:var(--go); }
-        .tf-btn.yellow:hover { background: var(--wa); border-color:var(--wa); }
+        .tf-btn { margin-top: 1rem; width: 100%; padding: 0.8rem; border-radius:8px; border: none; background: #F1F5F9; color: #475569; font-family: var(--s); font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .tf-btn.red { background: #FEF2F2; color: #DC2626; }
+        .tf-btn.red:hover { background: #DC2626; color: #FFFFFF; }
+        .tf-btn.green { background: #F0FDF4; color: #16A34A; }
+        .tf-btn.green:hover { background: #16A34A; color: #FFFFFF; }
+        .tf-btn.yellow { background: #FFFBEB; color: #D97706; }
+        .tf-btn.yellow:hover { background: #D97706; color: #FFFFFF; }
         .opp-btn:hover{background:var(--a)}
 
         /* ZONE 4: GLOBAL RADAR MAP */
-        .z4{padding:4rem 0 2rem;background:linear-gradient(180deg, inherit 0%, var(--bs) 100px, var(--bs) 100%);color:var(--w); border-top: 1px solid #2A2A2A;}
-        .rm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#333;border:1px solid #333}
-        .rm-cell{background:var(--bs);padding:1.5rem}
-        .rm-head{font-family:var(--m);font-size:.7rem;font-weight:700;letter-spacing:.1em;border-bottom:1px solid #333;padding-bottom:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-        .rm-signal{display:flex;gap:.5rem;margin-bottom:1rem;align-items:flex-start}
-        .rm-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
-        .rm-text{font-size:.8rem;line-height:1.4;color:#ccc}
-        .rm-cat{font-family:var(--m);font-size:.55rem;color:#888;margin-bottom:.2rem;text-transform:uppercase}
+        .z4{padding:6rem 0 6rem;background:#F8FAFC;color:#0F172A; border-top: 1px solid #F1F5F9;}
+        .rm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;background:transparent;border:none}
+        .rm-cell{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:2.5rem;border-radius:24px;box-shadow:0 4px 20px -5px rgba(0,0,0,0.02);border:1px solid rgba(226,232,240,0.8);transition:all 0.4s}
+        .rm-cell:hover{box-shadow:0 20px 40px -10px rgba(0,0,0,0.06);transform:translateY(-4px)}
+        .rm-head{font-family:var(--s);font-size:.9rem;font-weight:700;letter-spacing:.05em;border-bottom:1px solid #F1F5F9;padding-bottom:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;color:#020617}
+        .rm-signal{display:flex;gap:.75rem;margin-bottom:1rem;align-items:flex-start}
+        .rm-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+        .rm-text{font-size:.9rem;line-height:1.5;color:#475569}
+        .rm-cat{font-family:var(--s);font-size:.65rem;color:#94A3B8;margin-bottom:.3rem;text-transform:uppercase;font-weight:600}
 
         /* ZONE 0: MARKET REGIME BANNER */
-        .z0-banner{background:var(--re);color:var(--w);padding:.5rem 1rem;font-family:var(--m);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:1rem;}
-        .z0-banner.neutral{background:var(--ts)}
-        .z0-banner.risk_on{background:var(--go)}
+        .z0-banner{background:#EEF2FF;color:#3730A3;padding:.8rem 1rem;font-family:var(--s);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:1.5rem;border-bottom:1px solid #E0E7FF}
+        .z0-banner.neutral{background:#F1F5F9;color:#475569;border-bottom-color:#E2E8F0}
+        .z0-banner.risk_on{background:#F0FDF4;color:#166534;border-bottom-color:#DCFCE7}
 
         /* LAYERS (OVERLAYS) */
-        .layer-title{font-family:var(--m);font-weight:700;font-size:.7rem;letter-spacing:.1em;border-bottom:1px solid var(--b);padding-bottom:.5rem;margin-bottom:1rem;margin-top:3rem;text-transform:uppercase}
+        .layer-title{font-family:var(--s);font-weight:800;font-size:1.1rem;letter-spacing:.05em;border-bottom:2px solid #E2E8F0;padding-bottom:1rem;margin-bottom:2rem;margin-top:4rem;text-transform:uppercase;color:#0F172A}
         
         @keyframes fadeCycle { 0% { opacity: 0; transform: translateY(3px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-3px); } }
-        .z0-headline { animation: fadeCycle 5s infinite; display: inline-block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75vw; vertical-align: bottom; }
+        .z0-headline { animation: fadeCycle 5s infinite; display: inline-block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75vw; vertical-align: bottom; }
         .z0-banner { display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; white-space: nowrap; }
         
-        .layer-fairs{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1rem}
-        .layer-fairs-card{background:var(--w);border:1px solid var(--b);padding:1.5rem;display:flex;flex-direction:column}
-        .layer-fairs-card-days{font-family:var(--m);font-size:1.8rem;font-weight:900;color:var(--re);margin-bottom:.5rem;line-height:1}
+        .layer-fairs{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:1.5rem}
+        .layer-fairs-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:2rem;display:flex;flex-direction:column;box-shadow:0 4px 6px -1px rgba(0,0,0,0.02)}
+        .layer-fairs-card-days{font-family:var(--s);font-size:2.5rem;font-weight:900;color:var(--a);margin-bottom:.5rem;line-height:1;letter-spacing:-0.03em}
         
-        .layer-academy{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:1rem}
-        .layer-academy-card{background:var(--c);border:1px solid var(--b);padding:2rem}
-        .layer-academy-card h3{font-family:var(--sf);font-weight:900;font-size:1.4rem;margin:.5rem 0 1rem;line-height:1.2}
+        .layer-academy{display:grid;grid-template-columns:repeat(2,1fr);gap:2.5rem;margin-top:1.5rem}
+        .layer-academy-card{background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:2.5rem;box-shadow:0 4px 20px -5px rgba(0,0,0,0.03)}
+        .layer-academy-card h3{font-family:var(--s);font-weight:800;font-size:1.6rem;margin:.5rem 0 1rem;line-height:1.3;color:#0F172A;letter-spacing:-0.02em}
 
         /* EXTRA */
         .fr{padding:2rem 0;background:var(--c);border-top:1px solid var(--b)}
@@ -689,10 +682,6 @@ export default function PremiumB2BHomeLayout({
         @media(max-width:768px){.b2b-sup-table{display:block; overflow-x:auto;}}
       `}} />
 
-      {/* ZONE 1: LIVE MARKET STREAM (KOMPAKT SİNTETİK TİCKER) — REORDERED TO TOP */}
-      <section className="z1">
-        {finalTickerItems.length > 0 && <div className="tk"><IntelligenceTicker items={finalTickerItems}/></div>}
-      </section>
 
       {/* NAV — ORTAK BAĞLANTI */}
       <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="news" theme="light" />
@@ -700,7 +689,7 @@ export default function PremiumB2BHomeLayout({
       {/* ZONE 0: MARKET REGIME BANNER */}
       {activePriorityEngine?.market_regime && (
         <div className={`z0-banner ${String(activePriorityEngine.market_regime).toLowerCase()}`}>
-          <span style={{background:'#000',color:'#fff',padding:'2px 6px',borderRadius:'2px',marginRight:'10px', flexShrink: 0}}>{HL.marketRegime}: {String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_ON' ? HL.riskOn : String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_OFF' ? HL.riskOff : HL.neutralRegime}</span>
+          <span style={{background:'#FFFFFF',color:'inherit',padding:'4px 10px',borderRadius:'99px',marginRight:'10px', flexShrink: 0, boxShadow:'0 2px 4px rgba(0,0,0,0.05)'}}>{HL.marketRegime}: {String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_ON' ? HL.riskOn : String(activePriorityEngine.market_regime).toUpperCase() === 'RISK_OFF' ? HL.riskOff : HL.neutralRegime}</span>
           {z0Headlines[headlineIndex]?.href ? (
             <a href={z0Headlines[headlineIndex].href} key={headlineIndex} className="z0-headline" style={{color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px'}}>
               {z0Headlines[headlineIndex].text}
@@ -712,44 +701,91 @@ export default function PremiumB2BHomeLayout({
       )}
 
       {/* ZONE 2: BREAKING INTELLIGENCE */}
-      <section className="z2"><div className="tc">
-        <div className="z2h" style={{ borderBottom: '3px solid var(--t)', paddingBottom: '1.2rem', marginBottom: '3rem', flexWrap:'wrap', gap:'1rem' }}>
-          <div>
-            <div className="ml" style={{color:'var(--t)', marginBottom:'5px'}}><span className="live-dot"></span> {payload?.cmsData?.slogan?.title || HL.sectorNetwork} • {new Date().toISOString().split('T')[0]}</div>
-            <div className="z2t" style={{fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', letterSpacing:'-0.03em'}}>{payload?.cmsData?.hero_text?.title || HL.b2bPlatform}</div>
+      {/* ═══ 2027 PRODUCT HERO SECTION ═══ */}
+      <section className="z2" style={{ paddingTop: '8rem', paddingBottom: '8rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh' }}>
+        <div className="tc" style={{ maxWidth: '900px', margin: '0 auto' }}>
+          
+          <div style={{ display: 'inline-flex', alignItems: 'center', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.5rem 1.2rem', borderRadius: '99px', marginBottom: '2.5rem', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#16A34A', boxShadow: '0 0 8px #16A34A', marginRight: '10px', animation: 'pulse-live 2s infinite' }}></span>
+            <span style={{ fontFamily: 'var(--s)', fontSize: '0.8rem', fontWeight: 700, color: '#475569', letterSpacing: '0.5px' }}>
+              {HL.liveData} • <span suppressHydrationWarning>{new Date().toISOString().split('T')[0]}</span>
+            </span>
           </div>
-          <div style={{display:'flex', alignItems:'center', background:'#FAFAF8', border:'1px solid var(--b)', padding:'0.5rem 1rem'}}>
-            <div className="ml" style={{color:'var(--t)', display:'flex', alignItems:'center', gap:'6px'}}><span style={{color: 'green', fontSize: '1rem'}}>✅</span> {HL.liveData}</div>
+
+          <h1 style={{ fontFamily: 'var(--s)', fontSize: 'clamp(3rem, 5vw, 5rem)', fontWeight: 900, lineHeight: 1.05, color: '#020617', letterSpacing: '-0.04em', marginBottom: '1.5rem' }}>
+            {payload?.cmsData?.hero_text?.title || "Küresel Tekstil B2B Veritabanı."}
+          </h1>
+
+          <p style={{ fontFamily: 'var(--m)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', lineHeight: 1.6, color: '#475569', marginBottom: '3.5rem', maxWidth: '700px', margin: '0 auto 3.5rem auto' }}>
+            {payload?.cmsData?.slogan?.title || "İhalelere katılın, boş kapasiteyi değerlendirin ve dünyanın dört bir yanındaki üreticilerle güvenli ticaret yapın."}
+          </p>
+
+          <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', alignItems: 'center' }}>
+            <a href={getLocalizedLink('login')} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '1.2rem 3rem', background: '#020617', color: '#FFFFFF', fontFamily: 'var(--s)', fontSize: '1rem', fontWeight: 800, textDecoration: 'none', borderRadius: '99px', letterSpacing: '0.5px', boxShadow: '0 10px 30px -5px rgba(2, 6, 23, 0.3)', transition: 'all 0.3s' }}
+               onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 15px 40px -5px rgba(2, 6, 23, 0.4)'; }}
+               onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 30px -5px rgba(2, 6, 23, 0.3)'; }}
+            >
+              {targetLang === 'TR' ? 'ÜCRETSİZ BAŞLA →' : 'START FOR FREE →'}
+            </a>
+            
+            <a href={getLocalizedLink('tenders')} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '1.2rem 3rem', background: '#FFFFFF', color: '#0F172A', fontFamily: 'var(--s)', fontSize: '1rem', fontWeight: 700, textDecoration: 'none', borderRadius: '99px', border: '1px solid #E2E8F0', transition: 'all 0.3s' }}
+               onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = '#F8FAFC'; }}
+               onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; }}
+            >
+              {targetLang === 'TR' ? 'İhaleleri İncele' : 'Browse Tenders'}
+            </a>
           </div>
-        </div>
-        
-        {hero && <div className="hsg">
-          <a href={getLink(hero)} className="hiw" style={{position: 'relative'}}>
-             <img src={getImg(hero)} alt="" loading="lazy" style={{width:'100%', height:'100%', objectFit:'cover'}} /> 
-             <div style={{position:'absolute', top:0, left:0, background:'var(--a)', color:'#fff', padding:'5px 12px', fontFamily:'var(--m)', fontSize:'0.75rem', fontWeight:800, letterSpacing:'1px', zIndex:20}}>📌 {HL.headline}</div>
-          </a>
-          <div>
-            <div className="ml ma" style={{marginBottom:'.5rem'}}>{getCat(hero)}</div>
-            <a href={getLink(hero)}><h1 className="htl">{getTitle(hero)}</h1></a>
-            <p className="hsum">{getSummary(hero)}</p>
-            {/* AI CEO Block + INSIGHT LAYER (Çift Uyumluluk) */}
-            {(hero.ai_ceo_block || hero.insight) && <div className="hceo">
-              <div className="ml" style={{color:'var(--ts)', marginBottom:'0.8rem'}}>{HL.ceoBriefLabel}</div>
-              <ul>
-                {hero.insight?.explanation 
-                  ? <li>{hero.insight.explanation}</li>
-                  : Array.isArray(hero.ai_ceo_block?.executive_summary) 
-                    ? hero.ai_ceo_block.executive_summary.slice(0,3).map((li:string,i:number)=><li key={i}>{li}</li>)
-                    : <li>{hero.ai_ceo_block?.executive_summary || HL.scanningTender}</li>}
-              </ul>
-              {hero.insight?.direction && <div style={{marginTop:'1.2rem',display:'flex',gap:'.8rem',alignItems:'center', borderTop:'1px dashed #E8E8E3', paddingTop:'1rem'}}>
-                <span className="ds-pill" style={{background: hero.insight.direction === 'risk' ? 'var(--re)' : hero.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6', padding:'6px 10px', fontSize:'0.75rem'}}>{HL.marketDirection}: {hero.insight.direction === 'risk' ? HL.dirRisk : hero.insight.direction === 'opportunity' ? HL.dirOpp : HL.dirNeutral}</span>
-                <span style={{fontFamily:'var(--m)',fontSize:'.8rem',color:'var(--t)', fontWeight:700}}>{HL.aiImpactScore}: {hero.insight.market_impact_score}/100</span>
-              </div>}
-            </div>}
+
+          {/* ═══ BENTO BOX CARDS (Below Hero) ═══ */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginTop: '5rem', textAlign: 'left' }}>
+            
+            {/* Bento 1: Live Tender Map Preview */}
+            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🗺️</span>
+                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'Global İhale Radarı' : 'Global Tender Radar'}</h3>
+              </div>
+              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                {targetLang === 'TR' ? 'Avrupa ve MENA bölgesindeki canlı ev tekstili ihalelerini harita üzerinden otonom takip edin.' : 'Track live home textile tenders across Europe and MENA autonomously on the map.'}
+              </p>
+              <a href={getLocalizedLink('tenders')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Haritayı Aç →' : 'Open Map →'}</a>
+            </div>
+
+            {/* Bento 2: AI Sentiment / Matchmaker */}
+            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>🧠</span>
+                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'AI Fırsat Motoru' : 'AI Opportunity Engine'}</h3>
+              </div>
+              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                {targetLang === 'TR' ? 'Haberlerin ve piyasa verilerinin duygu (sentiment) analizini yaparak risk/fırsat skorlarınızı hesaplayın.' : 'Calculate your risk/opportunity scores by performing sentiment analysis on news and market data.'}
+              </p>
+              <a href={getLocalizedLink('news')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Analizleri İncele →' : 'View Analytics →'}</a>
+            </div>
+
+            {/* Bento 3: Market Simulator */}
+            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(226, 232, 240, 0.8)', boxShadow: '0 4px 30px rgba(0,0,0,0.03)', transition: 'transform 0.3s' }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '1.5rem' }}>⚖️</span>
+                <h3 style={{ fontFamily: 'var(--s)', fontWeight: 800, color: '#020617', fontSize: '1.1rem' }}>{targetLang === 'TR' ? 'Pazar Simülatörü' : 'Market Simulator'}</h3>
+              </div>
+              <p style={{ fontFamily: 'var(--m)', color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                {targetLang === 'TR' ? 'Ürettiğiniz veya satmak istediğiniz kumaşın küresel piyasadaki değerini ve alıcı eşleşmelerini simüle edin.' : 'Simulate the global market value and buyer matches for the fabric you produce or want to sell.'}
+              </p>
+              <a href={getLocalizedLink('collections')} style={{ fontFamily: 'var(--s)', color: '#1D4ED8', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none' }}>{targetLang === 'TR' ? 'Simülatörü Başlat →' : 'Start Simulator →'}</a>
+            </div>
 
           </div>
-        </div>}
+        </div>
+      </section>
+
+      {/* ═══ INSIGHT GRID (NEWS) ═══ */}
+      <section className="z2" style={{ paddingTop: '2rem', paddingBottom: '6rem', background: '#FFFFFF', borderBottom: '1px solid var(--b)' }}><div className="tc">
+        <div className="z2h" style={{ borderBottom: '1px solid #F1F5F9', paddingBottom: '1rem', marginBottom: '3rem' }}>
+          <h2 style={{ fontFamily: 'var(--s)', fontWeight: 800, fontSize: '1.8rem', color: '#020617', letterSpacing: '-0.02em' }}>
+            {targetLang === 'TR' ? 'Sektörel İçgörüler' : 'Industry Insights'}
+          </h2>
+        </div>
 
         <div className="ngg">
           {newsGrid.map((a:any)=>(
@@ -760,14 +796,17 @@ export default function PremiumB2BHomeLayout({
                 {a.insight?.direction && <span className="ds-pill" style={{background: a.insight.direction === 'risk' ? 'var(--re)' : a.insight.direction === 'opportunity' ? 'var(--go)' : '#3B82F6', fontSize:'.5rem', padding:'2px 5px'}}>{a.insight.direction === 'risk' ? HL.dirRisk : a.insight.direction === 'opportunity' ? HL.dirOpp : '—'}</span>}
               </div>
               <div className="ngt">{getTitle(a)}</div>
-              {a.createdAt && <div style={{fontSize:'.75rem',color:'#999',marginBottom:'0.4rem'}}>{new Date(a.createdAt).toLocaleDateString(targetLang === 'EN' ? 'en-US' : 'tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</div>}
+              {a.createdAt && <div style={{fontSize:'.85rem',color:'#94A3B8',marginBottom:'0.4rem'}} suppressHydrationWarning>{new Date(a.createdAt).toLocaleDateString(targetLang === 'EN' ? 'en-US' : 'tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</div>}
               <div style={{fontSize:'.85rem',color:'var(--ts)',lineHeight:1.4}}>{getSummary(a).substring(0,140)}{getSummary(a).length > 140 ? '...' : ''}</div>
             </a>
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <a href={`${basePath}/news?lang=${lang}`} style={{ display: 'inline-block', padding: '1rem 3rem', background: '#111', color: '#FFF', fontWeight: 900, fontSize: '0.9rem', textDecoration: 'none', letterSpacing: '1px' }}>
+        <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+          <a href={getLocalizedLink('news')} style={{ display: 'inline-block', padding: '1.2rem 3.5rem', background: 'var(--a)', color: '#FFF', fontWeight: 800, fontSize: '1rem', textDecoration: 'none', borderRadius: '99px', letterSpacing: '0.5px', boxShadow:'0 10px 25px -5px rgba(37, 99, 235, 0.4)', transition:'all 0.3s' }}
+             onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 15px 35px -5px rgba(37, 99, 235, 0.5)'; }}
+             onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 25px -5px rgba(37, 99, 235, 0.4)'; }}
+          >
             {targetLang === 'TR' ? 'TÜM HABERLER →' : HL.allNews}
           </a>
         </div>
@@ -800,26 +839,29 @@ export default function PremiumB2BHomeLayout({
       {/* ZONE 1.5: THE TRADING FLOOR — CANLI VERİ (TRTEX Intelligence Terminal) */}
       <section className="tf-sec">
         <div className="tc">
-          <div className="z2h" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '1.5rem' }}>
+          <div className="z2h" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '2.5rem' }}>
             <div>
-              <div className="ml" style={{color:'#888', marginBottom:'5px'}}><span className="live-dot" style={{background:'var(--wa)'}}></span> {HL.tradingActive}</div>
-              <div className="z2t" style={{fontSize: 'clamp(1.3rem, 2vw, 2rem)', letterSpacing:'-0.03em', color:'#fff'}}>{HL.tradingFloor}</div>
+              <div className="ml" style={{color:'#64748B', marginBottom:'8px'}}><span className="live-dot" style={{background:'var(--wa)'}}></span> {HL.tradingActive}</div>
+              <div className="z2t" style={{fontSize: 'clamp(1.5rem, 2.5vw, 2.5rem)', letterSpacing:'-0.03em', color:'#0F172A'}}>{HL.tradingFloor}</div>
             </div>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
               {/* ═══ CANLI İHALE SAYACI ═══ */}
               <div style={{
-                background: liveTenders.length > 0 ? 'var(--re)' : '#333', 
-                padding:'.5rem 1.2rem', 
-                fontFamily:'var(--m)', fontSize:'0.85rem', fontWeight:900, 
-                color:'#fff', letterSpacing:'.05em',
+                background: liveTenders.length > 0 ? '#FEF2F2' : '#F1F5F9', 
+                color: liveTenders.length > 0 ? '#DC2626' : '#64748B',
+                padding:'0.6rem 1.5rem', borderRadius:'99px',
+                fontFamily:'var(--s)', fontSize:'0.9rem', fontWeight:800, 
+                letterSpacing:'.02em', border: liveTenders.length > 0 ? '1px solid #FECACA' : '1px solid #E2E8F0',
                 display:'flex', alignItems:'center', gap:'.5rem',
                 animation: liveTenders.length > 0 ? 'pulse-live 2s infinite' : 'none'
               }}>
-                <span style={{fontSize:'1.2rem', fontWeight:900}}>{liveTenders.length}</span> {HL.activeDeal}
+                <span style={{fontSize:'1.3rem', fontWeight:900}}>{liveTenders.length}</span> {HL.activeDeal}
               </div>
               <button 
                 onClick={() => setLeadModal({ open: true, context: { type: 'BRIEFING', title: targetLang === 'TR' ? 'Haftalık CEO İstihbarat Brifing' : 'Weekly CEO Intelligence Briefing' } })}
-                style={{background:'#3B82F6', border:'none', color:'#fff', padding:'.5rem 1rem', fontFamily:'var(--m)', fontSize:'.65rem', fontWeight:800, cursor:'pointer', letterSpacing:'.05em'}}
+                style={{background:'#EFF6FF', border:'1px solid #BFDBFE', color:'#1D4ED8', borderRadius:'99px', padding:'0.6rem 1.5rem', fontFamily:'var(--s)', fontSize:'.85rem', fontWeight:700, cursor:'pointer', letterSpacing:'.02em', transition:'all 0.2s'}}
+                onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.background = '#DBEAFE'; }}
+                onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.background = '#EFF6FF'; }}
               >
                 📊 {HL.ceoBriefing}
               </button>
@@ -922,20 +964,20 @@ export default function PremiumB2BHomeLayout({
           </div>
 
           {/* ═══ TÜM İHALELERİ GÖR — FULL WIDTH CTA ═══ */}
-          <a href={`${basePath}/tenders`} style={{textDecoration:'none'}}>
+          <a href={getLocalizedLink('tenders')} style={{textDecoration:'none'}}>
             <div style={{
-              marginTop:'1.5rem', padding:'1rem', textAlign:'center',
-              border:'1px solid #333', background:'linear-gradient(135deg, #161920 0%, #0F1114 100%)',
-              cursor:'pointer', transition:'all .2s',
+              marginTop:'2.5rem', padding:'1.5rem', textAlign:'center', borderRadius:'16px',
+              border:'1px solid #E2E8F0', background:'#FFFFFF', boxShadow:'0 4px 10px rgba(0,0,0,0.02)',
+              cursor:'pointer', transition:'all .3s',
               display:'flex', justifyContent:'center', alignItems:'center', gap:'1rem',
             }}
-            onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#F59E0B'; (e.currentTarget as HTMLElement).style.background = '#1C2029'; }}
-            onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#333'; (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, #161920 0%, #0F1114 100%)'; }}
+            onMouseOver={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#CBD5E1'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 10px 20px -5px rgba(0,0,0,0.05)'; }}
+            onMouseOut={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#E2E8F0'; (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 10px rgba(0,0,0,0.02)'; }}
             >
-              <span style={{fontFamily:'var(--m)', fontSize:'.8rem', fontWeight:900, color:'var(--wa)', letterSpacing:'.1em'}}>
+              <span style={{fontFamily:'var(--s)', fontSize:'.95rem', fontWeight:800, color:'#0F172A', letterSpacing:'.05em'}}>
                 {HL.seeAll.replace('→', `${liveTenders.length} →`)}
               </span>
-              <span style={{fontFamily:'var(--m)', fontSize:'.65rem', color:'#666'}}>
+              <span style={{fontFamily:'var(--s)', fontSize:'.85rem', color:'#64748B', background:'#F1F5F9', padding:'4px 12px', borderRadius:'99px'}}>
                 {HL.filter}
               </span>
             </div>

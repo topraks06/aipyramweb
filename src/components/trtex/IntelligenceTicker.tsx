@@ -82,7 +82,7 @@ function sortByPriority(items: TickerItem[]): TickerItem[] {
 export default function IntelligenceTicker({
   items: externalItems,
   apiEndpoint = '/api/aloha/ticker',
-  speed = 60,
+  speed = 25,
   onItemClick,
   showChatBridge = true,
 }: IntelligenceTickerProps) {
@@ -193,12 +193,12 @@ export default function IntelligenceTicker({
           position: 'sticky',
           top: 0,
           zIndex: 10001,
-          background: 'rgba(15, 23, 42, 0.95)',
+          background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255,255,255,0.04)',
+          borderBottom: '1px solid rgba(0,0,0,0.05)',
           overflow: 'hidden', cursor: 'default',
-          fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace", // TRTEX Terminal font
+          fontFamily: "var(--m)",
           fontVariantNumeric: 'tabular-nums',
           height: '44px', display: 'flex', alignItems: 'center',
         }}
@@ -208,7 +208,7 @@ export default function IntelligenceTicker({
         {/* Live indicator */}
         <div style={{
           padding: '0 0.75rem', display: 'flex', alignItems: 'center', gap: '6px',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
+          borderRight: '1px solid rgba(0,0,0,0.05)',
           height: '100%', flexShrink: 0,
         }}>
           <div style={{
@@ -216,7 +216,7 @@ export default function IntelligenceTicker({
             background: '#22c55e', boxShadow: '0 0 6px #22c55e',
             animation: 'tickerPulse 2s ease-in-out infinite',
           }} />
-          <span style={{ fontSize: '0.60rem', letterSpacing: '2px', color: '#cbd5e1', fontWeight: 800 }}>
+          <span style={{ fontSize: '0.60rem', letterSpacing: '2px', color: '#475569', fontWeight: 800 }}>
             BB-TRTEX
           </span>
         </div>
@@ -257,9 +257,9 @@ export default function IntelligenceTicker({
           style={{
             position: 'fixed', top: '38px', right: '16px', zIndex: 10000,
             width: 'calc(100vw - 32px)', maxWidth: '340px', maxHeight: '480px',
-            background: '#0f0f1a', border: '1px solid rgba(255,255,255,0.08)',
+            background: '#ffffff', border: '1px solid rgba(0,0,0,0.1)',
             borderRadius: '10px', overflow: 'hidden',
-            boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
             fontFamily: "'Inter', sans-serif",
           }}
         >
@@ -488,11 +488,11 @@ function TickerItemCell({ item, onClick }: { item: TickerItem; onClick: () => vo
       style={{
         display: 'inline-flex', alignItems: 'center', gap: '6px',
         padding: '0 16px', height: '38px', cursor: 'pointer',
-        borderRight: '1px solid rgba(255,255,255,0.03)',
+        borderRight: '1px solid rgba(0,0,0,0.05)',
         transition: 'background 0.2s',
         animation: isBreaking ? 'tickerFlash 2s ease-in-out infinite' : 'none',
       }}
-      onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+      onMouseOver={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.02)'; }}
       onMouseOut={e => { e.currentTarget.style.background = 'transparent'; }}
     >
       {/* Severity dot */}
@@ -504,7 +504,7 @@ function TickerItemCell({ item, onClick }: { item: TickerItem; onClick: () => vo
 
       {/* Label */}
       <span style={{
-        fontSize: '13px', color: '#94a3b8', letterSpacing: '0.3px',
+        fontSize: '13px', color: '#64748B', letterSpacing: '0.3px',
         fontFamily: "'JetBrains Mono', monospace",
       }}>
         {item.label.toUpperCase()}
@@ -513,12 +513,12 @@ function TickerItemCell({ item, onClick }: { item: TickerItem; onClick: () => vo
       {/* Value or Headline */}
       <span style={{
         fontSize: '14px', fontWeight: 600,
-        color: item.severity === 'crisis' ? '#fca5a5' : '#E2E8F0',
+        color: item.severity === 'crisis' ? '#DC2626' : '#1E293B',
         fontFamily: "'JetBrains Mono', monospace",
         fontVariantNumeric: 'tabular-nums',
       }}>
         {item.newsHeadline ? (
-           <span style={{ color: '#fff', fontWeight: 400 }}>{item.newsHeadline} <span style={{ color: '#94a3b8', fontSize: '12px', marginLeft: '6px' }}>[{displayValue}]</span></span>
+           <span style={{ color: '#111827', fontWeight: 400 }}>{item.newsHeadline} <span style={{ color: '#64748b', fontSize: '12px', marginLeft: '6px' }}>[{displayValue}]</span></span>
         ) : (
            displayValue
         )}

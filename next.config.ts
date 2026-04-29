@@ -64,6 +64,15 @@ const nextConfig: NextConfig = {
         source: '/sitemap.xml',
         destination: '/api/sitemap',
       },
+      // SEO Localized Routes (TR)
+      { source: '/sites/:domain/haberler', destination: '/sites/:domain/news?lang=tr' },
+      { source: '/sites/:domain/haberler/:slug*', destination: '/sites/:domain/news/:slug*?lang=tr' },
+      { source: '/sites/:domain/ihaleler', destination: '/sites/:domain/tenders?lang=tr' },
+      { source: '/sites/:domain/akademi', destination: '/sites/:domain/academy?lang=tr' },
+      { source: '/sites/:domain/fuar-takvimi', destination: '/sites/:domain/fairs?lang=tr' },
+      { source: '/sites/:domain/koleksiyonlar', destination: '/sites/:domain/collections?lang=tr' },
+      { source: '/sites/:domain/hakkimizda', destination: '/sites/:domain/about?lang=tr' },
+      { source: '/sites/:domain/ticaret', destination: '/sites/:domain/trade?lang=tr' },
     ];
   },
   images: {

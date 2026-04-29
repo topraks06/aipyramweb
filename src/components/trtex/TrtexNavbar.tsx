@@ -1,6 +1,5 @@
 'use client';
-import React, { useState } from 'react';
-import SearchInput from '@/components/search/SearchInput';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AipyramAuthProvider';
 
 // ═══ DİL SEÇENEKLERİ ═══
@@ -16,15 +15,15 @@ const LANG_OPTIONS = [
 ];
 
 // ═══ NAV ETİKETLERİ (8 DİL) ═══
-const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string }> = {
-  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt' },
-  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up' },
-  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren' },
-  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация' },
-  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册' },
-  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني' },
-  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis' },
-  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite' },
+const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string; about: string; collections: string }> = {
+  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt', about: 'HAKKIMIZDA', collections: 'KOLEKSİYONLAR' },
+  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up', about: 'ABOUT US', collections: 'COLLECTIONS' },
+  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren', about: 'ÜBER UNS', collections: 'KOLLEKTIONEN' },
+  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация', about: 'О НАС', collections: 'КОЛЛЕКЦИИ' },
+  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册', about: '关于我们', collections: '系列' },
+  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني', about: 'من نحن', collections: 'مجموعات' },
+  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis', about: 'SOBRE NOSOTROS', collections: 'COLECCIONES' },
+  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite', about: 'À PROPOS', collections: 'COLLECTIONS' },
 };
 
 // ═══ ALT MENÜ ETİKETLERİ (8 DİL) ═══
@@ -57,41 +56,73 @@ interface TrtexNavbarProps {
 export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr', activePage, theme = 'light' }: TrtexNavbarProps) {
   const { user, logout } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const targetLang = lang.toUpperCase();
   const labels = navLabels[targetLang] || navLabels.TR;
   const subs = subLabels[targetLang] || subLabels.TR;
 
-  // SABİT KURUMSAL TEMA (Sayfadan sayfaya değişmemesi için hardcode ettik)
-  const bgColor = '#0B0D0F';
-  const textColor = '#EEEEEE';
+  // SABİT KURUMSAL TEMA (Aydınlık B2B)
+  const bgColor = '#FFFFFF';
+  const textColor = '#111827';
   const activeColor = '#CC0000';
-  const borderColor = '#222222';
-  const dropBg = '#111111';
-  const dropBorder = '#333333';
-  const dropHover = '#1A1D24';
+  const borderColor = '#E5E7EB';
+  const dropBg = '#FFFFFF';
+  const dropBorder = '#E5E7EB';
+  const dropHover = '#F3F4F6';
+
+  const getUrl = (key: string, hash: string = '', query: string = '') => {
+    if (lang === 'tr') {
+      const map: Record<string, string> = {
+        about: 'hakkimizda',
+        news: 'haberler',
+        tenders: 'ihaleler',
+        collections: 'koleksiyonlar',
+        academy: 'akademi',
+        fairs: 'fuar-takvimi',
+        trade: 'ticaret'
+      };
+      return `${basePath}/${map[key] || key}${query ? `?${query}` : ''}${hash}`;
+    }
+    return `${basePath}/${key}?lang=${lang}${query ? `&${query}` : ''}${hash}`;
+  };
 
   // ═══ MENÜ YAPIISI — Sadece gerçek içeriği olan sayfalar ═══
   const menuItems = [
     {
-      key: 'news', label: labels.news, href: `${basePath}/news?lang=${lang}`,
+      key: 'about', label: labels.about, href: getUrl('about'), subs: []
+    },
+    {
+      key: 'news', label: labels.news, href: getUrl('news'),
       subs: [
-        { label: subs.latest, href: `${basePath}/news?lang=${lang}` },
-        { label: subs.analysis, href: `${basePath}/news?lang=${lang}#news-grid` },
+        { label: subs.latest, href: getUrl('news') },
+        { label: subs.analysis, href: getUrl('news', '#news-grid') },
       ]
     },
     {
-      key: 'tenders', label: labels.tenders, href: `${basePath}/tenders?lang=${lang}`, accent: true,
+      key: 'tenders', label: labels.tenders, href: getUrl('tenders'), accent: true,
       subs: [
-        { label: subs.live, href: `${basePath}/tenders?lang=${lang}` },
-        { label: subs.stock, href: `${basePath}/tenders?lang=${lang}&filter=HOT_STOCK` },
-        { label: subs.capacity, href: `${basePath}/tenders?lang=${lang}&filter=CAPACITY` },
+        { label: subs.live, href: getUrl('tenders') },
+        { label: subs.stock, href: getUrl('tenders', '', 'filter=HOT_STOCK') },
+        { label: subs.capacity, href: getUrl('tenders', '', 'filter=CAPACITY') },
       ]
     },
     {
-      key: 'academy', label: labels.academy, href: `${basePath}/academy?lang=${lang}`,
+      key: 'collections', label: labels.collections, href: getUrl('collections'), subs: []
+    },
+    {
+      key: 'academy', label: labels.academy, href: getUrl('academy'),
       subs: [
-        { label: subs.fairs, href: `${basePath}/fairs?lang=${lang}` },
-        { label: subs.training, href: `${basePath}/academy?lang=${lang}` },
+        { label: subs.fairs, href: getUrl('fairs') },
+        { label: subs.training, href: getUrl('academy') },
       ]
     },
   ];
@@ -105,19 +136,28 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: `
-        .trtex-menu-group:hover .trtex-dropdown { display: block !important; }
-        .trtex-dropdown a:hover { background: ${dropHover} !important; color: #fff !important; }
-        .trtex-lang-drop { display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: ${dropBg}; border: 1px solid ${dropBorder}; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 100; }
+        .trtex-nav-link { position: relative; }
+        .trtex-nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: ${activeColor}; transition: all 0.3s ease; transform: translateX(-50%); }
+        .trtex-menu-group:hover .trtex-nav-link::after { width: 100%; }
+        .trtex-menu-group:hover .trtex-dropdown { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; }
+        .trtex-dropdown { opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .trtex-dropdown a:hover { background: #F8FAFC !important; color: #020617 !important; padding-left: 1.25rem !important; }
+        .trtex-lang-drop { display: none; position: absolute; right: 0; top: 100%; min-width: 180px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1); z-index: 100; overflow:hidden;}
         .trtex-lang-trigger:hover .trtex-lang-drop, .trtex-lang-drop:hover { display: block !important; }
-        .trtex-lang-drop a:hover { background: ${dropHover} !important; }
+        .trtex-lang-drop a:hover { background: #F8FAFC !important; }
       `}} />
       <nav 
-        className="relative z-50 w-full" 
-        style={{ background: bgColor, borderBottom: `1px solid ${borderColor}` }}
+        className="sticky top-0 z-[100] w-full transition-all duration-300" 
+        style={{ 
+          background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent', 
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          borderBottom: scrolled ? '1px solid ' + borderColor : '1px solid transparent',
+          boxShadow: scrolled ? '0 4px 20px -5px rgba(0,0,0,0.05)' : 'none'
+        }}
       >
         <div className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-[70px] lg:h-[80px]">
           {/* LOGO */}
-          <a href={basePath} className="no-underline font-serif text-xl lg:text-2xl font-black tracking-tight" style={{ color: '#fff' }}>
+          <a href={basePath} className="no-underline font-serif text-xl lg:text-2xl font-black tracking-tight" style={{ color: '#111' }}>
             {brandName === 'TRTEX' ? (
               <>Trtex<span style={{ color: activeColor }}>.</span>com</>
             ) : (
@@ -133,52 +173,50 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                 <div key={item.key} className="trtex-menu-group relative pb-2 pt-2 h-[80px] flex items-center">
                   <a
                     href={item.href}
-                    className="no-underline font-mono text-[0.85rem] uppercase flex items-center gap-1 transition-all px-4"
+                    className="trtex-nav-link no-underline font-sans text-[0.85rem] flex items-center gap-1 transition-all px-4"
                     style={{
-                      fontWeight: isActive ? 900 : 700,
-                      letterSpacing: '1.5px',
-                      color: isActive ? activeColor : (item as any).accent ? activeColor : textColor,
-                      borderBottom: isActive ? `3px solid ${activeColor}` : '3px solid transparent',
+                      fontWeight: isActive ? 800 : 600,
+                      letterSpacing: '0.5px',
+                      color: isActive ? activeColor : (item as any).accent ? activeColor : '#334155',
                       height: '100%',
                     }}
                   >
                     {item.label}
-                    <span className="text-[0.6rem] opacity-60 ml-1">▾</span>
+                    {item.subs.length > 0 && <span className="text-[0.6rem] opacity-40 ml-1 mt-[2px]">▾</span>}
                   </a>
 
-                  {/* DESKTOP DROPDOWN */}
-                  <div className="trtex-dropdown hidden absolute left-0 top-full shadow-xl z-[100] pt-2" style={{ background: dropBg, border: `1px solid ${dropBorder}` }}>
-                    {item.subs.map((sub, idx) => (
-                      <a
-                        key={idx}
-                        href={sub.href}
-                        className="block px-4 py-3 font-mono text-[0.7rem] font-semibold no-underline transition-colors"
-                        style={{ color: '#ccc', borderBottom: `1px solid #222` }}
-                      >
-                        {sub.label}
-                      </a>
-                    ))}
-                  </div>
+                  {/* DESKTOP DROPDOWN (Mega Menu Style) */}
+                  {item.subs.length > 0 && (
+                    <div className="trtex-dropdown absolute left-0 top-full pt-4 pb-2 z-[100] w-64">
+                      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden" style={{boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08)'}}>
+                        {item.subs.map((sub, idx) => (
+                          <a
+                            key={idx}
+                            href={sub.href}
+                            className="block px-5 py-3 font-sans text-[0.8rem] font-semibold no-underline transition-all duration-200"
+                            style={{ color: '#475569', borderBottom: idx !== item.subs.length -1 ? '1px solid #F1F5F9' : 'none' }}
+                          >
+                            {sub.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
 
-            {/* ARAMA MOTORU */}
-            <div className="ml-4 flex items-center">
-              <SearchInput lang={lang} />
-            </div>
-
             {/* TEK DİL SEÇİCİ — 8 Dil Dropdown */}
             <div className="trtex-lang-trigger relative flex items-center ml-4" style={{ cursor: 'pointer' }}>
               <div
-                className="flex items-center gap-2 px-3 py-2 font-mono text-[0.8rem] font-bold transition-colors"
-                style={{ border: `1px solid ${borderColor}`, color: textColor }}
+                className="flex items-center gap-2 px-3 py-1.5 font-sans text-[0.85rem] font-bold transition-colors rounded-full"
+                style={{ border: '1px solid #E2E8F0', color: '#334155', background: scrolled ? '#F8FAFC' : '#FFFFFF' }}
               >
-                <span>{currentLangObj.flag}</span>
+                <span className="text-[1.1rem]">{currentLangObj.flag}</span>
                 <span>{currentLangObj.code.toUpperCase()}</span>
-                <span className="text-[0.6rem] opacity-60 ml-1">▾</span>
+                <span className="text-[0.6rem] opacity-40 ml-1">▾</span>
               </div>
-              <div className="trtex-lang-drop">
+              <div className="trtex-lang-drop mt-2">
                 {LANG_OPTIONS.map(opt => (
                   <a
                     key={opt.code}
@@ -200,24 +238,24 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
             {/* SSO / KULLANICI PROFİLİ */}
             {user ? (
               <div className="trtex-lang-trigger relative flex items-center ml-4 cursor-pointer">
-                <div className="flex items-center gap-2 px-3 py-2 font-mono text-[0.8rem] font-bold transition-colors" style={{ border: `1px solid ${activeColor}`, color: activeColor }}>
+                <div className="flex items-center gap-2 px-4 py-1.5 font-sans text-[0.85rem] font-bold transition-colors rounded-full" style={{ border: `1px solid #BFDBFE`, color: '#1D4ED8', background: '#EFF6FF' }}>
                   <span>{user.displayName?.split(' ')[0] || 'ÜYE'}</span>
-                  <span className="text-[0.6rem] opacity-60 ml-1">▾</span>
+                  <span className="text-[0.6rem] opacity-40 ml-1 mt-[2px]">▾</span>
                 </div>
-                <div className="trtex-lang-drop">
-                  <div className="px-4 py-3 font-mono text-[0.7rem] text-gray-400 border-b border-gray-800">
+                <div className="trtex-lang-drop mt-2" style={{minWidth:'200px'}}>
+                  <div className="px-5 py-3 font-sans text-[0.75rem] text-slate-500 border-b border-slate-100 font-medium">
                     {user.email}
                   </div>
-                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block px-4 py-3 font-mono text-[0.75rem] font-semibold text-white hover:bg-gray-800 no-underline">
+                  <a href={`${basePath}/dashboard?lang=${lang}`} className="block px-5 py-3 font-sans text-[0.8rem] font-bold text-slate-700 hover:text-blue-600 no-underline transition-colors">
                     Terminal Dashboard
                   </a>
-                  <button onClick={logout} className="w-full text-left px-4 py-3 font-mono text-[0.75rem] font-semibold text-red-500 hover:bg-gray-800">
+                  <button onClick={logout} className="w-full text-left px-5 py-3 font-sans text-[0.8rem] font-bold text-red-600 hover:bg-red-50 transition-colors border-t border-slate-100">
                     Çıkış Yap
                   </button>
                 </div>
               </div>
             ) : (
-              <a href={`${basePath}/login?lang=${lang}`} className="ml-4 px-4 py-2 font-mono text-[0.75rem] font-bold uppercase tracking-widest transition-all no-underline" style={{ border: `1px solid ${borderColor}`, color: textColor }}>
+              <a href={`${basePath}/login?lang=${lang}`} className="ml-4 px-5 py-2 font-sans text-[0.85rem] font-bold transition-all no-underline rounded-full hover:-translate-y-[1px]" style={{ background: '#0F172A', color: '#FFFFFF', boxShadow:'0 4px 10px rgba(0,0,0,0.1)' }}>
                 {labels.register}
               </a>
             )}

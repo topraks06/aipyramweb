@@ -114,7 +114,7 @@ export const SOVEREIGN_NODES: Record<SovereignNodeId, SovereignNodeConfig> = {
     newsCollection: 'trtex_news',
     projectCollection: 'trtex_leads',
     walletCollection: 'trtex_wallets',
-    theme: 'dark',
+    theme: 'light',
     locale: 'tr',
     features: {
       b2b: false,
