@@ -134,6 +134,33 @@ Her oturumda, kod değişikliği yapılmadan ÖNCE:
 - 🧹 **Ekosistem Hijyeni:** Tamamlanan görev emirleri arşivlendi, 1MB+ geçici dosya temizlendi, skill dosyaları güncellendi.
 - 📋 **Derin Tarama Raporu:** 11 Sovereign Node, 86 ALOHA modülü, 25 ajan, 18 skill dosyası, 35 API route — dosya bazlı röntgen çıkarıldı.
 
+## 8. 🔐 Sovereign SSO — Tek Hesap, Tüm Ekosistem (Q2 2026 — YENİ)
+> **KURAL:** Tıpkı Google hesabı gibi — tek email + tek şifre ile tüm projelere giriş.
+
+### 7 Ana Node (1. Dalga):
+| # | Node | Açıklama |
+|---|------|----------|
+| 1 | **AIPyram** | Master Node — Beyindir |
+| 2 | **TRTex** | İstihbarat Radarı |
+| 3 | **Perde.ai** | B2C Perakende |
+| 4 | **icmimar.ai** | Tasarım & ERP |
+| 5 | **Vorhang.ai** | DACH Pazarı |
+| 6 | **Hometex.ai** | Sanal Fuar |
+| 7 | **Heimtex.ai** | Trend & Dergi |
+
+### Teknik Kurallar:
+1. **TEK Firebase Auth** — Tüm node'lar aynı Firebase projesini kullanır.
+2. **Session Bridge** — Login → `/api/auth/session` → HttpOnly cookie (14 gün). Cookie tüm API route'larda geçerli.
+3. **Sovereign Passport** — `sovereign_users/{uid}` = TEK GERÇEK KAYNAK. Email, rol, tier, kredi, pasaport burada yaşar.
+4. **Unified Wallet** — Tek kredi bakiyesi (`unifiedCredits`), tüm node'larda geçerli. Node bazlı harcama takibi (`creditUsage`).
+5. **Tier Sistemi:** Free → 🥉Bronze → 🥈Silver → 🥇Gold → 💎Platinum. Sovereign (kurucu) = daima Platinum.
+6. **Node-spesifik koleksiyonlar** (`perde_members` vb.) KALIR ama sadece o node'a özel tercihler için kullanılır.
+7. **Sovereign Bypass:** Kurucu email(`hakantoprak71@gmail.com`) HİÇBİR projede token/kredi/giriş engeline takılmaz.
+8. **Tek Tip Arayüz:** Tüm node'ların login/register sayfaları aynı bileşeni kullanır (`SovereignLogin`, `SovereignRegister`). Sadece renk ve logo değişir.
+
+### Genişleme Kuralı:
+> Sonradan eklenen her yeni node (Curtaindesign, Shtori, Parda vb.) otomatik olarak Sovereign SSO standardına uyar. `sovereign-config.ts`'e node eklemek yeterlidir.
+
 
 # AIPyram Sovereign B2B Template
 

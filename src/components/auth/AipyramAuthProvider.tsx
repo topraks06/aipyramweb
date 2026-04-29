@@ -24,6 +24,34 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+/**
+ * 🔐 SESSION BRIDGE — Firebase token → HttpOnly cookie
+ * Login sonrası otomatik çağrılır. Tüm API route'lar bu cookie'yi kullanır.
+ */
+async function syncSessionCookie(user: User | null) {
+  if (!user) return;
+  try {
+    const idToken = await user.getIdToken(true);
+    await fetch('/api/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken }),
+    });
+    console.log('[SSO] 🔐 Session cookie oluşturuldu');
+  } catch (err) {
+    console.warn('[SSO] Session cookie oluşturulamadı:', err);
+  }
+}
+
+async function clearSessionCookie() {
+  try {
+    await fetch('/api/auth/session', { method: 'DELETE' });
+    console.log('[SSO] 🔓 Session cookie silindi');
+  } catch (err) {
+    console.warn('[SSO] Session cookie silinemedi:', err);
+  }
+}
+
 export function AipyramAuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,13 +67,18 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       // Don't overwrite if dev bypass is active
       if (typeof window !== 'undefined' && sessionStorage.getItem('dev_bypass_admin') === 'true') {
         return;
       }
       setUser(currentUser);
       setLoading(false);
+
+      // 🔐 SESSION BRIDGE — Her auth değişikliğinde cookie'yi senkronize et
+      if (currentUser) {
+        await syncSessionCookie(currentUser);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -62,16 +95,17 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
         setLoading(false);
         return;
       }
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      // 🔐 Session cookie'yi hemen oluştur
+      await syncSessionCookie(result.user);
     } catch (error) {
       console.error("Login failed:", error);
-      throw error; // Throw the error so the caller can handle it
+      throw error;
     }
   };
 
   const loginWithEmail = async (e: string, p: string) => {
     try {
-      // Local Development Bypass (Firebase API Key Restriction Çözümü)
       const cleanEmail = e.trim().toLowerCase();
       const cleanPass = p.trim();
       
@@ -82,13 +116,14 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('dev_bypass_admin', 'true');
         }
-        // Force the email to be the master admin email so isAdmin evaluates to true
         setUser({ email: 'hakantoprak71@gmail.com', uid: 'admin-local-bypass' } as User);
         setLoading(false);
         return;
       }
       
-      await signInWithEmailAndPassword(auth, e, p);
+      const result = await signInWithEmailAndPassword(auth, e, p);
+      // 🔐 Session cookie'yi hemen oluştur
+      await syncSessionCookie(result.user);
     } catch (error) {
       console.error("Email login failed:", error);
       throw error;
@@ -100,8 +135,9 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('dev_bypass_admin');
       }
+      // 🔐 Session cookie'yi sil
+      await clearSessionCookie();
       await signOut(auth);
-      // Ensure user state is cleared immediately when bypassing
       setUser(null);
     } catch (error) {
       console.error("Logout failed:", error);
@@ -116,3 +152,4 @@ export function AipyramAuthProvider({ children }: { children: React.ReactNode })
     </AuthContext.Provider>
   );
 }
+
