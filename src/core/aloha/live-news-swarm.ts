@@ -56,7 +56,7 @@ If there is no clear B2B commercial value → REJECT.
 - Last paragraph = actionable trade recommendation for Wholesalers/Retailers.
 
 Sen sert mizaçlı, tüm kıtalarda sıfır hatayla çalışan global bir toptan/perakende tekstil istihbarat avcısısın.`,
-            complexity: 'routine'
+            complexity: 'complex' // Q2 2026: Enables Deep Research Max & Google Search Grounding
         },
         'liveNewsSwarm.runScoutAgent'
     );
