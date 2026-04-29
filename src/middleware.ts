@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { routing } from '@/i18n/routing';
+import { SOVEREIGN_NODES, SovereignNodeId } from '@/lib/sovereign-config';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -37,6 +38,41 @@ function cleanupRateLimitMap() {
     if (now > val.resetAt) rateLimitMap.delete(key);
   }
 }
+
+// ═══════════════════════════════════════════════════
+// SOVEREIGN ROUTE ALIAS (SEO için Yerel URL'ler)
+// ═══════════════════════════════════════════════════
+const LOCALIZED_ROUTES: Record<string, Record<string, string>> = {
+  tr: {
+    '/haberler': '/news',
+    '/ihaleler': '/tenders',
+    '/akademi': '/academy',
+    '/iletisim': '/contact',
+    '/koleksiyonlar': '/collections',
+    '/nasil-calisir': '/how-it-works',
+    '/hesabim': '/profile',
+    '/siparislerim': '/orders',
+    '/giris': '/login',
+    '/kayit': '/register'
+  },
+  de: {
+    '/nachrichten': '/news',
+    '/kontakt': '/contact',
+    '/kollektionen': '/collections',
+    '/mein-konto': '/profile',
+    '/meine-bestellungen': '/orders'
+  },
+  ru: {
+    '/novosti': '/news',
+    '/katalog': '/collections',
+    '/zakazy': '/orders'
+  },
+  fa: {
+    '/akhbar': '/news',
+    '/katalog': '/collections',
+    '/sefareshat': '/orders'
+  }
+};
 
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
@@ -91,8 +127,39 @@ export default async function middleware(req: NextRequest) {
     console.log(`[MIDDLEWARE] Local subdomain algılandı: ${currentHost} → node: ${SovereignNodeId}`);
   }
 
+  // Otonom SEO Yönlendirmesi (Route Alias)
+  // node id'den (trtex.com -> trtex) node conf'u bul
+  let nodeLocale = 'en'; // default fallback
+  const nodeIdMatch = Object.keys(SOVEREIGN_NODES).find(key => SovereignNodeId.includes(SOVEREIGN_NODES[key as SovereignNodeId].domain.split('.')[0]));
+  
+  if (nodeIdMatch) {
+    nodeLocale = SOVEREIGN_NODES[nodeIdMatch as SovereignNodeId].locale;
+  }
+
+  let finalPath = url.pathname;
+  
+  // Dictionary'de (Sözlükte) var mı kontrol et
+  if (LOCALIZED_ROUTES[nodeLocale]) {
+    // path'in sonundaki / işaretini temizle (tam eşleşme için)
+    const normalizedPath = finalPath.endsWith('/') && finalPath.length > 1 ? finalPath.slice(0, -1) : finalPath;
+    
+    // Exact match bulmaya çalış (/haberler -> /news)
+    if (LOCALIZED_ROUTES[nodeLocale][normalizedPath]) {
+      finalPath = LOCALIZED_ROUTES[nodeLocale][normalizedPath];
+    } 
+    // Alt yolları bulmaya çalış (/haberler/123 -> /news/123)
+    else {
+      for (const [localized, base] of Object.entries(LOCALIZED_ROUTES[nodeLocale])) {
+        if (normalizedPath.startsWith(`${localized}/`)) {
+          finalPath = normalizedPath.replace(localized, base);
+          break;
+        }
+      }
+    }
+  }
+
   // Rewrite requests to /sites/[domain]/[path]
-  url.pathname = `/sites/${SovereignNodeId}${url.pathname}`;
+  url.pathname = `/sites/${SovereignNodeId}${finalPath}`;
   return NextResponse.rewrite(url);
 }
 
