@@ -10,18 +10,13 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
-    const result = await alohaAI.models.embedContent({
-      model: 'gemini-embedding-exp-03-07',
-      contents: text,
-    });
-    return result.embeddings[0].values;
+    const embedding = await alohaAI.generateEmbedding(text, 'rag_engine');
+    if (embedding && embedding.length > 0) return embedding;
+    console.warn("[RAG] Embedding boş döndü, boş dizi kullanılıyor");
+    return [];
   } catch (err) {
-    console.warn("[RAG] gemini-embedding-exp-03-07 failed, falling back to text-embedding-004", err);
-    const fallback = await alohaAI.models.embedContent({
-      model: 'text-embedding-004',
-      contents: text,
-    });
-    return fallback.embeddings[0].values;
+    console.error("[RAG] Embedding üretim hatası:", err);
+    return [];
   }
 }
 

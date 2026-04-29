@@ -1,5 +1,5 @@
 # AIPyram Monorepo — Tam Teknik Referans Belgesi
-> Son Güncelleme: 2026-04-19T19:41 | Yazar: Antigravity Audit
+> Son Güncelleme: 2026-04-29T08:49 | Yazar: Antigravity Q2 Audit
 
 Bu belge, yeni oturum açıldığında tek seferde okunarak tüm projeyi kavramak için hazırlanmıştır.
 Her gelişte bu dosyayı oku, tekrar tekrar dosya taramaya gerek yok.
@@ -187,8 +187,13 @@ Middleware'de Upstash Redis ile 10 saniyede 100 istek limiti. Redis yoksa by-pas
 
 ### Gemini API
 - `GEMINI_API_KEY` env gerekli
+- **Modeller (Q2 2026):**
+  - `gemini-2.5-flash` — Ana model (hızlı, düşük maliyet)
+  - `gemini-3.1-pro` — Kompleks analiz (Deep Research Max)
+  - `gemini-3.1-flash-image-preview` — Görsel üretim (Nano Banana 2, 4K)
+  - `gemini-embedding-2` — Multimodal embedding (GA, 3072-dim)
 - ConciergeWidget → `/api/chat` üzerinden Gemini'ye çağrı yapar (fallback: lokal intent)
-- ALOHA command → **Gemini kullanmıyor** (hardcoded if/else)
+- ALOHA command → Gemini destekli intent resolver + tool executor
 
 ---
 
@@ -203,17 +208,17 @@ Middleware'de Upstash Redis ile 10 saniyede 100 istek limiti. Redis yoksa by-pas
 ---
 
 ## 7. CORE MODÜLLER (`src/core/`)
-Devasa bir otonom ajan altyapısı:
-- `core/aloha/` — 30+ dosya: newsAgent, imageAgent, trtexSiteManager, visualDNA, contentFilter vb.
+Devasa bir otonom ajan altyapısı (Q2 2026: 86+ dosya, ~1.2MB kod):
+- `core/aloha/` — 86+ dosya: aiClient, engine, orchestrator, agentBus (A2A Protocol), imageAgent, newsAgent, visualDNA, controlTower vb.
 - `core/antigravity/` — master_agent, worker_agent, reviewer_agent, execution_engine
 - `core/cache/` — feedCache, learningMatrix
 - `core/cron/` — masterCron.ts (10KB)
 - `core/events/` — eventBus, eventTypes, idempotencyGuard
 - `core/execution/` — actionRunner, bridge, cloudExecutor
 - `core/memory/` — knowledgeFlywheel, rag, semanticGraph
-- `core/registry/` — agentRegistry.ts (ayrı dosya, lib/aloha/registry.ts'den farklı)
+- `core/registry/` — agentRegistry.ts
 
-**⚠️ Bu modüller TRTEX otonom pipeline'ı için yazılmış. Perde.ai ve Hometex.ai ile bağlantısı yok.**
+**✅ TRTEX otonom pipeline'I canlı. A2A Protocol ile ajan iletişimi standartlaştırıldı.**
 
 ---
 

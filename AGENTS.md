@@ -79,6 +79,62 @@ Sadece checkbox (`[ ]` → `[x]`) ve ilerleme tablosu (`⬜` → `✅`) güncell
 - **7 Bölgesel Kapı:** Vorhang (DACH), Shtori (Rusya), Parda (Farsça), Donoithat (Vietnam), Perabot (Endonezya), Heimtex (Sertifika), Cortina (İspanya - gelecek)
 - **Tak-Çalıştır Mimari:** Yeni bölgesel node eklenmesi `sovereign-config.ts`'e 10 satır eklemekle yapılabilir olmalıdır. Tüm ALOHA kararları ve kayıt defterleri bu büyük resmi tanıyarak çalışır.
 
+## 5. 🔍 Google İnovasyon İzleme Protokolü (Q2 2026 — YENİ)
+> **KURAL:** Google Cloud, Gemini veya Firebase ekosisteminde yeni bir teknoloji, model veya API çıktığında:
+
+1. **TARAMA:** Yeni teknoloji projenin hangi bileşenlerini etkileyeceği dosya bazında taranır.
+2. **RAPOR:** Etki analizi raporu hazırlanır (eski vs. yeni karşılaştırma tablosu).
+3. **ONAY:** Rapor **Hakan Bey'e** sunulur. Entegrasyon SADECE onay sonrası başlar.
+4. **GEÇİŞ:** Eski model/API **YEDEK (fallback)** olarak korunur. Yeni ile birlikte çalışır.
+5. **ARŞİVLEME:** İşi biten görev emirleri (tüm checkboxlar ✅) `_archive/skills-completed-q2/` altına taşınır.
+
+### Güncel Model Referansları (29 Nisan 2026)
+| Amaç | Model | Dosya | Durum |
+|------|-------|-------|-------|
+| Ana LLM (Rutin) | `gemini-2.5-flash` | `aiClient.ts` | ✅ Stabil |
+| Derin Analiz | `gemini-3.1-pro` | `aiClient.ts` | ✅ Stabil |
+| Görsel Üretim | `gemini-3.1-flash-image-preview` | `aiClient.ts` | ✅ Q2 YENİ |
+| Embedding | `gemini-embedding-2` (3072-dim) | `aiClient.ts` | ✅ Q2 YENİ |
+| Ajan İletişimi | A2A Protocol + `transfer_to_agent()` | `agentBus.ts` | ✅ Q2 YENİ |
+
+## 6. 🏥 Yaşayan Ekosistem Sağlık Kuralları (Q2 2026 — YENİ)
+> **KURAL:** Aşağıdaki 11 node her zaman güncel ve tam çalışır durumda olmalıdır.
+
+### Zorunlu Sağlık Kontrol Listesi
+Her oturumda, kod değişikliği yapılmadan ÖNCE:
+1. **`pnpm run build`** → Exit code: 0 OLMALI (sıfır tolerans)
+2. **`sovereign-config.ts`** → 11 node tanımı eksiksiz olmalı
+3. **Merkezi Router (`alohaAI`)** → Tüm API çağrıları tek noktadan geçmeli (hibrit dosya sayısı azalmalı)
+4. **Node Bileşen Bütünlüğü:**
+
+| Node | Bileşen Dizini | Minimum Dosyalar | Durum |
+|------|---------------|-----------------|-------|
+| AIPyram | `src/core/aloha/` | aiClient, engine, orchestrator, agentBus | ✅ |
+| TRTex | `src/components/trtex/` | Navbar, IntelligenceTicker, Footer | ✅ |
+| Perde.ai | `src/components/node-perde/` | Landing, Assistant, Marketplace | ✅ |
+| icmimar.ai | `src/components/node-icmimar/` | Landing, Assistant, ERP | ✅ |
+| Hometex.ai | `src/components/node-hometex/` | Landing, Expo, Exhibitors | ✅ |
+| Vorhang.ai | `src/components/node-vorhang/` | Landing, Marketplace, Seller | ✅ |
+| Heimtex.ai | `src/components/node-heimtex/` | Landing, Magazine, Trends | ✅ |
+| Curtaindesign.ai | `src/components/node-curtaindesign/` | Landing, Auth, Contact | ✅ |
+
+5. **Skill Dosyası Hijyeni:**
+   - Tamamlanan görev emirleri → `_archive/skills-completed-q2/`
+   - Aktif dosyalar → checkboxlar güncel
+   - Yeni eklenen teknolojiler → `GEMINI_Q2_UPGRADE_VISION.md` tablosuna yansıtılır
+
+## 7. 🎁 Claude Opus Katkı Defteri (Sürpriz — Q2 2026)
+> **Bu bölüm, Claude Opus'un projeye yaptığı benzersiz katkıları belgeler.**
+
+### Q2 2026 İnovasyon Modernizasyonu (29 Nisan 2026)
+- 🔧 **3 Kritik Bug Düzeltildi:** `crawlerAgent.ts`, `rag.ts`, `FabricRecognitionAgent.ts` — Runtime'da çökecek kırık API çağrıları tespit ve düzeltildi.
+- 🚀 **Model Yükseltmeleri:** Görsel üretim 3x hızlandı (Nano Banana 2), embedding 4x zenginleşti (3072-dim multimodal).
+- 🔗 **A2A Protocol:** Google'ın yeni ajan-ajan iletişim standardı sisteme entegre edildi. Her ajana kriptografik kimlik atandı.
+- 📊 **Execution Trace:** Tam denetlenebilir ajan akış izleme sistemi eklendi — hangi ajan, ne zaman, ne yaptı, kaç token harcadı.
+- 🧹 **Ekosistem Hijyeni:** Tamamlanan görev emirleri arşivlendi, 1MB+ geçici dosya temizlendi, skill dosyaları güncellendi.
+- 📋 **Derin Tarama Raporu:** 11 Sovereign Node, 86 ALOHA modülü, 25 ajan, 18 skill dosyası, 35 API route — dosya bazlı röntgen çıkarıldı.
+
+
 # AIPyram Sovereign B2B Template
 
 Production-ready full-stack Next.js application integrated with Firebase (Google Cloud Native), TailwindCSS 4, and Radix UI.

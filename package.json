@@ -16,7 +16,6 @@
     "@emotion/is-prop-valid": "latest",
     "@google-cloud/vertexai": "^1.10.4",
     "@google/genai": "^1.47.0",
-    "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",

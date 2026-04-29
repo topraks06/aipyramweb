@@ -29,24 +29,23 @@ import { adminDb } from '@/lib/firebase-admin';
 //  KONFİGÜRASYON
 // ═══════════════════════════════════════
 
-// MODEL HABERLERİ (2026 Q1-Q2 GOOGLE GÜNCELLEMELERİ)
-// - gemini-2.5-flash: Mevcut ana model (stabil, hızlı)
-// - imagen-3.0-generate-002: Mevcut görsel üretim (stabil)
-// → YENİ: imagen-4.0-generate-001 (Subject Identity, 4K, 2-into-1 birleştirme)
-// → YENİ: gemini-embedding-exp-03-07 (multimodal embeddings — metin+görüntü+video)
-// → NOT: gemini-3.x henüz mevcut değil. Güncel stabil modeller:
-// → gemini-2.5-flash (agentic, hızlı, düşük maliyet)
-// → gemini-2.5-pro (derin analiz, complex workflows)
+// MODEL HABERLERİ (2026 Q2 — NİSAN GÜNCELLEMELERİ)
+// - gemini-2.5-flash: Ana model (stabil, hızlı, düşük maliyet)
+// - gemini-3.1-pro: Kompleks analiz (Deep Research Max)
+// - gemini-3.1-flash-image-preview: GÖRSEL — Nano Banana 2 (3x hızlı, 4K, 14 referans obje, karakter tutarlılığı)
+// - gemini-embedding-2: GA multimodal embedding (3072-dim, metin+görüntü+ses+video)
+// → ESKİ: imagen-3.0-generate-002 → YEDEĞe alındı (fallback olarak kalıyor)
+// → ESKİ: gemini-embedding-exp-03-07 → YEDEĞe alındı (fallback olarak kalıyor)
 
 // MALİYET SAVUNMASI (CFO GUARD):
 // Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
 // en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
 const DEFAULT_MODEL = 'gemini-2.5-flash'; // (Flash / Yüksek Hız, Düşük Maliyet)
 const DEEP_MODEL = 'gemini-3.1-pro'; // (Pro / Kompleks İşlemler - Deep Research Max)
-const IMAGE_MODEL = 'imagen-3.0-generate-002';     // Default for generateImages (stabil)
-const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback for generateImages
-const EMBEDDING_MODEL = 'gemini-embedding-exp-03-07';  // Multimodal embedding model
-const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004'; // Fallback
+const IMAGE_MODEL = 'gemini-3.1-flash-image-preview';   // Q2 2026: Nano Banana 2 (3x hızlı, 4K, referans obje)
+const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback: eski stabil model
+const EMBEDDING_MODEL = 'gemini-embedding-2';             // Q2 2026: GA, 3072-dim, multimodal (metin+görsel+ses)
+const EMBEDDING_MODEL_FALLBACK = 'gemini-embedding-exp-03-07'; // Fallback: eski deneysel model
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 1000;       // 1s → 2s → 4s
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 dakika
@@ -55,12 +54,11 @@ const MAX_REQUESTS_PER_MINUTE = 55; // Google API limiti 60, güvenli alan
 // ═══════════════════════════════════════
 //  HİBRİT MOD UYARISI (Gemini Audit Önerisi #1)
 // ═══════════════════════════════════════
-// ⚠️ UYARI: Sistemde hâlâ ~50 dosya doğrudan ai.models.generateContent() kullanıyor.
-// Bu dosyalar merkezi router'ı (getRouterModel) atlayarak eski modellere hardcoded bağlı.
-// Tam göç tamamlanana kadar "Hibrit Mod" aktiftir — bazı ajanlar yeni modelle,
-// bazıları eski modelle çalışabilir. Bu, "Zekâ Tutarsızlığı" riski taşır.
+// ⚠️ HİBRİT MOD AZALTMA (Q2 2026 Göçü Devam Ediyor)
+// FabricRecognitionAgent, crawlerAgent, rag.ts → merkezi alohaAI'ye göçürüldü.
+// Kalan hibrit dosyalar kademeli olarak taşınıyor.
 if (typeof process !== 'undefined') {
-  console.warn('[AI_CLIENT] ⚠️ HİBRİT MOD AKTİF — ~50 dosya hâlâ doğrudan API çağrısı yapıyor. Faz 2 göçü devam ediyor.');
+  console.warn('[AI_CLIENT] ⚠️ Q2 GÖÇ AKTİF — Kalan hibrit dosyalar kademeli olarak merkezi router\'a taşınıyor.');
 }
 
 // ═══════════════════════════════════════
