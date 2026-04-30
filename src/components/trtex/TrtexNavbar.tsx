@@ -58,7 +58,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   const getUrl = (key: string) => {
     const bp = basePath || '';
     if (safeLang === 'tr') {
-      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'trendler', academy: 'akademi', fairs: 'fuarlar', trade: 'ticaret', about: 'hakkimizda', manufacturers: 'firmalar', markets: 'piyasalar' };
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'trendler', academy: 'akademi', fairs: 'fuarlar', trade: 'ticaret', about: 'hakkimizda', manufacturers: 'manufacturers', markets: 'piyasalar' };
       return `${bp}/${map[key] || key}`;
     }
     return `${bp}/${key}?lang=${safeLang}`;
@@ -67,6 +67,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   const menuItems = [
     { key: 'news',        label: L.news },
     { key: 'tenders',     label: L.tenders },
+    { key: 'manufacturers', label: L.manufacturers },
     { key: 'trends',      label: L.trends },
     { key: 'fairs',       label: L.fairs },
     { key: 'about',       label: L.about },
