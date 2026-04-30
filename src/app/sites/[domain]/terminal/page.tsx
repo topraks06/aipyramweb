@@ -165,7 +165,7 @@ export default async function TerminalPage({ params }: { params: { domain: strin
 
         {/* Right Column: UGC B2B Action Panel (Otonom İstihbarat Üretimi) */}
         <div className="col-span-12 lg:col-span-3 flex flex-col h-full">
-          <B2BActionPanel brandName={params.domain.split('.')[0].toUpperCase()} />
+          <B2BActionPanel brandName={params.domain.split('.')[0].toUpperCase()} basePath={`/sites/${params.domain}`} />
         </div>
       </div>
     </div>

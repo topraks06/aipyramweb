@@ -1,7 +1,9 @@
 'use client';
 import React, { useState } from 'react';
+import { useAuth } from '@/components/auth/AipyramAuthProvider';
 
-export default function B2BActionPanel({ brandName }: { brandName: string }) {
+export default function B2BActionPanel({ brandName, basePath }: { brandName: string; basePath?: string }) {
+  const { user, loading } = useAuth();
   const [type, setType] = useState<'TENDER' | 'HOT_STOCK' | 'CAPACITY'>('TENDER');
   const [visibility, setVisibility] = useState<'PUBLIC' | 'VIP_ONLY' | 'MATCHED_ONLY'>('PUBLIC');
   const [rawText, setRawText] = useState('');
@@ -31,6 +33,7 @@ export default function B2BActionPanel({ brandName }: { brandName: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           type, rawText, companyName, country, visibility,
+          email: user?.email || '',
           mobilePhone, website, taxId, annualCapacity, employeeCount, exportImportInfo
         })
       });
@@ -48,13 +51,43 @@ export default function B2BActionPanel({ brandName }: { brandName: string }) {
     }
   };
 
+  // AUTH GUARD: Login olmamış kullanıcıya giriş kapısı göster
+  if (loading) {
+    return (
+      <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: '12px', padding: '2rem', color: '#FFF', fontFamily: "'Inter', sans-serif", textAlign: 'center' }}>
+        <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏳</div>
+        <p style={{ color: '#9CA3AF', fontSize: '0.85rem' }}>Oturum kontrol ediliyor...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: '12px', padding: '2rem', color: '#FFF', fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔒</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>B2B İlan Terminali</h3>
+          <p style={{ fontSize: '0.85rem', color: '#9CA3AF', marginBottom: '1.5rem', lineHeight: 1.6, maxWidth: '280px', margin: '0 auto 1.5rem' }}>
+            Alım talebi, sıcak stok veya boş kapasite ilanı vermek için giriş yapmanız gerekmektedir.
+          </p>
+          <a 
+            href={`${basePath || ''}/login`}
+            style={{ display: 'inline-block', padding: '0.75rem 2rem', background: '#CC0000', color: '#FFF', fontWeight: 800, fontSize: '0.85rem', borderRadius: '6px', textDecoration: 'none', letterSpacing: '0.5px' }}
+          >
+            GİRİŞ YAP / KAYIT OL
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: '12px', padding: '2rem', color: '#FFF', fontFamily: "'Inter', sans-serif" }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ background: '#CC0000', width: '40px', height: '40px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>📡</div>
         <div>
           <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Sovereign B2B İlan Terminali</h2>
-          <p style={{ fontSize: '0.85rem', color: '#9CA3AF', margin: 0 }}>Talebiniz yapay zeka tarafından anında küresel bir habere dönüştürülür.</p>
+          <p style={{ fontSize: '0.85rem', color: '#9CA3AF', margin: 0 }}>Hoş geldiniz, <strong style={{ color: '#F3F4F6' }}>{user.displayName || user.email?.split('@')[0]}</strong></p>
         </div>
       </div>
 
