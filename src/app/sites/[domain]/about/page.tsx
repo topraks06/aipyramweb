@@ -4,6 +4,23 @@ import PerdeFooter from '@/components/node-perde/PerdeFooter';
 import TrtexAbout from '@/components/trtex/TrtexAbout';
 import HometexAbout from '@/components/node-hometex/HometexAbout';
 import VorhangAbout from '@/components/node-vorhang/VorhangAbout';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const { domain } = await params;
+  const d = decodeURIComponent(domain).split(':')[0];
+  const brand = d.split('.')[0].toUpperCase();
+  return {
+    title: `Hakkımızda — ${brand} | B2B Ev Tekstili İstihbarat Platformu`,
+    description: `${brand} kimdir? Türkiye'nin lider B2B ev tekstili istihbarat terminali. Perde, kumaş, döşemelik sektöründe otonom AI destekli pazar analizi, ihale takibi ve ticari fırsat keşfi.`,
+    openGraph: {
+      title: `About Us — ${brand} | B2B Home Textile Intelligence`,
+      description: `${brand} — AI-powered B2B intelligence terminal for the global curtain, home textile & upholstery industry.`,
+      type: 'website',
+    },
+    alternates: { canonical: `https://${d}/hakkimizda` },
+  };
+}
 
 export default async function AboutPage({ params, searchParams }: any) {
   const resolvedParams = await params;

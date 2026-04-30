@@ -4,6 +4,23 @@ import PerdeFooter from '@/components/node-perde/PerdeFooter';
 import TrtexContact from '@/components/trtex/TrtexContact';
 import HometexContact from '@/components/node-hometex/HometexContact';
 import VorhangContact from '@/components/node-vorhang/VorhangContact';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const { domain } = await params;
+  const d = decodeURIComponent(domain).split(':')[0];
+  const brand = d.split('.')[0].toUpperCase();
+  return {
+    title: `İletişim — ${brand} | B2B Ev Tekstili İstihbarat Platformu`,
+    description: `${brand} ile iletişime geçin. B2B ihale sorguları, sponsorluk, reklam, teknik destek ve ticari ortaklık talepleri için bize ulaşın.`,
+    openGraph: {
+      title: `Contact — ${brand} | B2B Textile Intelligence`,
+      description: `Get in touch with ${brand} for B2B inquiries, partnerships, and trade intelligence support.`,
+      type: 'website',
+    },
+    alternates: { canonical: `https://${d}/iletisim` },
+  };
+}
 
 export default async function ContactPage({ params, searchParams }: any) {
   const resolvedParams = await params;

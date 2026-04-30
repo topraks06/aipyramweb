@@ -2,8 +2,24 @@ import { notFound } from 'next/navigation';
 import { adminDb } from '@/lib/firebase-admin';
 import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import B2BActionPanel from '@/components/trtex/B2BActionPanel';
+import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: { domain: string } }): Promise<Metadata> {
+  const d = decodeURIComponent(params.domain).split(':')[0];
+  const brand = d.split('.')[0].toUpperCase();
+  return {
+    title: `Sovereign Trading Terminal — ${brand} | Canlı B2B İstihbarat`,
+    description: `${brand} Sovereign Terminal — Gerçek zamanlı B2B alım/satım tahtası, canlı haber akışı, yapay zeka destekli ilan sistemi. Ev tekstili sektöründe Dark Pool ticaret istihbaratı.`,
+    openGraph: {
+      title: `${brand} Sovereign Trading Terminal`,
+      description: `Real-time B2B trading desk for the global home textile industry. Live tenders, AI-powered matchmaking, Dark Pool intelligence.`,
+      type: 'website',
+    },
+    alternates: { canonical: `https://${d}/terminal` },
+  };
+}
 
 async function getTerminalData() {
   if (!adminDb) return { news: [], ticker: [] };

@@ -224,7 +224,13 @@ export async function generateMetadata({ params, searchParams }: NewsListPagePro
   
   return {
     title: `${brandName} — ${titleCategory} (${lang})`,
-    description: `${brandName} B2B Intelligence Terminal — ${titleCategory} Haberleri ve Analizleri`,
+    description: `${brandName} B2B Intelligence Terminal — ${titleCategory} Haberleri ve Analizleri. Ev tekstili sektöründe gerçek zamanlı istihbarat.`,
+    openGraph: {
+      title: `${brandName} ${titleCategory} — B2B Textile Intelligence`,
+      description: `Latest B2B textile intelligence, market analysis and industry news from ${brandName}.`,
+      type: 'website',
+    },
+    alternates: { canonical: `https://${exactDomain}/haberler` },
   };
 }
 

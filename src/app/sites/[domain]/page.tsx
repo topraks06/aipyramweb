@@ -36,7 +36,17 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
       ],
     },
     alternates: {
-      canonical: `https://${exactDomain}`
+      canonical: `https://${exactDomain}`,
+      languages: {
+        'tr': `https://${exactDomain}`,
+        'en': `https://${exactDomain}?lang=en`,
+        'de': `https://${exactDomain}?lang=de`,
+        'ru': `https://${exactDomain}?lang=ru`,
+        'zh': `https://${exactDomain}?lang=zh`,
+        'ar': `https://${exactDomain}?lang=ar`,
+        'es': `https://${exactDomain}?lang=es`,
+        'fr': `https://${exactDomain}?lang=fr`,
+      }
     }
   };
 }
