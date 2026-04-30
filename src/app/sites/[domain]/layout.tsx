@@ -54,28 +54,37 @@ function NodeJsonLd({ domain }: { domain: string }) {
   if (!config) return null;
 
   // Organization Schema
+  const siteUrl = `https://${Object.keys(require("@/lib/sovereign-config").SOVEREIGN_NODES).find(k => k.includes(nodeName.toLowerCase())) || "aipyram.com"}`;
+  
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: config.name,
-    url: `https://${Object.keys(require("@/lib/sovereign-config").SOVEREIGN_NODES).find(k => k.includes(nodeName.toLowerCase())) || "aipyram.com"}`,
-    description: config.name + " B2B Intelligence",
-    logo: "",
+    url: siteUrl,
+    description: `${config.name} — AI-powered B2B intelligence terminal for the global curtain, home textile and upholstery industry. Real-time tenders, market analysis, and trade matchmaking.`,
+    logo: `${siteUrl}/assets/logo.png`,
+    sameAs: [],
     parentOrganization: {
       "@type": "Organization",
-      name: "aipyram Technologies",
+      name: "AIPyram Technologies",
       url: "https://aipyram.com",
     },
+    knowsAbout: ["Home Textile", "Curtain Fabric", "Upholstery", "B2B Trade Intelligence", "Textile Tenders"],
   };
 
-  // WebSite Schema with SearchAction
+  // WebSite Schema with SearchAction (Google Sitelinks Search Box)
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: config.name,
-    url: `https://${Object.keys(require("@/lib/sovereign-config").SOVEREIGN_NODES).find(k => k.includes(nodeName.toLowerCase())) || "aipyram.com"}`,
-    description: config.name + " B2B Intelligence",
+    url: siteUrl,
+    description: `${config.name} — B2B Intelligence Terminal for the global home textile industry.`,
     inLanguage: config.locale,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/haberler?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
   };
 
   return (
