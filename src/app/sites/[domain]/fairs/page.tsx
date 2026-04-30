@@ -4,6 +4,7 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
 import { t } from '@/i18n/labels';
 import { Metadata } from 'next';
+import { generateHreflang, getFallbackImage } from '@/lib/utils';
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,10 @@ export async function generateMetadata({ params, searchParams }: any): Promise<M
   const resolvedParams = await params;
   const exactDomain = decodeURIComponent(resolvedParams.domain).split(":")[0];
   const brandName = exactDomain.split('.')[0].toUpperCase();
-  return { title: `${brandName} — ${t('globalFairs', 'tr')}` };
+  return { 
+    title: `${brandName} — ${t('globalFairs', 'tr')}`,
+    alternates: generateHreflang(exactDomain, '/fairs')
+  };
 }
 
 export default async function FairsPage({ params, searchParams }: any) {
@@ -28,22 +32,62 @@ export default async function FairsPage({ params, searchParams }: any) {
 
   let fairsNews: any[] = [];
   try {
-    // Geniş filtre — intent bazlı boş kalmasın
-    const snap = await adminDb.collection(`${projectName}_news`)
-      .where("status", "==", "published")
-      .orderBy("createdAt", "desc")
-      .limit(30)
-      .get();
-    const allNews = snap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
-    const fairFiltered = allNews.filter((a: any) => {
+    let freshArticles: any[] = [];
+    
+    // Deneme 1: status + createdAt
+    try {
+      const snap = await adminDb.collection(`${projectName}_news`)
+        .where('status', '==', 'published')
+        .orderBy('createdAt', 'desc')
+        .limit(30)
+        .get();
+      freshArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (e1: any) {
+      console.warn('[FAIRS] Index hatası (status+createdAt), fallback deneniyor:', e1.message?.substring(0, 80));
+    }
+
+    // Deneme 2: Sadece createdAt
+    if (freshArticles.length === 0) {
+      try {
+        const snap2 = await adminDb.collection(`${projectName}_news`)
+          .orderBy('createdAt', 'desc')
+          .limit(50)
+          .get();
+        freshArticles = snap2.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter((a: any) => !a.status || a.status === 'published')
+          .slice(0, 30);
+      } catch (e2: any) {
+        console.warn('[FAIRS] createdAt sıralaması da başarısız:', e2.message?.substring(0, 80));
+      }
+    }
+
+    // Deneme 3: Ham koleksiyon
+    if (freshArticles.length === 0) {
+      try {
+        const snap3 = await adminDb.collection(`${projectName}_news`).limit(50).get();
+        freshArticles = snap3.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter((a: any) => !a.status || a.status === 'published')
+          .sort((a: any, b: any) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+          .slice(0, 30);
+      } catch (e3: any) {
+        console.error('[FAIRS] Ham okuma da başarısız:', e3.message);
+      }
+    }
+
+    // Fuar odaklı filtreleme
+    const fairFiltered = freshArticles.filter((a: any) => {
       const intent = (a.intent || '').toUpperCase();
       const cat = (a.category || '').toUpperCase();
       return intent === 'DISCOVER' || cat.includes('FUAR') || cat.includes('EXPO') || cat.includes('FAIR')
         || (a.entity_data?.places && a.entity_data.places.length > 0);
     });
-    fairsNews = fairFiltered.length > 0 ? fairFiltered : allNews.slice(0, 12);
+
+    // Bulunamazsa en azından son haberleri göster (boş kalmasın)
+    fairsNews = fairFiltered.length > 0 ? fairFiltered : freshArticles.slice(0, 12);
   } catch (err) {
-    console.error("[FAIRS] Fetch Error:", err);
+    console.error("[FAIRS] Fatal Fetch Error:", err);
   }
 
   return (
@@ -72,24 +116,9 @@ export default async function FairsPage({ params, searchParams }: any) {
                   Ev tekstili sektörünün önde gelen küresel fuarları — AI destekli katılımcı ve trend analizi ile.
                 </p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-                {[
-                  { name: 'Heimtextil Frankfurt', date: 'Ocak 2027', location: 'Frankfurt, Almanya', icon: '🇩🇪' },
-                  { name: 'Domotex Hannover', date: 'Ocak 2027', location: 'Hannover, Almanya', icon: '🇩🇪' },
-                  { name: 'Maison & Objet', date: 'Ocak 2027', location: 'Paris, Fransa', icon: '🇫🇷' },
-                  { name: 'EVTEKS İstanbul', date: 'Mayıs 2026', location: 'İstanbul, Türkiye', icon: '🇹🇷' },
-                  { name: 'Intertextile Shanghai', date: 'Eylül 2026', location: 'Şanghay, Çin', icon: '🇨🇳' },
-                  { name: 'Index Dubai', date: 'Eylül 2026', location: 'Dubai, BAE', icon: '🇦🇪' },
-                ].map((fair, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem', background: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', textAlign: 'left' }}>
-                    <div style={{ fontSize: '2rem', flexShrink: 0 }}>{fair.icon}</div>
-                    <div>
-                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111' }}>{fair.name}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#6B7280', marginTop: '0.15rem' }}>{fair.location}</div>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.7rem', fontWeight: 700, color: '#CC0000', marginTop: '0.3rem' }}>{fair.date}</div>
-                    </div>
-                  </div>
-                ))}
+              <div style={{ padding: '4rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📡</div>
+                <p style={{ color: '#6B7280', fontWeight: 600, fontSize: '1.1rem' }}>Otonom motor çalışıyor. Fuar verileri yakında burada olacak.</p>
               </div>
             </div>
          ) : (
@@ -97,19 +126,10 @@ export default async function FairsPage({ params, searchParams }: any) {
               {fairsNews.map((article: any, index: number) => {
                 const translatedTitle = article.translations?.[targetLang]?.title || article.title;
                 const translatedSummary = article.translations?.[targetLang]?.summary || article.commercial_note;
-                
-                // SOVEREIGN VISUAL VAULT
-                const fallbacks = [
-                  'https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=800&auto=format&fit=crop', // Expo
-                  'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop', // Event
-                  'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=800&auto=format&fit=crop'  // Convention
-                ];
                 let imgSrc = article.images?.[0] || article.image_url;
                 if (!imgSrc || !imgSrc.startsWith('http')) {
-                  const sum = String(article.id || Math.random()).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                  imgSrc = fallbacks[sum % fallbacks.length];
+                  imgSrc = getFallbackImage(article.id);
                 }
-                
                 // Mocking a future date for the calendar visual if no date exists
                 const eventDate = new Date();
                 eventDate.setDate(eventDate.getDate() + (index * 15) + 5); 
@@ -154,7 +174,7 @@ export default async function FairsPage({ params, searchParams }: any) {
                      )}
                      
                      <div style={{ marginTop: '1.5rem' }}>
-                        <a href={`${basePath}/news/${article.slug || article.id}?lang=${lang}`} style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '0.6rem 1.2rem', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '6px', textDecoration: 'none' }}>
+                        <a href={`${basePath}/news/${encodeURIComponent(article.slug || article.id)}?lang=${lang}`} style={{ display: 'inline-block', background: '#111', color: '#fff', padding: '0.6rem 1.2rem', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', borderRadius: '6px', textDecoration: 'none' }}>
                            KATILIMCI & TREND RAPORUNU İNCELE →
                         </a>
                      </div>

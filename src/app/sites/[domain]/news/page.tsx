@@ -5,6 +5,8 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import NewsletterCapture from '@/components/trtex/NewsletterCapture';
 import StickyCtaBar from '@/components/trtex/StickyCtaBar';
 import { Metadata } from 'next';
+import { getFallbackImage, generateHreflang } from '@/lib/utils';
+import SL from '@/i18n/static-labels';
 
 // ═══ HABER SAYFA ETİKETLERİ (8 DİL OTONOM) ═══
 const newsLabels: Record<string, {
@@ -213,6 +215,8 @@ async function fetchAlohaCategoryPayload(projectName: string, category: string, 
   return { tickerItems, menuConfig, categoryNews, categoryTitle, currentPage };
 }
 
+
+
 export async function generateMetadata({ params, searchParams }: NewsListPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const resolvedSearch = await searchParams as Record<string, string | undefined>;
@@ -230,7 +234,7 @@ export async function generateMetadata({ params, searchParams }: NewsListPagePro
       description: `Latest B2B textile intelligence, market analysis and industry news from ${brandName}.`,
       type: 'website',
     },
-    alternates: { canonical: `https://${exactDomain}/haberler` },
+    alternates: generateHreflang(exactDomain, '/news')
   };
 }
 
@@ -309,17 +313,10 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
                   const translatedTitle = article.translations?.[lang.toUpperCase()]?.title || article.title;
                   const translatedSummary = article.translations?.[lang.toUpperCase()]?.summary || article.commercial_note;
                   return (
-                  <a key={article.id} href={`${basePath}/${category}/${article.slug || article.id}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden' }}>
-                    {(article.images?.[0] || article.image_url || article.image) ? (
-                      <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
-                        <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </div>
-                    ) : (
-                      <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ position: 'absolute', inset: 0, opacity: 0.5, backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
-                        <div style={{ position: 'relative', zIndex: 10, width: '60px', height: '4px', background: '#D1D5DB', borderRadius: '2px' }}></div>
-                      </div>
-                    )}
+                  <a key={article.id} href={`${basePath}/${category}/${encodeURIComponent(article.slug || article.id)}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', aspectRatio: '16/9', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
+                      <img src={article.images?.[0] || article.image_url || article.image || getFallbackImage(article.id)} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
                     <div style={{ padding: '1.5rem' }}>
                        <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#CC0000', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
                          {(() => {
@@ -357,17 +354,12 @@ export default async function NewsListPage({ params, searchParams }: NewsListPag
                   const translatedTitle = article.translations?.[lang.toUpperCase()]?.title || article.title;
                   const translatedSummary = article.translations?.[lang.toUpperCase()]?.summary || article.commercial_note;
                   return (
-                  <a key={article.id} href={`${basePath}/${category}/${article.slug || article.id}?lang=${lang}`} style={{ 
+                  <a key={article.id} href={`${basePath}/${category}/${encodeURIComponent(article.slug || article.id)}?lang=${lang}`} style={{ 
                     display: 'flex', textDecoration: 'none', color: 'inherit', 
                     borderBottom: '1px solid #F3F4F6', paddingBottom: '1rem', alignItems: 'center', gap: '1.5rem' 
                   }}>
-                    <div style={{ width: '100px', height: '60px', flexShrink: 0, overflow: 'hidden', borderRadius: '4px', position: 'relative', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ position: 'absolute', inset: 0, opacity: 0.5, backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', backgroundSize: '8px 8px' }}></div>
-                      {(article.images?.[0] || article.image_url || article.image) ? (
-                        <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 20 }} />
-                      ) : (
-                        <div style={{ position: 'relative', zIndex: 10, width: '20px', height: '3px', background: '#D1D5DB', borderRadius: '2px' }}></div>
-                      )}
+                    <div style={{ width: '100px', height: '60px', flexShrink: 0, overflow: 'hidden', borderRadius: '4px', position: 'relative', background: '#F3F4F6' }}>
+                      <img src={article.images?.[0] || article.image_url || article.image || getFallbackImage(article.id)} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 20 }} />
                     </div>
                     <div style={{ flex: 1 }}>
                       <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#111', margin: '0 0 0.3rem 0', lineHeight: 1.3 }}>{translatedTitle}</h3>

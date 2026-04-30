@@ -4,6 +4,7 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
 import { t } from '@/i18n/labels';
 import { Metadata } from 'next';
+import { generateHreflang, getFallbackImage } from '@/lib/utils';
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,10 @@ export async function generateMetadata({ params, searchParams }: any): Promise<M
   const resolvedParams = await params;
   const exactDomain = decodeURIComponent(resolvedParams.domain).split(":")[0];
   const brandName = exactDomain.split('.')[0].toUpperCase();
-  return { title: `${brandName} — ${t('industryAcademy', 'tr')}` };
+  return { 
+    title: `${brandName} — ${t('industryAcademy', 'tr')}`,
+    alternates: generateHreflang(exactDomain, '/academy')
+  };
 }
 
 export default async function AcademyPage({ params, searchParams }: any) {
@@ -28,23 +32,61 @@ export default async function AcademyPage({ params, searchParams }: any) {
 
   let academyNews: any[] = [];
   try {
-    // Geniş kategori filtresi — Akademi sayfası boş kalmasın
-    const snap = await adminDb.collection(`${projectName}_news`)
-      .where("status", "==", "published")
-      .orderBy("createdAt", "desc")
-      .limit(30)
-      .get();
+    let freshArticles: any[] = [];
+    
+    // Deneme 1: status + createdAt
+    try {
+      const snap = await adminDb.collection(`${projectName}_news`)
+        .where('status', '==', 'published')
+        .orderBy('createdAt', 'desc')
+        .limit(30)
+        .get();
+      freshArticles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (e1: any) {
+      console.warn('[ACADEMY] Index hatası (status+createdAt), fallback deneniyor:', e1.message?.substring(0, 80));
+    }
+
+    // Deneme 2: Sadece createdAt
+    if (freshArticles.length === 0) {
+      try {
+        const snap2 = await adminDb.collection(`${projectName}_news`)
+          .orderBy('createdAt', 'desc')
+          .limit(50)
+          .get();
+        freshArticles = snap2.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter((a: any) => !a.status || a.status === 'published')
+          .slice(0, 30);
+      } catch (e2: any) {
+        console.warn('[ACADEMY] createdAt sıralaması da başarısız:', e2.message?.substring(0, 80));
+      }
+    }
+
+    // Deneme 3: Ham koleksiyon
+    if (freshArticles.length === 0) {
+      try {
+        const snap3 = await adminDb.collection(`${projectName}_news`).limit(50).get();
+        freshArticles = snap3.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter((a: any) => !a.status || a.status === 'published')
+          .sort((a: any, b: any) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+          .slice(0, 30);
+      } catch (e3: any) {
+        console.error('[ACADEMY] Ham okuma da başarısız:', e3.message);
+      }
+    }
+
     // Önce akademi/analiz/trend kategorili olanları filtrele
-    const allNews = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const academyFiltered = allNews.filter((a: any) => {
+    const academyFiltered = freshArticles.filter((a: any) => {
       const cat = (a.category || '').toUpperCase();
       return ['ANALİZ', 'TREND', 'AKADEMİ', 'ANALYSIS', 'DEKORASYON', 'DECORATION', 'GÜNDEM', 'İSTİHBARAT', 'PAZAR'].includes(cat)
         || (a.routing_signals?.academy_value || 0) >= 0.4;
     });
+
     // Akademi filtresi boşsa tüm haberleri göster (boş sayfa olmasın)
-    academyNews = academyFiltered.length > 0 ? academyFiltered : allNews;
+    academyNews = academyFiltered.length > 0 ? academyFiltered : freshArticles;
   } catch (err) {
-    console.error("[ACADEMY] Fetch Error:", err);
+    console.error("[ACADEMY] Fatal Fetch Error:", err);
   }
 
   return (
@@ -63,27 +105,9 @@ export default async function AcademyPage({ params, searchParams }: any) {
          </div>
 
          {academyNews.length === 0 ? (
-            <div style={{ padding: '4rem 2rem', textAlign: 'center', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎓</div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#111827', marginBottom: '0.75rem', fontFamily: "'Playfair Display', serif" }}>
-                Akademi İçerikleri Hazırlanıyor
-              </h2>
-              <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
-                Sektör profesyonelleri için derinlemesine pazar analizleri, trend raporları ve ticari eğitim dokümanları çok yakında bu ekranda yerini alacak.
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '700px', margin: '0 auto' }}>
-                {[
-                  { icon: '📊', title: 'Pazar Analizi', desc: 'Küresel ev tekstili pazar trendleri' },
-                  { icon: '🧵', title: 'Hammadde Rehberi', desc: 'İplik, kumaş ve aksesuar bilgi bankası' },
-                  { icon: '📈', title: 'Trend Raporları', desc: '2026/2027 sezon öngörüleri' },
-                ].map((item, i) => (
-                  <div key={i} style={{ padding: '1.25rem', border: '1px solid #E5E7EB', borderRadius: '8px', textAlign: 'left' }}>
-                    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{item.icon}</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#111', marginBottom: '0.25rem' }}>{item.title}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>{item.desc}</div>
-                  </div>
-                ))}
-              </div>
+            <div style={{ padding: '4rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📡</div>
+              <p style={{ color: '#6B7280', fontWeight: 600, fontSize: '1.1rem' }}>Otonom motor çalışıyor. Veriler yakında burada olacak.</p>
             </div>
          ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
@@ -91,17 +115,10 @@ export default async function AcademyPage({ params, searchParams }: any) {
                 const translatedTitle = article.translations?.[targetLang]?.title || article.title;
                 const translatedSummary = article.translations?.[targetLang]?.summary || article.commercial_note;
                 return (
-                <a key={article.id} href={`${basePath}/news/${article.slug || article.id}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden', borderRadius: '8px' }}>
-                  {(article.images?.[0] || article.image_url || article.image) ? (
-                    <div style={{ width: '100%', height: '180px', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
-                      <img src={article.images?.[0] || article.image_url || article.image} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ) : (
-                    <div style={{ width: '100%', height: '180px', background: 'linear-gradient(135deg, #F9FAFB 0%, #E5E7EB 100%)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                      <div style={{ position: 'absolute', inset: 0, opacity: 0.5, backgroundImage: 'radial-gradient(#D1D5DB 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
-                      <div style={{ position: 'relative', zIndex: 10, width: '40px', height: '4px', background: '#D1D5DB', borderRadius: '2px' }}></div>
-                    </div>
-                  )}
+                <a key={article.id} href={`${basePath}/news/${encodeURIComponent(article.slug || article.id)}?lang=${lang}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit', border: '1px solid #E5E7EB', background: '#fff', overflow: 'hidden', borderRadius: '8px' }}>
+                  <div style={{ width: '100%', height: '180px', overflow: 'hidden', backgroundColor: '#F3F4F6' }}>
+                    <img src={article.images?.[0] || article.image_url || article.image || getFallbackImage(article.id)} alt={translatedTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
                   <div style={{ padding: '1.5rem' }}>
                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3B82F6', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
                         {t('analysisTrend', lang)}
