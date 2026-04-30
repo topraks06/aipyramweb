@@ -63,8 +63,10 @@ const GLOBAL_HUNT_QUERIES = [
   { q: "hotel textile procurement tender 2026 Australia New Zealand Fiji Pacific Islands", type: "TENDER" as const, region: "OCEANIA" },
 
   // ════════════════════════ ULUSLARARASI KURULUŞLAR ════════════════════════
-  { q: "UNGM United Nations textile procurement tender 2026 blanket bednet curtain", type: "TENDER" as const, region: "INTL" },
-  { q: "World Bank IDB funded hotel hospital construction textile supply tender 2026", type: "TENDER" as const, region: "INTL" },
+  { q: "site:ungm.org United Nations UNGM textile procurement tender 2026 blanket bednet curtain", type: "TENDER" as const, region: "INTL" },
+  { q: "site:ted.europa.eu European TED public procurement textile hospital hotel curtain 2026", type: "TENDER" as const, region: "INTL" },
+  { q: "World Bank funded hospital construction textile supply tender 2026", type: "TENDER" as const, region: "INTL" },
+  { q: "site:sam.gov US federal procurement tender 2026 textile curtain", type: "TENDER" as const, region: "INTL" },
   { q: "NATO military textile blanket bedlinen procurement tender 2026", type: "TENDER" as const, region: "INTL" },
 
   // ════════════════════════ BÜYÜK OTEL ZİNCİRLERİ ════════════════════════
@@ -130,11 +132,12 @@ CRITICAL RULES:
 1. SECTOR RESTRICTION: ONLY Home Textiles, Curtains, Upholstery, Hospital/Hotel Linens, Towels, Yarns, and Commercial Fabrics.
 2. STRICTLY FORBIDDEN: NEVER include "apparel", "clothing", "garments", "fashion", "furniture", "woodwork", "shoes", or "machinery".
 3. NO RISKY TENDERS: Do not include erratic, scam, or financially unpredictable tenders. We need solid B2B leads.
-4. Each opportunity must include REAL country names, REAL project types, and realistic quantities/values.
-5. Even from SMALL countries — a €10.000 hospital curtain order from Malta is highly valuable.
-6. Language: ALL output fields MUST BE IN TURKISH.
-7. Type MUST BE "${tenderType}".
-8. Score 80-99 based on commercial attractiveness (value, urgency, accessibility for Turkish exporters).
+4. PRIORITY SOURCES: Give absolute priority to official sources like UNGM (UN), TED (Europe), SAM.gov, World Bank, and Ministry of Health/Defense portals. Always cite the exact institution.
+5. Each opportunity must include REAL country names, REAL project types, and realistic quantities/values.
+6. Even from SMALL countries — a €10.000 hospital curtain order from Malta is highly valuable.
+7. Language: ALL output fields MUST BE IN TURKISH.
+8. Type MUST BE "${tenderType}".
+9. Score 80-99 based on commercial attractiveness (value, urgency, accessibility for Turkish exporters).
 
 Output MUST BE a JSON array. Each object:
 {

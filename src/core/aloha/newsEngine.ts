@@ -249,7 +249,7 @@ Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için BUGÜNE ÖZE
 
 🔴 MUTLAK YASAKLAR:
 - ${year} öncesi yıl referansı → YASAK
-- Konfeksiyon, hazır giyim, moda haftası → YASAK  
+- Konfeksiyon, hazır giyim, kıyafet, tekstil modası (apparel, garments, fashion) → KESİNLİKLE YASAK! Biz SADECE EV TEKSTİLİ işindeyiz.
 - Sahte firma/istatistik → YASAK
 - "B2B" kelimesini başlıkta KULLANMA
 - Aşırı jargon → YASAK. Akıcı, okunabilir, keyifli bir dil kullan
@@ -257,7 +257,7 @@ Sen ${angle.tone} rolündesin. Ev tekstili ve perde sektörü için BUGÜNE ÖZE
 - DAHA ÖNCE YAZILMIŞ haberleri TEKRARLAMA
 
 ✅ İÇERİK ÇERÇEVESİ (${month} ${year} GÜNCELİ):
-Sınırsız B2B Çeşitliliği! Konu SADECE kumaş olmak zorunda değildir. Ev tekstili, dekorasyon, aksesuarlar, motorlu mekanizmalar, kornişler, akıllı ev sistemleri, otel tekstili, halı, hatta montaj için kullanılan özellikli bir ürün bile B2B/Ticari değer taşıyorsa haber yapılabilir. Pazardaki talebi dinamik olarak analiz et ve sektörün arz/talep dengelerine göre haberin yönünü belirle. Her seferinde B2B ekosisteminin FARKLI bir köşesinden, ASLA TEKRAR ETMEYEN eşsiz bir haber bul ve yaz.
+Sınırsız B2B Çeşitliliği! Konu SADECE kumaş olmak zorunda değildir. Ev tekstili, iç/dış dekorasyon, dekoratif aksesuarlar, perde rayları, kornişler, motorlu mekanizmalar, akıllı ev sistemleri, otel tekstili, halı, hatta montaj donanımları bile ticari değer taşıyorsa haber yapılabilir. Pazardaki talebi dinamik olarak analiz et ve sektörün arz/talep dengelerine göre haberin yönünü belirle.
 ${antiRepeatBlock}
 
 🎯 FARK YARATAN KURALLAR:

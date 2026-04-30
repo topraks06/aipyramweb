@@ -5,13 +5,17 @@ import TrtexContact from '@/components/trtex/TrtexContact';
 import HometexContact from '@/components/node-hometex/HometexContact';
 import VorhangContact from '@/components/node-vorhang/VorhangContact';
 
-export default async function ContactPage({ params }: { params: Promise<{ domain: string }> }) {
-  const { domain } = await params;
+export default async function ContactPage({ params, searchParams }: any) {
+  const resolvedParams = await params;
+  const resolvedSearch = await searchParams;
+  const domain = resolvedParams.domain;
   const d = decodeURIComponent(domain);
+  const lang = resolvedSearch?.lang || 'tr';
+  const basePath = `/sites/${d.split(':')[0]}`;
 
   // TRTEX — kendi navbar/footer'ı bileşen içinde
   if (d.includes('trtex')) {
-    return <TrtexContact />;
+    return <TrtexContact lang={lang} basePath={basePath} />;
   }
 
   if (d.includes('hometex')) return <HometexContact />;

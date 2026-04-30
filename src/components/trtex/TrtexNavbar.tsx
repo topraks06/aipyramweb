@@ -15,15 +15,15 @@ const LANG_OPTIONS = [
 ];
 
 // ═══ NAV ETİKETLERİ (8 DİL) ═══
-const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string; about: string; trends: string; fairs: string }> = {
-  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt', about: 'HAKKIMIZDA', trends: 'TRENDLER', fairs: 'FUAR TAKVİMİ' },
-  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up', about: 'ABOUT US', trends: 'TRENDS', fairs: 'FAIR CALENDAR' },
-  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren', about: 'ÜBER UNS', trends: 'TRENDS', fairs: 'MESSEKALENDER' },
-  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация', about: 'О НАС', trends: 'ТРЕНДЫ', fairs: 'КАЛЕНДАРЬ ВЫСТАВОК' },
-  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册', about: '关于我们', trends: '趋势', fairs: '展会日历' },
-  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني', about: 'من نحن', trends: 'اتجاهات', fairs: 'تقويم المعارض' },
-  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis', about: 'SOBRE NOSOTROS', trends: 'TENDENCIAS', fairs: 'CALENDARIO DE FERIAS' },
-  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription Gratuite', about: 'À PROPOS', trends: 'TENDANCES', fairs: 'CALENDRIER DES SALONS' },
+const navLabels: Record<string, { news: string; tenders: string; trade: string; academy: string; register: string; about: string; trends: string; fairs: string; manufacturers: string; markets: string; studio: string; myRadar: string }> = {
+  TR: { news: 'HABERLER', tenders: 'İHALELER', trade: 'TİCARET', academy: 'AKADEMİ', register: 'Ücretsiz Kayıt', about: 'HAKKIMIZDA', trends: 'TRENDLER', fairs: 'FUAR TAKVİMİ', manufacturers: 'FİRMALAR', markets: 'PİYASALAR', studio: '3D STÜDYO', myRadar: 'Benim Radarım' },
+  EN: { news: 'NEWS', tenders: 'TENDERS', trade: 'TRADE', academy: 'ACADEMY', register: 'Free Sign Up', about: 'ABOUT US', trends: 'TRENDS', fairs: 'FAIR CALENDAR', manufacturers: 'COMPANIES', markets: 'MARKETS', studio: '3D STUDIO', myRadar: 'My Radar' },
+  DE: { news: 'NACHRICHTEN', tenders: 'AUSSCHREIBUNGEN', trade: 'HANDEL', academy: 'AKADEMIE', register: 'Kostenlos Registrieren', about: 'ÜBER UNS', trends: 'TRENDS', fairs: 'MESSEKALENDER', manufacturers: 'FIRMEN', markets: 'MÄRKTE', studio: '3D STUDIO', myRadar: 'Mein Radar' },
+  RU: { news: 'НОВОСТИ', tenders: 'ТЕНДЕРЫ', trade: 'ТОРГОВЛЯ', academy: 'АКАДЕМИЯ', register: 'Регистрация', about: 'О НАС', trends: 'ТРЕНДЫ', fairs: 'ВЫСТАВКИ', manufacturers: 'КОМПАНИИ', markets: 'РЫНКИ', studio: '3D СТУДИЯ', myRadar: 'Мой радар' },
+  ZH: { news: '新闻', tenders: '招标', trade: '贸易', academy: '学院', register: '免费注册', about: '关于我们', trends: '趋势', fairs: '展会', manufacturers: '公司', markets: '市场', studio: '3D工作室', myRadar: '我的雷达' },
+  AR: { news: 'أخبار', tenders: 'مناقصات', trade: 'تجارة', academy: 'أكاديمية', register: 'تسجيل مجاني', about: 'من نحن', trends: 'اتجاهات', fairs: 'معارض', manufacturers: 'شركات', markets: 'الأسواق', studio: 'استوديو 3D', myRadar: 'راداري' },
+  ES: { news: 'NOTICIAS', tenders: 'LICITACIONES', trade: 'COMERCIO', academy: 'ACADEMIA', register: 'Registro Gratis', about: 'SOBRE NOSOTROS', trends: 'TENDENCIAS', fairs: 'FERIAS', manufacturers: 'EMPRESAS', markets: 'MERCADOS', studio: 'ESTUDIO 3D', myRadar: 'Mi Radar' },
+  FR: { news: 'ACTUALITÉS', tenders: 'APPELS D\'OFFRES', trade: 'COMMERCE', academy: 'ACADÉMIE', register: 'Inscription', about: 'À PROPOS', trends: 'TENDANCES', fairs: 'SALONS', manufacturers: 'ENTREPRISES', markets: 'MARCHÉS', studio: 'STUDIO 3D', myRadar: 'Mon Radar' },
 };
 
 interface TrtexNavbarProps {
@@ -58,7 +58,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   const getUrl = (key: string) => {
     const bp = basePath || '';
     if (safeLang === 'tr') {
-      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'trendler', academy: 'akademi', fairs: 'fuarlar', trade: 'ticaret', about: 'hakkimizda' };
+      const map: Record<string, string> = { news: 'haberler', tenders: 'ihaleler', trends: 'trendler', academy: 'akademi', fairs: 'fuarlar', trade: 'ticaret', about: 'hakkimizda', manufacturers: 'firmalar', markets: 'piyasalar' };
       return `${bp}/${map[key] || key}`;
     }
     return `${bp}/${key}?lang=${safeLang}`;
@@ -67,10 +67,9 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
   const menuItems = [
     { key: 'news',        label: L.news },
     { key: 'tenders',     label: L.tenders },
-    { key: 'trade',       label: L.trade },
     { key: 'trends',      label: L.trends },
     { key: 'fairs',       label: L.fairs },
-    { key: 'academy',     label: L.academy },
+    { key: 'about',       label: L.about },
   ];
 
   return (
@@ -108,6 +107,12 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
         .trtex-mobile { position: fixed; inset: 0; z-index: 150; background: #FFFFFF; padding-top: 80px; overflow-y: auto; }
         .trtex-mobile-link { display: block; padding: 1rem 2rem; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; color: #374151; text-decoration: none; border-bottom: 1px solid #F3F4F6; }
         .trtex-mobile-link:hover, .trtex-mobile-link.active { color: #CC0000; background: #FEF2F2; }
+        .trtex-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #FFFFFF; border-top: 1px solid #E5E7EB; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom); }
+        @media (max-width: 1023px) { .trtex-bottom-nav { display: flex; justify-content: space-around; align-items: center; height: 65px; } }
+        .trtex-bottom-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B7280; font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600; flex: 1; height: 100%; }
+        .trtex-bottom-link.active { color: #CC0000; }
+        .trtex-bottom-link svg { width: 22px; height: 22px; stroke-width: 1.5; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+        .trtex-bottom-link.active svg { stroke-width: 2; fill: rgba(204,0,0,0.1); }
       `}} />
 
       <nav className={`trtex-nav ${scrolled ? 'scrolled' : ''}`}>
@@ -161,6 +166,9 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                   <a href={`${basePath}/dashboard?lang=${lang}`} style={{ display: 'block', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#374151', textDecoration: 'none' }}>
                     Terminal Dashboard
                   </a>
+                  <a href={`${basePath}/dashboard/radar?lang=${lang}`} style={{ display: 'block', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#111827', borderLeft: '2px solid #CC0000', backgroundColor: '#F9FAFB', textDecoration: 'none' }}>
+                    {L.myRadar}
+                  </a>
                   <button onClick={logout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '0.75rem 1.25rem', fontSize: '0.85rem', fontWeight: 600, color: '#DC2626', background: 'none', border: 'none', borderTop: '1px solid #F3F4F6', cursor: 'pointer' }}>
                     Çıkış Yap
                   </button>
@@ -171,6 +179,11 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                 {L.register}
               </a>
             )}
+
+            {/* STÜDYO KÖPRÜSÜ (Ecosystem Gateway) */}
+            <a href="https://icmimar.ai" target="_blank" rel="noopener noreferrer" className="trtex-register" style={{ marginLeft: '0.5rem', background: '#111827' }}>
+              {L.studio} ↗
+            </a>
           </div>
 
           {/* MOBILE HAMBURGER */}
@@ -215,6 +228,7 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
               <>
                 <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#CC0000', marginBottom: '0.5rem' }}>{user.displayName || 'ÜYE'}</div>
                 <a href={`${basePath}/dashboard?lang=${lang}`} style={{ display: 'block', padding: '0.75rem', textAlign: 'center', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: '#374151', textDecoration: 'none' }}>Terminal Dashboard</a>
+                <a href={`${basePath}/dashboard/radar?lang=${lang}`} style={{ display: 'block', padding: '0.75rem', textAlign: 'center', border: '1px solid #E5E7EB', background: '#F9FAFB', borderRadius: '8px', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 700, color: '#111827', textDecoration: 'none' }}>{L.myRadar}</a>
                 <button onClick={logout} style={{ display: 'block', width: '100%', padding: '0.75rem', textAlign: 'center', border: '1px solid #DC2626', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, color: '#DC2626', background: 'none', cursor: 'pointer' }}>Çıkış Yap</button>
               </>
             ) : (
@@ -222,9 +236,33 @@ export default function TrtexNavbar({ basePath, brandName = 'TRTEX', lang = 'tr'
                 {L.register}
               </a>
             )}
+            
+            <a href="https://icmimar.ai" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.75rem', marginTop: '0.5rem', textAlign: 'center', background: '#111827', color: '#FFFFFF', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}>
+                {L.studio} ↗
+            </a>
           </div>
         </div>
       )}
+
+      {/* MOBILE BOTTOM NAVIGATION BAR */}
+      <div className="trtex-bottom-nav">
+        <a href={getUrl('news')} className={`trtex-bottom-link ${activePage === 'news' ? 'active' : ''}`}>
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          {L.news}
+        </a>
+        <a href={getUrl('tenders')} className={`trtex-bottom-link ${activePage === 'tenders' ? 'active' : ''}`}>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          {L.tenders}
+        </a>
+        <a href={getUrl('trends')} className={`trtex-bottom-link ${activePage === 'trends' ? 'active' : ''}`}>
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          {L.trends}
+        </a>
+        <a href="https://icmimar.ai" target="_blank" rel="noopener noreferrer" className="trtex-bottom-link" style={{ color: '#111827' }}>
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          {L.studio}
+        </a>
+      </div>
     </>
   );
 }

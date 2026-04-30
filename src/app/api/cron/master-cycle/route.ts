@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import { collectSignals } from '@/core/aloha/signalCollector';
 import { buildTerminalPayload } from '@/core/aloha/terminalPayloadBuilder';
 import { refreshTickerData } from '@/core/aloha/tickerDataFetcher';
-import { executeLiveNewsSwarm } from '@/core/aloha/live-news-swarm';
-import { TenderAgent } from '@/core/aloha/tenderAgent';
-import { TEDScraper } from '@/core/aloha/tedScraper';
 import { adminDb } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
@@ -21,12 +17,11 @@ export const maxDuration = 300; // 5 dakika max
  * Dağınık cron/trigger yapısı öldürüldü.
  * 
  * AKIŞ (sıralı):
- *   1. signalCollector → yeni haberler üret (draft + pending)
- *   2. image-queue işle → görselleri üret, published yap
- *   3. ticker refresh → piyasa verileri güncelle
- *   4. terminal payload build → frontend için tek çıktı
- *   5. fuar takvimi güncelle
+ *   1. image-queue işle → görselleri üret, published yap
+ *   2. ticker refresh → piyasa verileri güncelle
+ *   3. terminal payload build → frontend için tek çıktı
  * 
+ * NOT: Haber toplama işi tamamen GTI'a devredilmiştir. Master Cycle sadece görüntü işleme ve veri paketleme yapar.
  * TETİKLEYİCİ:
  *   - Google Cloud Scheduler: her 4 saatte bir
  *   - Lokal: PM2 cron veya manuel
@@ -87,87 +82,8 @@ export async function GET(req: Request) {
       }
     }
 
-    // ═══ ADIM 1: SİNYAL TOPLAMA ═══
-    console.log('[MASTER 1/5] 🎣 Signal Collector çalışıyor...');
-    try {
-      const signalResult = await collectSignals('trtex');
-      results.steps.signals = {
-        found: signalResult.signalsFound,
-        created: signalResult.articlesCreated,
-        filtered: signalResult.signalsFiltered,
-        errors: signalResult.errors.length,
-      };
-      console.log(`  → ${signalResult.articlesCreated} haber üretildi (${signalResult.signalsFiltered} filtrelendi)`);
-    } catch (err: any) {
-      results.steps.signals = { error: err.message };
-      console.error(`  ❌ Signal hatası: ${err.message}`);
-    }
-
-    if (isTimedOut()) throw new Error('TIMEOUT: Adım 1 sonrası');
-
-    // ═══ ADIM 1.2: İHALE AVI ARTIK AYRI CRON'DA ═══
-    // TenderAgent artık /api/cron/tender-cycle üzerinden 48 saatte bir çalışıyor.
-    // Master cycle'dan kaldırıldı çünkü her 4 saatte çalışması gereksiz maliyet yaratıyordu.
-    // (Günde 48 arama × $0.035 = $1.68/gün boşa gidiyordu)
-    results.steps.tenders = { status: 'delegated_to_tender_cycle' };
-    console.log('\n[MASTER 1.2/5] 🌍 İhale Avı → /api/cron/tender-cycle (48 saatte 1)');
-
-    // ═══ ADIM 1.5: LIVE NEWS SWARM (4 KANALLI OTONOM ZEKA) ═══
-    console.log('\n[MASTER 1.5/5] 🧠 Live News Swarm (Triple Output) çalışıyor...');
-    try {
-      let dailyCount = 0;
-      if (adminDb) {
-         const todayStr = new Date().toISOString().split('T')[0];
-         const dailyDoc = await adminDb.collection('aloha_daily_stats').doc(todayStr).get();
-         dailyCount = dailyDoc.exists ? (dailyDoc.data()?.articles_created || 0) : 0;
-      }
-      
-      let swarmRuns = 1;
-      if (dailyCount < 6) {
-         swarmRuns = Math.min(2, 6 - dailyCount); // Günlük hedef: 6 kaliteli haber
-         console.log(`  [INFO] Günlük hedef (6) altında kalındı (Mevcut: ${dailyCount}). Swarm ${swarmRuns} kez çalıştırılacak.`);
-      }
-
-      // 6 Swarm Briefs for the 6 cycles in 24 hours, focusing on 7 continents and retail/wholesale.
-      const SWARM_BRIEFS = [
-        'Avrupa ve Asya-Pasifik ev tekstili pazarında toptancıları ilgilendiren yeni renk ve desen trendleri, perakende satış öngörüleri',
-        'Kuzey ve Güney Amerika otel/kontrat projelerinde lüks döşemelik ve blackout perde kumaşı talepleri, toptancı fırsatları',
-        'Ortadoğu ve Afrika (MENA) bölgesinde artan lüks villa projeleri için premium perde tasarımları ve üretici-toptancı bağlantıları',
-        'Global perakendeciler için Heimtextil ve Hometex gibi fuarlarda öne çıkan akıllı ev tekstili ve sürdürülebilir ürün incelemeleri',
-        'Avrupa Yeşil Mutabakatı ve Japonya pazarı özelinde inovatif tekstil koleksiyonları, mağazacılık ve perakende eğitim istihbaratı',
-        'Dünya çapındaki 7 kıtada butik tekstil markalarının genişleme stratejileri, zincir mağaza dışı niş toptancı satış bağlantıları'
-      ];
-      
-      results.steps.swarm = { attempts: swarmRuns, results: [] };
-
-      for (let i = 0; i < swarmRuns; i++) {
-        if (isTimedOut()) break;
-        const briefIndex = Math.floor(Date.now() / (6 * 60 * 60 * 1000) + i) % SWARM_BRIEFS.length;
-        console.log(`  -> Swarm iterasyon ${i+1}/${swarmRuns} (Brief: ${briefIndex})...`);
-        const swarmResult = await executeLiveNewsSwarm(SWARM_BRIEFS[briefIndex]);
-        
-        results.steps.swarm.results.push({
-          success: !!swarmResult,
-          title: swarmResult?.intelligence?.translations?.TR?.title?.substring(0, 50) || 'Üretilemedi'
-        });
-        
-        if (swarmResult) {
-          console.log(`    ✅ Haber üretildi: ${swarmResult?.intelligence?.translations?.TR?.title}`);
-        } else {
-          console.log(`    ⚠️ Üretilemedi (kalite filtresi)`);
-        }
-        
-        await new Promise(r => setTimeout(r, 2000));
-      }
-    } catch (err: any) {
-      results.steps.swarm = { error: err.message };
-      console.error(`  ❌ Swarm hatası: ${err.message}`);
-    }
-
-    if (isTimedOut()) throw new Error('TIMEOUT: Adım 1.5 sonrası');
-
-    // ═══ ADIM 2: IMAGE QUEUE İŞLEME ═══
-    console.log('\n[MASTER 2/5] 📸 Image Queue işleniyor...');
+    // ═══ ADIM 1: IMAGE QUEUE İŞLEME ═══
+    console.log('\n[MASTER 1/3] 📸 Image Queue işleniyor...');
     try {
       const imageResult = await processImageQueue();
       results.steps.images = imageResult;
@@ -179,8 +95,8 @@ export async function GET(req: Request) {
 
     if (isTimedOut()) throw new Error('TIMEOUT: Adım 2 sonrası');
 
-    // ═══ ADIM 3: TICKER REFRESH ═══
-    console.log('\n[MASTER 3/5] 📊 Ticker verileri güncelleniyor...');
+    // ═══ ADIM 2: TICKER REFRESH ═══
+    console.log('\n[MASTER 2/3] 📊 Ticker verileri güncelleniyor...');
     try {
       const tickerResult = await refreshTickerData();
       results.steps.ticker = { result: tickerResult };
@@ -192,8 +108,8 @@ export async function GET(req: Request) {
 
     if (isTimedOut()) throw new Error('TIMEOUT: Adım 3 sonrası');
 
-    // ═══ ADIM 4: TERMINAL PAYLOAD BUILD ═══
-    console.log('\n[MASTER 4/5] 📦 Terminal Payload inşa ediliyor...');
+    // ═══ ADIM 3: TERMINAL PAYLOAD BUILD ═══
+    console.log('\n[MASTER 3/3] 📦 Terminal Payload inşa ediliyor...');
     try {
       const payload = await buildTerminalPayload();
       results.steps.payload = {
@@ -209,8 +125,8 @@ export async function GET(req: Request) {
       console.error(`  ❌ Payload hatası: ${err.message}`);
     }
 
-    // ═══ ADIM 5: CYCLE LOG KAYDET ═══
-    console.log('\n[MASTER 5/5] 📝 Cycle log kaydediliyor...');
+    // ═══ DÖNGÜ SONU: CYCLE LOG KAYDET ═══
+    console.log('\n[MASTER END] 📝 Cycle log kaydediliyor...');
     const duration = Date.now() - startTime;
     results.duration_ms = duration;
     results.completedAt = new Date().toISOString();
@@ -277,7 +193,7 @@ async function processImageQueue(): Promise<{
     console.log(`  → ${queueSnap.size} haber kuyruktda`);
 
     // Lazy import — sadece ihtiyaç olduğunda yükle
-    const { processImageForContent } = await import('@/core/aloha/imageAgent');
+    const { processMultipleImages } = await import('@/core/aloha/imageAgent');
 
     for (const qDoc of queueSnap.docs) {
       const qData = qDoc.data();
@@ -312,24 +228,11 @@ async function processImageQueue(): Promise<{
       }
 
       try {
-        console.log(`  [GEN] 📸 3'lü set: "${title.slice(0, 45)}..."`);
+        console.log(`  [GEN] 📸 3'lü set: "${title.slice(0, 45)}..." (1 Yeni, 2 Arşiv)`);
 
-        // 3'lü görsel seti: wide → medium → macro
-        const heroUrl = await processImageForContent('news', category, title, undefined, 'wide');
-        
-        let midUrl = '';
-        try {
-          await new Promise(r => setTimeout(r, 1500));
-          midUrl = await processImageForContent('news', category, title, undefined, 'medium');
-        } catch { /* mid opsiyonel */ }
-
-        let detailUrl = '';
-        try {
-          await new Promise(r => setTimeout(r, 1500));
-          detailUrl = await processImageForContent('news', category, title, undefined, 'macro');
-        } catch { /* detail opsiyonel */ }
-
-        const allImages = [heroUrl, midUrl, detailUrl].filter(Boolean);
+        // 3'lü görsel setini TEK seferde çağırıyoruz. 
+        // processMultipleImages içeride 1 resim üretecek, diğerlerini (2 ve 3) arşivden çekecek.
+        const allImages = await processMultipleImages(category, title, title, 3);
         const primaryImage = allImages[0] || '';
 
         if (primaryImage) {

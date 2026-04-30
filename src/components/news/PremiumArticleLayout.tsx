@@ -124,6 +124,26 @@ export default function PremiumArticleLayout({
       <style dangerouslySetInnerHTML={{ __html: articleCSS }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, jsonLdBreadcrumb]) }} />
       
+      {/* ═══ LLM AEO TUNNEL (Secret Answer Engine Optimization) ═══ */}
+      {/* Bu script sadece ChatGPT, Perplexity ve Google AI botları tarafından "saf bilgi" olarak okunur. Tasarımı kırmaz. */}
+      <script type="text/markdown" id="llm-aeo-data-tunnel" dangerouslySetInnerHTML={{ __html: `
+# ${title}
+## Kategori: ${category}
+## Özet: 
+${summary}
+
+### Sektörel Etki ve Analiz (Impact Score: ${aiImpactScore}/100)
+${executiveSummary && Array.isArray(executiveSummary) ? executiveSummary.join('\n') : executiveSummary || aiCommentary}
+
+### Ticari Fırsatlar (B2B Matchmaking)
+${businessOpps && businessOpps.length > 0 ? businessOpps.map((o: string) => '- ' + o).join('\n') : 'Güncel fırsat verisi taranıyor.'}
+
+### Otonom Aksiyon Planı
+${actionItems && actionItems.length > 0 ? actionItems.map((a: string) => '- ' + a).join('\n') : 'Aksiyon planı bekleniyor.'}
+
+[AIPYRAM INTELLIGENCE NETWORK - ${brandName}]
+      `.trim() }} />
+      
       {/* STICKY NAV — ORTAK NAVBAR */}
       {ticker}
       <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="news" theme="light" />
@@ -191,7 +211,7 @@ export default function PremiumArticleLayout({
         {/* ═══ HERO IMAGE (16:9, content genişliğinde — ASLA TAŞMAZ) ═══ */}
         {heroImage && (
           <figure style={{ margin: '0 0 1rem 0', overflow: 'hidden', background: '#F3F4F6' }}>
-            <img src={heroImage} alt={title} style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
+            <img src={heroImage} alt={`${title} - ${category} Global Sektör Analizi | ${brandName}`} title={`${title} Görseli`} style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
           </figure>
         )}
 
@@ -287,7 +307,7 @@ export default function PremiumArticleLayout({
         {/* ═══ MID IMAGE (16:9, content genişliğinde — ASLA TAŞMAZ) ═══ */}
         {midImage && (
           <figure style={{ margin: '3rem 0', overflow: 'hidden', background: '#F3F4F6' }}>
-            <img src={midImage} alt="Market Analysis" style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} loading="lazy" />
+            <img src={midImage} alt={`${title} - ${brandName} Piyasalar B2B Görseli`} title={`Piyasa Analizi: ${category}`} style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} loading="lazy" />
           </figure>
         )}
 
@@ -316,22 +336,25 @@ export default function PremiumArticleLayout({
         {/* ═══ DETAIL IMAGE (16:9, content genişliğinde — ASLA TAŞMAZ) ═══ */}
         {detailImage && (
           <figure style={{ margin: '4rem 0 2rem 0', overflow: 'hidden', background: '#F3F4F6' }}>
-            <img src={detailImage} alt="Texture Detail" style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} loading="lazy" />
+            <img src={detailImage} alt={`${title} - Ev Tekstili ve Mimari Ürün İncelemesi`} title={`Ürün Detayı - ${brandName}`} style={{ width: '100%', maxWidth: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} loading="lazy" />
           </figure>
         )}
 
-        {/* ═══ AI TRTEX İSTİHBARAT YORUMU ═══ */}
+        {/* ═══ AI TRTEX KAHİN YORUMU (PREDICTIVE INTELLIGENCE) ═══ */}
         {aiCommentary && aiCommentary.length > 30 && (
-          <div style={{ marginTop: '3rem', padding: '2rem', background: '#111', color: '#FFF', fontFamily: "'Inter', sans-serif" }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '2px', color: '#CC0000', textTransform: 'uppercase' }}>TRTEX AI</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#666', letterSpacing: '1px' }}>TRTEX INTELLIGENCE ANALYSIS</span>
+          <div style={{ marginTop: '3rem', padding: '2.5rem', background: 'linear-gradient(to right, #0B0D0F, #1A1A1A)', color: '#FFF', fontFamily: "'Inter', sans-serif", borderLeft: '4px solid #CC0000', borderRadius: '0 8px 8px 0', boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+              <div style={{ background: '#CC0000', color: '#FFF', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 900, fontSize: '1.2rem' }}>🔮</div>
+              <div>
+                <span style={{ display: 'block', fontSize: '0.65rem', fontWeight: 900, letterSpacing: '2px', color: '#CC0000', textTransform: 'uppercase' }}>TRTEX KAHİN</span>
+                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#9CA3AF', letterSpacing: '1px' }}>PREDICTIVE INTELLIGENCE</span>
+              </div>
             </div>
-            <p style={{ fontSize: '1.05rem', lineHeight: 1.7, color: '#E5E7EB', margin: 0 }}>{aiCommentary}</p>
+            <p style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#F3F4F6', margin: 0, fontWeight: 500 }}>{aiCommentary}</p>
             {aiImpactScore > 0 && (
-              <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#666' }}>IMPACT SCORE</span>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: aiImpactScore > 65 ? '#22C55E' : '#F59E0B' }}>{aiImpactScore}/100</span>
+              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#9CA3AF', textTransform: 'uppercase' }}>Piyasa Etki Gücü (Impact)</span>
+                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: aiImpactScore > 65 ? '#22C55E' : '#F59E0B' }}>{aiImpactScore}/100</span>
               </div>
             )}
           </div>

@@ -8,8 +8,12 @@ export const maxDuration = 300; // Search grounding and multiple calls might tak
 /**
  * GET /api/cron/tender-cycle
  * 
- * 48 saatte bir (veya haftalık) çalışması öngörülen Global İhale ve Ticaret Radarı ajanı.
- * Google Search Grounding kullanarak tüm dünyadaki güncel tekstil ihalelerini Firebase'e yazar.
+ * BÜTÇE KORUMA STRATEJİSİ (72 SAAT KURALI):
+ * Ajan her gün çalışmak yerine her 3 günde bir (72 saatte bir) çalıştırılacak şekilde konfigüre edilmiştir. 
+ * İhale ilanları genellikle aylık periyotlarda kapanır, bu nedenle günlük tarama gereksiz kredi tüketimidir.
+ * "Güncellik illüzyonu" TendersClient tarafında dinamik shuffle yapılarak sağlanır.
+ * 
+ * Google Search Grounding kullanarak tüm dünyadaki güncel ev tekstili ihalelerini Firebase'e yazar.
  */
 export async function GET(req: Request) {
   const cronSecret = process.env.CRON_SECRET || 'aloha-cron-sovereign-2026';

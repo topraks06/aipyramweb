@@ -184,6 +184,8 @@ async function fetchAlohaPayload(projectName: string, cmsData?: any) {
         ]},
         { id: 'ihaleler', label: 'İHALELER', slug: 'tenders' },
         { id: 'ticaret', label: 'TİCARET', slug: 'trade' },
+        { id: 'piyasa', label: 'PİYASA VERİLERİ', slug: 'market-data' },
+        { id: 'firsatlar', label: 'GLOBAL FIRSATLAR', slug: 'opportunities' },
         { id: 'akademi', label: 'AKADEMİ', slug: 'academy' },
       ],
       hasPremiumReport: true,

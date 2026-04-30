@@ -1,0 +1,60 @@
+{
+  "gti_sources": [
+    {
+      "id": "fibre2fashion_textile",
+      "name": "Fibre2Fashion Textile News",
+      "region": "GLOBAL/ASIA",
+      "url": "https://feeds.feedburner.com/fibre2fashion/textile-news",
+      "type": "rss"
+    },
+    {
+      "id": "textile_learner",
+      "name": "Textile Learner",
+      "region": "GLOBAL",
+      "url": "https://textilelearner.net/feed",
+      "type": "rss"
+    },
+    {
+      "id": "textilegence",
+      "name": "Textilegence Magazine",
+      "region": "EUROPE/ASIA",
+      "url": "https://textilegence.com/en/feed",
+      "type": "rss"
+    },
+    {
+      "id": "home_textiles_today",
+      "name": "Home Textiles Today",
+      "region": "NORTH_AMERICA",
+      "url": "https://www.hometextilestoday.com/feed/",
+      "type": "rss"
+    },
+    {
+      "id": "african_textile",
+      "name": "African Textile Magazine",
+      "region": "AFRICA",
+      "url": "https://www.africantextilemagazine.com/feed/",
+      "type": "rss"
+    },
+    {
+      "id": "souzlegprom_ru",
+      "name": "Souzlegprom",
+      "region": "RUSSIA",
+      "url": "https://souzlegprom.ru/ru/press-tsentr/novosti.feed?type=rss",
+      "type": "rss"
+    },
+    {
+      "id": "kohantextilejournal",
+      "name": "Kohan Textile Journal",
+      "region": "MENA/ASIA",
+      "url": "https://kohantextilejournal.com/feed/",
+      "type": "rss"
+    },
+    {
+      "id": "abit_brazil",
+      "name": "ABIT Brazil",
+      "region": "SOUTH_AMERICA",
+      "url": "https://www.abit.org.br/rss",
+      "type": "rss"
+    }
+  ]
+}

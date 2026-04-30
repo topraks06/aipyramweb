@@ -158,14 +158,47 @@ export async function checkImageDuplicate(newHash: string): Promise<{isDuplicate
   } catch { return { isDuplicate: false }; }
 }
 
-export async function saveImageHash(hash: string, filename: string, titleSlug: string): Promise<void> {
+export async function saveImageHash(hash: string, filename: string, titleSlug: string, categoryStr: string = 'general', colorStr: string = 'neutral'): Promise<void> {
   if (!adminDb) return;
   try {
     await adminDb.collection('trtex_image_hashes').add({
-      hash, filename, titleSlug, url: `https://storage.googleapis.com/aipyram-web.firebasestorage.app/${filename}`,
+      hash, filename, titleSlug, category: categoryStr, color: colorStr, url: `https://storage.googleapis.com/aipyram-web.firebasestorage.app/${filename}`,
       createdAt: new Date().toISOString()
     });
   } catch {}
+}
+
+async function fetchFromArchive(cat: string, color: string, count: number): Promise<string[]> {
+  if (!adminDb) return [];
+  try {
+    // Kategoriye göre son 50 görseli çek
+    const snaps = await adminDb.collection('trtex_image_hashes')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .get();
+      
+    let matches = snaps.docs.map(d => d.data());
+    
+    // 1. Öncelik: Kategori ve Renk eşleşmesi
+    let strictMatches = matches.filter(m => m.filename?.includes(cat.replace(/_/g, '-')) && m.filename?.includes(color));
+    
+    // 2. Öncelik: Sadece Kategori eşleşmesi
+    if (strictMatches.length < count) {
+       const catMatches = matches.filter(m => m.filename?.includes(cat.replace(/_/g, '-')));
+       strictMatches = [...new Set([...strictMatches, ...catMatches])];
+    }
+    
+    // 3. Öncelik: Rastgele herhangi bir görsel (Çökmeyi önlemek için Fallback)
+    if (strictMatches.length < count) {
+       strictMatches = [...new Set([...strictMatches, ...matches])];
+    }
+
+    // Karıştır ve istenen sayıda döndür
+    return strictMatches.sort(() => 0.5 - Math.random()).slice(0, count).map(m => m.url);
+  } catch (err) {
+    console.error('[IMAGE_AGENT] ❌ Arşiv okuma hatası:', err);
+    return [];
+  }
 }
 
 const BUCKET_NAME = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'aipyram-web.firebasestorage.app';
@@ -322,14 +355,32 @@ export async function processMultipleImages(
   const { alohaAI } = require('@/core/aloha/aiClient');
   const client = alohaAI.getClient();
 
-  for (let i = 0; i < 3; i++) {
+  // Sadece İLK görseli üretiyoruz (Hero / Geniş Açı)
+  for (let i = 0; i < maxImages; i++) {
+    if (i > 0) {
+       // Kalan görselleri SOVEREIGN VISUAL VAULT arşivinden çekiyoruz
+       console.log(`[IMAGE_AGENT] 🗄️ Görsel ${i+1} arşivden çekiliyor (Kategori: ${catDetection.category}, Renk: ${catDetection.color_context})...`);
+       const archivedUrls = await fetchFromArchive(catDetection.category, catDetection.color_context, maxImages - 1);
+       if (archivedUrls.length > 0) {
+           generatedUrls.push(...archivedUrls.slice(0, maxImages - 1));
+           break; // Geri kalanları arşivden aldığımız için döngüyü bitir
+       } else {
+           // Arşiv tamamen boşsa mecburen stok fotoğraf atayalım (güvenlik için)
+           const fallbacks = [
+              'https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=800&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop',
+              'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=800&auto=format&fit=crop'
+           ];
+           generatedUrls.push(fallbacks[i % fallbacks.length]);
+           continue;
+       }
+    }
+
     const plan = shotPlan[i];
     let promptText = buildPrompt(catDetection.category, title, content, i, plan.rule as any);
 
-    // KURAL: İnsan faktörüne sadece çok nadir (ara sıra) izin veriyoruz. Yoksa robotik hissettitir diye şikayet geldi.
-    // Ancak kullanıcı "sadece ürün göster, manken nadir olsun" diyor.
-    // Eğer şans %15 ise, mankenli premium çekime izin ver. Diğer durumlarda insanları negative prompt'a al.
-    const allowHumans = (new Date().getMinutes() % 7) === 0; // ~%15 — deterministik
+    // KURAL: İnsan faktörüne sadece çok nadir (ara sıra) izin veriyoruz.
+    const allowHumans = (new Date().getMinutes() % 7) === 0; // ~%15
     if (allowHumans && plan.rule !== 'detail') {
         promptText = promptText.replace('people, humans, models', '');
         promptText += ' Include an elegant, highly realistic human model subtly interacting with the product in a natural, candid B2B environment.';
@@ -337,10 +388,10 @@ export async function processMultipleImages(
 
     for (let retry = 1; retry <= 3; retry++) {
       try {
-        console.log(`[IMAGE_AGENT] 🎨 Çiziliyor [${i+1}/3] Aspect: ${plan.aspect} (Model: İzinli? ${allowHumans}) (Deneme: ${retry})...`);
+        console.log(`[IMAGE_AGENT] 🎨 Çiziliyor (HERO) [1/1] Aspect: ${plan.aspect} (Deneme: ${retry})...`);
         const response = await client.models.generateImages({
           model: alohaAI.getImageModel?.() || 'imagen-3.0-generate-002',
-          prompt: promptText.substring(0, 1800), // 480 TOKEN ≈ 1800 karakter (eski 480 char limiti YANLIŞTI)
+          prompt: promptText.substring(0, 1800),
           config: {
             numberOfImages: 1,
             outputMimeType: 'image/jpeg',
@@ -372,10 +423,8 @@ export async function processMultipleImages(
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
         generatedUrls.push(publicUrl);
         
-        await saveImageHash(hash, filename, title);
+        await saveImageHash(hash, filename, title, catDetection.category, catDetection.color_context);
         console.log(`[IMAGE_AGENT] ✅ Üretildi: ${publicUrl}`);
-        
-        if (i < 2) await new Promise(r => setTimeout(r, 15000));
         break; 
       } catch (err: any) {
         console.error(`[IMAGE_AGENT] ❌ Resim ${i+1} Hata: ${err.message?.substring(0,60)}`);

@@ -19,10 +19,15 @@ const stats = [
   { value: '∞', label: 'AI Analiz Kapasitesi', icon: Cpu },
 ];
 
-export default function TrtexAbout() {
+interface TrtexAboutProps {
+  lang?: string;
+  basePath?: string;
+}
+
+export default function TrtexAbout({ lang = 'tr', basePath = '' }: TrtexAboutProps) {
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-zinc-900">
-      <TrtexNavbar lang="tr" basePath="" theme="light" />
+      <TrtexNavbar lang={lang} basePath={basePath} theme="light" />
       
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-40 lg:pb-32 border-b border-white/10">
@@ -187,7 +192,7 @@ export default function TrtexAbout() {
               Ev tekstili, perde ve iç mimari sektörlerinde B2B dijital dönüşümün öncüsü.
             </p>
             <Link
-              href="/contact"
+              href={`${basePath}/contact?lang=${lang}`}
               className="inline-flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-zinc-900 font-medium hover:text-red-600 transition-colors"
             >
               <span>İletişime Geç</span>
@@ -198,7 +203,7 @@ export default function TrtexAbout() {
         </div>
       </section>
 
-      <TrtexFooter basePath="" lang="tr" />
+      <TrtexFooter basePath={basePath} lang={lang} />
     </div>
   );
 }

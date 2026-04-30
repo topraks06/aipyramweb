@@ -5,13 +5,17 @@ import TrtexAbout from '@/components/trtex/TrtexAbout';
 import HometexAbout from '@/components/node-hometex/HometexAbout';
 import VorhangAbout from '@/components/node-vorhang/VorhangAbout';
 
-export default async function AboutPage({ params }: { params: Promise<{ domain: string }> }) {
-  const { domain } = await params;
+export default async function AboutPage({ params, searchParams }: any) {
+  const resolvedParams = await params;
+  const resolvedSearch = await searchParams;
+  const domain = resolvedParams.domain;
   const d = decodeURIComponent(domain);
+  const lang = resolvedSearch?.lang || 'tr';
+  const basePath = `/sites/${d.split(':')[0]}`;
 
   // TRTEX — kendi navbar/footer'ı bileşen içinde
   if (d.includes('trtex')) {
-    return <TrtexAbout />;
+    return <TrtexAbout lang={lang} basePath={basePath} />;
   }
 
   if (d.includes('hometex')) return <HometexAbout />;

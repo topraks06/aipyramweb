@@ -30,6 +30,27 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
                 userAgent: "Google-Extended",
                 allow: "/",
             },
+            // 🌏 KÜRESEL 7-KITA SEO KUŞATMASI (VIP GİRİŞLER)
+            {
+                userAgent: "Baiduspider", // Çin
+                allow: "/",
+            },
+            {
+                userAgent: "YandexBot", // Rusya
+                allow: "/",
+            },
+            {
+                userAgent: "Sogou web spider", // Çin
+                allow: "/",
+            },
+            {
+                userAgent: "360Spider", // Asya
+                allow: "/",
+            },
+            {
+                userAgent: "bingbot", // Microsoft / Global (IndexNow)
+                allow: "/",
+            }
         ],
         sitemap: `https://${domain}/api/sitemap/${domain.split('.')[0]}`,
     };

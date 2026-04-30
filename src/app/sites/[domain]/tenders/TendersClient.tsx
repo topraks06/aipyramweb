@@ -18,9 +18,15 @@ export default function TendersClient({ tenders, tickerItems, basePath, brandNam
   const filtered = filter === 'ALL' ? [...tenders] : tenders.filter((t: any) => t.type === filter);
   
   // Sıralama Motoru (Sorting Engine)
+  const today = new Date().getDate(); // 1-31 arası
+  
   filtered.sort((a: any, b: any) => {
     if (sortType === 'score') {
-      return (b.score || 0) - (a.score || 0);
+      // GÜNLÜK SHUFFLE İLLÜZYONU: Skorlara günün tarihine bağlı +/- ufak bir ağırlık ekle.
+      // Böylece 3 günlük bekleme döngüsünde liste her gün farklı gözükür (Bütçe tasarrufu).
+      const aRandomizer = ((a.id?.length || 5) * today) % 12;
+      const bRandomizer = ((b.id?.length || 5) * today) % 12;
+      return ((b.score || 0) + bRandomizer) - ((a.score || 0) + aRandomizer);
     } else if (sortType === 'newest') {
       return (b.createdAt || 0) - (a.createdAt || 0);
     } else if (sortType === 'oldest') {
@@ -176,7 +182,7 @@ export default function TendersClient({ tenders, tickerItems, basePath, brandNam
           <div style={{ fontFamily: 'var(--m)', fontSize: '.7rem', color: '#6B7280', letterSpacing: '.1em', marginBottom: '.5rem', fontWeight: 800 }}>OTONOM İSTİHBARAT</div>
           <div style={{ fontSize: '.85rem', color: '#4B5563', lineHeight: 1.6 }}>
             Bu sayfadaki tüm veriler TRTEX Otonom İhale Avcısı tarafından 7 kıtadan gerçek zamanlı olarak toplanmaktadır.
-            58 farklı sorgu ile otel zincirleri, hastaneler, devlet kurumları, yat/cruise endüstrisi ve uluslararası kuruluş ihaleleri sürekli taranır.
+            TED (Avrupa), UNGM (Birleşmiş Milletler), World Bank fonlu projeler, otel zincirleri, hastaneler, devlet kurumları ve yat/cruise endüstrisi ihaleleri sürekli taranır.
             Her fırsata tıklayarak doğrudan teklif verebilir veya eşleştirme başlatabilirsiniz.
           </div>
         </div>

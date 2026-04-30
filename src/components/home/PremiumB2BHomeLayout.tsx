@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase-client';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
@@ -19,6 +20,25 @@ export default function PremiumB2BHomeLayout({
   } = payload || {};
   
   const [leadModal, setLeadModal] = useState<{ open: boolean; context: any }>({ open: false, context: { type: 'GENERAL' as const } });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (auth) {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (user && user.email === 'hakantoprak71@gmail.com') {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        });
+        return () => unsubscribe();
+      }
+    } catch (e) {
+      console.warn("Auth check error:", e);
+    }
+  }, []);
+
   const activeFairs = fairsWithCountdown || payload?.fairsWithCountdown || [];
   const liveTenders = Array.isArray(rawTenders) ? rawTenders : [];
   const hasTenders = liveTenders.length > 0;
@@ -205,50 +225,79 @@ export default function PremiumB2BHomeLayout({
         </div>
       </section>
 
-      {/* ═══ SECTION 3: İHALE & TİCARET ═══ */}
-      <section style={{ background: '#FFFFFF', borderTop: '1px solid #E5E7EB', borderBottom: '1px solid #E5E7EB', padding: '3rem 0' }}>
+      {/* ═══ SECTION 3: CANLI B2B ALIM/SATIM TAHTASI (FOMO ZONE) ═══ */}
+      <section style={{ background: '#0B0D0F', color: '#FFF', padding: '5rem 0' }}>
         <div className="tc">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div className="section-sub">🔴 CANLI TİCARET FIRSATLARI</div>
-              <h2 className="section-title">İhaleler & Ticaret</h2>
+              <div className="section-sub" style={{ color: '#F59E0B' }}>🔥 SADECE ONAYLI ÜRETİCİLER İÇİN</div>
+              <h2 className="section-title" style={{ color: '#FFF' }}>Canlı B2B Alım/Satım Tahtası</h2>
+              <p style={{ fontSize: '0.95rem', color: '#9CA3AF', marginTop: '0.5rem', maxWidth: '600px' }}>
+                Dünya genelindeki toptancı ve proje firmalarından gelen anlık kumaş/perde talepleri. İhaleyi kapan satışı alır.
+              </p>
             </div>
-            <a href={getLink('tenders')} className="link-arrow">Tüm İhaleler →</a>
+            <a href={getLink('tenders')} className="link-arrow" style={{ color: '#F59E0B', border: '1px solid #F59E0B', padding: '0.6rem 1.2rem', borderRadius: '4px' }}>
+              Tüm Tahtayı Gör →
+            </a>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-            {/* İhaleler */}
-            <div className="card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span className="stat-badge" style={{ background: 'var(--re)' }}>🔴 {totalTenders} İHALE</span>
-                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>CANLI</span>
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Küresel İhaleler</h3>
-              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Avrupa, Ortadoğu ve Asya'daki otel, hastane projelerine anında teklif verin.</p>
-              <a href={getLink('tenders')} style={{ display: 'block', textAlign: 'center', padding: '0.7rem', border: '1px solid #E5E7EB', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#111827', textDecoration: 'none' }}>İhaleleri Görüntüle →</a>
+          <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr 1.5fr 1fr', padding: '1rem 1.5rem', background: '#1F2937', borderBottom: '1px solid #374151', fontFamily: 'var(--m)', fontSize: '0.7rem', color: '#9CA3AF', letterSpacing: '0.05em' }}>
+              <div>SİNYAL TÜRÜ</div>
+              <div>TALEP DETAYI</div>
+              <div>LOKASYON</div>
+              <div style={{ textAlign: 'right' }}>AKSİYON</div>
             </div>
-
-            {/* Sıcak Stok */}
-            <div className="card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span className="stat-badge" style={{ background: 'var(--go)' }}>🟢 {totalStock} STOK</span>
-                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>GÜNCEL</span>
+            
+            {liveTenders.length > 0 ? (
+              liveTenders.slice(0, 5).map((t: any, i: number) => {
+                const isTender = t.type === 'TENDER';
+                const isStock = t.type === 'HOT_STOCK';
+                const color = isTender ? 'var(--re)' : isStock ? 'var(--go)' : 'var(--wa)';
+                return (
+                  <div key={t.id || i} style={{ display: 'grid', gridTemplateColumns: '1fr 3fr 1.5fr 1fr', padding: '1.25rem 1.5rem', borderBottom: '1px solid #1F2937', alignItems: 'center', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={(e) => e.currentTarget.style.background = '#374151'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'} onClick={() => window.location.href = getLink('tenders')}>
+                    <div>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '4px', background: color + '20', color: color }}>
+                        {t.type === 'TENDER' ? '🔴 İHALE' : t.type === 'HOT_STOCK' ? '🟢 STOK' : '🟡 KAPASİTE'}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 600, color: '#F3F4F6' }}>{t.title || 'Gizli B2B Talebi'}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span>📍</span> {t.location || 'Global'}
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <button style={{ background: color, color: isTender ? '#FFF' : '#000', border: 'none', padding: '0.5rem 1.2rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer' }}>
+                        {isTender ? 'TEKLİF VER' : 'DETAY GÖR'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            ) : isAdmin ? (
+              // SOVEREIGN GOD MODE (Şeffaf Yönetici Görünümü)
+              <div style={{ padding: '4rem 2rem', textAlign: 'center', background: '#0B0D0F', border: '1px solid #CC0000', borderRadius: '8px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>👁️</div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#CC0000', marginBottom: '0.5rem', letterSpacing: '2px' }}>SOVEREIGN GOD MODE AKTİF</h3>
+                <p style={{ fontSize: '0.95rem', color: '#9CA3AF', maxWidth: '600px', margin: '0 auto', lineHeight: 1.6 }}>
+                  Sayın Kurucu, sistemde şu an onaylanmış <b>aktif B2B ilanı bulunmuyor.</b> Normal ziyaretçiler burada "FOMO" yaratan kilitli bir ekran görüyor. Sistem tam şeffaflıkla emrinizdedir.
+                </p>
               </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Sıcak Stok Fırsatları</h3>
-              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Depodaki hazır kumaş ve ürün lotlarını hemen satın alın veya fiyat isteyin.</p>
-              <a href={getLink('tenders')} style={{ display: 'block', textAlign: 'center', padding: '0.7rem', border: '1px solid #E5E7EB', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#111827', textDecoration: 'none' }}>Stokları İncele →</a>
-            </div>
-
-            {/* Boş Kapasite */}
-            <div className="card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <span className="stat-badge" style={{ background: 'var(--wa)', color: '#000' }}>🟡 {totalCapacity} KAPASİTE</span>
-                <span style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: '#9CA3AF' }}>AÇIK</span>
+            ) : (
+              // ZERO MOCK AKTİF İKEN BOŞ DURUMU (FOMO YARATAN GÖRÜNÜM)
+              <div style={{ position: 'relative', padding: '4rem 2rem', textAlign: 'center', background: '#111827' }}>
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(#374151 1px, transparent 1px)', backgroundSize: '20px 20px', opacity: 0.1 }}></div>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔐</div>
+                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFF', marginBottom: '0.5rem' }}>TRTex Intelligence: 14 Yeni B2B Talebi Doğrulanıyor</h3>
+                  <p style={{ fontSize: '0.95rem', color: '#9CA3AF', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+                    Yapay zeka motorumuz şu an Avrupa ve Ortadoğu kaynaklı sıcak kumaş alım taleplerinin teyidini gerçekleştiriyor.
+                  </p>
+                  <a href={`${basePath}/register?lang=${safeLang}`} style={{ display: 'inline-block', padding: '0.8rem 2rem', background: '#CC0000', color: '#FFF', fontWeight: 800, fontSize: '0.9rem', borderRadius: '4px', textDecoration: 'none', letterSpacing: '1px' }}>
+                    FIRSATLARI GÖRMEK İÇİN VIP KAYIT OL
+                  </a>
+                </div>
               </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Boş Kapasite Bildirin</h3>
-              <p style={{ fontSize: '0.85rem', color: '#6B7280', marginBottom: '1.5rem', lineHeight: 1.6 }}>Dokuma veya konfeksiyon boşluklarınızı global alıcılara anonim duyurun.</p>
-              <button onClick={() => setLeadModal({ open: true, context: { type: 'CAPACITY' } })} style={{ display: 'block', width: '100%', textAlign: 'center', padding: '0.7rem', background: 'var(--wa)', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', color: '#000', cursor: 'pointer' }}>Hemen İlan Ver →</button>
-            </div>
+            )}
           </div>
         </div>
       </section>

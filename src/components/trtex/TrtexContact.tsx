@@ -6,7 +6,12 @@ import { useState } from 'react';
 import TrtexNavbar from './TrtexNavbar';
 import TrtexFooter from './TrtexFooter';
 
-export default function TrtexContact() {
+interface TrtexContactProps {
+  lang?: string;
+  basePath?: string;
+}
+
+export default function TrtexContact({ lang = 'tr', basePath = '' }: TrtexContactProps) {
   const [formState, setFormState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [form, setForm] = useState({ name: '', email: '', company: '', subject: '', message: '' });
 
@@ -35,7 +40,7 @@ export default function TrtexContact() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <TrtexNavbar lang="tr" basePath="" />
+      <TrtexNavbar lang={lang} basePath={basePath} theme="dark" />
 
       {/* Hero */}
       <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 border-b border-white/10">
@@ -240,7 +245,7 @@ export default function TrtexContact() {
         </div>
       </section>
 
-      <TrtexFooter basePath="" lang="tr" />
+      <TrtexFooter basePath={basePath} lang={lang} />
     </div>
   );
 }
