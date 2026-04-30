@@ -314,19 +314,20 @@ export default function PremiumB2BHomeLayout({
             <a href={getLink('fairs')} className="link-arrow">Tüm Fuarlar →</a>
           </div>
           <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-            {(activeFairs && activeFairs.length > 0 ? activeFairs.slice(0, 6) : [
-              { name: 'Heimtextil Frankfurt', date: 'Ocak 2027', location: 'Frankfurt' },
-              { name: 'EVTEKS İstanbul', date: 'Mayıs 2026', location: 'İstanbul' },
-              { name: 'Intertextile Shanghai', date: 'Eylül 2026', location: 'Şanghay' },
-              { name: 'Index Dubai', date: 'Eylül 2026', location: 'Dubai' },
-            ]).map((f: any, i: number) => (
+            {activeFairs && activeFairs.length > 0 ? activeFairs.slice(0, 6).map((f: any, i: number) => (
               <div key={i} className="card" style={{ minWidth: '250px', padding: '1.25rem', flexShrink: 0 }}>
                 <div style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 800, marginBottom: '0.5rem' }}>{f.date || f.startDate || '2026'}</div>
                 <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '0.3rem', lineHeight: 1.3 }}>{f.name || f.title}</h4>
                 <p style={{ fontSize: '0.8rem', color: '#6B7280' }}>{f.location || f.city || ''}</p>
                 {f.daysLeft != null && <div style={{ fontFamily: 'var(--m)', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 700, marginTop: '0.5rem' }}>{f.daysLeft} gün kaldı</div>}
               </div>
-            ))}
+            )) : (
+              <div style={{ width: '100%', textAlign: 'center', padding: '2rem', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px' }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>📅</div>
+                <p style={{ fontSize: '0.9rem', color: '#6B7280', marginBottom: '1rem' }}>Fuar takvimi güncelleniyor. En güncel etkinlik listesi için aşağıdaki bağlantıyı ziyaret edin.</p>
+                <a href={getLink('fairs')} style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--accent)', textDecoration: 'none' }}>Fuar Takvimi'ne Git →</a>
+              </div>
+            )}
           </div>
         </div>
       </section>
