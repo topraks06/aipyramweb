@@ -5,6 +5,7 @@ import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import IntelligenceTicker from '@/components/trtex/IntelligenceTicker';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import LeadCaptureModal from '@/components/trtex/LeadCaptureModal';
+import NewsletterCapture from '@/components/trtex/NewsletterCapture';
 import SovereignLiveConcierge from '@/components/home/SovereignLiveConcierge';
 
 // Zero-Mock: Sahte tender verileri KALDIRILDI (Hakan Bey kuralı)
@@ -461,6 +462,13 @@ export default function PremiumB2BHomeLayout({
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ SECTION 10: NEWSLETTER BÜLTENI ═══ */}
+      <section style={{ padding: '0 0 2rem' }}>
+        <div className="tc">
+          <NewsletterCapture lang={safeLang} />
         </div>
       </section>
 
