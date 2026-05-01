@@ -78,7 +78,7 @@ export default function TenderRadarSection({
               </p>
             </div>
           ) : (
-            // ZERO MOCK AKTİF İKEN BOŞ DURUMU (FOMO YARATAN GÖRÜNÜM)
+            // BOŞ DURUMU (FOMO YARATAN GÖRÜNÜM)
             <div style={{ position: 'relative', padding: '4rem 2rem', textAlign: 'center', background: '#111827' }}>
               <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(#374151 1px, transparent 1px)', backgroundSize: '20px 20px', opacity: 0.1 }}></div>
               <div style={{ position: 'relative', zIndex: 1 }}>

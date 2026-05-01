@@ -34,12 +34,10 @@ export async function POST(request: NextRequest) {
     
     let instant_offer = null;
     if (result.success) {
-      // Mock Instant Offer Engine
+      // Gerçek AI teklif motoruna (MatchmakerWorkflow) bırakıldı.
+      // Otonom ajan arka planda lead'i isleyecegi icin burada senkron mock teklif dondurmuyoruz.
       instant_offer = {
-        estimated_price: "$12.50 - $18.00 / m²",
-        lead_time: "3-4 Weeks",
-        suggested_material: "Premium Blackout / Fire Retardant",
-        match_status: "2 Verified Manufacturers Found"
+        status: "PROCESSING_BY_ALOHA_AGENT"
       };
       (result as any).instant_offer = instant_offer;
     }

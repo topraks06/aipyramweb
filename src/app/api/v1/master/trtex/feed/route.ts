@@ -13,108 +13,75 @@ let editorialCache: {
 
 // Removed raw ai client
 
-// 1. RAW DATA MOCK (TRTEX B2B Intelligence)
-async function getRawData() {
-  return {
-    rawSignal: 'Wholesale textile pricing drops globally but specialized blackout fabrics demand surges by 25% in hospitality sector.',
-    b2bEvents: ['TRTEX B2B Connect', 'Istanbul Fabric Trade']
-  };
-}
-
-// 2. VISIONARY AI KATMANI: Gerçek GenAI Ajanı
-async function runVisionary(raw: any, mode: string) {
-  if (!process.env.GEMINI_API_KEY) {
-    return {
-      verifiedTrends: [
-        { id: 'tx1', topic: 'Blackout Fabrics', confidence: 0.98 },
-        { id: 'tx2', topic: 'Hospitality Bulk', confidence: 0.85 }
-      ],
-      creativeStyle: 'Commercial Efficiency'
-    };
-  }
-
+async function getRealFeedData() {
   try {
-    const prompt = `
-      You are aipyram Visionary Editorial Agent for TRTEX (B2B).
-      Based on this raw signal: ${raw.rawSignal}
-      Generate 2 market trends for wholesale textiles and an overarching market outlook style.
-      Output pure JSON with no markdown: {"verifiedTrends": [{"id": "tx1", "topic": "Trend Name", "confidence": 0.98}], "creativeStyle": "Outlook Style"}
-    `;
-    const { text } = await alohaAI.generate(prompt, { 
-      responseMimeType: "application/json",
-      complexity: 'routine'
-    }, 'trtex.feed.runVisionary');
-    if (text) return JSON.parse(text);
-  } catch (error) {
-    console.warn("Visionary Agent failed, using fallback:", error);
-  }
+    const newsRef = adminDb.collection('trtex_news')
+      .where('status', '==', 'published')
+      .orderBy('publishedAt', 'desc')
+      .limit(5);
+    const snap = await newsRef.get();
+    
+    const docs = snap.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        titleTr: data.translations?.TR?.title || data.title || '',
+        titleEn: data.translations?.EN?.title || data.title || '',
+        summaryTr: data.translations?.TR?.summary || data.summary || '',
+        summaryEn: data.translations?.EN?.summary || data.summary || '',
+        category: data.category || 'Haber',
+        image: data.image_url || data.cover_image || 'https://images.unsplash.com/photo-1542452255191-c85a98f2c5d1?w=800&q=80',
+        confidence: data.confidence || 0.90
+      };
+    });
 
-  return {
-    verifiedTrends: [
-        { id: 'tx1', topic: 'Blackout Fabrics', confidence: 0.98 },
-        { id: 'tx2', topic: 'Hospitality Bulk', confidence: 0.85 }
-    ],
-    creativeStyle: 'Commercial Efficiency'
-  };
-}
-
-// 3. REALITY FILTER KATMANI
-async function runReality(visionary: any) {
-  return visionary;
-}
-
-// 4. LÜKS FORMATLAYICI (TRTEX Brutalist & B2B Intelligence Uyumluluğu)
-function formatForUI(reality: any) {
-  return {
-    hero: {
-      titleTr: ['GLOBAL TİCARET', 'B2B AĞI', 'TRTEX'],
-      titleEn: ['GLOBAL TRADE', 'B2B NETWORK', 'TRTEX'],
-      subtitleTr: `aipyram B2B Bot: "${reality.creativeStyle}" odaklı küresel tedarik analizi yürütülüyor.`,
-      subtitleEn: `aipyram B2B Bot analyzing global supply chain with "${reality.creativeStyle}" focus.`,
-      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1600&q=80'
-    },
-    trends: {
-      headerTr: 'Pazar Zekası',
-      headerEn: 'Market Intelligence',
-      cards: reality.verifiedTrends.map((t: any, i: number) => ({
-        id: t.id,
-        nameTr: t.topic === 'Blackout Fabrics' ? 'Karartma Kumaşlar' : 'Otel Tedarik',
-        nameEn: t.topic,
-        descTr: 'Toptan alımlarda ani artış tespit edildi.',
-        descEn: 'Sudden spike detected in wholesale purchases.',
-        img: i === 0 
-          ? 'https://images.unsplash.com/photo-1542452255191-c85a98f2c5d1?w=800&q=80'
-          : 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=800&q=80',
-        score: Math.floor(t.confidence * 100),
-        badge: t.confidence > 0.9 ? 'URGENT' : 'STABLE',
-        badgeEn: t.confidence > 0.9 ? 'URGENT' : 'STABLE',
-        reasonTr: 'B2B Veri Ağı Akışı',
-        reasonEn: 'B2B Data Network Flow'
-      }))
-    },
-    collections: {
-      headerTr: 'Onaylı Tedarikçiler',
-      headerEn: 'Verified Suppliers',
-      items: [
-        {
-          id: 'c1',
-          name_tr: 'Endüstriyel Kumaş Ağı',
-          name_en: 'Industrial Fabric Network',
-          ai_commentary_tr: 'Ajanlarımız bu çeyrekte toptan kapasitenin yetersiz kalabileceği uyarısını veriyor.',
-          ai_commentary_en: 'Our agents warn that wholesale capacity may be insufficient this quarter.',
-          trend_score: 98,
+    return {
+      hero: {
+        titleTr: ['GLOBAL TİCARET', 'B2B AĞI', 'TRTEX'],
+        titleEn: ['GLOBAL TRADE', 'B2B NETWORK', 'TRTEX'],
+        subtitleTr: `aipyram B2B Bot: En güncel ticari veriler sunuluyor.`,
+        subtitleEn: `aipyram B2B Bot analyzing latest global supply chain.`,
+        image: docs[0]?.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1600&q=80'
+      },
+      trends: {
+        headerTr: 'Pazar Zekası',
+        headerEn: 'Market Intelligence',
+        cards: docs.slice(0, 2).map((d: any, i: number) => ({
+          id: d.id,
+          nameTr: d.titleTr.substring(0, 30) + '...',
+          nameEn: d.titleEn.substring(0, 30) + '...',
+          descTr: d.summaryTr.substring(0, 100) + '...',
+          descEn: d.summaryEn.substring(0, 100) + '...',
+          img: d.image,
+          score: Math.floor(d.confidence * 100),
+          badge: d.confidence > 0.9 ? 'URGENT' : 'STABLE',
+          badgeEn: d.confidence > 0.9 ? 'URGENT' : 'STABLE',
+          reasonTr: d.category,
+          reasonEn: d.category
+        }))
+      },
+      collections: {
+        headerTr: 'Öne Çıkan Gelişmeler',
+        headerEn: 'Highlighted Updates',
+        items: docs.slice(2, 4).map((d: any) => ({
+          id: d.id,
+          name_tr: d.titleTr,
+          name_en: d.titleEn,
+          ai_commentary_tr: d.summaryTr,
+          ai_commentary_en: d.summaryEn,
+          trend_score: Math.floor(d.confidence * 100),
           is_trending: true,
-          cover_image_url: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&q=80',
-          style_tags: ['INDUSTRIAL', 'B2B BULK']
-        }
-      ]
-    },
-    fairs: [], 
-    showrooms: [ 
-      { id: 's1', name: 'aipyram B2B Node', location: 'Global', is_featured: true },
-      { id: 's2', name: 'TRTEX Toptan Merkezi', location: 'Istanbul', is_featured: false }
-    ]
-  };
+          cover_image_url: d.image,
+          style_tags: [d.category.toUpperCase()]
+        }))
+      },
+      fairs: [], 
+      showrooms: []
+    };
+  } catch (err) {
+    console.error("Feed error:", err);
+    throw err;
+  }
 }
 
 export async function GET(request: Request) {
@@ -142,10 +109,7 @@ export async function GET(request: Request) {
   }
 
   // ==== TRTEX EDITORIAL ENGINE PIPELINE ====
-  const raw = await getRawData();
-  const visionary = await runVisionary(raw, mode);
-  const reality = await runReality(visionary);
-  const editorialFormat = formatForUI(reality);
+  const editorialFormat = await getRealFeedData();
   // =========================================
 
   // Update Cache

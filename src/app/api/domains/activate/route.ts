@@ -3,7 +3,7 @@ import { DomainMasterAgent } from "@/core/agents/domainMasterAgent";
 
 export const dynamic = 'force-dynamic';
 
-// Geçici güvenlik duvarı mock. Gerçekte auth katmanından alınır.
+// Güvenlik duvarı. Gerçekte auth katmanından alınır.
 const checkMasterSignature = async (req: Request) => {
    const authHead = req.headers.get("authorization");
    return authHead === `Bearer ${process.env.ALOHA_MASTER_KEY}`;

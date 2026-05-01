@@ -10,108 +10,76 @@ let editorialCache: {
 
 // Removed raw ai client
 
-// 1. RAW DATA MOCK (Perde.ai 3D Rendering & Studio Constraints)
-async function getRawData() {
-  return {
-    rawSignal: 'Increasing rendering requests for minimalist living rooms and light-filtering dual curtain systems. Modern parametric folds in high demand.',
-    studioEvents: ['New Fabric Textures Synced', 'Global Render Node Update']
-  };
-}
-
-// 2. VISIONARY AI KATMANI: Gerçek GenAI Ajanı
-async function runVisionary(raw: any, mode: string) {
-  if (!process.env.GEMINI_API_KEY) {
-    return {
-      verifiedTrends: [
-        { id: 'p1', topic: 'Parametric Folds', confidence: 0.99 },
-        { id: 'p2', topic: 'Smart Tulle', confidence: 0.90 }
-      ],
-      creativeStyle: 'Parametric Living Space'
-    };
-  }
-
+async function getRealFeedData() {
   try {
-    const prompt = `
-      You are aipyram Visionary Editorial Agent for PERDE.AI (3D Rendering Studio).
-      Based on this raw signal: ${raw.rawSignal}
-      Generate 2 3D rendering design trends for curtains and an overarching aesthetic style.
-      Output pure JSON with no markdown: {"verifiedTrends": [{"id": "p1", "topic": "Trend Name", "confidence": 0.99}], "creativeStyle": "Aesthetic Style"}
-    `;
-    const { text } = await alohaAI.generate(prompt, { 
-      responseMimeType: "application/json",
-      complexity: 'routine'
-    }, 'perde.feed.runVisionary');
-    if (text) return JSON.parse(text);
-  } catch (error) {
-    console.warn("Visionary Agent failed, using fallback:", error);
-  }
+    const adminDb = (await import('@/lib/firebase-admin')).adminDb;
+    const newsRef = adminDb.collection('perde_content')
+      .where('status', '==', 'published')
+      .orderBy('publishedAt', 'desc')
+      .limit(5);
+    const snap = await newsRef.get();
+    
+    const docs = snap.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        titleTr: data.translations?.TR?.title || data.title || '',
+        titleEn: data.translations?.EN?.title || data.title || '',
+        summaryTr: data.translations?.TR?.summary || data.summary || '',
+        summaryEn: data.translations?.EN?.summary || data.summary || '',
+        category: data.category || 'Render',
+        image: data.image_url || data.cover_image || 'https://images.unsplash.com/photo-1600607688969-a5bfcd64bd40?w=800&q=80',
+        confidence: data.confidence || 0.90
+      };
+    });
 
-  return {
-    verifiedTrends: [
-        { id: 'p1', topic: 'Parametric Folds', confidence: 0.99 },
-        { id: 'p2', topic: 'Smart Tulle', confidence: 0.90 }
-    ],
-    creativeStyle: 'Parametric Living Space'
-  };
-}
-
-// 3. REALITY FILTER KATMANI
-async function runReality(visionary: any) {
-  return visionary;
-}
-
-// 4. LÜKS FORMATLAYICI (Perde.ai 3D Studio & Render Motoru Uyumluluğu)
-function formatForUI(reality: any) {
-  return {
-    hero: {
-      titleTr: ['PERDE.AI', 'OTONOM', 'STÜDYO'],
-      titleEn: ['PERDE.AI', 'AUTONOMOUS', 'STUDIO'],
-      subtitleTr: `aipyram Render Bot: "${reality.creativeStyle}" ortamı için sanal numune üretiliyor.`,
-      subtitleEn: `aipyram Render Bot generating virtual samples for "${reality.creativeStyle}" environment.`,
-      image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1600&q=80'
-    },
-    trends: {
-      headerTr: '3D Render Zekası',
-      headerEn: '3D Render Intelligence',
-      cards: reality.verifiedTrends.map((t: any, i: number) => ({
-        id: t.id,
-        nameTr: t.topic === 'Parametric Folds' ? 'Parametrik Pileler' : 'Akıllı Tüller',
-        nameEn: t.topic,
-        descTr: 'Son 24 saatteki en popüler render formatı.',
-        descEn: 'Most popular render format in last 24 hours.',
-        img: i === 0 
-          ? 'https://images.unsplash.com/photo-1600607688969-a5bfcd64bd40?w=800&q=80'
-          : 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=800&q=80',
-        score: Math.floor(t.confidence * 100),
-        badge: t.confidence > 0.95 ? 'HOT RENDER' : 'POPULAR',
-        badgeEn: t.confidence > 0.95 ? 'HOT RENDER' : 'POPULAR',
-        reasonTr: 'Global Tasarım Sensörü',
-        reasonEn: 'Global Design Sensor'
-      }))
-    },
-    collections: {
-      headerTr: 'Hazır Mekanlar',
-      headerEn: 'Ready Environments',
-      items: [
-        {
-          id: 'c1',
-          name_tr: 'aipyram Minimalist Salon',
-          name_en: 'aipyram Minimalist Living',
-          ai_commentary_tr: 'Render süresi: 4.2 saniye. Çok yüksek satış dönüşüm skoru.',
-          ai_commentary_en: 'Render time: 4.2 seconds. Very high conversion score.',
-          trend_score: 99,
+    return {
+      hero: {
+        titleTr: ['PERDE.AI', 'OTONOM', 'STÜDYO'],
+        titleEn: ['PERDE.AI', 'AUTONOMOUS', 'STUDIO'],
+        subtitleTr: `aipyram Render Bot: Sanal numune üretiliyor.`,
+        subtitleEn: `aipyram Render Bot generating virtual samples.`,
+        image: docs[0]?.image || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1600&q=80'
+      },
+      trends: {
+        headerTr: '3D Render Zekası',
+        headerEn: '3D Render Intelligence',
+        cards: docs.slice(0, 2).map((d: any, i: number) => ({
+          id: d.id,
+          nameTr: d.titleTr.substring(0, 30) + '...',
+          nameEn: d.titleEn.substring(0, 30) + '...',
+          descTr: d.summaryTr.substring(0, 100) + '...',
+          descEn: d.summaryEn.substring(0, 100) + '...',
+          img: d.image,
+          score: Math.floor(d.confidence * 100),
+          badge: d.confidence > 0.95 ? 'HOT RENDER' : 'POPULAR',
+          badgeEn: d.confidence > 0.95 ? 'HOT RENDER' : 'POPULAR',
+          reasonTr: d.category,
+          reasonEn: d.category
+        }))
+      },
+      collections: {
+        headerTr: 'Hazır Mekanlar',
+        headerEn: 'Ready Environments',
+        items: docs.slice(2, 4).map((d: any) => ({
+          id: d.id,
+          name_tr: d.titleTr,
+          name_en: d.titleEn,
+          ai_commentary_tr: d.summaryTr,
+          ai_commentary_en: d.summaryEn,
+          trend_score: Math.floor(d.confidence * 100),
           is_trending: true,
-          cover_image_url: 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800&q=80',
-          style_tags: ['3D READY', 'DAYLIGHT']
-        }
-      ]
-    },
-    fairs: [], 
-    showrooms: [ 
-      { id: 's1', name: 'Render Node Alpha', location: 'Cloud', is_featured: true },
-      { id: 's2', name: 'Texture Engine', location: 'Cloud', is_featured: true }
-    ]
-  };
+          cover_image_url: d.image,
+          style_tags: ['3D READY', d.category.toUpperCase()]
+        }))
+      },
+      fairs: [], 
+      showrooms: []
+    };
+  } catch (err) {
+    console.error("Feed error:", err);
+    throw err;
+  }
 }
 
 export async function GET(request: Request) {
@@ -139,10 +107,7 @@ export async function GET(request: Request) {
   }
 
   // ==== PERDE.AI EDITORIAL ENGINE PIPELINE ====
-  const raw = await getRawData();
-  const visionary = await runVisionary(raw, mode);
-  const reality = await runReality(visionary);
-  const editorialFormat = formatForUI(reality);
+  const editorialFormat = await getRealFeedData();
   // ===========================================
 
   // Update Cache
