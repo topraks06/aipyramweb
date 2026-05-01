@@ -571,13 +571,32 @@ export default function PerdeAIAssistant() {
     if (isRenderIntent || isYapWithAttachment || (currentAttachments.length > 0 && !isAnalysisIntent)) {
       const uid = Date.now() + '-' + crypto.randomUUID().slice(0, 5);
       setInputMsg('');
+      const capturedAttachments = [...currentAttachments];
       setAttachments([]);
-      hasCompletedRender.current = false; // Yeni render başlıyor, cila modu sıfırla
+      hasCompletedRender.current = false;
       setMessages(prev => [...prev, 
-        { id: 'u-' + uid, role: 'user', content: userMsg || 'Tasarımı başlat', attachments: currentAttachments },
+        { id: 'u-' + uid, role: 'user', content: userMsg || 'Tasarımı başlat', attachments: capturedAttachments },
         { id: 'r-' + uid, role: 'agent', content: d.startRenderMsg }
       ]);
-      window.dispatchEvent(new CustomEvent('start_autonomous_render', { detail: { attachments: currentAttachments, prompt: userMsg } }));
+      // RoomVisualizer'a sinyal gönder (mevcut çalışan akış korunuyor)
+      window.dispatchEvent(new CustomEvent('start_autonomous_render', { detail: { attachments: capturedAttachments, prompt: userMsg } }));
+      // Ek olarak render-pro API'sini de çağır ve sonucu chat'te göster
+      const products: Record<string, any> = {};
+      capturedAttachments.forEach((att, i) => {
+        products[i === 0 ? 'Fon Kumaşı' : `Kumaş ${i + 1}`] = { data: att.base64, mimeType: att.mimeType || 'image/jpeg' };
+      });
+      fetch('/api/perde/render-pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products, userPrompt: userMsg, SovereignNodeId })
+      }).then(res => res.json()).then(data => {
+        if (data.renderUrl) {
+          hasCompletedRender.current = true;
+          setMessages(prev => [...prev, { id: 'render-result-' + uid, role: 'agent', content: '✅ Tasarım tamamlandı! Sonuç aşağıda:', renderUrl: data.renderUrl }]);
+        }
+      }).catch(err => {
+        console.warn('[RENDER-PRO chat fallback]', err.message);
+      });
       setIsTyping(false);
       return;
     }
@@ -628,11 +647,32 @@ export default function PerdeAIAssistant() {
       return;
     }
 
-    // ── TEKLİF / FİYAT / ÖLÇÜ → YÖNETİM PANELİNE YÖNLENDİR ──
-    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj') || lower.includes('sipariş')) {
+    // ── TEKLİF / FİYAT / KEŞİF FÖYÜ → b2b-calc API ──
+    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj')) {
+      const calcUid = Date.now();
+      setInputMsg('');
+      setMessages(prev => [...prev,
+        { id: 'u-' + calcUid, role: 'user', content: userMsg },
+        { id: 'calc-' + calcUid, role: 'agent', content: '📊 Keşif föyü hesaplanıyor...' }
+      ]);
+      fetch('/api/perde/b2b-calc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMsg, SovereignNodeId })
+      }).then(res => res.json()).then(data => {
+        const resultMsg = data.summary || data.text || `Toplam: ${data.newTotal || data.grandTotal || '—'} ₺`;
+        setMessages(prev => [...prev, { id: 'calcres-' + calcUid, role: 'agent', content: `📋 **Keşif Föyü Sonucu:**\n\n${resultMsg}\n\n_Detaylı sipariş için B2B panelini kullanabilirsiniz._` }]);
+      }).catch(err => {
+        setMessages(prev => [...prev, { id: 'calcerr-' + calcUid, role: 'agent', content: 'Hesaplama sırasında hata: ' + err.message }]);
+      });
+      setIsTyping(false);
+      return;
+    }
+    // ── SİPARİŞ → YÖNETİM PANELİNE YÖNLENDİR ──
+    if (lower.includes('sipariş')) {
       setMessages(prev => [...prev,
         { id: 'u-' + Date.now(), role: 'user', content: userMsg },
-        { id: 'erp-' + Date.now(), role: 'agent', content: 'Fiyat, teklif ve sipariş işlemleri **Yönetim Paneli**\'nden yapılır. Sizi yönlendireyim mi? (Burası sadece tasarım stüdyosu)' }
+        { id: 'erp-' + Date.now(), role: 'agent', content: 'Sipariş işlemleri **Yönetim Paneli**\'nden yapılır. Sizi yönlendireyim mi?' }
       ]);
       setInputMsg('');
       setIsTyping(false);

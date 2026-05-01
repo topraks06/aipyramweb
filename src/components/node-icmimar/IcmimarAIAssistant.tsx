@@ -644,11 +644,32 @@ export default function IcmimarAIAssistant() {
       return;
     }
 
-    // ── TEKLİF / FİYAT / ÖLÇÜ → YÖNETİM PANELİNE YÖNLENDİR ──
-    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj') || lower.includes('sipariş')) {
+    // ── TEKLİF / KEŞİF FÖYÜ → b2b-calc API ──
+    if ((lower.includes('teklif') && lower.includes('hazırla')) || lower.includes('keşif föyü') || lower.includes('fiyat hesapla') || lower.includes('metraj')) {
+      const calcUid = Date.now();
+      setInputMsg('');
+      setMessages(prev => [...prev,
+        { id: 'u-' + calcUid, role: 'user', content: userMsg },
+        { id: 'calc-' + calcUid, role: 'agent', content: '📊 Keşif föyü hesaplanıyor...' }
+      ]);
+      fetch('/api/icmimar/b2b-calc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMsg, SovereignNodeId })
+      }).then(res => res.json()).then(data => {
+        const resultMsg = data.summary || data.text || 'Hesaplama tamamlandı.';
+        setMessages(prev => [...prev, { id: 'calcres-' + calcUid, role: 'agent', content: '📋 **Keşif Föyü Sonucu:**\n\n' + resultMsg }]);
+      }).catch(err => {
+        setMessages(prev => [...prev, { id: 'calcerr-' + calcUid, role: 'agent', content: 'Hesaplama hatası: ' + err.message }]);
+      });
+      setIsTyping(false);
+      return;
+    }
+    // ── SİPARİŞ → YÖNETİM PANELİ ──
+    if (lower.includes('sipariş')) {
       setMessages(prev => [...prev,
         { id: 'u-' + Date.now(), role: 'user', content: userMsg },
-        { id: 'erp-' + Date.now(), role: 'agent', content: 'Fiyat, teklif ve sipariş işlemleri **Yönetim Paneli**\'nden yapılır. Sizi yönlendireyim mi? (Burası sadece tasarım stüdyosu)' }
+        { id: 'erp-' + Date.now(), role: 'agent', content: 'Sipariş işlemleri **Yönetim Paneli**\'nden yapılır.' }
       ]);
       setInputMsg('');
       setIsTyping(false);

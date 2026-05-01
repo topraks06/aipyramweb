@@ -125,11 +125,11 @@
 **MEVCUT DURUM:** Zaten `/api/chat` API'sine bağlı ve temel sohbet çalışıyor.
 
 **YAPILACAKLAR:**
-- [ ] Attachment yüklendiğinde + "tasarla", "render" gibi komutlar geldiğinde → `/api/perde/render-pro` API'sini tetikle
-- [ ] "Kumaş analizi yap" komutu geldiğinde → `/api/perde/analyze-fabric` API'sini çağır
-- [ ] "Koleksiyon oluştur" komutu geldiğinde → `/api/perde/collection` API'sini çağır
-- [ ] "Teklif hazırla" / "Keşif föyü" komutu → `/api/perde/b2b-calc` API'sini çağır
-- [ ] Sonuçları chat widget'ları olarak göster (mevcut widget sistemi kullanılacak)
+- [x] Attachment yüklendiǧinde + "tasarla", "render" gibi komutlar geldiǧinde → `/api/perde/render-pro` API'sini tetikle (✅ satır 587-600 fetch + render-result widget)
+- [x] "Kumaş analizi yap" komutu geldiǧinde → `/api/perde/analyze-fabric` API'sini çag̏ır (✅ satır 593 mevcut)
+- [x] "Koleksiyon oluştur" komutu geldiǧinde → `/api/perde/collection` API'sini çag̏ır (✅ satır 619 mevcut)
+- [x] "Teklif hazırla" / "Keşif föyü" komutu → `/api/perde/b2b-calc` API'sini çag̏ır (✅ satır 638-653 fetch + sonuç widget)
+- [x] Sonuçları chat widget'ları olarak göster (mevcut widget sistemi kullanılacak) (✅ render-result, calcres, analiz widget’ları eklendi)
 
 **DOĞRULAMA:**
 ```
