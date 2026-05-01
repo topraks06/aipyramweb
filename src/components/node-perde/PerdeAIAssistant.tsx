@@ -12,6 +12,8 @@ import {
 } from 'recharts';
 import { useSovereignAuth } from '@/hooks/useSovereignAuth';
 import { PieChart as VIPieChart, MiniBarChart as VIMiniBarChart, KPICard as VIKPICard, DataCredibility } from '@/components/ui/visual-intelligence';
+import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { db } from "@/lib/firebase-client";
 
 const DICT: Record<string, any> = {
   tr: {
@@ -757,9 +759,37 @@ export default function PerdeAIAssistant() {
       }
   };
 
-  // TODO: Firestore'dan gercek gelir verileri cekilecek (Accounting koleksiyonundan)
-  // Bos baslat - sahte veri SIFIR MOCK kurali geregi kaldirildi
-  const revenueData: { name: string; ciro: number }[] = [];
+  const [revenueData, setRevenueData] = useState<{ name: string; ciro: number }[]>([]);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    const fetchRevenue = async () => {
+      try {
+        const q = query(
+          collection(db, 'perde_projects'),
+          where('authorId', '==', user.uid),
+          orderBy('createdAt', 'desc'),
+          limit(10)
+        );
+        const snap = await getDocs(q);
+        const data: any[] = [];
+        snap.forEach(doc => {
+           const d = doc.data();
+           if (d.amount || d.grandTotal) {
+              const dateObj = d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt || Date.now());
+              data.push({
+                 name: dateObj.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' }),
+                 ciro: d.amount || d.grandTotal || 0
+              });
+           }
+        });
+        setRevenueData(data.reverse());
+      } catch (err) {
+        console.error("Revenue fetch error", err);
+      }
+    };
+    fetchRevenue();
+  }, [user?.uid]);
 
   return (
     <>

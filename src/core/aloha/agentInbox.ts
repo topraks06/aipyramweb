@@ -94,5 +94,19 @@ export async function completeLongRunningTask(jobId: string, result: any, succes
   });
   
   console.log(`[📦 AGENT INBOX] Görev tamamlandı: ${jobId}`);
-  // TODO: Flash TTS veya Email/SMS ile kullanıcıya haber ver.
+  
+  // Sistem içi bildirim bırak (EventBus ve Firestore Notification)
+  try {
+     const { EventBus } = await import('../events/eventBus');
+     EventBus.emit({ type: "LONG_TASK_COMPLETED", source: "AGENT_INBOX", payload: { jobId, success } });
+     
+     await adminDb.collection('aloha_notifications').add({
+        jobId,
+        message: `Uzun soluklu görev ${success ? 'tamamlandı' : 'başarısız oldu'}.`,
+        createdAt: new Date().toISOString(),
+        read: false
+     });
+  } catch (e) {
+     console.warn("[📦 AGENT INBOX] Bildirim tetiklenemedi:", e);
+  }
 }

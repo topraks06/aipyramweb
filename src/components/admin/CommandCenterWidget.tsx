@@ -22,6 +22,7 @@ export default function CommandCenterWidget() {
   const [mode, setMode] = useState<CommandMode>('chat');
   const [input, setInput] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -82,8 +83,7 @@ export default function CommandCenterWidget() {
     setInput('');
     setFiles([]);
     
-    // Yükleniyor durumu ekleyebiliriz (bunu UI'da zaten isTyping state'i ile yapmıştık)
-    // setIsTyping(true); // TODO: Eklenebilir
+    setIsTyping(true);
 
     try {
       const res = await fetch('/api/aloha/command', {
@@ -114,6 +114,8 @@ export default function CommandCenterWidget() {
         content: `SİSTEM HATASI: ${err.message}`,
         mode
       }]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -193,8 +195,24 @@ export default function CommandCenterWidget() {
                 )}
               </div>
             )}
-          </div>
         ))}
+        {isTyping && (
+          <div className="flex flex-col items-start">
+             <div className="max-w-[85%] border text-xs tracking-wide p-3 rounded-r-lg rounded-tl-lg bg-white border-blue-500/30">
+                <div className="flex items-center gap-2 mb-1 border-b border-slate-200 pb-1">
+                  <Bot size={10} className="text-blue-500" />
+                  <span className="text-[9px] uppercase font-mono font-bold text-slate-500">
+                    SYSTEM / PROCESSING
+                  </span>
+                </div>
+                <div className="leading-relaxed font-mono whitespace-pre-wrap text-slate-500 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                </div>
+             </div>
+          </div>
+        )}
       </div>
 
       {/* INPUT AREA */}

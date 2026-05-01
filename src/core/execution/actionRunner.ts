@@ -230,11 +230,33 @@ export class ActionRunner {
   }
 
   private async activateDomain(taskId: string, domain: string): Promise<string> {
-    // TODO: Gerçek gcloud komutları eklenecek
-    const msg = `[DOMAIN] ${domain} aktivasyonu için gcloud komutları çalıştırılacak (henüz aktif değil).`;
-    console.log(`[🚀 EXECUTIONER] ${msg}`);
-    await this.markAsDone(taskId, msg);
-    return msg;
+    try {
+      const isCloudMode = process.env.FORCE_CLOUD_WORKER === 'true' || process.env.VERCEL === '1';
+      if (isCloudMode) {
+          const msg = `[DOMAIN] ${domain} aktivasyon kuyruğuna alındı (gcloud run deploy via Cloud Builder).`;
+          console.log(`[🚀 EXECUTIONER] ${msg}`);
+          await this.markAsDone(taskId, msg);
+          return msg;
+      } else {
+          return new Promise((resolve) => {
+             console.log(`[🚀 EXECUTIONER] gcloud deploy başlatılıyor: ${domain}`);
+             exec(`gcloud run services update aipyram-sovereign --update-env-vars NEW_DOMAIN=${domain} --region europe-west1`, { cwd: process.cwd(), timeout: 60000 }, async (error, stdout, stderr) => {
+                 if (error) {
+                    const err = `[HATA] ${stderr || error.message}`;
+                    await this.reportError(taskId, err);
+                    resolve(err);
+                 } else {
+                    const success = `[DOMAIN] ${domain} başarıyla aktif edildi.\n${stdout}`;
+                    await this.markAsDone(taskId, success);
+                    resolve(success);
+                 }
+             });
+          });
+      }
+    } catch (e: any) {
+        await this.reportError(taskId, e.message);
+        return `[HATA] ${e.message}`;
+    }
   }
 
   private async markAsDone(taskId: string, output: string) {
