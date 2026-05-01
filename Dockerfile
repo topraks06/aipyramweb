@@ -1,26 +1,47 @@
-FROM node:18-alpine
+FROM node:18-alpine AS base
 
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
-# Paketleri kur
 COPY package.json pnpm-lock.yaml* ./
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
-# Kaynak kodları kopyala ve inşa et
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm build
 
-# Cloud Run PORT 8080 kullanır
-EXPOSE 8080
-ENV PORT=8080
+# Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm install -g pnpm && pnpm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
-# Standalone mode: serverExternalPackages (firebase-admin) node_modules'a ihtiyaç duyar
-# Bu yüzden standalone dizinine kopyala
-RUN cp -r node_modules .next/standalone/node_modules 2>/dev/null || true
-RUN cp -r public .next/standalone/public 2>/dev/null || true
-RUN cp -r .next/static .next/standalone/.next/static 2>/dev/null || true
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Standalone server — doğru yol
-CMD ["node", ".next/standalone/server.js"]
+COPY --from=builder /app/public ./public
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 8080
+
+CMD ["node", "server.js"]
