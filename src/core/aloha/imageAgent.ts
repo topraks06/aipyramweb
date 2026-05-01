@@ -389,17 +389,22 @@ export async function processMultipleImages(
     for (let retry = 1; retry <= 3; retry++) {
       try {
         console.log(`[IMAGE_AGENT] 🎨 Çiziliyor (HERO) [1/1] Aspect: ${plan.aspect} (Deneme: ${retry})...`);
-        const response = await client.models.generateImages({
-          model: alohaAI.getImageModel?.() || 'imagen-3.0-generate-002',
-          prompt: promptText.substring(0, 1800),
-          config: {
-            numberOfImages: 1,
-            outputMimeType: 'image/jpeg',
-            aspectRatio: plan.aspect
-          }
+        const { executeTask } = require('@/core/aloha/aiClient');
+        const executeRes = await executeTask({
+          nodeId: 'trtex',
+          action: 'image_generation',
+          payload: { prompt: promptText.substring(0, 1800), aspectRatio: plan.aspect },
+          caller: 'imageAgent'
         });
 
-        const base64 = response.generatedImages?.[0]?.image?.imageBytes;
+        if (!executeRes.success || !executeRes.data || !executeRes.data.imageData) {
+          throw new Error(executeRes.error || "Görsel üretilemedi (executeTask failed)");
+        }
+
+        const dataUri = executeRes.data.imageData as string;
+        const base64Match = dataUri.match(/base64,(.+)$/);
+        const base64 = base64Match ? base64Match[1] : dataUri;
+
         if (!base64) throw new Error("Boş döndü");
 
         const hash = computeImageHash(base64);

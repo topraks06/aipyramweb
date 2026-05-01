@@ -181,10 +181,10 @@ Aynı render backend bağlantısı — `nodeId: 'perde'` ile. Perde.ai render ye
 Mevcut: Statik fiyat bilgisi. Yeni: Stripe Checkout bağlantısı ile gerçek satış.
 
 ### 2.4 Doğrulama
-- [ ] icmimar.ai'de render butonu çalışıyor
-- [ ] Render sonucu Storage'a yazılıyor
-- [ ] Kredi düşüşü yapılıyor
-- [ ] Sovereign Bypass çalışıyor (hakantoprak71@gmail.com)
+- `[x]` icmimar.ai'de render butonu çalışıyor
+- `[x]` Render sonucu Storage'a yazılıyor
+- `[x]` Kredi düşüşü yapılıyor
+- `[x]` Sovereign Bypass çalışıyor (hakantoprak71@gmail.com)
 
 ---
 
@@ -215,9 +215,9 @@ const CREDIT_PACKAGES = [
 Statik kartları Stripe Checkout butonu ile bağla.
 
 ### 3.4 Doğrulama
-- [ ] Stripe test modunda Checkout akışı çalışıyor
-- [ ] Webhook kredi ekleme yapıyor
-- [ ] `sovereign_users/{uid}.unifiedCredits` güncelleniyor
+- `[x]` Stripe test modunda Checkout akışı çalışıyor
+- `[x]` Webhook kredi ekleme yapıyor
+- `[x]` `sovereign_users/{uid}.unifiedCredits` güncelleniyor
 
 ---
 
@@ -251,10 +251,10 @@ Alıcı-Tedarikçi eşleştirme motorunu canlıya al.
 `processMultipleImages()` → `executeTask({ nodeId: 'trtex', action: 'image_generation' })` üzerinden çalışacak. TRTex için render yetkisi Firestore override ile açılacak.
 
 ### 4.5 Doğrulama
-- [ ] `/api/cron/master-cycle` çalışıyor
-- [ ] Yeni haber Firestore'a yazılıyor
-- [ ] Ticker verileri güncelleniyor
-- [ ] Lead eşleştirme çalışıyor
+- `[x]` `/api/cron/master-cycle` çalışıyor
+- `[x]` Yeni haber Firestore'a yazılıyor
+- `[x]` Ticker verileri güncelleniyor
+- `[x]` Lead eşleştirme çalışıyor
 
 ---
 
