@@ -39,6 +39,13 @@ export async function scanAndGenerateImages(
   limit = MAX_PER_RUN,
   dryRun = false
 ): Promise<ScanResult> {
+  // 🔒 KILL SWITCH — Hakan Bey emri (30/04/2026)
+  const { IMAGE_GENERATION_DISABLED } = await import('./aiClient');
+  if (IMAGE_GENERATION_DISABLED) {
+    console.log('[📸 IMAGE SCANNER] 🔒 GÖRSEL ÜRETİM KAPALI (maliyet kilidi). İşlem yapılmadı.');
+    return { scanned: 0, generated: 0, failed: 0, skipped: 0, details: [] };
+  }
+
   const result: ScanResult = {
     scanned: 0,
     generated: 0,
@@ -130,6 +137,8 @@ export async function scanAndGenerateImages(
         let midUrl = '';
         let detailUrl = '';
         
+        // Mid ve Detail görselleri IPTAL EDİLDİ (Hakan Bey'in talebi - bütçe koruması)
+        /*
         // Mid görsel: orta çekim ticari detay (50mm)
         try {
           midUrl = await processImageForContent('news', category, title, undefined, 'medium');
@@ -145,6 +154,7 @@ export async function scanAndGenerateImages(
         } catch (detailErr: any) {
           console.warn(`  [⚠️] Detail görsel atlandı: ${detailErr.message}`);
         }
+        */
         
         const allGeneratedImages = [heroUrl, midUrl, detailUrl].filter(Boolean);
         const primaryImage = allGeneratedImages[0] || '';

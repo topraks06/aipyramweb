@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { processMultipleImages } from '@/core/aloha/imageAgent';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 dakika max
@@ -38,6 +39,19 @@ export async function GET(req: Request) {
 
   try {
     console.log('[IMAGE-PROCESSOR] 🖼️ Kuyruk işleme başladı (Master Photographer Modu)');
+
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'image_generation',
+      payload: { task: 'image-processor' },
+      caller: 'cron_image_processor',
+    });
+
+    if (!auth.success) {
+      console.warn(`[IMAGE-PROCESSOR] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
 
     // Pending görselleri çek (son 5 haber max, 5 dk limite takılmasın)
     const queueSnap = await adminDb.collection('trtex_image_queue')

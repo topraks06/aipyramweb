@@ -2,6 +2,7 @@ import { adminDb } from '@/lib/firebase-admin';
 import TrtexNavbar from '@/components/trtex/TrtexNavbar';
 import TrtexFooter from '@/components/trtex/TrtexFooter';
 import { Metadata } from 'next';
+import { generateHreflang } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       description: `Discover verified manufacturers, wholesalers and suppliers in the home textile industry. Trust-scored B2B company directory.`,
       type: 'website',
     },
-    alternates: { canonical: `https://${d}/firmalar` },
+    alternates: generateHreflang(d, '/firmalar')
   };
 }
 
@@ -255,16 +256,29 @@ export default async function ManufacturersPage({ params, searchParams }: any) {
               })}
             </div>
           ) : (
-            /* VERİ YOKSA — BİLGİLENDİRME + CTA */
-            <div style={{ textAlign: 'center', padding: '5rem 2rem', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏭</div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Firma Dizini Kuruluyor</h2>
-              <p style={{ fontSize: '0.95rem', color: '#6B7280', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
-                B2B Firma Rehberi yakında aktif olacak. Firmanızı dizine eklemek ve doğrulanmış Güven Skoru almak için şimdi kayıt olun.
-              </p>
-              <a href={`${basePath}/register?lang=${lang}`} style={{ display: 'inline-block', background: '#CC0000', color: '#FFF', padding: '0.85rem 2rem', borderRadius: '8px', fontWeight: 800, fontSize: '0.9rem', textDecoration: 'none' }}>
-                FİRMANIZI KAYIT EDİN →
-              </a>
+            /* VERİ YOKSA — KURUMSAL BİLGİLENDİRME */
+            <div style={{ padding: '4rem 2rem', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px' }}>
+              <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>🏭</div>
+                <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1rem', fontFamily: "'Playfair Display', serif" }}>B2B Firma Rehberi</h2>
+                <p style={{ fontSize: '0.95rem', color: '#6B7280', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+                  TRTEX Firma Dizini, ev tekstili sektöründeki üretici, toptancı ve tedarikçi firmaları yapay zeka destekli Güven Skoru ile değerlendirerek listeler. 
+                  Dizin, kayıtlı üye firmalarımızın profil bilgileri ile otomatik olarak oluşturulmaktadır.
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem', textAlign: 'left' }}>
+                  <div style={{ padding: '1rem', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                    <div style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>FİRMALAR İÇİN</div>
+                    <div style={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.5 }}>Ücretsiz kayıt olun, firmanızı dizine ekleyin ve AI destekli Güven Skoru ile öne çıkın.</div>
+                  </div>
+                  <div style={{ padding: '1rem', background: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                    <div style={{ fontFamily: 'var(--m)', fontSize: '0.65rem', fontWeight: 800, color: '#9CA3AF', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>ALICILAR İÇİN</div>
+                    <div style={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.5 }}>Doğrulanmış firma profillerini inceleyin, kapasite ve uzmanlık alanına göre filtreleyin.</div>
+                  </div>
+                </div>
+                <a href={`${basePath}/register?lang=${lang}`} style={{ display: 'inline-block', background: '#CC0000', color: '#FFF', padding: '0.85rem 2rem', borderRadius: '8px', fontWeight: 800, fontSize: '0.9rem', textDecoration: 'none' }}>
+                  FİRMANIZI KAYIT EDİN →
+                </a>
+              </div>
             </div>
           )}
 

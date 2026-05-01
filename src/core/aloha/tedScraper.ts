@@ -63,8 +63,15 @@ interface NormalizedTender {
   source_url: string;
   deadline?: string;
   estimated_value?: string;
-  buyer?: string;
-  cpv_code?: string;
+  buyerName?: string;           // UI bunu okur (eski: buyer)
+  cpv?: string;                 // UI bunu okur (eski: cpv_code)
+  description?: string;         // İhale açıklaması
+  products?: { name: string; quantity: string; spec: string }[];  // Ürün/metraj tablosu
+  requirements?: string[];      // Sertifikasyon listesi
+  ai_analysis?: string;         // Yapay zeka analizi
+  logistics_hint?: string;      // Lojistik/gümrük ipucu
+  contact_hint?: string;        // İletişim ipucu (varsa)
+  source_type?: 'OPEN' | 'SEMI_OPEN' | 'CLOSED';  // Şeffaflık seviyesi
   createdAt: number;
 }
 
@@ -212,38 +219,52 @@ Return as JSON array:
     
     console.log(`[TED] 🔧 ${rawNotices.length} ihale normalize ediliyor...`);
     
-    // Use AI to translate and enrich the tender data
-    const batchText = rawNotices.slice(0, 15).map((n, i) => 
-      `${i+1}. Title: ${n.title || n['notice-title'] || 'N/A'} | Country: ${n.country || n['buyer-country'] || 'EU'} | Buyer: ${n.buyerName || n['buyer-name'] || 'N/A'} | CPV: ${n.cpv || 'N/A'} | Deadline: ${n.deadline || n['deadline-receipt-request'] || 'N/A'} | Value: ${n.estimatedValue || n['estimated-value'] || 'N/A'}`
-    ).join('\n');
+    // Use AI to translate and enrich the tender data (NOW INCLUDING DEEP DESCRIPTION)
+    const batchText = rawNotices.slice(0, 15).map((n, i) => {
+      const desc = (n.description || n['description'] || '').substring(0, 800); // Take first 800 chars of description to save context limit but keep technical meat
+      return `${i+1}. Title: ${n.title || n['notice-title'] || 'N/A'} | Country: ${n.country || n['buyer-country'] || 'EU'} | Buyer: ${n.buyerName || n['buyer-name'] || 'N/A'} | CPV: ${n.cpv || 'N/A'} | Deadline: ${n.deadline || n['deadline-receipt-request'] || 'N/A'} | Value: ${n.estimatedValue || n['estimated-value'] || 'N/A'} | Desc: ${desc}`;
+    }).join('\n\n');
 
     try {
       const parsed = await alohaAI.generateJSON(
-        `You are the TRTEX Tender Normalizer. Convert these EU procurement notices into the TRTEX Trading Floor format.
+        `You are the TRTEX Tender Intelligence Agent. Your job is to extract MAXIMUM commercial detail from EU procurement notices for Turkish textile manufacturers.
 
-CRITICAL SECTOR RESTRICTION: ONLY Home Textiles, Curtains, Upholstery, Hospital/Hotel Linens, Towels, Carpets, and Commercial Fabrics.
-STRICTLY REJECT: "apparel", "clothing", "garments", "fashion", "furniture", "woodwork", "metals", "IT services", "military weapons". 
-If a raw notice is about these forbidden sectors, or if it is a RISKY/CANCELLED tender, DO NOT output it. Ignore it completely.
+SECTOR FILTER: ONLY Home Textiles, Curtains, Upholstery, Hospital/Hotel Linens, Towels, Carpets, and Commercial Fabrics.
+REJECT: apparel, clothing, garments, fashion, furniture, woodwork, metals, IT services, military weapons.
 
 RAW DATA:
 ${batchText}
 
-For each VALID tender, create a JSON object:
-- "type": "TENDER" (always)
-- "location": "🇩🇪 Almanya / Otel Projesi" format (use flag emojis, country name IN TURKISH, and project type)
-- "title": Short, punchy Turkish title (e.g., "20.000 Adet Otel Yastık Kılıfı Alımı" or "5.000m² FR Blackout Perde")
-- "detail_key": Most relevant data label (e.g., "Son Teklif:", "Tahmini Değer:", "Teslimat:", "Sertifika:")
-- "detail_value": Corresponding value (e.g., "15 Mayıs 2026", "€150.000", "ISO 9001")
-- "score": Commercial attractiveness score 80-99 (higher for bigger value, longer deadline = lower urgency)
-- "action_text": CTA button text → "İHALEYİ İNCELE"
-- "source_id": Original publication number
-- "deadline": ISO date if available
-- "estimated_value": Value string if available
-- "buyer": Buyer name in Turkish if possible
-- "cpv_code": CPV code
+For each VALID tender, create a JSON object with ALL of these fields (leave empty string if truly unavailable, NEVER invent fake data):
 
-Return JSON array ONLY. No markdown fences. Turkish language for all user-facing fields.`,
-        { temperature: 0.3, complexity: 'routine' },
+- "type": "TENDER"
+- "title": Kısa, net Türkçe başlık. MİKTAR varsa başlığa yaz (Örn: "20.000 Adet Otel Yastık Kılıfı" veya "Hastane Tekstili Alımı")
+- "location": "🇩🇪 Almanya / Berlin" formatında (bayrak + Türkçe ülke adı + şehir/proje tipi)
+- "buyerName": Alıcı kurum/firma adı. ASLA boş bırakma, metinde ne yazıyorsa onu koy.
+- "description": Türkçeye çevrilmiş kapsamlı açıklama. Ne alınacak, nereye teslim edilecek, proje ne hakkında — en az 3-4 cümle.
+- "estimated_value": Bütçe/değer (Örn: "€150.000"). Metinde yoksa boş string.
+- "deadline": Son teklif tarihi (ISO tarih). Metinde yoksa boş string.
+- "source_id": Yayın numarası (publication number).
+- "cpv": CPV kodu.
+- "score": Ticari çekicilik skoru 40-99. Büyük bütçe ve net detay = yüksek skor.
+- "products": Ürün dizisi [{"name": "Türkçe ürün adı", "quantity": "miktar (varsa)", "spec": "teknik özellik (kumaş tipi, gramaj, en, renk vb.)"}]. Metinde ne kadar detay varsa HEPSINI çek. Miktar yoksa boş string yaz, ASLA "Şartnamede Belirtilecek" gibi sahte bilgi YAZMA.
+- "requirements": Sertifikasyon dizisi ["ISO 9001", "OEKO-TEX", ...]. Metinde geçen TÜM standartları çek. Metinde yoksa boş dizi [].
+- "ai_analysis": 1-2 cümle Türkçe istihbarat analizi. Bu fırsat Türk üretici için neden değerli veya riskli?
+- "logistics_hint": 1 cümle Türkçe lojistik/gümrük ipucu. Bu ülkeye tekstil ihracatında dikkat edilecek belge/sertifika nedir?
+- "source_type": Bilgi ne kadar şeffaf? "OPEN" (tüm detaylar açık), "SEMI_OPEN" (kayıt gerekli), "CLOSED" (PDF arkasında)
+- "contact_hint": Metinde iletişim bilgisi varsa yaz (email, telefon, web sitesi). Yoksa boş string.
+- "detail_key": "Tahmini Değer:"
+- "detail_value": Bütçe değeri veya ana detay
+- "action_text": "İHALEYİ İNCELE"
+
+KRİTİK KURALLAR:
+1. ASLA sahte/mock veri üretme. Metinde olmayan bilgiyi UYDURMAK YASAKTIR.
+2. Alıcı adı (buyerName) metinde kesinlikle geçiyordur — bul ve yaz.
+3. Ürün bilgisi mümkün olduğunca detaylı olsun — kumaş tipi, ebat, gramaj, renk, adet.
+4. Boş alan bırakmak, sahte bilgi yazmaktan İYİDİR.
+
+Return JSON array ONLY. No markdown fences.`,
+        { temperature: 0.15, complexity: 'routine' },
         'tedScraper.normalizeTenders'
       );
 
@@ -258,16 +279,23 @@ Return JSON array ONLY. No markdown fences. Turkish language for all user-facing
         title: t.title || 'Tekstil İhalesi',
         detail_key: t.detail_key || 'Kaynak:',
         detail_value: t.detail_value || 'TED Europa',
-        score: Math.min(99, Math.max(80, t.score || 85)),
+        score: Math.min(99, Math.max(40, t.score || 50)),
         action_text: t.action_text || '→ İHALEYİ İNCELE',
         status: 'LIVE' as const,
         source: 'TED_EU' as const,
         source_id: t.source_id || '',
         source_url: t.source_id ? `https://ted.europa.eu/en/notice/-/${t.source_id}` : '',
-        deadline: t.deadline || undefined,
-        estimated_value: t.estimated_value || undefined,
-        buyer: t.buyer || undefined,
-        cpv_code: t.cpv_code || undefined,
+        deadline: t.deadline || '',
+        estimated_value: t.estimated_value || '',
+        buyerName: t.buyerName || t.buyer || '',
+        cpv: t.cpv || t.cpv_code || '',
+        description: t.description || '',
+        products: Array.isArray(t.products) ? t.products : [],
+        requirements: Array.isArray(t.requirements) ? t.requirements : [],
+        ai_analysis: t.ai_analysis || '',
+        logistics_hint: t.logistics_hint || '',
+        contact_hint: t.contact_hint || '',
+        source_type: t.source_type || 'SEMI_OPEN',
         createdAt: Date.now(),
       }));
 

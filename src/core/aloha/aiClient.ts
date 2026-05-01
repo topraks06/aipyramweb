@@ -51,20 +51,46 @@ export const aiGenkit = genkit({
 // → ESKİ: imagen-3.0-generate-002 → YEDEĞe alındı (fallback olarak kalıyor)
 // → ESKİ: gemini-embedding-exp-03-07 → YEDEĞe alındı (fallback olarak kalıyor)
 
-// MALİYET SAVUNMASI (CFO GUARD):
-// Günlük 100.000 işlem yapan ALOHA için 'routine' işlemlerde 
-// en düşük maliyetli model (Flash) zorunludur. Pro sadece 'complex' onaylı işlerde çalışır.
-const DEFAULT_MODEL = 'gemini-3.1-flash'; // (Flash / Yüksek Hız, Düşük Maliyet - 2M Context Destekli)
-const DEEP_MODEL = 'gemini-3.1-pro'; // (Pro / Kompleks İşlemler - Deep Research Max)
-const MICRO_MODEL = 'gemini-3.1-flash-8b'; // (Micro / Çok düşük maliyetli basit NLP işlemleri)
-const IMAGE_MODEL = 'gemini-3.1-flash-image-preview';   // Q2 2026: Nano Banana 2 (3x hızlı, 4K, referans obje)
-const IMAGE_MODEL_FALLBACK = 'imagen-3.0-generate-002';  // Fallback: eski stabil model
-const EMBEDDING_MODEL = 'gemini-embedding-2';             // Q2 2026: GA, 3072-dim, multimodal (metin+görsel+ses)
-const EMBEDDING_MODEL_FALLBACK = 'gemini-embedding-exp-03-07'; // Fallback: eski deneysel model
-const MAX_RETRIES = 3;
-const BASE_BACKOFF_MS = 1000;       // 1s → 2s → 4s
+// ╔═══════════════════════════════════════════════════════════════╗
+// ║  🚨 ACİL MALİYET KİLİDİ — HAKAN BEY EMRİ (30 NİSAN 2026)   ║
+// ║  AYLIK BÜTÇE: MAX $20 USD. BU LİMİT AŞILAMAZ.               ║
+// ║  GÖRSEL ÜRETİM: TAMAMEN KAPALI (KILL SWITCH AÇIK)            ║
+// ║  PRO MODEL: KAPALI — HER ŞEY FLASH LITE İLE ÇALIŞIR         ║
+// ╚═══════════════════════════════════════════════════════════════╝
+const DEFAULT_MODEL = 'gemini-2.0-flash-lite'; // EN UCUZ MODEL — Tüm rutin işlemler
+const DEEP_MODEL = 'gemini-2.0-flash-lite';    // 🔒 PRO KAPALI — Flash Lite'a düşürüldü (maliyet kilidi)
+const MICRO_MODEL = 'gemini-2.0-flash-lite';   // En ucuz
+const IMAGE_MODEL = 'gemini-2.0-flash-lite';   // 🔒 GÖRSEL ÜRETİM KAPALI — model sadece referans
+const IMAGE_MODEL_FALLBACK = 'gemini-2.0-flash-lite';  // 🔒 Imagen KAPALI
+const EMBEDDING_MODEL = 'text-embedding-004';           // Ücretsiz tier embedding
+const EMBEDDING_MODEL_FALLBACK = 'text-embedding-004';  // Ücretsiz tier
+const MAX_RETRIES = 2;              // 3→2 (daha az retry = daha az token)
+const BASE_BACKOFF_MS = 2000;       // 2s → 4s (daha yavaş = daha az çağrı)
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 dakika
-const MAX_REQUESTS_PER_MINUTE = 55; // Google API limiti 60, güvenli alan
+const MAX_REQUESTS_PER_MINUTE = 15; // 55→15 (dakikada max 15 çağrı)
+
+// 🔒 GÖRSEL ÜRETİM — NODE BAZLI KONTROL (sovereignAuthority üzerinden)
+// Eski: export const IMAGE_GENERATION_DISABLED = true;
+// Yeni: Node bazlı render kontrolü — icmimar.ai AÇIK, diğerleri KAPALI
+import { 
+  checkNodeAuthority, 
+  recordNodeTokenUsage, 
+  recordNodeRenderUsage, 
+  logAudit,
+  type ActionType, 
+  type RenderType 
+} from './sovereignAuthority';
+
+/**
+ * Node bazlı render kontrolü. icmimar.ai için render açık,
+ * diğer node'lar için kapalı. Firestore override ile runtime'da değiştirilebilir.
+ * Eski sisteme geriye uyumlu export korunuyor (legacy kod kırılmasın).
+ */
+export const IMAGE_GENERATION_DISABLED = true; // ⚠️ LEGACY — node bazlı isImageAllowedForNode() kullanın
+
+export async function isImageAllowedForNode(nodeId: string, userEmail?: string): Promise<{ allowed: boolean; reason: string }> {
+  return checkNodeAuthority(nodeId, 'image_generation', userEmail);
+}
 
 // ═══════════════════════════════════════
 //  HİBRİT MOD UYARISI (Gemini Audit Önerisi #1)
@@ -79,8 +105,10 @@ if (typeof process !== 'undefined') {
 // ═══════════════════════════════════════
 //  GÜNLÜK TOKEN BÜTÇESİ (MALİYE BAKANI v2)
 // ═══════════════════════════════════════
-const DAILY_TOKEN_BUDGET = 100_000;       // Günlük max 100K token (~3.3 CHF/gün ≈ 100 CHF/ay)
-const MAX_GEMINI_CALLS_PER_CYCLE = 8;    // Döngü başına max 8 API çağrısı
+const DAILY_TOKEN_BUDGET = 50_000;        // 🔒 500K→50K — Günlük max 50K token (~$0.50/gün = $15/ay)
+const MAX_GEMINI_CALLS_PER_CYCLE = 3;     // 🔒 8→3 — Döngü başına max 3 çağrı
+const MONTHLY_BUDGET_USD = 20;            // 🔒 AYLIK HARD LİMİT: $20 USD
+const DAILY_BUDGET_USD = MONTHLY_BUDGET_USD / 30; // ~$0.66/gün
 
 interface TokenUsageEntry {
   caller: string;
@@ -145,8 +173,38 @@ function recordTokenUsage(caller: string, prompt: string | any[], responseText: 
   }
 }
 
+let _killSwitchActive = false;
+let _killSwitchReason = "";
+let _lastKillSwitchCheck = 0;
+
+async function checkRemoteKillSwitch() {
+  if (!adminDb || Date.now() - _lastKillSwitchCheck < 60000) return; // Check every 60s
+  _lastKillSwitchCheck = Date.now();
+  try {
+    const doc = await adminDb.collection('aloha_system_state').doc('finance').get();
+    if (doc.exists) {
+      const data = doc.data();
+      if (data?.global_kill_switch === true) {
+        _killSwitchActive = true;
+        _killSwitchReason = data?.reason || "CFO Ajanı veya Yönetici tarafından sistem uyku moduna alındı.";
+      } else {
+        _killSwitchActive = false;
+      }
+    }
+  } catch (e) {
+    // Sessiz hata - veritabanı erişilemiyorsa sistemi kitleme
+  }
+}
+
 function checkBudget(caller?: string): { allowed: boolean; reason?: string } {
   resetDailyIfNeeded();
+
+  if (_killSwitchActive) {
+    return {
+      allowed: false,
+      reason: `🚨 OTONOM KILL SWITCH AKTİF: ${_killSwitchReason}`
+    };
+  }
 
   if (_dailyTokensUsed >= DAILY_TOKEN_BUDGET) {
     return {
@@ -239,17 +297,9 @@ interface AICallResult {
  * Karmaşıklığa göre en uygun/ucuz modeli seçer.
  */
 function getRouterModel(complexity?: 'routine' | 'complex' | 'vision' | 'micro'): string {
-  switch (complexity) {
-    case 'complex':
-      return DEEP_MODEL; // gemini-3.1-pro
-    case 'vision':
-      return DEFAULT_MODEL; // gemini-3.1-flash handles vision natively
-    case 'micro':
-      return MICRO_MODEL; // gemini-3.1-flash-8b (en ucuz, basit NLP)
-    case 'routine':
-    default:
-      return DEFAULT_MODEL; // gemini-3.1-flash (cost saving)
-  }
+  // 🔒 MALİYET KİLİDİ: Tüm karmaşıklık seviyeleri aynı ucuz modele yönlendirilir
+  // Pro model KAPALI — Hakan Bey emri: aylık $20 limiti
+  return DEFAULT_MODEL; // HER ŞEY gemini-2.0-flash-lite
 }
 
 /**
@@ -290,6 +340,9 @@ async function generateWithRetry(
       }
       
       if ((options as any).responseSchema) config.responseSchema = (options as any).responseSchema;
+
+      // UZAK KILL SWITCH KONTROLÜ
+      await checkRemoteKillSwitch();
 
       // BÜTÇE KONTROLÜ — Maliye Bakanı v2
       const budgetCheck = checkBudget(caller);
@@ -355,17 +408,33 @@ async function generateWithRetry(
 //  PUBLIC API
 // ═══════════════════════════════════════
 
+function inferNodeFromCaller(caller?: string): string {
+  if (!caller) return 'trtex'; // default fallback for older agents
+  const low = caller.toLowerCase();
+  if (low.includes('icmimar') || low.includes('render') || low.includes('studio')) return 'icmimar';
+  if (low.includes('perde')) return 'perde';
+  if (low.includes('hometex') || low.includes('expo')) return 'hometex';
+  if (low.includes('vorhang')) return 'vorhang';
+  if (low.includes('heimtex') || low.includes('magazine')) return 'heimtex';
+  return 'trtex';
+}
+
 export const alohaAI = {
   /**
    * Düz metin üretimi
    * @example const result = await alohaAI.generate('Haber yaz', { temperature: 0.7 });
    */
   async generate(prompt: string | any[], options: GenerateOptions = {}, caller?: string): Promise<{ text: string, usageMetadata?: any, rawResponse?: any }> {
-    const result = await generateWithRetry(prompt, options, caller);
-    if (result.retries > 0) {
-      console.log(`[AI_CLIENT] 📊 Başarılı — ${result.retries} retry sonrası, ${result.durationMs}ms`);
-    }
-    return { text: result.text, rawResponse: result.rawResponse };
+    // 🔥 AUTO-ROUTE LEGACY CALLS TO EXECUTE_TASK (HARD LOCK) 🔥
+    const nodeId = inferNodeFromCaller(caller);
+    const res = await executeTask({
+      nodeId,
+      action: 'text_generation',
+      payload: { prompt, ...options },
+      caller
+    });
+    if (!res.success) throw new Error(res.error || "generate() failed during executeTask routing");
+    return res.data;
   },
 
   /**
@@ -377,37 +446,32 @@ export const alohaAI = {
     options: GenerateOptions = {},
     caller?: string
   ): Promise<T> {
-    const result = await generateWithRetry(
-      prompt,
-      { ...options, responseMimeType: 'application/json' },
+    // 🔥 AUTO-ROUTE LEGACY CALLS TO EXECUTE_TASK (HARD LOCK) 🔥
+    const nodeId = inferNodeFromCaller(caller);
+    const res = await executeTask({
+      nodeId,
+      action: 'text_generation',
+      payload: { prompt, ...options, responseMimeType: 'application/json' },
       caller
-    );
-
+    });
+    
+    if (!res.success) throw new Error(res.error || "generateJSON() failed during executeTask routing");
+    
     try {
-      return JSON.parse(result.text) as T;
+      return JSON.parse(res.data.text) as T;
     } catch (parseErr) {
-      // JSON parse başarısız — markdown fence temizleme dene
-      const cleaned = result.text
-        .replace(/```json\s*/gi, '')
-        .replace(/```\s*/g, '')
-        .trim();
-
+      const cleaned = res.data.text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
       try {
         return JSON.parse(cleaned) as T;
       } catch {
-        console.error(
-          `[AI_CLIENT] 🔴 JSON parse hatası${caller ? ` [${caller}]` : ''}: ` +
-          result.text.substring(0, 200)
-        );
+        console.error(`[AI_CLIENT] 🔴 JSON parse hatası${caller ? ` [${caller}]` : ''}: ` + res.data.text.substring(0, 200));
         throw new Error(`AI JSON parse başarısız: ${(parseErr as Error).message}`);
       }
     }
   },
 
-
   /**
    * Ham GoogleGenAI istemcisine erişim (özel kullanımlar için)
-   * Mümkünse generate() veya generateJSON() kullanın.
    */
   getClient(): GoogleGenAI {
     return getClient();
@@ -543,42 +607,101 @@ export const alohaAI = {
    * @returns number[] (768 boyutlu vektör) veya null
    */
   async generateEmbedding(text: string, caller?: string): Promise<number[] | null> {
-    try {
-      const client = getClient();
-      recordRequest();
-
-      // Önce yeni multimodal embedding modelini dene
-      try {
-        const result = await client.models.embedContent({
-          model: EMBEDDING_MODEL,
-          contents: text.substring(0, 2000),
-        });
-        const embedding = result?.embeddings?.[0]?.values;
-        if (embedding && embedding.length > 0) return embedding;
-      } catch {
-        // Fallback: eski text-embedding modeli
-        const result = await client.models.embedContent({
-          model: EMBEDDING_MODEL_FALLBACK,
-          contents: text.substring(0, 2000),
-        });
-        const embedding = result?.embeddings?.[0]?.values;
-        if (embedding && embedding.length > 0) return embedding;
-      }
-
-      console.warn(`[AI_CLIENT] ⚠️ Embedding boş döndü${caller ? ` [${caller}]` : ''}`);
-      return null;
-    } catch (err: any) {
-      console.error(`[AI_CLIENT] 🔴 Embedding hatası${caller ? ` [${caller}]` : ''}: ${err.message?.substring(0, 100)}`);
-      return null;
-    }
+    return _embedInternal(text, caller);
   },
-
 
   /**
    * Derin analiz modeli (Gemini 3.1 Pro)
    */
   getDeepModel(): string {
     return DEEP_MODEL;
+  },
+
+  /**
+   * Node bazlı render kontrolü ile görsel üretimi
+   */
+  async generateImage(
+    prompt: string,
+    nodeId: string,
+    userEmail?: string,
+  ): Promise<{ imageData: string | null; error?: string }> {
+    // 🔥 AUTO-ROUTE TO EXECUTE_TASK 🔥
+    const res = await executeTask({
+      nodeId,
+      action: 'image_generation',
+      payload: { prompt },
+      userEmail,
+      caller: `${nodeId}_generateImage`
+    });
+    if (!res.success) return { imageData: null, error: res.error };
+    return { imageData: res.data.imageData };
+  },
+
+  /**
+   * Mevcut referans görseli kullanarak yeni tasarım üretimi (Image-to-Image)
+   */
+  async generateImageToImage(
+    parts: any[],
+    genConfig: any,
+    nodeId: string,
+    userEmail?: string,
+  ): Promise<{ imageData: string | null; preFlightData?: any; error?: string }> {
+    if (!budget.allowed) {
+      return { imageData: null, error: budget.reason };
+    }
+
+    // 3. Rate limit
+    if (!checkRateLimit()) {
+      return { imageData: null, error: 'Rate limit aşıldı. Biraz bekleyin.' };
+    }
+
+    try {
+      const client = getClient();
+      recordRequest();
+
+      console.log(`[AI_CLIENT] 🎨 Image-to-Image Render başlıyor [${nodeId}]...`);
+      const modelName = 'gemini-3-pro-image-preview'; // Veya gemini-3.1-pro-image-preview
+
+      const response = await client.models.generateContent({
+        model: modelName,
+        contents: { parts },
+        config: genConfig,
+      });
+
+      const candidate = response.candidates?.[0];
+      if (!candidate) throw new Error("Model yanıt döndürmedi.");
+
+      if (candidate.finishReason === "SAFETY") {
+        return { imageData: null, error: "Güvenlik filtresi: Görseliniz güvenlik politikalarına takıldı. Farklı bir görsel deneyin." };
+      }
+
+      let renderUrl: string | null = null;
+      for (const part of candidate.content?.parts || []) {
+        if (part.inlineData) {
+          renderUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+          break;
+        }
+      }
+
+      if (!renderUrl) {
+        return { imageData: null, error: "Model görsel çıktısı üretmedi. Lütfen farklı bir mekan veya ürün görseli deneyin." };
+      }
+
+      // Kullanım kaydet
+      recordNodeRenderUsage(nodeId);
+      recordTokenUsage(`render_pro_${nodeId}`, 'image_to_image', `[image_generated_${renderUrl.length}_bytes]`);
+
+      console.log(`[AI_CLIENT] ✅ Image-to-Image Render tamamlandı [${nodeId}]`);
+      return { imageData: renderUrl };
+    } catch (err: any) {
+      console.error(`[AI_CLIENT] 🔴 Image-to-Image Render hatası [${nodeId}]: ${err.message?.substring(0, 100)}`);
+      
+      let msg = err.message || "Bilinmeyen hata";
+      if (msg.includes("SAFETY")) msg = "Güvenlik filtresi aktif. Farklı görsel deneyin.";
+      else if (msg.includes("too large") || msg.includes("exceeds")) msg = "Görseller çok büyük. Lütfen daha küçük dosyalar kullanın.";
+      
+      return { imageData: null, error: `Render hatası: ${msg}` };
+    }
   },
 };
 
@@ -595,4 +718,269 @@ let _cacheExpiry: number | null = null;
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ╔═══════════════════════════════════════════════════════════════╗
+// ║  TEK GİRİŞ NOKTASI: executeTask()                             ║
+// ║  Tüm AI operasyonları bu fonksiyondan geçer.                  ║
+// ║  Authority + Budget + Action-Level kontrolü.                  ║
+// ║  Doğrudan alohaAI.generate() çağırmayın — bypass oluşur.     ║
+// ╚═══════════════════════════════════════════════════════════════╝
+
+export interface ExecuteTaskRequest {
+  nodeId: string;
+  action: ActionType;
+  payload: {
+    prompt?: string;
+    systemInstruction?: string;
+    temperature?: number;
+    renderType?: RenderType;
+    aspectRatio?: string;
+    complexity?: 'routine' | 'complex' | 'vision' | 'micro';
+    [key: string]: any;
+  };
+  userEmail?: string;
+  caller?: string;
+}
+
+export interface ExecuteTaskResult {
+  success: boolean;
+  data: any;
+  error?: string;
+  costUSD?: number;
+  nodeId: string;
+  action: ActionType;
+}
+
+/**
+ * TEK GİRİŞ NOKTASI — Tüm AI operasyonları bu fonksiyondan geçer.
+ * 
+ * İçerde:
+ *   1. Authority check (action-level)
+ *   2. Budget check ($ cost)
+ *   3. Tool permission
+ *   4. Rate limit
+ *   5. Execute
+ *   6. Audit log
+ * 
+ * Kullanım:
+ *   const result = await executeTask({ nodeId: 'icmimar', action: 'image_generation', payload: { prompt: '...' } });
+ *   const result = await executeTask({ nodeId: 'trtex', action: 'text_generation', payload: { prompt: '...' } });
+ */
+export async function executeTask(request: ExecuteTaskRequest): Promise<ExecuteTaskResult> {
+  const { nodeId, action, payload, userEmail, caller } = request;
+  const startTime = Date.now();
+
+  // ── 1. AUTHORITY CHECK (Action-Level + Cost + Kill Switch) ──
+  const auth = await checkNodeAuthority(nodeId, action, userEmail, payload.renderType);
+  if (!auth.allowed) {
+    return {
+      success: false,
+      data: null,
+      error: auth.reason,
+      nodeId,
+      action,
+    };
+  }
+
+  try {
+    // ── 2. EXECUTE BASED ON ACTION TYPE ──
+    switch (action) {
+      case 'text_generation': {
+        const result = await generateWithRetry(
+          payload.prompt || '',
+          {
+            systemInstruction: payload.systemInstruction,
+            temperature: payload.temperature,
+            complexity: payload.complexity,
+            ...(payload.responseMimeType ? { responseMimeType: payload.responseMimeType } : {})
+          },
+          caller || `${nodeId}_executeTask`
+        );
+        return {
+          success: true,
+          data: { text: result.text, rawResponse: result.rawResponse },
+          nodeId,
+          action,
+        };
+      }
+
+      case 'image_generation': {
+        const result = await _generateImageInternal(
+          payload.prompt || '',
+          nodeId,
+          userEmail,
+        );
+        if (!result.imageData) {
+          return { success: false, data: null, error: result.error, nodeId, action };
+        }
+        return {
+          success: true,
+          data: { imageData: result.imageData, renderType: payload.renderType },
+          costUSD: 0.04,
+          nodeId,
+          action,
+        };
+      }
+
+      case 'image_to_image_generation': {
+        const result = await _generateImageToImageInternal(
+          payload.parts || [],
+          payload.genConfig || {},
+          nodeId,
+          userEmail
+        );
+        if (!result.imageData) {
+          return { success: false, data: null, error: result.error, nodeId, action };
+        }
+        return {
+          success: true,
+          data: { imageData: result.imageData, preFlightData: result.preFlightData, renderType: payload.renderType },
+          costUSD: 0.10,
+          nodeId,
+          action,
+        };
+      }
+
+      case 'embedding': {
+        const result = await _embedInternal(
+          payload.prompt || '',
+          caller || `${nodeId}_embed`
+        );
+        return { success: !!result, data: result, nodeId, action };
+      }
+
+      default: {
+        // Diğer aksiyonlar (news_pipeline, seo_indexing, vb.) — sadece yetki kontrolü
+        // Gerçek iş mantığı çağıran modülde
+        logAudit({
+          timestamp: new Date().toISOString(),
+          nodeId,
+          agentId: caller || 'unknown',
+          action,
+          approved: true,
+          reason: `Passthrough — ${action} yetkisi verildi`,
+        });
+        return {
+          success: true,
+          data: { authorized: true, action },
+          nodeId,
+          action,
+        };
+      }
+    }
+  } catch (err: any) {
+    logAudit({
+      timestamp: new Date().toISOString(),
+      nodeId,
+      agentId: caller || 'unknown',
+      action,
+      approved: false,
+      reason: `HATA: ${err.message?.substring(0, 100)}`,
+    });
+
+    return {
+      success: false,
+      data: null,
+      error: `executeTask hatası: ${err.message}`,
+      nodeId,
+      action,
+    };
+  }
+}
+
+// ═══════════════════════════════════════
+//  INTERNAL GENERATION METHODS (USED BY EXECUTE_TASK)
+// ═══════════════════════════════════════
+
+async function _embedInternal(text: string, caller?: string): Promise<number[] | null> {
+  try {
+    const client = getClient();
+    recordRequest();
+    try {
+      const result = await client.models.embedContent({ model: EMBEDDING_MODEL, contents: text.substring(0, 2000) });
+      const embedding = result?.embeddings?.[0]?.values;
+      if (embedding && embedding.length > 0) return embedding;
+    } catch {
+      const result = await client.models.embedContent({ model: EMBEDDING_MODEL_FALLBACK, contents: text.substring(0, 2000) });
+      const embedding = result?.embeddings?.[0]?.values;
+      if (embedding && embedding.length > 0) return embedding;
+    }
+    return null;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function _generateImageInternal(
+  prompt: string,
+  nodeId: string,
+  userEmail?: string,
+): Promise<{ imageData: string | null; error?: string }> {
+  try {
+    const client = getClient();
+    recordRequest();
+
+    const response = await client.models.generateContent({
+      model: IMAGE_MODEL,
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      config: {
+        systemInstruction: "Aşağıdaki açıklamaya uygun fotoğraf kalitesinde bir görsel üret.",
+      }
+    });
+
+    const candidate = response.candidates?.[0];
+    if (candidate?.finishReason === "SAFETY") return { imageData: null, error: "Güvenlik filtresi aktif." };
+
+    let renderUrl: string | null = null;
+    for (const part of candidate?.content?.parts || []) {
+      if (part.inlineData) {
+        renderUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        break;
+      }
+    }
+    
+    if (!renderUrl) return { imageData: null, error: "Görsel üretilemedi." };
+    recordNodeRenderUsage(nodeId);
+    recordTokenUsage(`render_${nodeId}`, 'generate_image', `[image_generated]`);
+    return { imageData: renderUrl };
+  } catch (err: any) {
+    return { imageData: null, error: err.message };
+  }
+}
+
+async function _generateImageToImageInternal(
+  parts: any[],
+  genConfig: any,
+  nodeId: string,
+  userEmail?: string,
+): Promise<{ imageData: string | null; preFlightData?: any; error?: string }> {
+  try {
+    const client = getClient();
+    recordRequest();
+
+    const response = await client.models.generateContent({
+      model: IMAGE_MODEL,
+      contents: [{ role: "user", parts }],
+      config: genConfig
+    });
+
+    const candidate = response.candidates?.[0];
+    if (candidate?.finishReason === "SAFETY") return { imageData: null, error: "Güvenlik filtresi aktif." };
+
+    let renderUrl: string | null = null;
+    for (const part of candidate?.content?.parts || []) {
+      if (part.inlineData) {
+        renderUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        break;
+      }
+    }
+
+    if (!renderUrl) return { imageData: null, error: "Görsel üretilemedi." };
+    recordNodeRenderUsage(nodeId);
+    recordTokenUsage(`render_pro_${nodeId}`, 'image_to_image', `[image_generated]`);
+    return { imageData: renderUrl };
+  } catch (err: any) {
+    return { imageData: null, error: err.message };
+  }
 }

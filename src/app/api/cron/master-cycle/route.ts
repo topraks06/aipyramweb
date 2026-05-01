@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { buildTerminalPayload } from '@/core/aloha/terminalPayloadBuilder';
 import { refreshTickerData } from '@/core/aloha/tickerDataFetcher';
 import { adminDb } from '@/lib/firebase-admin';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 dakika max
@@ -67,7 +68,20 @@ export async function GET(req: Request) {
     console.log(`  ${cycleId}`);
     console.log(`${'═'.repeat(55)}\n`);
 
-    // 0. RESET CIRCUIT BREAKER / METRICS
+    // 0. AUTHORITY CHECK (ExecuteTask üzerinden)
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'news_pipeline',
+      payload: { task: 'master_cycle' },
+      caller: 'cron_master_cycle',
+    });
+
+    if (!auth.success) {
+      console.warn(`[MASTER CYCLE] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
+    // 0.1 RESET CIRCUIT BREAKER / METRICS
     if (adminDb) {
       try {
         await adminDb.collection('trtex_system_metrics').doc('current').set({

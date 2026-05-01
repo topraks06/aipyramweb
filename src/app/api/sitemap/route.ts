@@ -22,19 +22,25 @@ export async function GET(request: Request) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 `;
 
-    // 1. Ana sayfalar (Her dil için)
-    for (const lang of LANGUAGES) {
-      xml += `  <url>
-    <loc>${baseUrl}?lang=${lang}</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    // 1. Ana sayfalar ve Statik Rotalar (Her dil için)
+    const staticRoutes = ['', '/news', '/tenders', '/academy', '/trade', '/fairs', '/trends', '/about', '/manufacturers'];
+    
+    for (const route of staticRoutes) {
+      for (const lang of LANGUAGES) {
+        const pageUrl = `${baseUrl}${route}?lang=${lang}`;
+        xml += `  <url>
+    <loc>${pageUrl}</loc>
+    <changefreq>${route === '' ? 'daily' : 'weekly'}</changefreq>
+    <priority>${route === '' ? '1.0' : '0.9'}</priority>
 `;
-      // hreflang
-      for (const altLang of LANGUAGES) {
-        xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${baseUrl}?lang=${altLang}" />\n`;
+        // hreflang
+        for (const altLang of LANGUAGES) {
+          const altUrl = `${baseUrl}${route}?lang=${altLang}`;
+          xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${altUrl}" />\n`;
+        }
+        xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${route}?lang=tr" />\n`;
+        xml += `  </url>\n`;
       }
-      xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}?lang=tr" />\n`;
-      xml += `  </url>\n`;
     }
 
     // 2. Haberler (Eğer varsa)

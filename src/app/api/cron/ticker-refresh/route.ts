@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { refreshTickerData } from '@/core/aloha/tickerDataFetcher';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -27,6 +28,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'data_write',
+      payload: { task: 'ticker-refresh' },
+      caller: 'cron_ticker_refresh',
+    });
+
+    if (!auth.success) {
+      console.warn(`[TICKER REFRESH] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     const result = await refreshTickerData();
 
     return NextResponse.json({
@@ -42,9 +56,21 @@ export async function POST(req: Request) {
   }
 }
 
-// GET de destekle (tarayıcıdan test için)
 export async function GET() {
   try {
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'data_write',
+      payload: { task: 'ticker-refresh' },
+      caller: 'cron_ticker_refresh',
+    });
+
+    if (!auth.success) {
+      console.warn(`[TICKER REFRESH] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     const result = await refreshTickerData();
     return NextResponse.json({
       success: true,

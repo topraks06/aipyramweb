@@ -138,6 +138,9 @@ export const TOOL_PERMISSIONS: Record<string, ToolPermission> = {
   // 🔴 DESTRUCTIVE — Sadece admin açık komutla
   'deploy_target_project':     { risk: 'destructive', description: 'Deploy', requiresApproval: true },
   'cloud_deploy':              { risk: 'destructive', description: 'Cloud Run self-deploy', requiresApproval: true },
+
+  // 🎨 icmimar.ai RENDER (sovereignAuthority üzerinden kontrollü)
+  'icmimar_render':            { risk: 'risky', description: 'icmimar.ai görsel render (kontrollü)', requiresApproval: false, autoExecuteAboveConfidence: 0.9 },
 };
 
 // ═══════════════════════════════════════════════════
@@ -222,6 +225,12 @@ const SAFE_COLLECTIONS = [
   'trtex_terminal',
   // Archive koleksiyonları
   'trtex_archive', 'hometex_archive', 'perde_archive',
+  // icmimar.ai Render + ERP koleksiyonları
+  'icmimar_renders', 'icmimar_render_log', 'icmimar_orders', 'icmimar_wallets',
+  'icmimar_customers', 'icmimar_products',
+  // Sovereign Authority + Audit
+  'sovereign_agent_authority', 'sovereign_audit_log', 'a2a_transfer_log',
+  'aloha_costs',
 ];
 
 // ═══════════════════════════════════════════════════

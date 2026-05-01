@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { runGTIEngine } from '@/core/aloha/gti/engine';
 import { adminDb } from '@/lib/firebase-admin';
 import { FinanceMinister } from '@/core/aloha/financeMinister';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 mins because of AI parsing
@@ -56,6 +57,19 @@ export async function GET(req: Request) {
 
     console.log(`\n[GTI CRON] 🌍 Global Textile Intelligence (GTI) Huni Motoru Başlatılıyor... ${isBatchMode ? '[🌙 GECE VARDİYASI / BATCH MODE - %50 İNDİRİM]' : ''}`);
     
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'news_pipeline',
+      payload: { task: 'gti-cycle', batch: isBatchMode },
+      caller: 'cron_gti_cycle',
+    });
+
+    if (!auth.success) {
+      console.warn(`[GTI CRON] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     // 2. Budget Guard (Finance Minister)
     const quotas = await FinanceMinister.getDailyQuotas();
     

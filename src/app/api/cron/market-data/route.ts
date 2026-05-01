@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -19,6 +20,19 @@ export async function GET(req: Request) {
     }
 
     console.log('[⏰ CRON] Market Data Güncellemesi Başlatılıyor...');
+
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'data_write',
+      payload: { task: 'market-data' },
+      caller: 'cron_market_data',
+    });
+
+    if (!auth.success) {
+      console.warn(`[MARKET DATA] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
 
     // Market verilerini web'den çek (gerçek kaynaklar)
     const marketData: any = {

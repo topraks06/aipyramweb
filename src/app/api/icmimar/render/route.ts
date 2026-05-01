@@ -1,24 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { alohaAI } from "@/core/aloha/aiClient";
+import { alohaAI, executeTask } from "@/core/aloha/aiClient";
 import { admin, adminDb } from "@/lib/firebase-admin";
+import { checkRenderBudget, recordRenderCompletion, type RenderRequest } from "@/core/aloha/renderBudgetGuard";
 
 export const maxDuration = 300;
 export const dynamic = "force-dynamic";
-
-const FREE_RENDER_QUOTA = 5;
 
 /**
  * ═══════════════════════════════════════════════════════════════
  *  İCMİMAR.AI — SOVEREIGN RENDER ENGINE v5.0 (Image-to-Image)
  *  
  *  EN YENİ MODEL: gemini-3.1-pro-image-preview (Nano Banana 2 Pro)
- *  - Extended aspect ratio desteği (4:1, 1:4 dahil)
- *  - Google Search grounding
- *  - 14 referans görsel desteği
- *  - Yüksek çözünürlüklü Image-to-Image düzenleme
- *  
- *  KURAL: Sıfırdan görsel ÜRETİLMEZ. Mevcut mekan fotoğrafı
- *         DÜZENLENEREK kumaş/ürünler entegre edilir.
+ *  Tüm render istekleri bu endpoint'ten geçer.
+ *  İçinde: executeTask() → sovereignAuthority → renderBudgetGuard → Gemini Image-to-Image
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -29,13 +23,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       spaceImage,        // { data: string, mimeType: string } | null
-      spacePrompt,       // Mekan tasviri (mekan görseli yoksa — katalog çekimi modu)
-      products,          // Record<string, { data: string, mimeType: string }> — etiketli ürünler
-      referenceModel,    // { data: string, mimeType: string } | null — beyaz model
-      studioSettings,    // { lighting, lens, composition, decorationMode, renderQuality, timeOfDay }
+      spacePrompt,       // Mekan tasviri (mekan görseli yoksa)
+      products,          // Record<string, { data: string, mimeType: string }>
+      referenceModel,    // { data: string, mimeType: string } | null
+      studioSettings,    
       variationCount = 1,
       aspectRatio: requestedAR,
-      userPrompt,        // Chatbot'tan gelen özel tasarım komutu
+      userPrompt,        
       isUpscale = false,
       SovereignNodeId = 'icmimar'
     } = body;
@@ -53,12 +47,14 @@ export async function POST(req: NextRequest) {
     const SOVEREIGN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'hakantoprak71@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
     let uid: string | null = null;
     let isSovereign = false;
+    let userEmail: string = '';
     const isDev = process.env.NODE_ENV === 'development';
 
     const sessionCookie = req.cookies.get("session");
 
     if (isDev) {
       uid = 'dev-bypass-user';
+      userEmail = 'hakantoprak71@gmail.com';
       isSovereign = true;
       console.log("[ICMIMAR-RENDER] Dev bypass aktif, auth atlanıyor.");
     } else if (!sessionCookie?.value) {
@@ -73,28 +69,16 @@ export async function POST(req: NextRequest) {
         
         // 👑 SOVEREIGN BYPASS — Kurucu email kontrolü
         const userRecord = await admin.auth().getUser(uid);
-        isSovereign = SOVEREIGN_EMAILS.includes(userRecord.email?.toLowerCase() || '');
+        userEmail = userRecord.email || '';
+        isSovereign = SOVEREIGN_EMAILS.includes(userEmail.toLowerCase());
         if (isSovereign) {
-          console.log(`[ICMIMAR-RENDER] 👑 Sovereign erişim: ${userRecord.email} — tüm engeller atlandı`);
+          console.log(`[ICMIMAR-RENDER] 👑 Sovereign erişim: ${userEmail} — tüm engeller atlandı`);
         }
       } catch (authErr) {
         console.error("[ICMIMAR-RENDER] Auth error:", authErr);
         return NextResponse.json(
           { error: "Oturum süresi dolmuş. Lütfen tekrar giriş yapın." },
           { status: 401 }
-        );
-      }
-    }
-
-    // Kredi kontrolü (sadece normal kullanıcılar, sadece prodüksiyon)
-    if (!isDev && !isSovereign && uid && adminDb) {
-      const quotaRef = adminDb.collection('icmimar_render_quota').doc(uid);
-      const quotaDoc = await quotaRef.get();
-      const usedRenders = quotaDoc.exists ? (quotaDoc.data()?.usedRenders || 0) : 0;
-      if (usedRenders >= FREE_RENDER_QUOTA) {
-        return NextResponse.json(
-          { error: `Ücretsiz ${FREE_RENDER_QUOTA} tasarım hakkınız doldu. Devam etmek için kredi satın alın.` },
-          { status: 402 }
         );
       }
     }
@@ -294,101 +278,80 @@ KRİTİK KURALLAR (İHLAL EDİLEMEZ):
 
     parts.push({ text: finalPrompt });
 
-    // ══════════════════════════════════════════════════════════
-    //  MODEL SEÇİMİ — EN YENİ YÜKSEK ÇÖZÜNÜRLÜKLÜ
-    //  gemini-3.1-pro-image-preview: Nano Banana 2 Pro
-    //  - Extended AR, Google Search grounding, 14 ref image
-    //  - En yeni ve en yüksek kaliteli Image-to-Image modeli
-    // ══════════════════════════════════════════════════════════
-    const modelName = "gemini-3-pro-image-preview";
-
     // AR Config
-    const imageConfig: any = {};
+    const genConfig: any = {
+      responseModalities: ["IMAGE", "TEXT"],
+    };
     if (requestedAR && requestedAR !== 'auto') {
-      imageConfig.aspectRatio = requestedAR;
+      genConfig.imageConfig = { aspectRatio: requestedAR };
     }
 
-    // ── RENDER ──
-    const ai = alohaAI.getClient();
-    let renderUrl: string | null = null;
+    // ══════════════════════════════════════════════════════════
+    //  RENDER BUDGET GUARD KONTROLÜ
+    // ══════════════════════════════════════════════════════════
+    const renderRequest: RenderRequest = {
+      userId: uid || 'dev-bypass-user',
+      userEmail: userEmail,
+      nodeId: SovereignNodeId,
+      prompt: finalPrompt,
+      renderType: 'full_room',
+      style: settings.lighting,
+      aspectRatio: requestedAR,
+    };
 
-    console.log(`[ICMIMAR-RENDER v5.0] Model: ${modelName}, Images: ${imageCount}, Products: ${productNames}, AR: ${requestedAR || 'auto'}`);
-
-    try {
-      const genConfig: any = {
-        responseModalities: ["IMAGE", "TEXT"],
-      };
-      
-      if (Object.keys(imageConfig).length > 0) {
-        genConfig.imageConfig = imageConfig;
-      }
-
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: { parts },
-        config: genConfig,
-      });
-
-      const candidate = response.candidates?.[0];
-      if (!candidate) throw new Error("Model yanıt döndürmedi.");
-
-      if (candidate.finishReason === "SAFETY") {
-        return NextResponse.json(
-          { error: "Güvenlik filtresi: Görseliniz güvenlik politikalarına takıldı. Farklı bir görsel deneyin." },
-          { status: 422 }
-        );
-      }
-
-      for (const part of candidate.content?.parts || []) {
-        if (part.inlineData) {
-          renderUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-          break;
-        }
-      }
-
-      if (!renderUrl) {
-        const textResponse = candidate.content?.parts?.find((p: any) => p.text)?.text || "";
-        console.error("[ICMIMAR-RENDER v5.0] Model görsel üretmedi. Metin:", textResponse.substring(0, 500));
-        throw new Error("Model görsel çıktısı üretmedi. Lütfen farklı bir mekan veya ürün görseli deneyin.");
-      }
-    } catch (e: any) {
-      console.error("[ICMIMAR-RENDER v5.0] Gemini Error:", e);
-      
-      const msg = e.message || "Bilinmeyen hata";
-      if (msg.includes("SAFETY")) {
-        return NextResponse.json({ error: "Güvenlik filtresi aktif. Farklı görsel deneyin." }, { status: 422 });
-      }
-      if (msg.includes("too large") || msg.includes("exceeds")) {
-        return NextResponse.json({ error: "Görseller çok büyük. Lütfen daha küçük dosyalar kullanın." }, { status: 413 });
-      }
-      return NextResponse.json({ error: `Render hatası: ${msg.substring(0, 300)}` }, { status: 500 });
+    const budgetCheck = await checkRenderBudget(renderRequest);
+    if (!budgetCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: budgetCheck.reason,
+          creditsRemaining: budgetCheck.userCreditsRemaining,
+          nodeRenderLimit: budgetCheck.nodeRenderLimit,
+        },
+        { status: 429 }
+      );
     }
+
+    // ══════════════════════════════════════════════════════════
+    //  EXECUTE TASK (AUTHORITY & GEMINI CALL)
+    // ══════════════════════════════════════════════════════════
+    const result = await executeTask({
+      nodeId: SovereignNodeId,
+      action: 'image_to_image_generation',
+      payload: {
+        parts,
+        genConfig,
+        renderType: 'full_room',
+      },
+      userEmail,
+      caller: 'icmimar_render_api',
+    });
+
+    if (!result.success || !result.data?.imageData) {
+      return NextResponse.json(
+        { error: result.error || 'Render başarısız oldu.' },
+        { status: 500 }
+      );
+    }
+
+    // 4. Kullanım kayıtları güncelle
+    await recordRenderCompletion(renderRequest);
 
     const duration = Date.now() - startTime;
-    console.log(`[ICMIMAR-RENDER v5.0] ✅ Başarılı! Model: ${modelName}, ${imageCount} görsel, ${duration}ms`);
-
-    // ── Kota Sayacı (👑 Sovereign atlanır) ──
-    if (uid && uid !== 'dev-bypass-user' && !isSovereign && adminDb) {
-      const quotaRef = adminDb.collection('icmimar_render_quota').doc(uid);
-      const quotaDoc = await quotaRef.get();
-      if (quotaDoc.exists) {
-        await quotaRef.update({ usedRenders: (quotaDoc.data()?.usedRenders || 0) + 1 });
-      } else {
-        await quotaRef.set({ usedRenders: 1, createdAt: new Date() });
-      }
-    }
+    console.log(`[ICMIMAR-RENDER v5.0] ✅ Başarılı! Node: ${SovereignNodeId}, Images: ${imageCount}, ${duration}ms`);
 
     return NextResponse.json({
-      renderUrl,
-      preFlightData,
+      renderUrl: result.data.imageData,
+      preFlightData: result.data.preFlightData || preFlightData,
       analysis: {
         roomType: "auto",
         imageCount,
         duration,
-        model: modelName,
+        model: 'gemini-3-pro-image-preview',
         quality: "4K",
         decorationMode: settings.decorationMode,
       },
+      creditsRemaining: budgetCheck.userCreditsRemaining - 1,
+      costUSD: result.costUSD,
       suggestions: [],
     });
 

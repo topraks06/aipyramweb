@@ -385,8 +385,8 @@ export default function RoomVisualizer() {
      setLoadingMsg(T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...');
      
      try {
-       // v4: TÜM renderlar render-pro üzerinden (Dual-Label + model seçim stratejisi)
-       const endpoint = '/api/perde/render-pro';
+       // v4: TÜM renderlar render üzerinden
+       const endpoint = '/api/perde/render';
 
        // ── TÜM GÖRSELLERİ SIKIŞTIRIR (API payload boyutunu düşür) ──
        const compressedTarget = await compressImage(targetImage, 1200, 0.8);

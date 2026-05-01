@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -397,7 +397,7 @@ export default function RoomVisualizer() {
        : (T.rendering || 'İÇ MİMAR (YZ) DETAYLI 4K TASARIMI HAZIRLIYOR...'));
      
      try {
-       const endpoint = '/api/icmimar/render-pro';
+       const endpoint = '/api/icmimar/render';
 
        // â”€â”€ Ürünleri sıkıştır â”€â”€
        const productsObj: Record<string, any> = {};

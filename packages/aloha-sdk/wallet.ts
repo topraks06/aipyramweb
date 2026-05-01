@@ -45,21 +45,14 @@ export async function checkCredits(
   }
 
   try {
-    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
-    const snap = await walletRef.get();
+    const userRef = adminDb.collection('sovereign_users').doc(uid);
+    const snap = await userRef.get();
 
     if (!snap.exists) {
-      // İlk kullanım — otomatik 50 kredi ile başlat
-      await walletRef.set({
-        balance: 50,
-        totalSpent: 0,
-        createdAt: new Date().toISOString(),
-        node,
-      });
-      return { allowed: true, remaining: 50, cost };
+      return { allowed: false, remaining: 0, cost };
     }
 
-    const balance = snap.data()?.balance ?? 0;
+    const balance = snap.data()?.unifiedCredits ?? 0;
     return { allowed: balance >= cost, remaining: balance, cost };
   } catch (err: any) {
     console.error(`[WALLET] checkCredits hatası: ${err.message}`);
@@ -83,19 +76,26 @@ export async function deductCredit(
   }
 
   try {
-    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
+    const userRef = adminDb.collection('sovereign_users').doc(uid);
 
     const newBalance = await adminDb.runTransaction(async (txn) => {
-      const snap = await txn.get(walletRef);
-      const current = snap.exists ? (snap.data()?.balance ?? 0) : 0;
+      const snap = await txn.get(userRef);
+      const current = snap.exists ? (snap.data()?.unifiedCredits ?? 0) : 0;
       const updated = Math.max(0, current - cost);
 
-      txn.set(walletRef, {
-        balance: updated,
-        totalSpent: (snap.data()?.totalSpent ?? 0) + cost,
+      // merge: true ile obje yapısı kullanmak, nested alanları korur. 
+      // Ancak creditUsage objesi mevcut değilse tamamını yazar.
+      const currentCreditUsage = snap.data()?.creditUsage ?? {};
+      
+      txn.set(userRef, {
+        unifiedCredits: updated,
+        creditUsage: {
+          ...currentCreditUsage,
+          [node]: (currentCreditUsage[node] ?? 0) + cost
+        },
         lastAction: action,
         lastActionAt: new Date().toISOString(),
-        node,
+        lastActiveNode: node,
       }, { merge: true });
 
       return updated;
@@ -122,23 +122,23 @@ export async function addCredit(
   }
 
   try {
-    const walletRef = adminDb.collection(`${node}_wallets`).doc(uid);
+    const userRef = adminDb.collection('sovereign_users').doc(uid);
 
     const newBalance = await adminDb.runTransaction(async (txn) => {
-      const snap = await txn.get(walletRef);
-      const current = snap.exists ? (snap.data()?.balance ?? 0) : 0;
+      const snap = await txn.get(userRef);
+      const current = snap.exists ? (snap.data()?.unifiedCredits ?? 0) : 0;
       const updated = current + amount;
 
-      txn.set(walletRef, {
-        balance: updated,
+      txn.set(userRef, {
+        unifiedCredits: updated,
         lastCreditAt: new Date().toISOString(),
-        node,
+        lastActiveNode: node,
       }, { merge: true });
 
       return updated;
     });
 
-    console.log(`[WALLET] +${amount} kredi eklendi → ${node}/${uid} (yeni: ${newBalance})`);
+    console.log(`[WALLET] +${amount} unifiedCredits eklendi → ${uid} (yeni: ${newBalance})`);
     return { success: true, newBalance };
   } catch (err: any) {
     console.error(`[WALLET] addCredit hatası: ${err.message}`);
@@ -157,8 +157,8 @@ export async function getBalance(
   if (!adminDb) return 0;
 
   try {
-    const snap = await adminDb.collection(`${node}_wallets`).doc(uid).get();
-    return snap.exists ? (snap.data()?.balance ?? 0) : 0;
+    const snap = await adminDb.collection('sovereign_users').doc(uid).get();
+    return snap.exists ? (snap.data()?.unifiedCredits ?? 0) : 0;
   } catch {
     return 0;
   }

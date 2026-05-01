@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { TenderAgent } from '@/core/aloha/tenderAgent';
 import { FinanceMinister } from '@/core/aloha/financeMinister';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // Search grounding and multiple calls might take time
@@ -35,6 +36,19 @@ export async function GET(req: Request) {
   try {
     console.log('[TENDER CRON] 🌐 Global İhale Ajanı (TenderAgent) başlatılıyor...');
     
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'data_write',
+      payload: { task: 'tender-cycle' },
+      caller: 'cron_tender_cycle',
+    });
+
+    if (!auth.success) {
+      console.warn(`[TENDER CRON] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     // 2. MALIYE BAKANI (BÜTÇE KONTROLÜ)
     // maxBatches=8 -> 8 istek * $0.035 (Gemini Search Grounding Base) = $0.28 USD
     const ESTIMATED_COST = 0.28;

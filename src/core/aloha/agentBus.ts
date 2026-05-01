@@ -4,6 +4,7 @@
  */
 import { adminDb } from '@/lib/firebase-admin';
 import { alohaAI, aiGenkit } from './aiClient';
+import { logAudit } from './sovereignAuthority';
 import crypto from 'crypto';
 import { z } from 'zod';
 
@@ -271,6 +272,17 @@ export async function sendAndWait(
       }
 
       console.log(`[🔗 AGENT BUS] ✅ ${to} → yanıt geldi (güven: ${response.confidence || '?'}, deneme: ${attempt + 1})`);
+
+      // 📋 AUDIT LOG — Her ajan iletişimini kayıt altına al
+      logAudit({
+        timestamp: new Date().toISOString(),
+        nodeId: payload.nodeId || 'global',
+        agentId: to,
+        action: 'agent_communication',
+        approved: response.success,
+        reason: `sendAndWait: ${type} → ${response.success ? 'başarılı' : 'başarısız'} (güven: ${response.confidence || '?'})`,
+      });
+
       break;
 
     } catch (e: any) {

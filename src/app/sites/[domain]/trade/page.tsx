@@ -4,6 +4,7 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
 import { t } from '@/i18n/labels';
 import { Metadata } from 'next';
+import { generateHreflang } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
   return {
     title: `${brandName} — B2B Ticaret Merkezi`,
     description: `${brandName} Küresel Ticaret Merkezi — İhaleler, sıcak stok fırsatları, boş kapasite bildirimleri ve tedarikçi eşleştirme.`,
+    alternates: generateHreflang(exactDomain, '/trade')
   };
 }
 

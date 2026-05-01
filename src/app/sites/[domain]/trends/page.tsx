@@ -5,6 +5,7 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
 import { t } from '@/i18n/labels';
 import { Metadata } from 'next';
+import { generateHreflang } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
   return {
     title: `${brandName} — Dünya Radarı & Trend Analizi`,
     description: `${brandName} B2B Intelligence Terminal — Küresel risk analizi, fırsat radarı ve piyasa sinyalleri.`,
+    alternates: generateHreflang(exactDomain, '/trends')
   };
 }
 
@@ -153,9 +155,9 @@ export default async function TrendsPage({ params, searchParams }: {
             </div>
 
             {section.articles.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{section.icon}</div>
-                <p style={{ color: '#9CA3AF', fontWeight: 600 }}>Bu kategoride henüz sinyal bulunmuyor.</p>
+              <div style={{ padding: '4rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📡</div>
+                <p style={{ color: '#6B7280', fontWeight: 600, fontSize: '1.1rem' }}>Otonom motor çalışıyor. Veriler yakında burada olacak.</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>

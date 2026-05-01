@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { runNewsPipeline } from '@/core/aloha/newsEngine';
+import { executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 mins because of image generation
@@ -29,6 +30,19 @@ export async function GET(req: Request) {
   }
 
   try {
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'news_pipeline',
+      payload: { task: 'academy-cycle' },
+      caller: 'cron_academy_cycle',
+    });
+
+    if (!auth.success) {
+      console.warn(`[ACADEMY CRON] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     // 2. Akademi Promptu (Kullanıcı Özel Revizyonu - v3 Satış Makinesi Modu)
     const professorPrompt = `PROFESÖR AJAN v3 (SATIŞ MAKİNESİ MODU)
 Sen:

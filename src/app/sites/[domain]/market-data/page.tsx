@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { generateHreflang } from '@/lib/utils';
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ domain: s
   return {
     title: `${brandName} — Piyasa Verileri & Emtia Fiyatları`,
     description: `Gerçek zamanlı pamuk, iplik fiyatları ve global navlun endeksleri. B2B üretici ve toptancılar için tedarik zinciri istihbaratı.`,
+    alternates: generateHreflang(exactDomain, '/market-data')
   };
 }
 

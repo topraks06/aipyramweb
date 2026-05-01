@@ -66,21 +66,67 @@ export default async function PrivacyPage({ params, searchParams }: any) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#FAFAFA', fontFamily: "'Inter', sans-serif" }}>
-      <GlobalTicker />
-      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="news" theme="light" />
+      <TrtexNavbar basePath={basePath} brandName={brandName} lang={lang} activePage="legal" theme="light" />
       
       <main style={{ flex: 1, maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem' }}>
-         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '2rem', fontFamily: "'Playfair Display', serif" }}>
-           {t('privacyPolicy', lang)}
+         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.7rem', fontWeight: 800, color: '#CC0000', letterSpacing: '0.15em', marginBottom: '0.5rem' }}>YASAL</div>
+         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem', fontFamily: "'Playfair Display', serif" }}>
+           Gizlilik Politikası
          </h1>
-         <div style={{ fontSize: '1.05rem', lineHeight: 1.8, color: '#374151' }}>
+         <p style={{ fontSize: '0.85rem', color: '#9CA3AF', marginBottom: '3rem' }}>Son güncelleme: 1 Mayıs 2026</p>
+         
+         <div style={{ fontSize: '1rem', lineHeight: 1.9, color: '#374151' }}>
             <p style={{ marginBottom: '1.5rem' }}>
-              {t('privacyText', lang)}
+              TRTEX Intelligence Terminal (&ldquo;Platform&rdquo;), aipyram GmbH tarafından işletilmektedir. Bu gizlilik politikası, platformumuzu kullanırken kişisel verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklamaktadır. Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) ve 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında hareket ediyoruz.
             </p>
-            <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: '#111' }}>{t('dataCollected', lang)}</h3>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>1. Toplanan Veriler</h2>
+            <p style={{ marginBottom: '1rem' }}>Platformumuzu kullanırken aşağıdaki veriler toplanabilir:</p>
+            <ul style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem' }}>
+              <li style={{ marginBottom: '0.5rem' }}><strong>Hesap Bilgileri:</strong> Ad, e-posta adresi, firma adı, ülke bilgisi (kayıt sırasında).</li>
+              <li style={{ marginBottom: '0.5rem' }}><strong>Kullanım Verileri:</strong> Ziyaret edilen sayfalar, tıklama verileri, oturum süreleri.</li>
+              <li style={{ marginBottom: '0.5rem' }}><strong>Cihaz Bilgileri:</strong> Tarayıcı türü, IP adresi, işletim sistemi (anonim olarak).</li>
+              <li style={{ marginBottom: '0.5rem' }}><strong>Ticari Tercihler:</strong> İlgi duyulan ihale kategorileri, fuar takipleri, ürün filtreleri.</li>
+            </ul>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>2. Verilerin Kullanım Amacı</h2>
             <p style={{ marginBottom: '1.5rem' }}>
-              {t('dataCollectedText', lang)}
+              Toplanan veriler; platformun işlevselliğini sağlamak, kişiselleştirilmiş B2B istihbarat sunmak, ihale eşleştirme algoritmamızı iyileştirmek ve yasal yükümlülüklerimizi yerine getirmek amacıyla kullanılır. Verileriniz üçüncü taraf reklam ağlarıyla paylaşılmaz.
             </p>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>3. Çerezler (Cookies)</h2>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Platformumuz, oturum yönetimi ve kullanıcı tercihlerinin hatırlanması için teknik çerezler kullanır. Analitik çerezler (Google Analytics) anonim kullanım istatistikleri toplamak amacıyla kullanılabilir. Çerez tercihlerinizi tarayıcı ayarlarınızdan yönetebilirsiniz.
+            </p>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>4. Üçüncü Taraf Hizmetler</h2>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Platformumuz Google Cloud (Firebase) altyapısı üzerinde çalışmaktadır. Kimlik doğrulama için Firebase Authentication, veri depolama için Google Cloud Firestore kullanılmaktadır. Bu hizmetler GDPR uyumlu veri işleme anlaşmaları (DPA) kapsamındadır.
+            </p>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>5. Haklarınız</h2>
+            <p style={{ marginBottom: '1rem' }}>GDPR ve KVKK kapsamında aşağıdaki haklara sahipsiniz:</p>
+            <ul style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem' }}>
+              <li style={{ marginBottom: '0.5rem' }}>Verilerinize erişim talep etme hakkı</li>
+              <li style={{ marginBottom: '0.5rem' }}>Verilerinizin düzeltilmesini veya silinmesini isteme hakkı</li>
+              <li style={{ marginBottom: '0.5rem' }}>Veri işleme faaliyetlerine itiraz etme hakkı</li>
+              <li style={{ marginBottom: '0.5rem' }}>Verilerinizin taşınabilirliğini talep etme hakkı</li>
+            </ul>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>6. Veri Saklama ve Güvenlik</h2>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Verileriniz Google Cloud altyapısında, endüstri standartlarında şifreleme (TLS 1.3, AES-256) ile korunmaktadır. Hesap silme talebinden itibaren 30 gün içinde tüm kişisel veriler kalıcı olarak silinir.
+            </p>
+
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#111827', marginTop: '2.5rem', marginBottom: '1rem' }}>7. İletişim</h2>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Gizlilik politikamızla ilgili sorularınız için <strong>info@aipyram.com</strong> adresinden bize ulaşabilirsiniz.
+            </p>
+
+            <div style={{ marginTop: '3rem', padding: '1.5rem', background: '#F3F4F6', borderRadius: '8px', fontSize: '0.85rem', color: '#6B7280' }}>
+              <strong style={{ color: '#111827' }}>Veri Sorumlusu:</strong> aipyram GmbH<br />
+              Bu politika, yasal düzenlemelerdeki değişikliklere bağlı olarak güncellenebilir.
+            </div>
          </div>
       </main>
 

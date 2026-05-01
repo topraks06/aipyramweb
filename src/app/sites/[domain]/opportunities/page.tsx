@@ -4,6 +4,7 @@ import TrtexFooter from '@/components/trtex/TrtexFooter';
 import GlobalTicker from '@/components/trtex/GlobalTicker';
 import { t } from '@/i18n/labels';
 import { Metadata } from 'next';
+import { generateHreflang } from '@/lib/utils';
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,10 @@ export async function generateMetadata({ params, searchParams }: any): Promise<M
   const resolvedParams = await params;
   const exactDomain = decodeURIComponent(resolvedParams.domain).split(":")[0];
   const brandName = exactDomain.split('.')[0].toUpperCase();
-  return { title: `${brandName} — ${t('tradeOpportunities', 'tr')}` };
+  return { 
+    title: `${brandName} — ${t('tradeOpportunities', 'tr')}`,
+    alternates: generateHreflang(exactDomain, '/opportunities')
+  };
 }
 
 export default async function OpportunitiesPage({ params, searchParams }: any) {
@@ -55,7 +59,10 @@ export default async function OpportunitiesPage({ params, searchParams }: any) {
          </div>
 
          {opportunities.length === 0 ? (
-            <div style={{ padding: '4rem', textAlign: 'center', color: '#6B7280', fontWeight: 600 }}>{t('noTradeSignal', lang)}</div>
+            <div style={{ padding: '4rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📡</div>
+              <p style={{ color: '#6B7280', fontWeight: 600, fontSize: '1.1rem' }}>Otonom motor çalışıyor. Veriler yakında burada olacak.</p>
+            </div>
          ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: '#fff', border: '1px solid #E5E7EB', padding: '2rem', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               {opportunities.map((article: any) => {

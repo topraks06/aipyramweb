@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import { alohaAI } from '@/core/aloha/aiClient';
+import { alohaAI, executeTask } from '@/core/aloha/aiClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 dakika max
@@ -50,6 +50,19 @@ export async function GET(req: Request) {
   };
 
   try {
+    // AUTHORITY CHECK
+    const auth = await executeTask({
+      nodeId: 'trtex',
+      action: 'text_generation',
+      payload: { task: 'translation-processor' },
+      caller: 'cron_translation_processor',
+    });
+
+    if (!auth.success) {
+      console.warn(`[TRANSLATION CRON] 🚫 Otonom pipeline engellendi: ${auth.error}`);
+      return NextResponse.json({ blocked: true, reason: auth.error }, { status: 403 });
+    }
+
     // Kuyruktaki pending çevirileri çek
     const queueSnap = await adminDb
       .collection('trtex_translation_queue')

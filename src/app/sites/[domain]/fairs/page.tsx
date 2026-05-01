@@ -106,19 +106,19 @@ export default async function FairsPage({ params, searchParams }: any) {
          </div>
 
          {fairsNews.length === 0 ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ padding: '3rem 2rem', background: '#FFF', borderRadius: '12px', border: '1px solid #E5E7EB', marginBottom: '2rem' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📅</div>
-                <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#111827', marginBottom: '0.75rem', fontFamily: "'Playfair Display', serif" }}>
-                  Fuar Takvimi
-                </h2>
-                <p style={{ color: '#6B7280', fontSize: '1rem', maxWidth: '500px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
-                  Ev tekstili sektörünün önde gelen küresel fuarları — AI destekli katılımcı ve trend analizi ile.
+            <div style={{ padding: '4rem 2rem', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '12px' }}>
+              <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>📅</div>
+                <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1rem', fontFamily: "'Playfair Display', serif" }}>Küresel Fuar Takvimi</h2>
+                <p style={{ fontSize: '0.95rem', color: '#6B7280', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+                  Ev tekstili sektörünün öncü fuarları (Heimtextil, Domotex, ITMA, Evteks, R+T ve daha fazlası) yapay zeka destekli katılımcı ve trend analizi ile burada listelenecektir.
+                  Otonom istihbarat motorumuz fuar haberlerini otomatik olarak tarar ve kategorize eder.
                 </p>
-              </div>
-              <div style={{ padding: '4rem', textAlign: 'center', background: '#FFF', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📡</div>
-                <p style={{ color: '#6B7280', fontWeight: 600, fontSize: '1.1rem' }}>Otonom motor çalışıyor. Fuar verileri yakında burada olacak.</p>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  {['Heimtextil', 'Evteks', 'Domotex', 'R+T', 'ITMA'].map((fair, i) => (
+                    <span key={i} style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6B7280', background: '#F3F4F6', padding: '0.4rem 0.8rem', borderRadius: '4px' }}>{fair}</span>
+                  ))}
+                </div>
               </div>
             </div>
          ) : (
@@ -130,12 +130,11 @@ export default async function FairsPage({ params, searchParams }: any) {
                 if (!imgSrc || !imgSrc.startsWith('http')) {
                   imgSrc = getFallbackImage(article.id);
                 }
-                // Mocking a future date for the calendar visual if no date exists
-                const eventDate = new Date();
-                eventDate.setDate(eventDate.getDate() + (index * 15) + 5); 
+                // Gerçek tarih kullan (mock tarih YASAK)
+                const articleDate = article.createdAt ? new Date(article.createdAt) : new Date();
                 const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                const month = monthNames[eventDate.getMonth()];
-                const day = eventDate.getDate();
+                const month = monthNames[articleDate.getMonth()];
+                const day = articleDate.getDate();
 
                 return (
                 <div key={article.id} style={{ display: 'flex', flexDirection: 'row', background: '#fff', border: '1px solid #E5E7EB', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>

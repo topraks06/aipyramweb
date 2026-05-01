@@ -90,51 +90,23 @@ async function handleTopicWrite(topic: string, category?: string, imageUrls?: st
     await docRef.set(newsData);
     console.log(`[TRTEX-TOPIC] ✅ Haber yazıldı: ${slug}`);
     
-    // 3. GÖRSEL SİSTEMİ — Eğer kullanıcı kendi resimlerini yüklediyse, onları kullan ve SANAL RESİM ÇİZME.
+    // 3. 🔒 GÖRSEL ÜRETİM TAMAMEN KAPALI — Hakan Bey emri (30/04/2026)
+    // Maliyet kilidi: Aylık $20 bütçe. Görsel üretim 1.989 CHF harcadı.
+    // Kullanıcı kendi resmini yüklediyse onu kullan, yoksa görselsiz bırak.
     if (imageUrls && imageUrls.length > 0) {
-        console.log(`[TRTEX-TOPIC] 📸 ${imageUrls.length} GERÇEK SAHA GÖRSELİ kullanılıyor (Sanal çizim iptal edildi).`);
+        console.log(`[TRTEX-TOPIC] 📸 ${imageUrls.length} KULLANICI GÖRSELİ kullanılıyor.`);
         await docRef.update({
           image_url: imageUrls[0],
           images: imageUrls,
-          image_generated: false, // Gerçek resim
+          image_generated: false,
         });
     } else {
-      // KENDİ SANAL RESİMLERİNİ ÇİZ (Fallback)
-      const images: string[] = [];
-      try {
-        const { processImageForContent } = await import('@/core/aloha/imageAgent');
-        const cat = article.category || 'İstihbarat';
-        
-        console.log(`[TRTEX-TOPIC] 📸 1/3 Hero görsel (wide) üretiliyor...`);
-        const heroUrl = await processImageForContent('news', cat, article.title, undefined, 'wide');
-        if (heroUrl) images.push(heroUrl);
-        
-        await new Promise(r => setTimeout(r, 3000));
-        console.log(`[TRTEX-TOPIC] 📸 2/3 Mid görsel (medium) üretiliyor...`);
-        try {
-          const midUrl = await processImageForContent('news', cat, article.title, undefined, 'medium');
-          if (midUrl) images.push(midUrl);
-        } catch { console.warn('[TRTEX-TOPIC] ⚠️ Mid görsel atlandı (rate limit)'); }
-        
-        await new Promise(r => setTimeout(r, 3000));
-        console.log(`[TRTEX-TOPIC] 📸 3/3 Detail görsel (macro) üretiliyor...`);
-        try {
-          const detailUrl = await processImageForContent('news', cat, article.title, undefined, 'macro');
-          if (detailUrl) images.push(detailUrl);
-        } catch { console.warn('[TRTEX-TOPIC] ⚠️ Detail görsel atlandı (rate limit)'); }
-        
-        if (images.length > 0) {
-          await docRef.update({
-            image_url: images[0],
-            images: images,
-            image_generated: true,
-            image_generated_at: new Date().toISOString(),
-          });
-          console.log(`[TRTEX-TOPIC] ✅ ${images.length}/3 görsel üretildi`);
-        }
-      } catch (imgErr: any) {
-        console.warn(`[TRTEX-TOPIC] ⚠️ Görsel üretilemedi: ${imgErr.message}`);
-      }
+      console.log(`[TRTEX-TOPIC] 🔒 Görsel üretim KAPALI (maliyet kilidi). Manuel yükleme bekliyor.`);
+      await docRef.update({
+        image_generated: false,
+        needs_manual_image: true,
+        image_status: 'awaiting_manual',
+      });
     }
     
     // 4. Terminal payload'u güncelle

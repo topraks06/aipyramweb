@@ -58,7 +58,9 @@ const LOCALIZED_ROUTES: Record<string, Record<string, string>> = {
     '/fuar-takvimi': '/fairs',
     '/trendler': '/trends',
     '/ticaret': '/trade',
-    '/hakkimizda': '/about'
+    '/hakkimizda': '/about',
+    '/firmalar': '/manufacturers',
+    '/piyasalar': '/market-data'
   },
   de: {
     '/nachrichten': '/news',
