@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
 
         // Authentication & Wallet Check (If session exists)
-        /* 
+        // Authentication & Wallet Check (If session exists)
         const sessionCookie = req.cookies.get('session');
         let uid = null;
         if (sessionCookie?.value) {
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         } else {
             // 🛡️ Anonim Kullanıcı Kontrolü: Günde 1 Render (IP bazlı Firestore)
             if (adminDb) {
-                const clientIp = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "127.0.0.1";
+                const clientIp = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
                 // IP adresinden '.' veya ':' gibi karakterleri güvenli document ID'ye çevir
                 const safeIp = clientIp.replace(/[\.:]/g, '_'); 
                 const today = new Date().toISOString().split('T')[0];
@@ -68,8 +68,6 @@ export async function POST(req: NextRequest) {
                 }, { merge: true });
             }
         }
-        */
-        let uid = null;
 
         // 1. Analyze room
         // Extract plain base64 if it has data url scheme
@@ -118,9 +116,8 @@ export async function POST(req: NextRequest) {
                 if (base64Output) {
                     renderUrlUrl = `data:image/jpeg;base64,${base64Output}`;
                     
-                    // Kredi Düş (Merkezi Servis)
                     if (uid) {
-                        // await deductCredit(SovereignNodeId, uid, 'render');
+                        await deductCredit(SovereignNodeId, uid, 'render');
                     }
 
                     // Add to library
