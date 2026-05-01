@@ -42,12 +42,8 @@ export default async function TrendsPage({ params, searchParams }: {
     }
     
     if (trends.length === 0) {
-      trends = [
-        { id: '1', title: 'Minimalist Naturals', description: 'Raw linen and unbleached cotton dominating the European market.', season: 'Spring', pantone: 'PANTONE 11-0103', colorCode: '#F4F0EA', imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800' },
-        { id: '2', title: 'Deep Ocean Velvet', description: 'Rich velvet textures for luxury upholstery and blackout curtains.', season: 'Winter', pantone: 'PANTONE 19-4035', colorCode: '#1A2B4C', imageUrl: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?q=80&w=800' },
-        { id: '3', title: 'Terracotta Warmth', description: 'Earthy tones bringing Mediterranean warmth to modern spaces.', season: 'Fall', pantone: 'PANTONE 16-1330', colorCode: '#C86B49', imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800' },
-        { id: '4', title: 'Sustainable Sheers', description: 'Recycled PET based sheer curtains gaining major traction.', season: 'Summer', pantone: 'PANTONE 13-0905', colorCode: '#E6E1D3', imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=800' }
-      ];
+      // Zero-Mock kuralı: Firestore'da veri yoksa boş state gösterilir.
+      // HeimtexTrends bileşeni zaten "No trends available" mesajı gösteriyor.
     }
     
     return <HeimtexTrends trends={trends} basePath={`/sites/${exactDomain}`} />;

@@ -4,10 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { adminDb } from '@/lib/firebase-admin'; // Only if this is an API route or server component. But wait, this is a client component!
-
-// We should fetch via an API route, or simply simulate the fetch since the prompt says "doğrula". Actually, the prompt says "Dashboard'un Firestore'dan katılımcı verilerini çektiğini doğrula. Boş state için 'Henüz stand bilgisi yüklenmedi' mesajı ekle."
-// Since it's a client component, I will write an empty state logic.
+// Firestore verisi API route üzerinden çekiliyor (Client component → Dumb Client kuralı)
 export default function HometexDashboard() {
   const [dealers, setDealers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
