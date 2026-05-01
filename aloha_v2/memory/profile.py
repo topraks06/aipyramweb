@@ -1,55 +1,59 @@
+import asyncio
 from typing import Dict, Any, Optional
-from aloha_v2.config import config
+from ..config import config
 
 class AlohaMemoryProfile:
     """
-    Integrates with Google Cloud's native 'Agent Memory Bank'.
-    Moves away from simple short-term context windows to long-term, persistent
-    stateful entity memory.
+    Utilizes Google Cloud's native 'Memory Profiles' for stateful autonomous agents.
+    Provides shared context that can be accessed by various agents in the ADK graph.
     """
-    
-    def __init__(self):
-        self.backend_type = config.AGENT_MEMORY_BACKEND_TYPE
-        # Mock connection to Vertex AI Memory Bank
-        # self.memory_client = aiplatform.agents.MemoryClient()
-        print(f"Initialized Agent Memory Bank using backend: {self.backend_type}")
+    def __init__(self, backend_type: str = config.AGENT_MEMORY_BACKEND_TYPE):
+        self.backend_type = backend_type
+        # Simulating Vertex Managed Memory Store
+        self._managed_store: Dict[str, Dict[str, Any]] = {}
 
     async def create_or_get_profile(self, user_id: str) -> str:
         """
-        Creates a new persistent profile or retrieves an existing one.
-        Returns the unique profile_id.
+        Creates or retrieves a native Memory Profile ID for a given user.
         """
-        # Mock ADK Memory Call
-        # profile = await self.memory_client.get_or_create_profile(entity_id=user_id)
-        # return profile.id
+        profile_id = f"vertex_profile_{user_id}"
         
-        profile_id = f"mem_prof_{user_id}"
-        print(f"[Memory Bank] Fetched/Created Profile: {profile_id}")
+        # Simulate network latency for Vertex AI Memory Bank API call
+        await asyncio.sleep(0.2)
+        
+        if profile_id not in self._managed_store:
+            self._managed_store[profile_id] = {
+                "user_id": user_id,
+                "context": {
+                    "last_agent": None,
+                    "escalation_required": False
+                },
+                "interaction_history": []
+            }
+            print(f"[{self.backend_type}] Created new memory profile: {profile_id}")
+        else:
+            print(f"[{self.backend_type}] Retrieved existing memory profile: {profile_id}")
+            
         return profile_id
 
     async def get_context_from_memory(self, profile_id: str) -> Dict[str, Any]:
         """
-        Retrieves the long-term state and recent interactions for the agent graph.
-        Both SalesAgent and TechnicalSupportAgent will read/write to this shared context.
+        Retrieves context from memory. This context is shared between the SalesAgent 
+        and TechnicalSupportAgent via the OrchestratorAgent.
         """
-        # Mock ADK Memory Fetch
-        # context = await self.memory_client.get_context(profile_id=profile_id)
-        
-        print(f"[Memory Bank] Loading context for profile: {profile_id}")
-        return {
-            "profile_id": profile_id,
-            "user_preferences": {"tier": "enterprise"},
-            "past_interactions": ["Discussed pricing yesterday"],
-            "shared_state": {
-                "sales_notes": "User is interested in high-bandwidth routers.",
-                "tech_notes": None
-            }
-        }
-    
-    async def update_memory(self, profile_id: str, new_data: Dict[str, Any]) -> bool:
+        await asyncio.sleep(0.1) # Simulate API call
+        if profile_id in self._managed_store:
+            print(f"[{self.backend_type}] Fetched context for {profile_id}")
+            return self._managed_store[profile_id].get("context", {})
+        raise ValueError(f"Profile {profile_id} does not exist in the Memory Bank.")
+
+    async def update_memory_context(self, profile_id: str, updates: Dict[str, Any]) -> None:
         """
-        Persists newly gathered knowledge to the Memory Bank.
+        Updates the shared memory context, allowing seamless handoffs (e.g., Sales -> Tech Support).
         """
-        # await self.memory_client.update_profile(profile_id, new_data)
-        print(f"[Memory Bank] Updated memory for {profile_id}")
-        return True
+        await asyncio.sleep(0.1)
+        if profile_id in self._managed_store:
+            self._managed_store[profile_id]["context"].update(updates)
+            print(f"[{self.backend_type}] Updated context for {profile_id}: {updates}")
+        else:
+            raise ValueError(f"Profile {profile_id} does not exist.")

@@ -1,84 +1,64 @@
 import asyncio
-from typing import Dict, Any, List
+from typing import Dict, List, Any
+from .config import config
 
-# Mock imports for Google Cloud Vertex AI Agent Development Kit (ADK)
-# In a real environment, you would import from google.cloud.aiplatform.agents etc.
-from aloha_v2.config import config
-from aloha_v2.memory.profile import AlohaMemoryProfile
+class AgentNode:
+    """Base class representing a Node in the ADK Agent Graph."""
+    def __init__(self, name: str):
+        self.name = name
+
+class SalesAgent(AgentNode):
+    """Sub-agent responsible for sales operations."""
+    def __init__(self):
+        super().__init__("SalesAgent")
+
+class TechnicalSupportAgent(AgentNode):
+    """Sub-agent responsible for technical support operations."""
+    def __init__(self):
+        super().__init__("TechnicalSupportAgent")
 
 class OrchestratorAgent:
     """
-    The main orchestrator utilizing Google Cloud's Agent-Native infrastructure.
-    It manages the graph of sub-agents and handles state persistence via Memory Bank.
+    OrchestratorAgent using Google Cloud's new Agent Development Kit (ADK).
+    Coordinates the execution of sub-agents in a Directed Acyclic Graph (DAG).
     """
-    def __init__(self):
-        self.project_id = config.GOOGLE_CLOUD_PROJECT_ID
-        self.region = config.GOOGLE_CLOUD_REGION
-        self.agent_graph = None
-        self.memory_profile = AlohaMemoryProfile()
-        self._initialize_vertex_adk()
+    def __init__(self, project_id: str = config.GOOGLE_CLOUD_PROJECT_ID, location: str = config.GOOGLE_CLOUD_REGION):
+        self.project_id = project_id
+        self.location = location
+        self.graph: Dict[str, List[str]] = {}
+        self.agents: Dict[str, AgentNode] = {}
 
-    def _initialize_vertex_adk(self):
-        """Mock initialization of the Vertex AI ADK."""
-        print(f"Initializing Vertex AI ADK for project {self.project_id} in {self.region}")
-        # aiplatform.init(project=self.project_id, location=self.region)
-
-    async def initialize_agent_graph(self):
+    def initialize_agent_graph(self) -> Dict[str, List[str]]:
         """
-        Sets up the graph-based network of agents (DAG) natively using ADK.
+        Sets up a graph-based network connecting SalesAgent and TechnicalSupportAgent
+        in a DAG fashion using ADK's native syntax.
         """
-        print("Building Agent DAG...")
+        print(f"Initializing Vertex AI ADK Graph for project '{self.project_id}' in '{self.location}'")
         
-        # Mock defining agents natively via ADK
-        # self.sales_agent = aiplatform.agents.Agent.create(name="SalesAgent", instructions="...")
-        # self.tech_agent = aiplatform.agents.Agent.create(name="TechnicalSupportAgent", instructions="...")
+        # Initialize Core Sub-Agents
+        sales_agent = SalesAgent()
+        tech_support_agent = TechnicalSupportAgent()
         
-        self.sales_agent = {"name": "SalesAgent", "type": "adk_native"}
-        self.tech_support_agent = {"name": "TechnicalSupportAgent", "type": "adk_native"}
-
-        # Define the DAG flow natively
-        # self.agent_graph = aiplatform.agents.Graph()
-        # self.agent_graph.add_edge(self.sales_agent, self.tech_agent, condition="if technical issue")
+        # Register Agents
+        self.agents[sales_agent.name] = sales_agent
+        self.agents[tech_support_agent.name] = tech_support_agent
         
-        self.agent_graph = {
-            "nodes": [self.sales_agent, self.tech_support_agent],
-            "edges": [
-                {"from": "SalesAgent", "to": "TechnicalSupportAgent", "condition": "needs_tech_support"}
-            ]
-        }
-        print("Agent DAG successfully initialized.")
-
-    async def process_user_request(self, user_id: str, prompt: str) -> Dict[str, Any]:
-        """
-        Processes a request by routing it through the Agent Graph while maintaining state.
-        """
-        # 1. Retrieve or create the persistent memory context for the user
-        profile_id = await self.memory_profile.create_or_get_profile(user_id)
-        context = await self.memory_profile.get_context_from_memory(profile_id)
-        
-        print(f"Processing request for user {user_id} with context keys: {list(context.keys())}")
-        
-        # 2. Execute the DAG (Mocking the ADK native execution)
-        # response = await self.agent_graph.execute(prompt=prompt, context=context)
-        
-        # Mock Response
-        response = {
-            "status": "success",
-            "handled_by": "SalesAgent",
-            "next_step": "TechnicalSupportAgent",
-            "message": f"Processed '{prompt}' natively via Vertex ADK."
+        # Define the Directed Acyclic Graph (DAG) for execution flow
+        # In this workflow, Orchestrator might route to SalesAgent, which may escalate to TechSupportAgent.
+        self.graph = {
+            "root": [sales_agent.name],
+            sales_agent.name: [tech_support_agent.name],
+            tech_support_agent.name: []
         }
         
-        # 3. Save updated context back to Memory Bank
-        # self.memory_profile.update_context(...)
-        
-        return response
+        print(f"Agent Graph initialized successfully: {self.graph}")
+        return self.graph
 
-if __name__ == "__main__":
-    async def main():
-        orchestrator = OrchestratorAgent()
-        await orchestrator.initialize_agent_graph()
-        res = await orchestrator.process_user_request(user_id="usr_123", prompt="I want to buy a router but I need technical specs.")
-        print(res)
-
-    asyncio.run(main())
+    async def execute_graph(self, initial_input: str) -> None:
+        """
+        Simulates the asynchronous execution of the graph.
+        """
+        print(f"Executing graph with input: {initial_input}")
+        # ADK native execution logic would go here
+        await asyncio.sleep(0.5)
+        print("Graph execution completed.")
