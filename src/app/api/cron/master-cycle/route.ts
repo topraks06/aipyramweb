@@ -206,8 +206,8 @@ async function processImageQueue(): Promise<{
 
     console.log(`  → ${queueSnap.size} haber kuyruktda`);
 
-    // Lazy import — sadece ihtiyaç olduğunda yükle
-    const { processMultipleImages } = await import('@/core/aloha/imageAgent');
+    // Sadece executeTask kullanacağız
+    const { executeTask } = await import('@/core/aloha/aiClient');
 
     for (const qDoc of queueSnap.docs) {
       const qData = qDoc.data();
@@ -244,10 +244,20 @@ async function processImageQueue(): Promise<{
       try {
         console.log(`  [GEN] 📸 3'lü set: "${title.slice(0, 45)}..." (1 Yeni, 2 Arşiv)`);
 
-        // 3'lü görsel setini TEK seferde çağırıyoruz. 
-        // processMultipleImages içeride 1 resim üretecek, diğerlerini (2 ve 3) arşivden çekecek.
-        const allImages = await processMultipleImages(category, title, title, 3);
-        const primaryImage = allImages[0] || '';
+        // Sadece executeTask üzerinden TEK kapıdan geçilir (Hakan Bey Kural 1)
+        const res = await executeTask({
+          nodeId: 'trtex',
+          action: 'image_generation',
+          payload: { prompt: title },
+          caller: 'cron_master_cycle'
+        });
+
+        if (!res.success) {
+          throw new Error(res.error || 'executeTask failed');
+        }
+
+        const primaryImage = res.data.imageData || '';
+        const allImages = [primaryImage]; // Şimdilik 1 görsel yeterli
 
         if (primaryImage) {
           // Haberi güncelle: image + status → published

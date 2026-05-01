@@ -81,7 +81,7 @@ export default async function CollectionsPage({ params, searchParams }: any) {
                 ];
                 let imgSrc = article.images?.[0] || article.image_url;
                 if (!imgSrc || !imgSrc.startsWith('http')) {
-                  const sum = String(article.id || Math.random()).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                  const sum = String(article.id || article.title || 'fallback').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
                   imgSrc = fallbacks[sum % fallbacks.length];
                 }
                 

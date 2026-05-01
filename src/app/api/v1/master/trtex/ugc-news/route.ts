@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import { generateWithGemini } from '@/core/aloha/aiClient';
+import { executeTask } from '@/core/aloha/aiClient';
 import { FinanceMinister } from '@/core/aloha/financeMinister';
 import { MatchmakerEngine } from '@/core/aloha/matchmakerEngine';
 
@@ -65,8 +65,15 @@ export async function POST(req: Request) {
       }
     `;
 
-    // Use Gemini Pro for complex data extraction and strict JSON reasoning
-    const aiResponse = await generateWithGemini(prompt, 'gemini-3.1-pro');
+    // Use executeTask for centralized budget + authority control
+    const taskResult = await executeTask({
+      nodeId: 'trtex',
+      action: 'ugc_data_extraction',
+      payload: { prompt },
+      userEmail: email || 'system@trtex.com',
+      caller: 'ugc_news_api',
+    });
+    const aiResponse = taskResult.success ? taskResult.data?.text : null;
     if (!aiResponse) throw new Error('AI Motoru veri ayrıştırmasını gerçekleştiremedi.');
 
     let parsed;

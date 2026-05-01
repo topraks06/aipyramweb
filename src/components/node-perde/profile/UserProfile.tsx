@@ -13,6 +13,7 @@ export default function UserProfile({ basePath = '/sites/perde.ai' }: { basePath
   const [formData, setFormData] = useState({ name: '', company: '', profession: '' });
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(true);
+  const [wallet, setWallet] = useState({ credits: 0, tier: 'free', totalSpend: 0 });
   const [isSaving, setIsSaving] = useState(false);
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
   const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
@@ -32,6 +33,18 @@ export default function UserProfile({ basePath = '/sites/perde.ai' }: { basePath
             company: data.company || '',
             profession: data.profession || 'diger'
           });
+        }
+        
+        // Fetch Sovereign Wallet (Faz 8)
+        const sovRef = doc(db, 'sovereign_users', user!.uid);
+        const sovSnap = await getDoc(sovRef);
+        if (sovSnap.exists()) {
+           const sovData = sovSnap.data();
+           setWallet({
+             credits: sovData.unifiedCredits || 0,
+             tier: sovData.tier || 'free',
+             totalSpend: sovData.totalSpend || 0
+           });
         }
       } catch (err) {
         console.error("Profil çekilemedi:", err);
@@ -100,6 +113,26 @@ export default function UserProfile({ basePath = '/sites/perde.ai' }: { basePath
           <p className="text-sm font-medium">{message.text}</p>
         </div>
       )}
+
+      {/* Unified Wallet (Faz 8) */}
+      <section className="bg-gradient-to-br from-[#111] to-[#222] text-white p-8 shadow-xl mb-12 relative overflow-hidden">
+        <Sparkles className="absolute right-0 top-0 w-64 h-64 text-white/5 -mr-16 -mt-16 pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+           <div>
+              <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Sovereign Passport</h2>
+              <div className="flex items-baseline gap-4 mb-2">
+                 <span className="text-5xl font-black">{wallet.credits}</span>
+                 <span className="text-zinc-400 text-sm font-medium">B2B Kredi</span>
+              </div>
+              <p className="text-zinc-400 text-xs font-light">Tüm AIPyram ekosisteminde (icmimar, perde, vb.) geçerlidir.</p>
+           </div>
+           <div className="bg-white/10 p-6 backdrop-blur-sm border border-white/10 min-w-[200px]">
+              <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Mevcut Tier</div>
+              <div className="text-2xl font-bold text-[#D4AF37] uppercase tracking-wider">{wallet.tier}</div>
+              <div className="text-xs text-zinc-400 mt-2">Toplam Harcama: ${wallet.totalSpend}</div>
+           </div>
+        </div>
+      </section>
 
       <div className="space-y-12">
         {/* Profil Bilgileri */}

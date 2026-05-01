@@ -12,7 +12,7 @@
  */
 
 import { adminDb } from '@/lib/firebase-admin';
-import { processImageForContent } from './imageAgent';
+import { executeTask } from './aiClient';
 import { buildVisualSEOPackage } from './visualSeoEngine';
 
 interface ScanResult {
@@ -133,7 +133,13 @@ export async function scanAndGenerateImages(
         // 2. MID: Ticari detay (haber içi 1. görsel)
         // 3. DETAIL: Makro/doku yakın çekim (haber içi 2. görsel)
         
-        const heroUrl = await processImageForContent('news', category, title, undefined, 'wide');
+        const heroResult = await executeTask({
+          nodeId: 'trtex',
+          action: 'image_generation',
+          payload: { category, title, type: 'wide' }
+        });
+        
+        const heroUrl = heroResult.success && heroResult.data?.imageUrl ? heroResult.data.imageUrl : '';
         let midUrl = '';
         let detailUrl = '';
         
@@ -246,7 +252,13 @@ export async function regenerateImage(
     const title = data.translations?.TR?.title || data.title || '';
     const category = data.category || 'İstihbarat';
 
-    const imageUrl = await processImageForContent('news', category, title);
+    const result = await executeTask({
+      nodeId: 'trtex',
+      action: 'image_generation',
+      payload: { category, title }
+    });
+    
+    const imageUrl = result.success && result.data?.imageUrl ? result.data.imageUrl : '';
 
     await adminDb.collection(collection).doc(docId).update({
       image_url: imageUrl,

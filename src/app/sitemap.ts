@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // 1.5. TRTEX Main Subpages (Static with Lang Params)
-    const TRTEX_SUBPAGES = ["", "news", "tenders", "academy", "supply", "fairs", "opportunities", "login", "register"];
+    const TRTEX_SUBPAGES = ["", "news", "tenders", "academy", "supply", "fairs", "opportunities", "login", "register", "manufacturers", "trends", "trade", "market-data"];
     for (const subpage of TRTEX_SUBPAGES) {
         const basePath = subpage ? `/${subpage}` : "";
         const alternatesMap: Record<string, string> = {

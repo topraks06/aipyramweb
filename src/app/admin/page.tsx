@@ -206,7 +206,7 @@ const NODE_ICONS: Record<string, string> = {
 // ═══════════════════════════════════════════════════
 // PANEL VIEWS — Mevcut bileşenlerin plug-in noktaları
 // ═══════════════════════════════════════════════════
-type PanelView = 'overview' | 'agents' | 'commercial' | 'domains' | 'trtex' | 'inbox';
+type PanelView = 'overview' | 'agents' | 'commercial' | 'domains' | 'trtex' | 'inbox' | 'leads';
 
 // Lazy imports — mevcut bileşenleri reuse et
 import dynamic from 'next/dynamic';
@@ -225,6 +225,10 @@ const DomainManagement = dynamic(() => import('@/components/admin/DomainManageme
 });
 const TrtexControlPanel = dynamic(() => import('@/components/admin/TrtexControlPanel'), { 
   loading: () => <PanelLoader label="TRTEX" />,
+  ssr: false 
+});
+const LeadIntelligencePanel = dynamic(() => import('@/components/admin/LeadIntelligencePanel'), { 
+  loading: () => <PanelLoader label="Leads" />,
   ssr: false 
 });
 
@@ -397,6 +401,7 @@ export default function SovereignCommandCenter() {
     { id: 'inbox', label: 'Agent Inbox', icon: <Inbox className="w-4 h-4" /> },
     { id: 'commercial', label: 'Ticaret', icon: <Database className="w-4 h-4" /> },
     { id: 'domains', label: 'Domainler', icon: <Globe className="w-4 h-4" /> },
+    { id: 'leads', label: 'TRTex Leads', icon: <Inbox className="w-4 h-4" />, nodeSpecific: true },
     { id: 'trtex', label: 'TRTEX Kontrol', icon: <Newspaper className="w-4 h-4" />, nodeSpecific: true },
   ];
 
@@ -541,6 +546,7 @@ export default function SovereignCommandCenter() {
           {activePanel === 'inbox' && <PanelErrorBoundary name="Agent Inbox"><div className="p-6"><AgentInbox /></div></PanelErrorBoundary>}
           {activePanel === 'commercial' && <PanelErrorBoundary name="Ticaret"><div className="p-6"><CommercialPanel /></div></PanelErrorBoundary>}
           {activePanel === 'domains' && <PanelErrorBoundary name="Domainler"><div className="p-6"><DomainManagement /></div></PanelErrorBoundary>}
+          {activePanel === 'leads' && activeNode === 'trtex' && <PanelErrorBoundary name="TRTEX Leads"><div className="p-6"><LeadIntelligencePanel /></div></PanelErrorBoundary>}
           {activePanel === 'trtex' && activeNode === 'trtex' && <PanelErrorBoundary name="TRTEX Kontrol"><div className="p-6"><TrtexControlPanel /></div></PanelErrorBoundary>}
         </div>
       </div>

@@ -5,33 +5,59 @@ import VorhangFooter from "./VorhangFooter";
 import { ArrowRight, ShieldCheck, CheckCircle2, Building, Banknote, MapPin } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
+import { useSovereignAuth } from "@/hooks/useSovereignAuth";
+import toast from "react-hot-toast";
 
 export default function SellerOnboarding({ basePath = "" }: { basePath?: string }) {
+  const { user, loading: authLoading } = useSovereignAuth("vorhang");
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const [formData, setFormData] = useState({
+    companyName: '',
+    legalForm: '',
+    vatId: '',
+    street: '',
+    zip: '',
+    city: '',
+    country: 'DE',
+    iban: '',
+    bic: '',
+    accountHolder: ''
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
     } else {
+      if (!user) {
+        toast.error('Lütfen önce giriş yapın.');
+        return;
+      }
       setLoading(true);
       try {
-        await addDoc(collection(db, "vorhang_sellers"), {
+        await setDoc(doc(db, "vorhang_sellers", user.uid), {
+          ...formData,
+          userId: user.uid,
           timestamp: new Date().toISOString(),
           status: "pending",
         });
         setSuccess(true);
       } catch (error) {
         console.error("Error adding document: ", error);
+        toast.error("Hata oluştu, lütfen tekrar deneyin.");
       } finally {
         setLoading(false);
       }
     }
   };
+
+  if (authLoading) return <div className="p-12 text-center text-gray-500">Yükleniyor...</div>;
+  if (!user) return <div className="p-12 text-center text-gray-500">Lütfen kayıt olmak için giriş yapın.</div>;
 
   if (success) {
     return (
@@ -96,11 +122,11 @@ export default function SellerOnboarding({ basePath = "" }: { basePath?: string 
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Firmenname</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Ihre Firma GmbH" />
+                  <input required type="text" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Ihre Firma GmbH" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Rechtsform</label>
-                  <select required className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors bg-white">
+                  <select required value={formData.legalForm} onChange={e => setFormData({...formData, legalForm: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors bg-white">
                     <option value="">Bitte wählen...</option>
                     <option value="gmbh">GmbH</option>
                     <option value="ag">AG</option>
@@ -110,7 +136,7 @@ export default function SellerOnboarding({ basePath = "" }: { basePath?: string 
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Umsatzsteuer-ID (VAT)</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="DE123456789" />
+                  <input required type="text" value={formData.vatId} onChange={e => setFormData({...formData, vatId: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="DE123456789" />
                 </div>
               </div>
             </div>
@@ -126,19 +152,19 @@ export default function SellerOnboarding({ basePath = "" }: { basePath?: string 
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Straße und Hausnummer</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Musterstraße 123" />
+                  <input required type="text" value={formData.street} onChange={e => setFormData({...formData, street: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Musterstraße 123" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Postleitzahl</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="10115" />
+                  <input required type="text" value={formData.zip} onChange={e => setFormData({...formData, zip: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="10115" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Stadt</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Berlin" />
+                  <input required type="text" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Berlin" />
                 </div>
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Land</label>
-                  <select required className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors bg-white">
+                  <select required value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors bg-white">
                     <option value="DE">Deutschland</option>
                     <option value="AT">Österreich</option>
                     <option value="CH">Schweiz</option>
@@ -164,15 +190,15 @@ export default function SellerOnboarding({ basePath = "" }: { basePath?: string 
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">IBAN</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors font-mono" placeholder="DE00 0000 0000 0000 0000 00" />
+                  <input required type="text" value={formData.iban} onChange={e => setFormData({...formData, iban: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors font-mono" placeholder="DE00 0000 0000 0000 0000 00" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">BIC / SWIFT</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors font-mono" placeholder="XXXX DE XX XXX" />
+                  <input required type="text" value={formData.bic} onChange={e => setFormData({...formData, bic: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors font-mono" placeholder="XXXX DE XX XXX" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Kontoinhaber</label>
-                  <input required type="text" className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Ihre Firma GmbH" />
+                  <input required type="text" value={formData.accountHolder} onChange={e => setFormData({...formData, accountHolder: e.target.value})} className="w-full border border-gray-200 p-3 outline-none focus:border-black transition-colors" placeholder="Ihre Firma GmbH" />
                 </div>
               </div>
             </div>

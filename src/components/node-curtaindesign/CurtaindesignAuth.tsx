@@ -19,9 +19,15 @@ export default function CurtaindesignAuth({ mode = 'login' }: { mode?: 'login' |
     setError('');
 
     try {
-      // Simulate auth
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      window.location.href = '/dashboard';
+      const endpoint = mode === 'login' ? '/api/auth/session' : '/api/auth/register';
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, node: 'curtaindesign' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Authentication failed');
+      window.location.href = '/sites/curtaindesign.ai';
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please try again.');
     } finally {

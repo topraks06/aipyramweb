@@ -13,7 +13,7 @@
  */
 
 import { adminDb, admin } from '@/lib/firebase-admin';
-import { alohaAI } from './aiClient';
+import { alohaAI, executeTask } from './aiClient';
 
 // ═══════════════════════════════════════
 //  TYPES
@@ -551,6 +551,18 @@ export async function runNewsPipeline(brief: string): Promise<PipelineResult> {
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`[NEWS ENGINE v3.0] 🚀 Pipeline başladı`);
   console.log(`${'═'.repeat(60)}`);
+
+  // KURAL #1 İNFAZI: Yetki ve bütçe kontrolü
+  const auth = await executeTask({
+    nodeId: 'trtex', // Veya dinamik
+    action: 'news_pipeline',
+    payload: { task: 'runNewsPipeline', briefLength: brief.length },
+    caller: 'newsEngine.runNewsPipeline'
+  });
+  if (!auth.success) {
+    console.error(`🚨 NEWS PIPELINE BLOCKED BY SOVEREIGN: ${auth.error}`);
+    return { success: false, imageCount: 0, qualityScore: 0, error: `Blocked: ${auth.error}`, durationMs: Date.now() - start };
+  }
 
   try {
     // ADIM 1: Scout — editoryal çeşitlilik + anti-tekrar

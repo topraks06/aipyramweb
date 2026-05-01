@@ -1,4 +1,4 @@
-import { alohaAI } from '@/core/aloha/aiClient';
+import { alohaAI, executeTask } from '@/core/aloha/aiClient';
 import { saveToGoogleNativeMemory } from "./publishers/google-native-memory";
 import { learningMatrix } from "../cache/learningMatrix";
 import { Schema, Type } from "@google/genai";
@@ -11,6 +11,19 @@ const getAI = () => alohaAI.getClient();
  */
 async function runScoutAgent(brief: string): Promise<string> {
     console.log("🕵️‍♂️ [SCOUT AGENT] Verilen brief inceleniyor, haber taslağı oluşturuluyor...");
+    
+    // KURAL #1 İNFAZI: Yetki ve bütçe kontrolü
+    const auth = await executeTask({
+        nodeId: 'trtex',
+        action: 'news_generation',
+        payload: { task: 'scout_agent', briefLength: brief.length },
+        caller: 'liveNewsSwarm.runScoutAgent'
+    });
+    if (!auth.success) {
+        console.error(`🚨 [SCOUT AGENT BLOCKED] ${auth.error}`);
+        return "";
+    }
+
     const lessons = learningMatrix.getLessonsLearned("SCOUT_NEWS");
     const TODAY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const CURRENT_YEAR = new Date().getFullYear(); // 2026
@@ -70,6 +83,17 @@ Sen sert mizaçlı, tüm kıtalarda sıfır hatayla çalışan global bir toptan
 async function runRealityGuard(draft: string): Promise<{ status: "APPROVED" | "REJECTED", critique: string }> {
     console.log("🛡️ [REALITY GUARD] Haber gerçeğe uygunluk açısından laboratuvara alınıyor...");
     
+    // KURAL #1 İNFAZI
+    const auth = await executeTask({
+        nodeId: 'trtex',
+        action: 'data_validation',
+        payload: { task: 'reality_guard', draftLength: draft.length },
+        caller: 'liveNewsSwarm.runRealityGuard'
+    });
+    if (!auth.success) {
+        return { status: "REJECTED", critique: `🚨 BLOCKED BY SOVEREIGN: ${auth.error}` };
+    }
+
     const CURRENT_YEAR = new Date().getFullYear();
     
     const schema: Schema = {
@@ -124,6 +148,17 @@ Eğer metinde sahte veri varsa acımasızca REJECT bas.`,
  */
 async function runPublisherAgent(cleanContent: string) {
     console.log("📡 [PUBLISHER AGENT] Güvenlikten geçen haber 7 dile çevriliyor...");
+
+    // KURAL #1 İNFAZI
+    const auth = await executeTask({
+        nodeId: 'trtex',
+        action: 'news_publishing',
+        payload: { task: 'publisher_agent', contentLength: cleanContent.length },
+        caller: 'liveNewsSwarm.runPublisherAgent'
+    });
+    if (!auth.success) {
+        throw new Error(`🚨 PUBLISHER BLOCKED BY SOVEREIGN: ${auth.error}`);
+    }
 
     const schema: Schema = {
         type: Type.OBJECT,
@@ -299,6 +334,18 @@ ${cleanContent}`,
 // 🛠️ REPAIR AGENT (PATCH MODE)
 async function runPatchRepairAgent(brokenJson: any) {
     console.log("🛠️ [REPAIR AGENT] Çökmüş JSON tamir atölyesine (PATCH MODE) alındı. Sadece intelligence_layer onarılıyor...");
+    
+    // KURAL #1 İNFAZI
+    const auth = await executeTask({
+        nodeId: 'trtex',
+        action: 'data_validation',
+        payload: { task: 'patch_repair_agent' },
+        caller: 'liveNewsSwarm.runPatchRepairAgent'
+    });
+    if (!auth.success) {
+        throw new Error(`🚨 REPAIR AGENT BLOCKED BY SOVEREIGN: ${auth.error}`);
+    }
+
     const schema: Schema = {
         type: Type.OBJECT,
         properties: {

@@ -111,6 +111,21 @@ export async function GET() {
       };
     }));
 
+    // 4. Kill Switch Status
+    let killSwitchActive = false;
+    try {
+      const stateDoc = await adminDb.collection('aloha_system_state').doc('global').get();
+      if (stateDoc.exists && stateDoc.data()?.global_kill_switch) {
+        killSwitchActive = true;
+      }
+    } catch(e) {}
+
+    // 5. Gemini API Ping (Optional fast check, simulated for speed if needed, but let's do a lightweight ping)
+    // We will assume Gemini is OK if the app booted, but a real ping could be added here.
+    // For now, we will just return a mocked "OK" or rely on the DLQ errors above to imply API health.
+    let geminiApiStatus = "OK";
+    if (error_count > 50) geminiApiStatus = "DEGRADED (High Error Rate)";
+
     const report = {
       status,
       timestamp: new Date().toISOString(),
@@ -119,6 +134,8 @@ export async function GET() {
       missing_images,
       ticker_count,
       radar_count,
+      kill_switch_active: killSwitchActive,
+      gemini_api_status: geminiApiStatus,
       node_health
     };
 

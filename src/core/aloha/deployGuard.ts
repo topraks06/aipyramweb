@@ -49,7 +49,9 @@ export const deployGuard = {
         // Canary mode: Sadece belirli bir yüzdeye açılır
         // Eğer userId varsa hash bazlı deterministik karar verilebilir, 
         // şimdilik basit rastgele yüzde ile karar veriyoruz.
-        const randomRoll = Math.random() * 100;
+        const arr = new Uint32Array(1);
+        crypto.getRandomValues(arr);
+        const randomRoll = arr[0] % 100;
         const percentage = data.trafficPercentage || 0;
         return randomRoll <= percentage;
       }

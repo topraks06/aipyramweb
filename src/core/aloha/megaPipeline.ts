@@ -19,7 +19,7 @@
  */
 
 import { adminDb } from '@/lib/firebase-admin';
-import { alohaAI } from './aiClient';
+import { alohaAI, executeTask } from './aiClient';
 import { dlq } from './dlq';
 import { safeParseLLM, schemas } from './schemaGuard';
 
@@ -52,6 +52,17 @@ export async function runMegaPipeline(project: string = 'trtex'): Promise<MegaPi
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`[MEGA] 🚀 ${project.toUpperCase()} MEGA PIPELINE BAŞLADI`);
   console.log(`${'═'.repeat(60)}\n`);
+
+  // KURAL #1 İNFAZI: Yetki ve bütçe kontrolü
+  const auth = await executeTask({
+    nodeId: project,
+    action: 'news_pipeline',
+    payload: { task: 'runMegaPipeline' },
+    caller: 'megaPipeline.runMegaPipeline'
+  });
+  if (!auth.success) {
+    throw new Error(`🚨 MEGA PIPELINE BLOCKED BY SOVEREIGN: ${auth.error}`);
+  }
 
   const result: MegaPipelineResult = {
     project,

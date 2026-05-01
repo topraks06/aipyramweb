@@ -74,6 +74,70 @@ export async function GET(request: Request) {
       console.warn(`Sitemap: ${projectName}_news okunamadı`, e);
     }
 
+    // 3. Products (perde.ai / vorhang.ai)
+    if (projectName === 'perde' || projectName === 'vorhang') {
+      try {
+        const prodSnap = await adminDb.collection(`${projectName}_products`).limit(500).get();
+        prodSnap.docs.forEach(doc => {
+          const data = doc.data();
+          const slug = data.slug || doc.id;
+          const lastMod = data.updatedAt || data.createdAt || new Date().toISOString();
+          const dateStr = new Date(lastMod).toISOString();
+
+          for (const lang of LANGUAGES) {
+            const pageUrl = `${baseUrl}/product/${slug}?lang=${lang}`;
+            
+            xml += `  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${dateStr}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+`;
+            for (const altLang of LANGUAGES) {
+              const altUrl = `${baseUrl}/product/${slug}?lang=${altLang}`;
+              xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${altUrl}" />\n`;
+            }
+            xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/product/${slug}?lang=tr" />\n`;
+            xml += `  </url>\n`;
+          }
+        });
+      } catch (e) {
+        console.warn(`Sitemap: ${projectName}_products okunamadı`, e);
+      }
+    }
+
+    // 4. Exhibitors (hometex.ai)
+    if (projectName === 'hometex') {
+      try {
+        const exhSnap = await adminDb.collection('hometex_exhibitors').where("status", "==", "approved").limit(500).get();
+        exhSnap.docs.forEach(doc => {
+          const data = doc.data();
+          const slug = data.slug || doc.id;
+          const lastMod = data.updatedAt || data.createdAt || new Date().toISOString();
+          const dateStr = new Date(lastMod).toISOString();
+
+          for (const lang of LANGUAGES) {
+            const pageUrl = `${baseUrl}/exhibitor/${slug}?lang=${lang}`;
+            
+            xml += `  <url>
+    <loc>${pageUrl}</loc>
+    <lastmod>${dateStr}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+`;
+            for (const altLang of LANGUAGES) {
+              const altUrl = `${baseUrl}/exhibitor/${slug}?lang=${altLang}`;
+              xml += `    <xhtml:link rel="alternate" hreflang="${altLang}" href="${altUrl}" />\n`;
+            }
+            xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/exhibitor/${slug}?lang=tr" />\n`;
+            xml += `  </url>\n`;
+          }
+        });
+      } catch (e) {
+        console.warn(`Sitemap: hometex_exhibitors okunamadı`, e);
+      }
+    }
+
     xml += `</urlset>`;
 
     return new NextResponse(xml, {

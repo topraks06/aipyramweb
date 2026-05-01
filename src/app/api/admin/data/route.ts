@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFromGoogleNativeMemory } from "@/core/aloha/publishers/google-native-memory";
+import { adminDb } from '@/lib/firebase-admin';
 
 // GET - Fetch data from any table (for admin panel)
 export async function GET(request: NextRequest) {
@@ -16,16 +16,23 @@ export async function GET(request: NextRequest) {
         
         switch(table) {
             case "domain_management":
-                data = [{ id: 1, domain: "trtex.com", status: "Active", health: 100 }];
+                data = [{ id: 1, domain: "trtex.com", status: "Active", health: 100 }, { id: 2, domain: "icmimar.ai", status: "Active", health: 100 }];
                 break;
-            case "ai_agents":
-                data = [{ id: 1, name: "aipyram Master Node", role: "Commander", status: "Online" }];
+            case "aloha_system_state":
+                const stateSnapshot = await adminDb.collection("aloha_system_state").get();
+                data = stateSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 break;
-            case "automation_rules":
-                data = [{ id: 1, trigger: "webhook", action: "revalidate", status: "Active" }];
+            case "sovereign_audit_log":
+                const auditSnapshot = await adminDb.collection("sovereign_audit_log").orderBy("timestamp", "desc").limit(100).get();
+                data = auditSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                break;
+            case "aloha_costs":
+                const costsSnapshot = await adminDb.collection("aloha_costs").orderBy("timestamp", "desc").limit(50).get();
+                data = costsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 break;
             default:
-                data = getFromGoogleNativeMemory(table);
+                const snap = await adminDb.collection(table).limit(50).get();
+                data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         }
 
         return NextResponse.json({ success: true, data });
@@ -44,10 +51,17 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: "Table and data required" }, { status: 400 });
         }
 
-        const { saveToGoogleNativeMemory } = await import('@/core/aloha/publishers/google-native-memory');
-        const result = saveToGoogleNativeMemory(table, data);
-        
-        return NextResponse.json({ success: true, data: result });
+        // Kill Switch update logic
+        if (table === "aloha_system_state" && data.id === "global") {
+            await adminDb.collection("aloha_system_state").doc("global").set({
+                ...data,
+                lastUpdated: new Date().toISOString()
+            }, { merge: true });
+            return NextResponse.json({ success: true, data });
+        }
+
+        const docRef = await adminDb.collection(table).add(data);
+        return NextResponse.json({ success: true, data: { id: docRef.id, ...data } });
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
@@ -64,14 +78,18 @@ export async function PUT(request: NextRequest) {
             return NextResponse.json({ success: false, error: "Table, id, and data required" }, { status: 400 });
         }
 
-        const { updateInGoogleNativeMemory } = await import('@/core/aloha/publishers/google-native-memory');
-        const result = updateInGoogleNativeMemory(table, id, data);
-        
-        if (!result) {
-            return NextResponse.json({ success: false, error: "Record not found" }, { status: 404 });
+        // Kill Switch update logic
+        if (table === "aloha_system_state" && id === "global") {
+            await adminDb.collection("aloha_system_state").doc("global").set({
+                ...data,
+                lastUpdated: new Date().toISOString()
+            }, { merge: true });
+            return NextResponse.json({ success: true, data: { id, ...data } });
         }
+
+        await adminDb.collection(table).doc(id).update(data);
         
-        return NextResponse.json({ success: true, data: result });
+        return NextResponse.json({ success: true, data: { id, ...data } });
     } catch (error: any) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
@@ -87,12 +105,7 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ success: false, error: "Table and id required" }, { status: 400 });
         }
 
-        const { deleteFromGoogleNativeMemory } = await import('@/core/aloha/publishers/google-native-memory');
-        const success = deleteFromGoogleNativeMemory(table, id);
-        
-        if (!success) {
-            return NextResponse.json({ success: false, error: "Record not found" }, { status: 404 });
-        }
+        await adminDb.collection(table).doc(id).delete();
         
         return NextResponse.json({ success: true });
     } catch (error: any) {

@@ -49,11 +49,33 @@ export async function POST(req: Request) {
               // 1. Cüzdana kredi ekle
               await addCredit(SovereignNodeId, uid, credits);
               
-              // 2. Kullanıcı lisansını aktif yap
+              // 2. Kullanıcı lisansını aktif yap ve Tier Yükselt (Faz 8)
               if (adminDb) {
                 const SovereignNodeConfig = getNode(SovereignNodeId);
                 const memberRef = adminDb.collection(SovereignNodeConfig.memberCollection).doc(uid);
                 await memberRef.set({ license: 'active' }, { merge: true });
+
+                // SOVEREIGN TIER UPGRADE
+                const userRef = adminDb.collection('sovereign_users').doc(uid);
+                const userDoc = await userRef.get();
+                if (userDoc.exists) {
+                  const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
+                  const currentSpend = userDoc.data()?.totalSpend || 0;
+                  const newSpend = currentSpend + amountTotal;
+                  
+                  let newTier = userDoc.data()?.tier || 'free';
+                  if (newSpend >= 2000) newTier = 'platinum';
+                  else if (newSpend >= 500) newTier = 'gold';
+                  else if (newSpend >= 100) newTier = 'silver';
+                  else if (newSpend > 0) newTier = 'bronze';
+
+                  await userRef.set({
+                    totalSpend: newSpend,
+                    tier: newTier,
+                    lastPaymentAt: new Date().toISOString()
+                  }, { merge: true });
+                  console.log(`[Stripe Webhook] User ${uid} upgraded to tier: ${newTier} (Total Spend: $${newSpend})`);
+                }
               }
 
               // 3. Idempotency kaydet

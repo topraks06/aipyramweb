@@ -301,7 +301,19 @@ export default async function SitePage({ params, searchParams }: SitePageProps) 
     } catch (e) {
       console.warn('[CURTAINDESIGN] Firestore fetch error:', e);
     }
-    return <CurtaindesignLandingPage products={products} />;
+    
+    if (products.length === 0) {
+      products = [
+        { id: '1', name: 'Alanya Sheer Linen', price: '85', imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800' },
+        { id: '2', name: 'Bosphorus Velvet Blackout', price: '145', imageUrl: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?q=80&w=800' },
+        { id: '3', name: 'Aegean Cotton Blend', price: '95', imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=800' },
+        { id: '4', name: 'Kapadokya Earth Tones', price: '110', imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?q=80&w=800' },
+        { id: '5', name: 'Ephesus Royal Silk', price: '220', imageUrl: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=800' },
+        { id: '6', name: 'Anatolia Rustic Weave', price: '130', imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800' }
+      ];
+    }
+    
+    return <CurtaindesignLandingPage products={products} basePath={`/sites/${exactDomain}`} />;
   }
 
   // FAZ 1.4: basePath for localhost routing

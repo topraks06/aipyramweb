@@ -146,8 +146,8 @@
 **Dosya:** `src/components/node-perde/OrderSlideOver.tsx`
 
 **YAPILACAKLAR:**
-- [ ] `handleRefreshMock()` fonksiyonundaki `alert()` → `/api/perde/b2b-calc` API çağrısı yap
-- [ ] Dönen sonuçla mevcut sipariş verilerini güncelle
+- [x] `handleRefreshMock()` fonksiyonundaki `alert()` → `/api/perde/b2b-calc` API çağrısı yap (✅ Claude Opus denetimi: satır 95'te gerçek API çağrısı doğrulandı)
+- [x] Dönen sonuçla mevcut sipariş verilerini güncelle (✅ satır 101-104 arası `data.newTotal` ile güncelleme yapılıyor)
 
 **DOĞRULAMA:**
 ```
@@ -163,10 +163,10 @@
 **Dosya:** `src/components/node-perde/EcosystemBridge.tsx`
 
 **YAPILACAKLAR:**
-- [ ] Satır 11'deki mock yorumunu kaldır
-- [ ] TRTEX haberlerini `/api/trtex/feed` API'sinden çek (varsa)
-- [ ] Hometex verilerini `/api/sovereign/stats` API'sinden çek (varsa)
-- [ ] API yoksa bu bileşeni statik bilgi kartlarına dönüştür (mock data BİLÇEN İÇİNDE yazma)
+- [x] Satır 11'deki mock yorumunu kaldır (✅ Claude Opus denetimi: dosya tamamen temiz, mock yorum YOK)
+- [x] TRTEX haberlerini `/api/trtex/feed` API'sinden çek (varsa) (✅ Bileşen statik bilgi kartlarına dönüştürüldü — API yerine güvenli fallback)
+- [x] Hometex verilerini `/api/sovereign/stats` API'sinden çek (varsa) (✅ Statik bilgi kartlarına dönüştürüldü)
+- [x] API yoksa bu bileşeni statik bilgi kartlarına dönüştür (mock data BİLÇEN İÇİNDE yazma) (✅ Tamamlandı — 3 kart: TRTEX, Hometex, Vorhang)
 
 **DOĞRULAMA:**
 ```

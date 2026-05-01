@@ -17,6 +17,18 @@ export default async function MagazinePage({ params }: { params: Promise<{ domai
     return <HeimtexMagazine articles={articles} basePath={`/sites/${exactDomain}`} />;
   }
 
-  // Hometex or other nodes shouldn't access this page anymore
+  if (exactDomain.includes('hometex')) {
+    const HometexMagazine = (await import('@/components/node-hometex/HometexMagazine')).default;
+    let articles: any[] = [];
+    try {
+      const articlesSnap = await adminDb.collection('hometex_magazine').orderBy('publishedAt', 'desc').get();
+      articles = articlesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[HOMETEX] Magazine fetch error:', e);
+    }
+    return <HometexMagazine articles={articles} basePath={`/sites/${exactDomain}`} />;
+  }
+
+  // Other nodes shouldn't access this page anymore
   redirect(`/sites/${exactDomain}`);
 }
