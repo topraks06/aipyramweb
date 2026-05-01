@@ -31,8 +31,20 @@ export default function HometexDashboard() {
   }, []);
 
   const approveDealer = async (id: string) => {
-    // Bu kısım ALOHA'ya "hometex.approve" tool olarak bağlanabilir.
-    setDealers(prev => prev.map(d => d.id === id ? { ...d, status: 'approved' } : d));
+    try {
+      const res = await fetch('/api/v1/master/hometex/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) {
+        setDealers(prev => prev.map(d => d.id === id ? { ...d, status: 'approved' } : d));
+      } else {
+        console.error("Approve failed");
+      }
+    } catch (err) {
+      console.error("Approve request failed", err);
+    }
   };
 
   return (
