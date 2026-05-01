@@ -38,7 +38,7 @@ export default function SwarmTerminal() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": "sk_aipyram_master_71", // Local test key
+          "x-api-key": process.env.NEXT_PUBLIC_SWARM_API_KEY || "", 
           "x-project": domain
         },
         body: JSON.stringify({ task, mode })
