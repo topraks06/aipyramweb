@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { alohaAI } from '../aloha/aiClient';
 
 /**
  * ANTI-GRAVITY: WORKER AGENT
@@ -21,21 +22,24 @@ export class WorkerAgent {
     const skillDirectives = fs.readFileSync(skillPath, 'utf-8');
     console.log(`[Worker] "${skillFile}" kuralları yüklendi. İşlem icra ediliyor...`);
 
-    // SİMÜLASYON: Gerçek LLM entegre edilene kadar taslak bir üretim simülasyonu çalıştırılır.
-    // Sistemin asıl gücü işin kendisinde değil, sonrasındaki REVIEWER REDDİ mekanizmasındadır.
-    
-    await new Promise(resolve => setTimeout(resolve, 1500)); // İş yapım süresi
+    // SİMÜLASYON KALDIRILDI: Zero-Mock kuralı gereği doğrudan ALOHA Engine çağrısı yapılır
+    try {
+      const prompt = `GÖREV: ${taskId}\nBECERİ KURALLARI:\n${skillDirectives}\nPAYLOAD:\n${JSON.stringify(inputPayload, null, 2)}`;
+      
+      const response = await alohaAI.generate(prompt, { 
+        complexity: 'complex',
+        responseMimeType: 'application/json' 
+      }, 'worker_agent');
 
-    // Bilerek eksik veya kuralsız çıktı vererek Reviewer'ın gücünü kullanabiliriz.
-    // Ancak mutlu senaryoda:
-    const mockOutput = {
-      title: inputPayload.subject ? `${inputPayload.subject} Raporu` : "Otonom Sonuç",
-      content: "Bu metin 100 kelimelik limit kuralını test etmek amacıyla uzatılmıştır. ".repeat(15), 
-      images: ["https://image.pollinations.ai/prompt/demo?seed=1240"]
-    };
+      const textOutput = response.text || "{}";
+      const result = JSON.parse(textOutput);
 
-    console.log(`[Worker] Üretim tamamlandı ancak ajan onay (COMPLETED) yetkisine sahip değil. Çıktı Motor'a (Engine) gönderiliyor.`);
-    
-    return mockOutput;
+      console.log(`[Worker] Üretim tamamlandı. Otonom çıktı (COMPLETED izni olmadan) Engine'e gönderiliyor.`);
+      return result;
+
+    } catch (err: any) {
+      console.error(`[Worker] Kritik Motor Hatası: ${err.message}`);
+      throw err;
+    }
   }
 }
