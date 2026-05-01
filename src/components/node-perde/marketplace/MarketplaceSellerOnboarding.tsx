@@ -5,11 +5,13 @@ import PerdeFooter from "../PerdeFooter";
 import { ArrowRight, ShieldCheck, CheckCircle2, Building, Banknote, MapPin } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useSovereignAuth } from "@/hooks/useSovereignAuth";
 
 export default function MarketplaceSellerOnboarding({ basePath = "" }: { basePath?: string }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { user } = useSovereignAuth('perde');
 
   // Form Data
   const [formData, setFormData] = useState({
@@ -37,7 +39,7 @@ export default function MarketplaceSellerOnboarding({ basePath = "" }: { basePat
                 address: `${formData.address}, ${formData.city}`,
                 iban: formData.iban,
                 ibanOwner: formData.ibanOwner,
-                email: "test@esnaf.com", // TODO: Gerçek auth user
+                email: user?.email || "test@esnaf.com", // Auth provider'dan alınır
                 phone: ""
             })
         });

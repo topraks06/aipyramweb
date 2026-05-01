@@ -6,11 +6,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { collection, query, where, getDocs, limit, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase-client";
+import { useSovereignAuth } from "@/hooks/useSovereignAuth";
 
 export default function MarketplaceSellerDashboard({ basePath = "" }: { basePath?: string }) {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const sellerId = "test_seller_id"; // TODO: Gerçek auth user ID
+  const { user } = useSovereignAuth('perde');
+  const sellerId = user?.uid || "test_seller_id"; // Auth provider'dan gelecek
 
   useEffect(() => {
     const fetchOrders = async () => {

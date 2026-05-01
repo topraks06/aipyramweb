@@ -23,8 +23,15 @@ export async function POST(req: Request) {
 
     console.log(`[VORHANG-BRIDGE] 🇪🇺 Yeni Avrupa Siparişi Alındı: ${totalEur} EUR`);
 
-    // 1. Kuru TRTEX üzerinden al (Simüle edilmiş güncel kur)
-    const EUR_TRY_RATE = 36.45; // TODO: TRTEX Intelligence'dan çekilecek
+    let EUR_TRY_RATE = 36.45; 
+    try {
+      const tickerDoc = await adminDb.collection('trtex_intelligence').doc('ticker_live').get();
+      if (tickerDoc.exists && tickerDoc.data()?.forex?.eur_try?.value) {
+        EUR_TRY_RATE = tickerDoc.data()!.forex.eur_try.value;
+      }
+    } catch (e) {
+      console.warn('[VORHANG-BRIDGE] Kur çekilemedi, varsayılan değer kullanılıyor.');
+    }
     const totalTry = totalEur * EUR_TRY_RATE;
 
     const orderId = `VOR-${Date.now()}-${crypto.randomUUID().slice(0,4).toUpperCase()}-DE`;
